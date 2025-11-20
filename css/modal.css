@@ -77,7 +77,7 @@
   z-index: 1001;
   position: fixed;
   bottom: 0;
-  width: 50%;
+  width: 40%;
   max-height: 80vh;
   overflow-y: auto;
   background-color: var(--container-bg);

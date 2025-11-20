@@ -132,7 +132,7 @@ class BillScanner {
   }
 
   async callGeminiAPI(base64Image) {
-    const BASE_API_URL = "https://split-bill-backend-vercel.vercel.app"; // domain backend kamu
+    const BASE_API_URL = "https://splitbillbe.netlify.app"; // domain backend kamu
 
     const payload = {
       mime_type: this.selectedFile.type,
@@ -266,7 +266,7 @@ class BillScanner {
   //       ],
   //     };
 
-  //     const BASE_API_URL = "https://split-bill-backend-vercel.vercel.app";
+  //     const BASE_API_URL = "https://splitbillbe.netlify.app";
 
   //     const response = await fetch(`${BASE_API_URL}/api/gemini-scan`, {
   //       method: "POST",

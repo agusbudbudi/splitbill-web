@@ -192,7 +192,7 @@ function stopCountdownTimer() {
 
 // API Configuration
 const API_CONFIG = {
-  baseURL: "https://split-bill-backend-vercel.vercel.app/api",
+  baseURL: "https://splitbillbe.netlify.app/api",
   endpoints: {
     reviews: "/reviews",
   },

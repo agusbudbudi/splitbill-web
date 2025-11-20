@@ -1,5 +1,5 @@
 // API Configuration
-const API_BASE_URL = "https://split-bill-backend-vercel.vercel.app";
+const API_BASE_URL = "https://splitbillbe.netlify.app";
 
 // Enhanced Authentication service
 class AuthService {

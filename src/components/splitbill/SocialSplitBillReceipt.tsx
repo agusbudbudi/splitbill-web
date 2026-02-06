@@ -93,7 +93,7 @@ export const SocialSplitBillReceipt = React.forwardRef<
       {/* Branding */}
       <div className="relative z-10 w-full flex justify-between items-center mb-12">
         <div className="flex items-center gap-5">
-          <div className="w-20 h-20 bg-white rounded-2xl shadow-xl flex items-center justify-center border border-primary/5 p-3">
+          <div className="w-20 h-20 bg-white rounded-2xl flex items-center justify-center border border-primary/5 p-3">
             <img
               src="/img/footer-icon.png"
               alt="SplitBill Logo"
@@ -119,7 +119,7 @@ export const SocialSplitBillReceipt = React.forwardRef<
       {/* Hero Section */}
       <div className="relative z-10 w-full flex flex-col items-center text-center mt-10">
         <div className="mb-8 relative">
-          <div className="w-36 h-36 bg-white rounded-full flex items-center justify-center shadow-2xl relative z-10 overflow-hidden border-4 border-primary/10">
+          <div className="w-36 h-36 bg-white rounded-full flex items-center justify-center relative z-10 overflow-hidden border-4 border-primary/10">
             <ReceiptText className="w-16 h-16 text-primary" />
           </div>
           <div className="absolute inset-0 bg-primary/20 blur-2xl opacity-40 animate-pulse rounded-full" />
@@ -134,7 +134,7 @@ export const SocialSplitBillReceipt = React.forwardRef<
       </div>
 
       {/* Main Stats Card */}
-      <div className="relative z-10 w-full bg-white rounded-[50px] shadow-2xl shadow-primary/10 border border-primary/5 p-14 mt-16 flex flex-col gap-10">
+      <div className="relative z-10 w-full bg-white rounded-[50px] border border-primary/5 p-14 mt-16 flex flex-col gap-10">
         <div className="flex justify-between items-center py-10 px-10 bg-primary/5 rounded-[30px] border border-primary/10">
           <div className="flex flex-col gap-2">
             <span className="text-primary text-2xl font-black uppercase tracking-widest opacity-60">
@@ -178,7 +178,7 @@ export const SocialSplitBillReceipt = React.forwardRef<
                   key={name}
                   className="flex items-center gap-5 p-6 bg-slate-50 rounded-[30px] border border-slate-100 transition-all hover:scale-105"
                 >
-                  <div className="w-20 h-20 rounded-full border-4 border-white shadow-xl overflow-hidden bg-white shrink-0">
+                  <div className="w-20 h-20 rounded-full border-4 border-white overflow-hidden bg-white shrink-0">
                     <img
                       src={`${AVATAR_BASE_URL}${encodeURIComponent(name)}`}
                       alt={name}
@@ -214,7 +214,7 @@ export const SocialSplitBillReceipt = React.forwardRef<
           <Users className="w-8 h-8 text-primary" />
           Rincian Per Orang 📊
         </h3>
-        <div className="grid grid-cols-1 gap-6 shadow-2xl shadow-primary/5 rounded-[50px] border border-primary/5 p-10 bg-white">
+        <div className="grid grid-cols-1 gap-6 rounded-[50px] border border-primary/5 p-10 bg-white">
           {people
             .filter((name) => {
               const b = balances[name];
@@ -228,11 +228,11 @@ export const SocialSplitBillReceipt = React.forwardRef<
               return (
                 <div
                   key={name}
-                  className="flex flex-col gap-6 p-6 bg-white border border-slate-100 rounded-[35px] shadow-sm"
+                  className="flex flex-col gap-6 p-6 bg-white border border-slate-100 rounded-[35px]"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-6">
-                      <div className="w-20 h-20 rounded-full border-4 border-white shadow-xl overflow-hidden bg-white shrink-0 shadow-primary/10">
+                      <div className="w-20 h-20 rounded-full border-4 border-white overflow-hidden bg-white shrink-0">
                         <img
                           src={`${AVATAR_BASE_URL}${encodeURIComponent(name)}`}
                           alt={name}
@@ -351,21 +351,21 @@ export const SocialSplitBillReceipt = React.forwardRef<
                 settlementInstructions.map((inst, idx) => (
                   <div
                     key={idx}
-                    className="bg-white border border-slate-100 rounded-[35px] p-8 flex items-center justify-between shadow-soft hover:shadow-xl transition-all"
+                    className="bg-white border border-slate-100 rounded-[35px] p-8 flex items-center justify-between transition-all"
                   >
                     <div className="flex items-center gap-6">
                       <div className="relative flex items-center">
-                        <div className="w-20 h-20 rounded-full border-4 border-white shadow-xl overflow-hidden bg-white ring-4 ring-destructive/10">
+                        <div className="w-20 h-20 rounded-full border-4 border-white overflow-hidden bg-white ring-4 ring-destructive/10">
                           <img
                             src={`${AVATAR_BASE_URL}${encodeURIComponent(inst.from)}`}
                             alt={inst.from}
                             className="w-full h-full object-cover"
                           />
                         </div>
-                        <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-lg mx-[-10px] z-10 border-2 border-slate-50">
+                        <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center mx-[-10px] z-10 border-2 border-slate-50">
                           <ArrowRight className="w-6 h-6 text-primary" />
                         </div>
-                        <div className="w-20 h-20 rounded-full border-4 border-white shadow-xl overflow-hidden bg-white ring-4 ring-emerald-500/10">
+                        <div className="w-20 h-20 rounded-full border-4 border-white overflow-hidden bg-white ring-4 ring-emerald-500/10">
                           <img
                             src={`${AVATAR_BASE_URL}${encodeURIComponent(inst.to)}`}
                             alt={inst.to}
@@ -415,13 +415,13 @@ export const SocialSplitBillReceipt = React.forwardRef<
                 <DollarSign className="w-8 h-8 text-primary" />
                 Detail Rekening Pembayaran 📥
               </h3>
-              <div className="grid grid-cols-2 gap-6 p-6 bg-slate-50 rounded-[50px] border border-slate-100 shadow-inner">
+              <div className="grid grid-cols-2 gap-6 p-6 bg-slate-50 rounded-[50px] border border-slate-100">
                 {selectedMethods.map((method) => (
                   <div
                     key={method.id}
-                    className="p-6 bg-white border border-slate-100 rounded-[35px] flex items-center gap-8 shadow-sm"
+                    className="p-6 bg-white border border-slate-100 rounded-[35px] flex items-center gap-8"
                   >
-                    <div className="w-24 h-24 p-4 bg-slate-50 rounded-3xl flex items-center justify-center border border-slate-100 shadow-sm shrink-0">
+                    <div className="w-24 h-24 p-4 bg-slate-50 rounded-3xl flex items-center justify-center border border-slate-100 shrink-0">
                       {[
                         "bca",
                         "bni",
@@ -431,6 +431,14 @@ export const SocialSplitBillReceipt = React.forwardRef<
                         "gopay",
                         "ovo",
                         "shopeepay",
+                        "jenius",
+                        "linkaja",
+                        "permata",
+                        "danamon",
+                        "bsi",
+                        "btn",
+                        "bank jago",
+                        "seabank",
                       ].some((kw) =>
                         method.providerName.toLowerCase().includes(kw),
                       ) ? (

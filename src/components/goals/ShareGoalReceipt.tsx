@@ -52,7 +52,7 @@ export const ShareGoalReceipt = React.forwardRef<
       {/* Branding */}
       <div className="relative z-10 w-full flex justify-between items-center mb-12">
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 bg-white rounded-2xl shadow-xl flex items-center justify-center border border-primary/5 p-2">
+          <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center border border-primary/5 p-2">
             <img
               src="/img/footer-icon.png"
               alt="SplitBill Logo"
@@ -76,7 +76,7 @@ export const ShareGoalReceipt = React.forwardRef<
       {/* Hero Section */}
       <div className="relative z-10 w-full flex flex-col items-center text-center mt-8">
         <div className="mb-6 relative">
-          <div className="w-32 h-32 bg-white rounded-full flex items-center justify-center shadow-2xl relative z-10 overflow-hidden border-4 border-primary/10 text-6xl">
+          <div className="w-32 h-32 bg-white rounded-full flex items-center justify-center relative z-10 overflow-hidden border-4 border-primary/10 text-6xl">
             {getProgressEmoji(progress)}
           </div>
           <div className="absolute inset-0 bg-primary/20 blur-2xl opacity-40 animate-pulse rounded-full" />
@@ -93,7 +93,7 @@ export const ShareGoalReceipt = React.forwardRef<
       </div>
 
       {/* Progress Display */}
-      <div className="relative z-10 w-full bg-white rounded-[40px] shadow-2xl shadow-primary/10 border border-primary/5 p-12 mt-16 flex flex-col gap-10">
+      <div className="relative z-10 w-full bg-white rounded-[40px] border border-primary/5 p-12 mt-16 flex flex-col gap-10">
         <div className="flex justify-between items-end">
           <div className="flex flex-col gap-2">
             <span className="text-slate-500 text-xl font-bold uppercase tracking-widest">
@@ -170,10 +170,10 @@ export const ShareGoalReceipt = React.forwardRef<
             return (
               <div
                 key={memberId}
-                className="bg-white border border-slate-100 rounded-3xl p-6 flex items-center justify-between shadow-soft"
+                className="bg-white border border-slate-100 rounded-3xl p-6 flex items-center justify-between"
               >
                 <div className="flex items-center gap-5">
-                  <div className="w-16 h-16 rounded-full border-4 border-white shadow-soft overflow-hidden bg-white shrink-0">
+                  <div className="w-16 h-16 rounded-full border-4 border-white overflow-hidden bg-white shrink-0">
                     <img
                       src={`${AVATAR_BASE_URL}${encodeURIComponent(memberId)}-${idx}`}
                       alt={memberId}

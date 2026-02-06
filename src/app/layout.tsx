@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import { Toaster } from "sonner";
 import "./globals.css";
@@ -10,7 +10,16 @@ const inter = Inter({
   subsets: ["latin"],
 });
 
+export const viewport: Viewport = {
+  themeColor: "#7056ec",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false, // Often desired for PWAs to feel like native apps
+};
+
 export const metadata: Metadata = {
+  metadataBase: new URL("https://splitbill.my.id"),
   title: "Split Bill App - Bagi Tagihan Lebih Mudah",
   description:
     "Buat dan bagikan pembagian tagihan secara otomatis dengan Split Bill App. Praktis dan cepat!",

@@ -81,7 +81,7 @@ export function Step1Details() {
         </div>
 
         {/* Invoice Date & Due Date */}
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className="space-y-2">
             <label className="text-xs font-bold text-foreground/70 tracking-tight">
               Invoice Date

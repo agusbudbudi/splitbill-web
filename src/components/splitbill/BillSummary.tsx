@@ -160,7 +160,7 @@ export const BillSummary = ({
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <Card className="p-5 border-primary/20 shadow-md overflow-hidden relative">
+      <Card className="p-4 border-primary/20 shadow-md overflow-hidden relative">
         {/* Decorative background element */}
         <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 blur-3xl pointer-events-none" />
 

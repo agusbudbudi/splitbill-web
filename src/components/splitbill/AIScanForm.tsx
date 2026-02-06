@@ -115,7 +115,7 @@ export const AIScanForm = () => {
     return (
       <div className="space-y-4 py-2 animate-in fade-in duration-500 relative">
         {/* Premium Banner */}
-        <div className="relative overflow-hidden rounded-3xl p-6 bg-gradient-to-br from-primary via-primary/90 to-violet-600 text-white shadow-xl shadow-primary/20 border border-white/20 z-10 mx-1">
+        <div className="relative overflow-hidden rounded-3xl p-6 bg-gradient-to-br from-primary via-primary/90 to-violet-600 text-white shadow-lg shadow-primary/20 border border-white/20 z-10">
           {/* Decorative Elements */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-[80px] -mr-16 -mt-16 pointer-events-none" />
           <div className="absolute bottom-0 left-0 w-40 h-40 bg-indigo-500/30 rounded-full blur-[60px] -ml-10 -mb-10 pointer-events-none" />

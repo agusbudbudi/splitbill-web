@@ -205,7 +205,7 @@ export default function InvoicePage() {
         </div>
       </Header>
 
-      <main className="w-full max-w-[480px] px-4 pt-10 pb-40 space-y-6 relative z-10">
+      <main className="w-full max-w-[480px] px-4 pt-10 pb-48 space-y-6 relative z-10">
         <div className="text-center space-y-2 animate-in fade-in slide-in-from-right-4 duration-500">
           <h2 className="text-2xl font-bold">{getStepTitle()}</h2>
           <p className="text-muted-foreground text-sm">{getStepSubtitle()}</p>

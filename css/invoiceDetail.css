@@ -1,9 +1,0 @@
-.invoice-action-button {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  border-bottom: 1px solid var(--input-bg);
-  padding-bottom: 10px;
-  margin-bottom: 10px;
-  align-items: center;
-}

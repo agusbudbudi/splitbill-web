@@ -1,0 +1,87 @@
+"use client";
+
+import React, { useState } from "react";
+import { Header } from "@/components/layout/Header";
+import { Footer } from "@/components/layout/Footer";
+import { Banner } from "@/components/home/Banner";
+import { NavigationMenu } from "@/components/home/NavigationMenu";
+import { AIScanBanner } from "@/components/home/AIScanBanner";
+import { GettingStarted } from "@/components/home/GettingStarted";
+import { FeatureHighlights } from "@/components/home/FeatureHighlights";
+import { FloatingBadge } from "@/components/ui/FloatingBadge";
+import { OngoingSplitBillCard } from "@/components/home/OngoingSplitBillCard";
+import { LoginEncouragementCard } from "@/components/home/LoginEncouragementCard";
+import { useSplitBillStore } from "@/store/useSplitBillStore";
+import { useWalletStore } from "@/store/useWalletStore";
+import { cn } from "@/lib/utils";
+import { MerchandisingBanner } from "@/components/ui/MerchandisingBanner";
+import { useAuthStore } from "@/lib/stores/authStore";
+
+const BackgroundDecoration = () => (
+  <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+    <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[120px]" />
+    <div className="absolute bottom-[10%] right-[-10%] w-[50%] h-[50%] bg-indigo-500/5 rounded-full blur-[150px]" />
+  </div>
+);
+
+export default function Home() {
+  const { isAuthenticated } = useAuthStore();
+  const expenses = useSplitBillStore((state) => state.expenses);
+  const [isMounted, setIsMounted] = useState(false);
+
+  React.useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-background flex flex-col items-center relative">
+      <BackgroundDecoration />
+      <MerchandisingBanner imageSrc="/img/banner-merchandising.png" />
+      <Header transparent />
+
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] z-0">
+        <Banner />
+      </div>
+
+      <main className="w-full max-w-[480px] px-4 pt-[210px] sm:pt-[230px] pb-32 space-y-4 relative z-10">
+        <div>
+          <NavigationMenu />
+        </div>
+
+        {isMounted && expenses.length > 0 && (
+          <div>
+            <OngoingSplitBillCard />
+          </div>
+        )}
+
+        {isMounted && !isAuthenticated && (
+          <div>
+            <LoginEncouragementCard />
+          </div>
+        )}
+
+        <div>
+          <GettingStarted />
+        </div>
+
+        <div>
+          <AIScanBanner />
+        </div>
+
+        {/* Dashboard Section */}
+        <section className="space-y-4">
+          <div className="flex items-center gap-2 px-1">
+            <h2 className="text-sm font-bold text-foreground/70">
+              {isMounted && isAuthenticated
+                ? "Progress Kamu 🙌"
+                : "Apa yang bisa kamu lacak? 🤔"}
+            </h2>
+          </div>
+          <FeatureHighlights />
+        </section>
+      </main>
+
+      <Footer />
+    </div>
+  );
+}

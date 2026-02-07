@@ -11,7 +11,7 @@ const inter = Inter({
 });
 
 export const viewport: Viewport = {
-  themeColor: "#7056ec",
+  themeColor: "#479fea",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
@@ -52,6 +52,11 @@ export const metadata: Metadata = {
     title: "Split Bill App - Bagi Tagihan Lebih Mudah",
     description: "Buat dan bagikan pembagian tagihan secara otomatis.",
     images: ["/img/banner-splitbill.jpg"],
+  },
+  appleWebApp: {
+    capable: true,
+    title: "Split Bill App",
+    statusBarStyle: "default",
   },
 };
 

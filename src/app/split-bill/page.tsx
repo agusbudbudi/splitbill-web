@@ -89,11 +89,13 @@ const SplitBillContent = () => {
     clearDraftAfterFinalize();
     setShowFinalizeModal(false);
 
-    // Update current URL to include saved=true so back navigation shows the success card
+    // 1. Update current URL to include saved=true so back navigation shows the success card
     router.replace(`/split-bill?step=4&saved=true&id=${id}`);
 
-    // Navigate to detail page
-    router.push(`/history/split-bill/${id}`);
+    // 2. Navigate to detail page with new=true
+    setTimeout(() => {
+      router.push(`/history/split-bill/${id}?new=true`);
+    }, 100);
 
     // Celeberation Effect
     const duration = 3 * 1000;
@@ -313,7 +315,7 @@ const SplitBillContent = () => {
                 {
                   label: "Lihat History",
                   onClick: () =>
-                    router.push(`/history/split-bill/${lastSavedId}`),
+                    router.push(`/history/split-bill/${lastSavedId}?new=true`),
                   variant: "outline",
                   icon: HistoryIcon,
                 },

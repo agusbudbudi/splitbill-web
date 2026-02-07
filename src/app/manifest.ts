@@ -13,7 +13,7 @@ export default function manifest(): MetadataRoute.Manifest {
     prefer_related_applications: false,
     icons: [
       {
-        src: "/img/pwa-icon.png",
+        src: "/img/pwa-icon-192.png",
         sizes: "192x192", // Chrome requires a 192x192 icon. If actual file is 512, this causes a warning, but is required.
         type: "image/png",
         purpose: "maskable",
@@ -27,15 +27,15 @@ export default function manifest(): MetadataRoute.Manifest {
     ],
     screenshots: [
       {
-        src: "/img/banner-splitbill.jpg",
+        src: "/img/pwa-banner.png",
         sizes: "1200x630",
-        type: "image/jpg",
+        type: "image/png",
         form_factor: "wide",
       },
       {
-        src: "/img/banner-splitbill.jpg",
+        src: "/img/pwa-banner.png",
         sizes: "1200x630",
-        type: "image/jpg",
+        type: "image/png",
       },
     ],
   };

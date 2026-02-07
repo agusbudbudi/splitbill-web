@@ -134,7 +134,7 @@ export const SocialSplitBillReceipt = React.forwardRef<
       </div>
 
       {/* Main Stats Card */}
-      <div className="relative z-10 w-full bg-white rounded-[50px] border border-primary/5 p-14 mt-16 flex flex-col gap-10">
+      <div className="relative z-10 w-full bg-white rounded-[50px] border border-primary/5 p-8 mt-8 flex flex-col gap-10">
         <div className="flex justify-between items-center py-10 px-10 bg-primary/5 rounded-[30px] border border-primary/10">
           <div className="flex flex-col gap-2">
             <span className="text-primary text-2xl font-black uppercase tracking-widest opacity-60">
@@ -214,7 +214,7 @@ export const SocialSplitBillReceipt = React.forwardRef<
           <Users className="w-8 h-8 text-primary" />
           Rincian Per Orang 📊
         </h3>
-        <div className="grid grid-cols-1 gap-6 rounded-[50px] border border-primary/5 p-10 bg-white">
+        <div className="flex flex-col gap-8 w-full">
           {people
             .filter((name) => {
               const b = balances[name];
@@ -228,11 +228,11 @@ export const SocialSplitBillReceipt = React.forwardRef<
               return (
                 <div
                   key={name}
-                  className="flex flex-col gap-6 p-6 bg-white border border-slate-100 rounded-[35px]"
+                  className="flex flex-col gap-10 p-8 bg-white border border-slate-100 rounded-[50px]"
                 >
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-6">
-                      <div className="w-20 h-20 rounded-full border-4 border-white overflow-hidden bg-white shrink-0">
+                    <div className="flex items-center gap-8">
+                      <div className="w-28 h-28 rounded-full border-4 border-white overflow-hidden bg-white shrink-0">
                         <img
                           src={`${AVATAR_BASE_URL}${encodeURIComponent(name)}`}
                           alt={name}
@@ -240,18 +240,18 @@ export const SocialSplitBillReceipt = React.forwardRef<
                           className="w-full h-full object-cover"
                         />
                       </div>
-                      <div className="flex flex-col gap-1">
-                        <p className="text-3xl font-black text-slate-800">
+                      <div className="flex flex-col gap-2">
+                        <p className="text-5xl font-black text-slate-800 tracking-tight">
                           {name}
                         </p>
-                        <div className="flex items-center gap-4 text-lg font-bold text-slate-400">
+                        <div className="flex items-center gap-6 text-2xl font-bold text-slate-400">
                           <p>
                             Bayar:{" "}
                             <span className="text-slate-600">
                               {formatToIDR(b.paid)}
                             </span>
                           </p>
-                          <div className="w-1.5 h-1.5 rounded-full bg-slate-200" />
+                          <div className="w-2 h-2 rounded-full bg-slate-200" />
                           <p>
                             Beban:{" "}
                             <span className="text-slate-600">
@@ -264,7 +264,7 @@ export const SocialSplitBillReceipt = React.forwardRef<
                     <div className="text-right">
                       <p
                         className={cn(
-                          "text-[12px] font-black uppercase tracking-widest px-4 py-1.5 rounded-full inline-block mb-1 border",
+                          "text-[16px] font-black uppercase tracking-widest px-6 py-2 rounded-full inline-block mb-2 border",
                           diff === 0
                             ? "bg-slate-50 text-slate-400 border-slate-100"
                             : isOwed
@@ -276,7 +276,7 @@ export const SocialSplitBillReceipt = React.forwardRef<
                       </p>
                       <p
                         className={cn(
-                          "text-4xl font-black tracking-tight",
+                          "text-6xl font-black tracking-tighter",
                           diff === 0
                             ? "text-slate-400"
                             : isOwed
@@ -291,29 +291,29 @@ export const SocialSplitBillReceipt = React.forwardRef<
 
                   {/* Person's Items */}
                   {b.items.length > 0 && (
-                    <div className="bg-slate-50/50 rounded-[25px] p-6 flex flex-col gap-3">
-                      <p className="text-[12px] font-black uppercase text-slate-400 tracking-widest pl-2">
+                    <div className="bg-slate-50/50 rounded-[35px] p-10 flex flex-col gap-6">
+                      <p className="text-[18px] font-black uppercase text-slate-400 tracking-widest pl-2">
                         Item Terdaftar:
                       </p>
-                      <div className="grid grid-cols-1 gap-2">
+                      <div className="grid grid-cols-1 gap-4">
                         {b.items.map((item: BillItem, idx: number) => (
                           <div
                             key={idx}
-                            className="flex justify-between items-center text-xl"
+                            className="flex justify-between items-center text-3xl py-1"
                           >
-                            <div className="flex items-center gap-3">
-                              <span className="text-slate-600 font-bold truncate max-w-[500px]">
+                            <div className="flex items-center gap-4">
+                              <span className="text-slate-600 font-bold truncate max-w-[600px]">
                                 {item.name}
                               </span>
                               {item.share < 0 && (
-                                <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-destructive/10 text-destructive border border-destructive/5">
+                                <span className="text-[14px] font-black uppercase px-3 py-1 rounded bg-destructive/10 text-destructive border border-destructive/5">
                                   Disc
                                 </span>
                               )}
                               {item.isAdditional && (
                                 <span
                                   className={cn(
-                                    "text-[10px] font-black uppercase px-2 py-0.5 rounded border",
+                                    "text-[14px] font-black uppercase px-3 py-1 rounded border",
                                     item.method === "prop"
                                       ? "bg-primary/5 text-primary border-primary/20"
                                       : "bg-slate-200 text-slate-500 border-slate-300",
@@ -355,7 +355,7 @@ export const SocialSplitBillReceipt = React.forwardRef<
                   >
                     <div className="flex items-center gap-6">
                       <div className="relative flex items-center">
-                        <div className="w-20 h-20 rounded-full border-4 border-white overflow-hidden bg-white ring-4 ring-destructive/10">
+                        <div className="w-20 h-20 rounded-full border-4 border-white overflow-hidden bg-white">
                           <img
                             src={`${AVATAR_BASE_URL}${encodeURIComponent(inst.from)}`}
                             alt={inst.from}
@@ -365,7 +365,7 @@ export const SocialSplitBillReceipt = React.forwardRef<
                         <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center mx-[-10px] z-10 border-2 border-slate-50">
                           <ArrowRight className="w-6 h-6 text-primary" />
                         </div>
-                        <div className="w-20 h-20 rounded-full border-4 border-white overflow-hidden bg-white ring-4 ring-emerald-500/10">
+                        <div className="w-20 h-20 rounded-full border-4 border-white overflow-hidden bg-white">
                           <img
                             src={`${AVATAR_BASE_URL}${encodeURIComponent(inst.to)}`}
                             alt={inst.to}

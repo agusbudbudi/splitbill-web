@@ -16,6 +16,8 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false, // Often desired for PWAs to feel like native apps
+  viewportFit: "cover",
+  interactiveWidget: "resizes-content",
 };
 
 export const metadata: Metadata = {
@@ -56,7 +58,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     title: "Split Bill App",
-    statusBarStyle: "default",
+    statusBarStyle: "black-translucent",
   },
 };
 

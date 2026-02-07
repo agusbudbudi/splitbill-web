@@ -140,6 +140,15 @@
   background: linear-gradient(135deg, #7dd3fc 0%, #479fea 100%) !important;
 }
 
+/* Save Area Utilities for PWA (iOS) */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.pt-safe {
+  padding-top: env(safe-area-inset-top);
+}
+
 /* Removed global border-color to allow utility overrides */
 
 body {

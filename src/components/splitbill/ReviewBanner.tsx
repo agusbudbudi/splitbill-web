@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Star, X } from "lucide-react";
+import { ThumbsUp, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/Button";
@@ -46,12 +46,12 @@ export const ReviewBanner: React.FC<ReviewBannerProps> = ({ onClose }) => {
 
         <div className="flex items-center gap-4 relative z-10">
           <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center shrink-0 backdrop-blur-sm">
-            <Star className="w-5 h-5 text-yellow-300 fill-yellow-300" />
+            <ThumbsUp className="w-5 h-5 text-white fill-white/20" />
           </div>
           <div className="flex flex-col">
             <h4 className="font-bold text-sm">Suka aplikasinya?</h4>
             <p className="text-xs text-primary-foreground/80">
-              Bantu kami dengan kasih rating bintang 5 ya! ⭐
+              Bantu kami kasih rating bintang 5 ya! ⭐
             </p>
           </div>
         </div>

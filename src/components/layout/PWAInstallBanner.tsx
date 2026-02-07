@@ -9,7 +9,7 @@ import { usePWA } from "@/hooks/usePWA";
 import { useUIStore } from "@/lib/stores/uiStore";
 
 export const PWAInstallBanner = () => {
-  const { isInstallable, isStandalone, installPWA } = usePWA();
+  const { isInstallable, isStandalone, isIOS, installPWA } = usePWA();
   const [isVisible, setIsVisible] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
   const pathname = usePathname();
@@ -19,8 +19,13 @@ export const PWAInstallBanner = () => {
     const dismissed = localStorage.getItem("pwa-banner-dismissed") === "true";
     setIsDismissed(dismissed);
 
-    // Only show if installable, not standalone, not dismissed, AND on landing page
-    if (isInstallable && !isStandalone && !dismissed && pathname === "/") {
+    // Show if installable OR is iOS (and not standalone/dismissed)
+    if (
+      (isInstallable || isIOS) &&
+      !isStandalone &&
+      !dismissed &&
+      pathname === "/"
+    ) {
       // Delay visibility for a smoother entrance
       const timer = setTimeout(() => {
         setIsVisible(true);
@@ -31,7 +36,7 @@ export const PWAInstallBanner = () => {
       setIsVisible(false);
       useUIStore.getState().setIsPWABannerVisible(false);
     }
-  }, [isInstallable, isStandalone, pathname]);
+  }, [isInstallable, isStandalone, isIOS, pathname]);
 
   const handleDismiss = () => {
     setIsVisible(false);
@@ -41,9 +46,18 @@ export const PWAInstallBanner = () => {
   };
 
   const handleInstall = async () => {
-    const outcome = await installPWA();
-    if (outcome === "accepted") {
-      setIsVisible(false);
+    if (isIOS) {
+      // Show simple iOS instructions (toast or alert for now, or maybe a dedicated modal if we had one)
+      // For simplicity in this iteration, we'll use a native alert or just rely on the user knowing.
+      // Better: Change the button text/action logic below.
+      alert(
+        "Untuk menginstall aplikasi di iOS:\n1. Tap tombol Share ⎋ dibawah\n2. Pilih 'Add to Home Screen' (Tambah ke Layar Utama) ⊞",
+      );
+    } else {
+      const outcome = await installPWA();
+      if (outcome === "accepted") {
+        setIsVisible(false);
+      }
     }
   };
 
@@ -55,7 +69,7 @@ export const PWAInstallBanner = () => {
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-sm bg-white backdrop-blur-md flex items-center justify-center overflow-hidden border border-white/20">
             <img
-              src="/img/pwa-icon.png"
+              src="/img/pwa-icon-192.png"
               alt="SplitBill Logo"
               className="w-full h-full object-cover"
             />
@@ -77,7 +91,7 @@ export const PWAInstallBanner = () => {
             className="h-8 px-4 bg-white text-primary hover:bg-white/90 font-bold text-[10px] rounded-lg shadow-lg shadow-black/10 transition-all active:scale-95"
           >
             <Download className="w-3.5 h-3.5 mr-1.5" />
-            INSTALL
+            {isIOS ? "CARA INSTALL" : "INSTALL"}
           </Button>
           <button
             onClick={handleDismiss}

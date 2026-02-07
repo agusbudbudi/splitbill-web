@@ -182,7 +182,7 @@ export const useBillCalculations = (
     people.forEach((name) => (badges[name] = []));
 
     if (people.length >= 2) {
-      // Si Paling Traktir (Paid the most)
+      // 1. Si Paling Traktir (Paid the most)
       const topPayer = [...netBalances].sort((a, b) => {
         const paidA = balances[a.name].paid;
         const paidB = balances[b.name].paid;
@@ -192,26 +192,33 @@ export const useBillCalculations = (
         badges[topPayer.name].push("Si Paling Traktir");
       }
 
-      // Si Paling Sultan (Spent the most)
+      // 2. Si Paling Sultan (Spent the most)
       const topSpender = [...netBalances].sort((a, b) => {
         const spentA = balances[a.name].spent;
         const spentB = balances[b.name].spent;
         return spentB - spentA;
       })[0];
+
       if (topSpender && balances[topSpender.name].spent > 0) {
-        badges[topSpender.name].push("Si Paling Sultan");
+        // Only add if they don't have a badge yet or we want to allow override logic
+        // But user says: only 1 label, priority Traktir
+        if (badges[topSpender.name].length === 0) {
+          badges[topSpender.name].push("Si Paling Sultan");
+        }
       }
 
-      // Si Paling Irit (Spent the least)
+      // 3. Si Paling Irit (Spent the least)
       const lowestSpender = [...netBalances].sort((a, b) => {
         const spentA = balances[a.name].spent;
         const spentB = balances[b.name].spent;
         return spentA - spentB;
       })[0];
+
       if (
         lowestSpender &&
         balances[lowestSpender.name].spent > 0 &&
-        lowestSpender.name !== topSpender?.name
+        lowestSpender.name !== topSpender?.name &&
+        badges[lowestSpender.name].length === 0 // Ensure only one badge
       ) {
         badges[lowestSpender.name].push("Si Paling Irit");
       }

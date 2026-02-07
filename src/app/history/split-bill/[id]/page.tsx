@@ -1,19 +1,31 @@
 "use client";
 
-import React from "react";
-import { useParams, useRouter } from "next/navigation";
+import React, { useState, useEffect } from "react";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { useWalletStore } from "@/store/useWalletStore";
 import { Button } from "@/components/ui/Button";
 import { BillSummary } from "@/components/splitbill/BillSummary";
 import { ReceiptText, ChevronRight } from "lucide-react";
+import { ReviewBanner } from "@/components/splitbill/ReviewBanner";
+import { AnimatePresence } from "framer-motion";
 
 export default function SplitBillDetailPage() {
   const params = useParams();
+  const searchParams = useSearchParams();
   const router = useRouter();
   const { savedBills } = useWalletStore();
   const id = params.id as string;
+  const isNew = searchParams.get("new") === "true";
+
+  const [showBanner, setShowBanner] = useState(false);
+
+  useEffect(() => {
+    if (isNew) {
+      setShowBanner(true);
+    }
+  }, [isNew]);
 
   const bill = savedBills.find((b) => b.id === id);
 
@@ -66,6 +78,10 @@ export default function SplitBillDetailPage() {
           </div>
           <BillSummary billData={bill} />
         </main>
+
+        <AnimatePresence>
+          {showBanner && <ReviewBanner onClose={() => setShowBanner(false)} />}
+        </AnimatePresence>
 
         <Footer />
       </div>

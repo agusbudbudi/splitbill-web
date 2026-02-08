@@ -38,8 +38,8 @@ export function InfoModal({
         </button>
 
         <div className="text-center space-y-4 pt-2">
-          <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto rotate-12">
-            <Info className="w-7 h-7 text-primary -rotate-12" />
+          <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto rotate-12">
+            <Info className="w-6 h-6 text-primary -rotate-12" />
           </div>
 
           <div className="space-y-2">
@@ -54,7 +54,7 @@ export function InfoModal({
           <div className="pt-2">
             <Button
               onClick={onClose}
-              className="w-full h-11 rounded-xl font-bold bg-primary text-white shadow-lg shadow-primary/20 cursor-pointer"
+              className="w-full h-11 rounded-lg font-bold bg-primary text-white shadow-lg shadow-primary/20 cursor-pointer"
             >
               Tutup
             </Button>

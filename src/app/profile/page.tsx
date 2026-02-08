@@ -260,7 +260,7 @@ export default function ProfilePage() {
               >
                 <div className="bg-muted/30 divide-y divide-border/40">
                   <a
-                    href="https://wa.me/6285559496968"
+                    href="https://api.whatsapp.com/send?phone=6285559496968&text=Hi%20Admin%20%F0%9F%91%8B%0AMau%20tanya%20dong%20soal%20aplikasi%20split%20bill%20%F0%9F%99%8F"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center justify-between p-4 hover:bg-accent/40 transition-all group"

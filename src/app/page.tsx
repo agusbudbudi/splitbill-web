@@ -16,6 +16,10 @@ import { useWalletStore } from "@/store/useWalletStore";
 import { cn } from "@/lib/utils";
 import { MerchandisingBanner } from "@/components/ui/MerchandisingBanner";
 import { useAuthStore } from "@/lib/stores/authStore";
+import { QuickStartScenarios } from "@/components/home/QuickStartScenarios";
+import { TrustHighlights } from "@/components/home/TrustHighlights";
+import { FAQSection } from "@/components/home/FAQSection";
+import { VisualFlowPreview } from "@/components/home/VisualFlowPreview";
 
 const BackgroundDecoration = () => (
   <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
@@ -27,6 +31,7 @@ const BackgroundDecoration = () => (
 export default function Home() {
   const { isAuthenticated } = useAuthStore();
   const expenses = useSplitBillStore((state) => state.expenses);
+  const people = useSplitBillStore((state) => state.people);
   const [isMounted, setIsMounted] = useState(false);
 
   React.useEffect(() => {
@@ -39,46 +44,53 @@ export default function Home() {
       <MerchandisingBanner imageSrc="/img/banner-merchandising.png" />
       <Header transparent />
 
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] z-0">
-        <Banner />
-      </div>
-
-      <main className="w-full max-w-[480px] px-4 pt-[210px] sm:pt-[230px] pb-32 space-y-4 relative z-10">
-        <div>
-          <NavigationMenu />
+      <main className="w-full max-w-[480px] pb-24 relative z-10 -mt-14">
+        {/* Hero Section */}
+        <div className="w-full">
+          <Banner />
         </div>
 
-        {isMounted && expenses.length > 0 && (
+        <div className="px-4 pt-4 space-y-4">
           <div>
-            <OngoingSplitBillCard />
+            <NavigationMenu />
           </div>
-        )}
 
-        {isMounted && !isAuthenticated && (
+          {isMounted && <OngoingSplitBillCard />}
+
+          {isMounted && !isAuthenticated && (
+            <div>
+              <LoginEncouragementCard />
+            </div>
+          )}
+
           <div>
-            <LoginEncouragementCard />
+            <GettingStarted />
           </div>
-        )}
 
-        <div>
-          <GettingStarted />
-        </div>
-
-        <div>
-          <AIScanBanner />
-        </div>
-
-        {/* Dashboard Section */}
-        <section className="space-y-4">
-          <div className="flex items-center gap-2 px-1">
-            <h2 className="text-sm font-bold text-foreground/70">
-              {isMounted && isAuthenticated
-                ? "Progress Kamu 🙌"
-                : "Apa yang bisa kamu lacak? 🤔"}
-            </h2>
+          <div>
+            <AIScanBanner />
           </div>
-          <FeatureHighlights />
-        </section>
+
+          <div>
+            <QuickStartScenarios />
+          </div>
+
+          {/* Dashboard Section */}
+          <section className="space-y-4">
+            <div className="flex items-center gap-2 px-1">
+              <h2 className="text-sm font-bold text-foreground/70">
+                {isMounted && isAuthenticated
+                  ? "Progress Kamu 🙌"
+                  : "Apa yang bisa kamu lacak? 🤔"}
+              </h2>
+            </div>
+            <FeatureHighlights />
+          </section>
+
+          <VisualFlowPreview />
+          <FAQSection />
+          {isMounted && !isAuthenticated && <TrustHighlights />}
+        </div>
       </main>
 
       <Footer />

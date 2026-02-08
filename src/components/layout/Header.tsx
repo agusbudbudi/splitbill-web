@@ -2,7 +2,8 @@
 
 import React, { useEffect } from "react";
 import Link from "next/link";
-import { Sprout, ArrowLeft, LogIn } from "lucide-react";
+import Image from "next/image";
+import { Sprout, ArrowLeft, LogIn, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/lib/stores/authStore";
@@ -129,10 +130,13 @@ export const Header = ({
           ) : (
             <div className="w-full flex items-center justify-between">
               <Link href="/" className="flex items-center gap-2 group">
-                <img
+                <Image
                   src="/img/logo.png"
                   alt="SplitBill Logo"
+                  width={120}
+                  height={32}
                   className="h-8 w-auto"
+                  priority
                 />
               </Link>
 
@@ -154,9 +158,11 @@ export const Header = ({
                         "drop-shadow-[0_2px_4px_rgba(0,0,0,0.2)] border-white/30",
                     )}
                   >
-                    <img
+                    <Image
                       src={`https://api.dicebear.com/9.x/personas/svg?backgroundColor=b6e3f4&scale=100&seed=${user?.email || "default"}`}
                       alt="Profile"
+                      width={32}
+                      height={32}
                       className="w-full h-full object-cover"
                     />
                   </Link>

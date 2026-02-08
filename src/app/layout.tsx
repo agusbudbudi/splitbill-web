@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     siteName: "Split Bill App",
     images: [
       {
-        url: "/img/banner-splitbill.jpg",
+        url: "/img/pwa-banner.png",
         width: 1200,
         height: 630,
       },
@@ -53,12 +53,15 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Split Bill App - Bagi Tagihan Lebih Mudah",
     description: "Buat dan bagikan pembagian tagihan secara otomatis.",
-    images: ["/img/banner-splitbill.jpg"],
+    images: ["/img/pwa-banner.png"],
   },
   appleWebApp: {
     capable: true,
     title: "Split Bill App",
     statusBarStyle: "black-translucent",
+  },
+  icons: {
+    apple: "/img/footer-icon.png",
   },
 };
 

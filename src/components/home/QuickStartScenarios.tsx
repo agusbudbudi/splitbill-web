@@ -117,11 +117,11 @@ export const QuickStartScenarios = () => {
 
               <div className="space-y-0.5 min-w-0">
                 <div className="flex items-center gap-1">
-                  <h3 className="text-[11px] font-black text-foreground tracking-tight truncate">
+                  <h3 className="text-[11px] font-bold text-foreground tracking-tight truncate">
                     {scenario.title}
                   </h3>
                   {scenario.badge && (
-                    <span className="text-[7px] font-black bg-primary/10 text-primary px-1 py-0.5 rounded-full uppercase tracking-tighter shrink-0">
+                    <span className="text-[7px] font-bold bg-primary/10 text-primary px-1 py-0.5 rounded-full uppercase tracking-tighter shrink-0">
                       {scenario.badge}
                     </span>
                   )}

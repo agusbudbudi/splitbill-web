@@ -87,7 +87,7 @@ export const VisualFlowPreview = () => {
                 {/* AI Badge for Step 2 */}
                 {step.badge && (
                   <div className="absolute top-2 right-2 z-20">
-                    <div className="bg-amber-400 text-amber-950 text-[9px] font-black px-2 py-0.5 rounded-full border-2 border-white flex items-center gap-1">
+                    <div className="bg-amber-400 text-amber-950 text-[9px] font-bold px-2 py-0.5 rounded-full border-2 border-white flex items-center gap-1">
                       <Sparkles className="w-2.5 h-2.5" />
                       {step.badge}
                     </div>

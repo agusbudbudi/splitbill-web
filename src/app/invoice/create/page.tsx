@@ -220,7 +220,7 @@ export default function InvoicePage() {
       {(currentStep < 6 || (currentStep === 6 && !isFinalized)) && (
         <div className="fixed bottom-0 left-0 right-0 z-50 pointer-events-none flex justify-center">
           <div className="w-full max-w-[480px] relative pointer-events-auto flex flex-col">
-            <div className="bg-background px-4 pb-10 flex flex-col gap-3">
+            <div className="bg-background px-4 pb-4 flex flex-col gap-3">
               {!canProceed() && getValidationMessage() && (
                 <InfoBanner message={getValidationMessage()!} variant="blue" />
               )}

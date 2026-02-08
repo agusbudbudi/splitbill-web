@@ -66,6 +66,8 @@ export const MerchandisingBanner = ({
             width={400}
             height={400}
             className="w-full h-auto object-contain drop-shadow-2xl"
+            priority
+            sizes="(max-width: 400px) 100vw, 400px"
           />
         </div>
       </div>

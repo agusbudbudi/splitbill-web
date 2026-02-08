@@ -65,7 +65,7 @@ export function RegisterForm({
     const passwordValidation = validatePassword(password);
     if (!passwordValidation.isValid) {
       setPasswordError(
-        "Password minimal 6 karakter dan harus mengandung huruf atau angka",
+        "Password minimal 8 karakter dan harus mengandung huruf atau angka",
       );
       hasError = true;
     }
@@ -170,7 +170,7 @@ export function RegisterForm({
           <Input
             id="password"
             type={showPassword ? "text" : "password"}
-            placeholder="Minimal 6 karakter"
+            placeholder="Minimal 8 karakter"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="pl-12 pr-12"

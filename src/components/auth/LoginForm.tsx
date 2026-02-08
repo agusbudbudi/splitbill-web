@@ -41,8 +41,8 @@ export function LoginForm({
       hasError = true;
     }
 
-    if (password.length < 6) {
-      setPasswordError("Password minimal 6 karakter");
+    if (password.length < 8) {
+      setPasswordError("Password minimal 8 karakter");
       hasError = true;
     }
 

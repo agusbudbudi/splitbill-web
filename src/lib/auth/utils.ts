@@ -17,7 +17,7 @@ export interface PasswordValidation {
 
 export function validatePassword(password: string): PasswordValidation {
   const checks = {
-    length: password.length >= 6,
+    length: password.length >= 8,
     hasNumber: /\d/.test(password),
     hasLetter: /[a-zA-Z]/.test(password),
   };

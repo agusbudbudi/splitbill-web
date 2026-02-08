@@ -14,12 +14,12 @@ export default function manifest(): MetadataRoute.Manifest {
     icons: [
       {
         src: "/img/pwa-icon-192.png",
-        sizes: "192x192", // Chrome requires a 192x192 icon. If actual file is 512, this causes a warning, but is required.
+        sizes: "192x192",
         type: "image/png",
         purpose: "maskable",
       },
       {
-        src: "/img/pwa-icon.png",
+        src: "/img/footer-icon.png",
         sizes: "512x512",
         type: "image/png",
         purpose: "maskable",

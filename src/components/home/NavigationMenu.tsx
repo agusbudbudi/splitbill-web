@@ -13,6 +13,7 @@ import {
 import { cn } from "@/lib/utils";
 
 import Link from "next/link";
+import Image from "next/image";
 
 const menuItems = [
   {
@@ -63,9 +64,11 @@ export const NavigationMenu = () => {
           <div className="relative">
             {item.badge && <FloatingBadge>{item.badge}</FloatingBadge>}
             <div className="w-16 h-16 rounded-[30%] bg-white flex items-center justify-center transition-all group-hover:scale-105 shadow-soft">
-              <img
+              <Image
                 src={item.image}
                 alt={item.label}
+                width={48}
+                height={48}
                 className="w-12 h-12 object-contain"
               />
             </div>

@@ -93,12 +93,12 @@ export const InfoBanner = ({
   return (
     <div
       className={cn(
-        "border rounded-2xl p-3 px-4 flex items-center gap-3 animate-in fade-in slide-in-from-bottom-2",
+        "border rounded-sm p-2 px-2 flex items-center gap-3 animate-in fade-in slide-in-from-bottom-2",
         currentStyle.container,
         className,
       )}
     >
-      <div className={cn("p-1.5 rounded-lg shrink-0", currentStyle.iconBg)}>
+      <div className={cn("p-1 rounded-lg shrink-0", currentStyle.iconBg)}>
         <Icon className={cn("w-4 h-4", currentStyle.icon)} />
       </div>
       <p className={cn("text-[11px] leading-tight", currentStyle.text)}>

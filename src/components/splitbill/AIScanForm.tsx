@@ -121,9 +121,9 @@ export const AIScanForm = () => {
           <div className="absolute bottom-0 left-0 w-40 h-40 bg-indigo-500/30 rounded-full blur-[60px] -ml-10 -mb-10 pointer-events-none" />
 
           <div className="relative z-10 flex flex-col items-center text-center gap-4">
-            <div className="relative mb-2">
+            <div className="relative">
               <div className="absolute inset-0 bg-white/20 blur-xl rounded-full animate-pulse" />
-              <div className="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center shadow-lg shadow-black/5 relative border border-white/30">
+              <div className="w-16 h-16 rounded-3xl bg-white/20 backdrop-blur-md flex items-center justify-center shadow-lg shadow-black/5 relative border border-white/30">
                 <Sparkles className="w-8 h-8 text-white fill-white/30" />
               </div>
               <div className="absolute -top-1 -right-1 bg-amber-300 text-[9px] font-black text-amber-950 px-1.5 py-0.5 rounded-full border border-white/20 shadow-sm">
@@ -154,7 +154,7 @@ export const AIScanForm = () => {
         </div>
 
         {/* Blurred Preview/Teaser background */}
-        <div className="absolute inset-0 top-6 z-0 px-2 opacity-40 blur-[2px] pointer-events-none grayscale brightness-125 contrast-75 overflow-hidden">
+        <div className="absolute inset-0 top-6 z-0 px-2 opacity-40 blur-[10px] pointer-events-none grayscale brightness-125 contrast-75 overflow-hidden">
           <div className="border-2 border-dashed border-slate-300 rounded-2xl h-[280px] w-full flex flex-col items-center justify-center gap-4 bg-slate-50"></div>
         </div>
       </div>

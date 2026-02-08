@@ -10,7 +10,6 @@ import { AIScanForm } from "@/components/splitbill/AIScanForm";
 import { ExpenseList } from "@/components/splitbill/ExpenseList";
 import { AdditionalExpenses } from "@/components/splitbill/AdditionalExpenses";
 import { BillSummary } from "@/components/splitbill/BillSummary";
-import { ClearDataButton } from "@/components/splitbill/ClearDataButton";
 import { Card, CardContent } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
@@ -57,7 +56,6 @@ const SplitBillContent = () => {
     selectedPaymentMethodIds,
     setSelectedPaymentMethodIds,
     togglePaymentMethodSelection,
-    resetStore,
     clearDraftAfterFinalize,
   } = useSplitBillStore();
   const { paymentMethods, saveBill } = useWalletStore();
@@ -165,7 +163,6 @@ const SplitBillContent = () => {
               </p>
             </div>
             <PeopleList />
-            <ClearDataButton />
           </div>
         );
       case 2:
@@ -207,7 +204,6 @@ const SplitBillContent = () => {
 
             <ExpenseList />
             <AdditionalExpenses />
-            <ClearDataButton />
           </div>
         );
       case 3:

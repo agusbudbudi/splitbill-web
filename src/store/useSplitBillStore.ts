@@ -43,7 +43,6 @@ interface SplitBillState {
   ) => void;
   removeAdditionalExpense: (id: string) => void;
 
-  resetStore: () => void;
   clearDraftAfterFinalize: () => void;
 }
 
@@ -123,15 +122,6 @@ export const useSplitBillStore = create<SplitBillState>()(
             (e) => e.id !== id,
           ),
         })),
-
-      resetStore: () =>
-        set({
-          activityName: "",
-          people: [],
-          expenses: [],
-          additionalExpenses: [],
-          selectedPaymentMethodIds: [],
-        }),
 
       clearDraftAfterFinalize: () =>
         set({

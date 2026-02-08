@@ -3,6 +3,7 @@
 import React from "react";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { LucideIcon } from "lucide-react";
 
@@ -36,9 +37,11 @@ export const FeatureBanner = ({
       {/* 3D Illustration / Big Icon Background */}
       {illustration && (
         <div className="absolute -top-2 right-4 w-28 h-28 opacity-100 transition-transform hover:scale-105 pointer-events-none z-20">
-          <img
+          <Image
             src={illustration}
             alt="Decoration"
+            width={112}
+            height={112}
             className="w-full h-full object-contain"
           />
         </div>

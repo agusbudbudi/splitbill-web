@@ -10,6 +10,7 @@ import {
   ChevronRight,
   TrendingUp,
   ReceiptText,
+  Star,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -85,7 +86,7 @@ export const FeatureHighlights = () => {
       </div>
 
       {/* Feature Shortcut Cards */}
-      <div className="grid grid-cols-1 gap-3">
+      {/* <div className="grid grid-cols-1 gap-3">
         {shortcuts.map((card) => (
           <Link key={card.title} href={card.href}>
             <div
@@ -116,52 +117,49 @@ export const FeatureHighlights = () => {
             </div>
           </Link>
         ))}
-      </div>
+      </div> */}
 
       {/* Mini Promotion / Info */}
       {/* Split Bill Statistics */}
-      <div className="space-y-3">
-        <div className="grid grid-cols-3 gap-2">
-          {/* Active Users */}
-          <Card className="rounded-md bg-blue-50/50 border-none shadow-soft">
-            <CardContent className="p-3 text-center flex flex-col items-center justify-center gap-1">
-              <span className="text-xl font-black text-blue-600 tracking-tight">
-                12k+
-              </span>
-              <span className="text-[9px] font-bold text-blue-600/60 uppercase tracking-wide leading-none">
-                Active Users
-              </span>
-            </CardContent>
-          </Card>
+      {!isAuthenticated && (
+        <div className="space-y-4">
+          <div className="relative overflow-hidden rounded-lg bg-gradient-to-br from-primary via-primary/90 to-violet-600 text-white shadow-lg shadow-primary/20 border border-white/20">
+            {/* Decorative Elements */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-[80px] -mr-16 -mt-16 pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-40 h-40 bg-indigo-500/30 rounded-full blur-[60px] -ml-10 -mb-10 pointer-events-none" />
 
-          {/* Split Bills */}
-          <Card className="rounded-md bg-primary/5 border-none shadow-soft">
-            <CardContent className="p-3 text-center flex flex-col items-center justify-center gap-1">
-              <span className="text-xl font-black text-primary tracking-tight">
-                150rb+
-              </span>
-              <span className="text-[9px] font-bold text-primary/60 uppercase tracking-wide leading-none">
-                Split Bills
-              </span>
-            </CardContent>
-          </Card>
-
-          {/* Rating */}
-          <Card className="rounded-md bg-amber-50/50 border-none shadow-soft">
-            <CardContent className="p-3 text-center flex flex-col items-center justify-center gap-1">
-              <div className="flex items-center gap-1 mb-0.5">
-                <span className="text-xl font-black text-amber-500 tracking-tight">
-                  4.8
+            <div className="relative z-10 p-6 flex items-center justify-between divide-x divide-white/20">
+              <div className="flex-1 flex flex-col items-center gap-1">
+                <span className="text-xl font-black text-white tracking-tight">
+                  12k+
                 </span>
-                <span className="text-xs text-amber-400">★</span>
+                <span className="text-[9px] font-bold text-white/70 uppercase tracking-wide leading-none text-center">
+                  Active Users
+                </span>
               </div>
-              <span className="text-[9px] font-bold text-amber-600/60 uppercase tracking-wide leading-none">
-                User Rating
-              </span>
-            </CardContent>
-          </Card>
+              <div className="flex-1 flex flex-col items-center gap-1">
+                <span className="text-xl font-black text-white tracking-tight">
+                  150rb+
+                </span>
+                <span className="text-[9px] font-bold text-white/70 uppercase tracking-wide leading-none text-center">
+                  Split Bills
+                </span>
+              </div>
+              <div className="flex-1 flex flex-col items-center gap-1">
+                <div className="flex items-center gap-1 mb-0.5">
+                  <span className="text-xl font-black text-white tracking-tight">
+                    4.8
+                  </span>
+                  <span className="text-xs text-amber-300">★</span>
+                </div>
+                <span className="text-[9px] font-bold text-white/70 uppercase tracking-wide leading-none text-center">
+                  User Rating
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

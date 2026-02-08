@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import { createPortal } from "react-dom";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 interface MerchandisingBannerProps {
@@ -59,9 +60,11 @@ export const MerchandisingBanner = ({
 
         {/* Image Content */}
         <div className="relative overflow-hidden rounded-3xl">
-          <img
+          <Image
             src={imageSrc}
             alt={altText}
+            width={400}
+            height={400}
             className="w-full h-auto object-contain drop-shadow-2xl"
           />
         </div>

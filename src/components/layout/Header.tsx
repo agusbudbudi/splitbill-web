@@ -158,11 +158,9 @@ export const Header = ({
                         "drop-shadow-[0_2px_4px_rgba(0,0,0,0.2)] border-white/30",
                     )}
                   >
-                    <Image
+                    <img
                       src={`https://api.dicebear.com/9.x/personas/svg?backgroundColor=b6e3f4&scale=100&seed=${user?.email || "default"}`}
                       alt="Profile"
-                      width={32}
-                      height={32}
                       className="w-full h-full object-cover"
                     />
                   </Link>

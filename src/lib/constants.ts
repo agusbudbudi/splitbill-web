@@ -1,4 +1,5 @@
-export const API_BASE_URL = "https://splitbillbe.netlify.app";
+export const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8888";
 
 export const API_ENDPOINTS = {
   AUTH: {
@@ -7,6 +8,8 @@ export const API_ENDPOINTS = {
     LOGOUT: "/api/auth/logout",
     REFRESH: "/api/auth/refresh",
     ME: "/api/auth/me",
+    VERIFY: "/api/auth/verify",
+    RESEND_VERIFICATION: "/api/auth/resend-verification",
   },
   REVIEWS: "/api/reviews",
 } as const;

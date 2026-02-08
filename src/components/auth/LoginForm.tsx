@@ -5,14 +5,21 @@ import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { validateEmail } from "@/lib/auth/utils";
+import { LoginCredentials } from "@/lib/stores/authStore";
 
 interface LoginFormProps {
-  onSubmit: (email: string, password: string) => Promise<void>;
+  onSubmit: (credentials: LoginCredentials) => Promise<void>;
   isLoading?: boolean;
   error?: string | null;
+  success?: string | null;
 }
 
-export function LoginForm({ onSubmit, isLoading, error }: LoginFormProps) {
+export function LoginForm({
+  onSubmit,
+  isLoading,
+  error,
+  success,
+}: LoginFormProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -41,7 +48,7 @@ export function LoginForm({ onSubmit, isLoading, error }: LoginFormProps) {
 
     if (hasError) return;
 
-    await onSubmit(email, password);
+    await onSubmit({ email, password });
   };
 
   return (
@@ -52,6 +59,15 @@ export function LoginForm({ onSubmit, isLoading, error }: LoginFormProps) {
             <span className="text-destructive font-bold">!</span>
           </div>
           <div className="text-destructive text-sm font-medium">{error}</div>
+        </div>
+      )}
+
+      {success && (
+        <div className="bg-green-500/5 border border-green-500/20 rounded-2xl p-4 flex items-center gap-3 animate-in fade-in slide-in-from-top-1">
+          <div className="w-8 h-8 rounded-full bg-green-500/10 flex items-center justify-center shrink-0">
+            <span className="text-green-500 font-bold">✓</span>
+          </div>
+          <div className="text-green-500 text-sm font-medium">{success}</div>
         </div>
       )}
 

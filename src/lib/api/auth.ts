@@ -87,3 +87,27 @@ export async function getCurrentUser(): Promise<User> {
   );
   return response.user;
 }
+
+export async function verifyEmail(token: string): Promise<{ message: string }> {
+  return await apiClient.request<{ message: string }>(
+    API_ENDPOINTS.AUTH.VERIFY,
+    {
+      method: "POST",
+      body: JSON.stringify({ token }),
+      skipAuth: true,
+    },
+  );
+}
+
+export async function resendVerification(
+  email: string,
+): Promise<{ message: string }> {
+  return await apiClient.request<{ message: string }>(
+    API_ENDPOINTS.AUTH.RESEND_VERIFICATION,
+    {
+      method: "POST",
+      body: JSON.stringify({ email }),
+      skipAuth: true,
+    },
+  );
+}

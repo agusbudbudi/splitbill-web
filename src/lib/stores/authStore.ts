@@ -3,6 +3,11 @@ import { User } from "@/lib/api/auth";
 import * as authApi from "@/lib/api/auth";
 import { hasTokens, clearTokens } from "@/lib/auth/tokens";
 
+export interface LoginCredentials {
+  email: string;
+  password: string;
+}
+
 interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
@@ -11,7 +16,7 @@ interface AuthState {
   error: string | null;
 
   // Actions
-  login: (email: string, password: string) => Promise<void>;
+  login: (credentials: LoginCredentials) => Promise<void>;
   register: (name: string, email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   getCurrentUser: () => Promise<void>;
@@ -26,10 +31,10 @@ export const useAuthStore = create<AuthState>((set) => ({
   isInitialized: false,
   error: null,
 
-  login: async (email: string, password: string) => {
+  login: async (credentials: LoginCredentials) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await authApi.login({ email, password });
+      const response = await authApi.login(credentials);
       set({
         user: response.user,
         isAuthenticated: true,
@@ -53,18 +58,10 @@ export const useAuthStore = create<AuthState>((set) => ({
   register: async (name: string, email: string, password: string) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await authApi.register({ name, email, password });
+      await authApi.register({ name, email, password });
       set({
-        user: response.user,
-        isAuthenticated: true,
         isLoading: false,
-        isInitialized: true,
       });
-
-      // Store user data in localStorage for offline access
-      if (typeof window !== "undefined") {
-        localStorage.setItem("currentUser", JSON.stringify(response.user));
-      }
     } catch (error) {
       set({
         error: error instanceof Error ? error.message : "Registration failed",

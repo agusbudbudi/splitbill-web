@@ -30,12 +30,8 @@ export default function RegisterPage() {
       setError(null);
       setSuccess(null);
       await register(name, email, password);
-      setSuccess("Yeay registrasi berhasil...");
-
-      // Redirect after 2 seconds
-      setTimeout(() => {
-        router.push("/");
-      }, 2000);
+      // Redirect to login page with success message
+      router.push("/login?registered=true");
     } catch (err) {
       setError(getErrorMessage(err));
     }

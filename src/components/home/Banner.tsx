@@ -4,8 +4,16 @@ import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { fetchBanners, getCachedBanners } from "@/lib/api/banners";
 
-const banners = [
+interface BannerItem {
+  id: string | number;
+  image: string;
+  alt: string;
+  href: string;
+}
+
+const DEFAULT_BANNERS: BannerItem[] = [
   {
     id: 1,
     image: "/img/banner-shared-goals-1.jpg",
@@ -46,6 +54,7 @@ const banners = [
 
 export const Banner = () => {
   const [isMounted, setIsMounted] = useState(false);
+  const [banners, setBanners] = useState<BannerItem[]>(DEFAULT_BANNERS);
   const [current, setCurrent] = useState(0);
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
@@ -53,11 +62,49 @@ export const Banner = () => {
 
   useEffect(() => {
     setIsMounted(true);
+
+    // Initial load from cache to prevent layout shift
+    const cached = getCachedBanners();
+    if (cached.length > 0) {
+      const mappedBanners: BannerItem[] = cached.map((b) => ({
+        id: b._id,
+        image: b.image,
+        alt: "Banner",
+        href: b.route,
+      }));
+      setBanners(mappedBanners);
+    }
+
+    // Fetch banners from backend (will use cache if fresh)
+    const loadBanners = async () => {
+      try {
+        const data = await fetchBanners();
+        if (data && data.length > 0) {
+          const mappedBanners: BannerItem[] = data.map((b) => ({
+            id: b._id,
+            image: b.image,
+            alt: "Banner", // Backend doesn't provide alt text yet
+            href: b.route,
+          }));
+          setBanners(mappedBanners);
+        }
+      } catch (error) {
+        console.error("Failed to fetch banners:", error);
+        // Fallback to DEFAULT_BANNERS if no cache and fetch fails
+      }
+    };
+
+    loadBanners();
+  }, []);
+
+  useEffect(() => {
+    if (banners.length === 0) return;
+
     const timer = setInterval(() => {
       setCurrent((prev) => (prev + 1) % banners.length);
     }, 5000);
     return () => clearInterval(timer);
-  }, []);
+  }, [banners.length]);
 
   if (!isMounted) {
     return (
@@ -103,7 +150,7 @@ export const Banner = () => {
         className="flex transition-transform duration-500 ease-out"
         style={{ transform: `translateX(-${current * 100}%)` }}
       >
-        {banners.map((banner) => (
+        {banners.map((banner, index) => (
           <Link
             key={banner.id}
             href={banner.href}
@@ -116,7 +163,7 @@ export const Banner = () => {
                 width={480}
                 height={280}
                 className="w-full aspect-[480/280] block object-cover transition-transform duration-700 group-hover:scale-105"
-                priority={banner.id === 1}
+                priority={index === 0}
                 draggable={false}
               />
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300" />

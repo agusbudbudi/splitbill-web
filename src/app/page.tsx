@@ -19,6 +19,8 @@ import { useAuthStore } from "@/lib/stores/authStore";
 import { QuickStartScenarios } from "@/components/home/QuickStartScenarios";
 import { TrustHighlights } from "@/components/home/TrustHighlights";
 import { FAQSection } from "@/components/home/FAQSection";
+import { FAQCard } from "@/components/home/FAQCard";
+import { AdsCarousel } from "@/components/home/AdsCarousel";
 import { VisualFlowPreview } from "@/components/home/VisualFlowPreview";
 
 const BackgroundDecoration = () => (
@@ -76,19 +78,20 @@ export default function Home() {
           </div>
 
           {/* Dashboard Section */}
-          <section className="space-y-4">
-            <div className="flex items-center gap-2 px-1">
-              <h2 className="text-sm font-bold text-foreground/70">
-                {isMounted && isAuthenticated
-                  ? "Progress Kamu 🙌"
-                  : "Apa yang bisa kamu lacak? 🤔"}
-              </h2>
-            </div>
-            <FeatureHighlights />
-          </section>
+          {isMounted && isAuthenticated && (
+            <section className="space-y-4">
+              <div className="flex items-center gap-2 px-1">
+                <h2 className="text-sm font-bold text-foreground/70">
+                  Progress Kamu 🙌
+                </h2>
+              </div>
+              <FeatureHighlights />
+            </section>
+          )}
 
           <VisualFlowPreview />
-          <FAQSection />
+          <AdsCarousel />
+          {isMounted && isAuthenticated ? <FAQCard /> : <FAQSection />}
           {isMounted && !isAuthenticated && <TrustHighlights />}
         </div>
       </main>

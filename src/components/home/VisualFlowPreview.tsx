@@ -37,7 +37,7 @@ const steps = [
 
 export const VisualFlowPreview = () => {
   return (
-    <section className="py-2 px-2 space-y-6">
+    <section className="space-y-4">
       <div className="flex items-center gap-3 px-1">
         <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
           <Zap className="w-5 h-5 text-primary" />
@@ -52,9 +52,9 @@ export const VisualFlowPreview = () => {
         </div>
       </div>
 
-      {/* Horizontal Scroll Container */}
-      <div className="relative pt-2 mb-0">
-        <div className="flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide">
+      {/* Horizontal Scroll Container with Bleed Effect */}
+      <div className="relative -mx-4 overflow-hidden pt-2 mb-0">
+        <div className="flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide px-4 scroll-pl-4">
           {steps.map((step, idx) => (
             <div
               key={step.number}

@@ -1,3 +1,6 @@
+import { apiClient } from "./api/client";
+import { API_ENDPOINTS } from "./constants";
+
 export interface ReceiptItem {
   name: string;
   price: number;
@@ -25,35 +28,14 @@ export const scanReceipt = async (
     const mimeType = matches[1];
     const base64Image = matches[2];
 
-    // 2. Call the external API (V1 implementation)
-    const response = await fetch(
-      "https://splitbillbe.netlify.app/api/gemini-scan",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          mime_type: mimeType,
-          base64Image: base64Image,
-        }),
-      },
-    );
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      // Try to parse error json if possible
-      try {
-        const errJson = JSON.parse(errorText);
-        throw new Error(
-          errJson.error?.message || `API Error: ${response.status}`,
-        );
-      } catch (e) {
-        throw new Error(`API Error: ${response.status} - ${errorText}`);
-      }
-    }
-
-    const data = await response.json();
+    // 2. Call the external API using apiClient (handles auth)
+    const data = await apiClient.request<any>(API_ENDPOINTS.GEMINI_SCAN, {
+      method: "POST",
+      body: JSON.stringify({
+        mime_type: mimeType,
+        base64Image: base64Image,
+      }),
+    });
 
     // 3. Handle different response formats
     let rawTaxonomy = data;

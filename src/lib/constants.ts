@@ -12,4 +12,5 @@ export const API_ENDPOINTS = {
     RESEND_VERIFICATION: "/api/auth/resend-verification",
   },
   REVIEWS: "/api/reviews",
+  GEMINI_SCAN: "/api/gemini-scan",
 } as const;

@@ -140,6 +140,14 @@
   background: linear-gradient(135deg, #7dd3fc 0%, #479fea 100%) !important;
 }
 
+@utility scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+  &::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+  }
+}
+
 /* Save Area Utilities for PWA (iOS) */
 .pb-safe {
   padding-bottom: env(safe-area-inset-bottom);

@@ -276,7 +276,7 @@ export const SocialSplitBillReceipt = React.forwardRef<
                       </p>
                       <p
                         className={cn(
-                          "text-6xl font-black tracking-tighter",
+                          "text-5xl font-black tracking-tighter",
                           diff === 0
                             ? "text-slate-400"
                             : isOwed
@@ -291,7 +291,7 @@ export const SocialSplitBillReceipt = React.forwardRef<
 
                   {/* Person's Items */}
                   {b.items.length > 0 && (
-                    <div className="bg-slate-50/50 rounded-[35px] p-10 flex flex-col gap-6">
+                    <div className="bg-slate-50/50 rounded-[35px] p-8 flex flex-col gap-6">
                       <p className="text-[18px] font-black uppercase text-slate-400 tracking-widest pl-2">
                         Item Terdaftar:
                       </p>
@@ -299,10 +299,10 @@ export const SocialSplitBillReceipt = React.forwardRef<
                         {b.items.map((item: BillItem, idx: number) => (
                           <div
                             key={idx}
-                            className="flex justify-between items-center text-3xl py-1"
+                            className="flex justify-between items-start gap-6 text-3xl py-1.5"
                           >
-                            <div className="flex items-center gap-4">
-                              <span className="text-slate-600 font-bold truncate max-w-[600px]">
+                            <div className="flex flex-wrap items-center gap-3 flex-1 min-w-0">
+                              <span className="text-slate-600 font-bold">
                                 {item.name}
                               </span>
                               {item.share < 0 && (
@@ -323,7 +323,7 @@ export const SocialSplitBillReceipt = React.forwardRef<
                                 </span>
                               )}
                             </div>
-                            <span className="font-black text-slate-700">
+                            <span className="font-black text-slate-700 shrink-0 whitespace-nowrap pt-1">
                               {formatToIDR(item.share)}
                             </span>
                           </div>
@@ -351,21 +351,21 @@ export const SocialSplitBillReceipt = React.forwardRef<
                 settlementInstructions.map((inst, idx) => (
                   <div
                     key={idx}
-                    className="bg-white border border-slate-100 rounded-[35px] p-8 flex items-center justify-between transition-all"
+                    className="bg-white border border-slate-100 rounded-[35px] p-8 flex items-center justify-between gap-4 transition-all"
                   >
-                    <div className="flex items-center gap-6">
-                      <div className="relative flex items-center">
-                        <div className="w-20 h-20 rounded-full border-4 border-white overflow-hidden bg-white">
+                    <div className="flex items-center gap-6 flex-1 min-w-0">
+                      <div className="relative flex items-center shrink-0">
+                        <div className="w-16 h-16 rounded-full border-4 border-white overflow-hidden bg-white">
                           <img
                             src={`${AVATAR_BASE_URL}${encodeURIComponent(inst.from)}`}
                             alt={inst.from}
                             className="w-full h-full object-cover"
                           />
                         </div>
-                        <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center mx-[-10px] z-10 border-2 border-slate-50">
-                          <ArrowRight className="w-6 h-6 text-primary" />
+                        <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center mx-[-8px] z-10 border-2 border-slate-50">
+                          <ArrowRight className="w-5 h-5 text-primary" />
                         </div>
-                        <div className="w-20 h-20 rounded-full border-4 border-white overflow-hidden bg-white">
+                        <div className="w-16 h-16 rounded-full border-4 border-white overflow-hidden bg-white">
                           <img
                             src={`${AVATAR_BASE_URL}${encodeURIComponent(inst.to)}`}
                             alt={inst.to}
@@ -373,8 +373,8 @@ export const SocialSplitBillReceipt = React.forwardRef<
                           />
                         </div>
                       </div>
-                      <div className="flex flex-col gap-1">
-                        <p className="text-3xl font-bold text-slate-600">
+                      <div className="flex flex-col gap-1 min-w-0">
+                        <p className="text-2xl font-bold text-slate-600">
                           <span className="text-destructive font-black underline decoration-destructive/20 underline-offset-4">
                             {inst.from}
                           </span>
@@ -388,8 +388,8 @@ export const SocialSplitBillReceipt = React.forwardRef<
                         </p>
                       </div>
                     </div>
-                    <div className="flex flex-col items-end gap-1">
-                      <span className="text-5xl font-black text-primary">
+                    <div className="flex flex-col items-end gap-1 shrink-0">
+                      <span className="text-3xl font-black text-primary">
                         {formatToIDR(inst.amount)}
                       </span>
                     </div>

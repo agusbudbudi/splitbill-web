@@ -89,8 +89,40 @@ export const BillSummary = ({
         backgroundColor: "#ffffff",
       });
 
+      const fileName = `SplitBill-${activityName?.replace(/\s+/g, "-") || "Summary"}-${new Date().getTime()}.png`;
+      const caption = `💸 Habis seru-seruan bareng di "${activityName || "Makan-makan"}"!\n\nTotal tagihannya ${formatToIDR(totalSpent)}. Biar pertemanan makin asik, yuk lunasin tagihannya ya! 😉✨\n\nCek rinciannya di gambar ini. Powered by Split Bill Web`;
+
+      // Try native share if available
+      if (
+        typeof navigator !== "undefined" &&
+        navigator.share &&
+        navigator.canShare
+      ) {
+        try {
+          const res = await fetch(dataUrl);
+          const blob = await res.blob();
+          const file = new File([blob], fileName, { type: "image/png" });
+
+          if (navigator.canShare({ files: [file] })) {
+            await navigator.share({
+              files: [file],
+              title: activityName || "Split Bill Summary",
+              text: caption,
+            });
+            toast.success("Berhasil dibagikan! 📸✨", { id: toastId });
+            return;
+          }
+        } catch (shareErr) {
+          console.warn(
+            "Native share failed, falling back to download:",
+            shareErr,
+          );
+        }
+      }
+
+      // Fallback: Download behavior
       const link = document.createElement("a");
-      link.download = `SplitBill-${activityName?.replace(/\s+/g, "-") || "Summary"}-${new Date().getTime()}.png`;
+      link.download = fileName;
       link.href = dataUrl;
       link.click();
 
@@ -99,7 +131,7 @@ export const BillSummary = ({
       });
     } catch (err) {
       console.error("Sharing failed:", err);
-      toast.error("Gagal membuat gambar sharing.", { id: toastId });
+      toast.error("Gagal membagikan gambar.", { id: toastId });
     } finally {
       setIsSharing(false);
     }

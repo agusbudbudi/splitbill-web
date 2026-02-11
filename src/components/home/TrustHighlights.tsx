@@ -33,7 +33,7 @@ const highlights = [
 
 export const TrustHighlights = () => {
   return (
-    <section className="py-2 px-2 space-y-6">
+    <section className="space-y-6">
       <div className="flex items-center gap-3 px-1">
         <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
           <Sparkles className="w-5 h-5 text-primary" />

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { X, Download } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
@@ -64,7 +65,13 @@ export const PWAInstallBanner = () => {
   if (!isVisible || isDismissed) return null;
 
   return (
-    <div className="sticky top-0 w-full max-w-[480px] mx-auto bg-gradient-brand border-b border-white/10 overflow-hidden animate-in slide-in-from-top duration-500 shadow-lg z-[60]">
+    <motion.div
+      initial={{ y: -100, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      exit={{ y: -100, opacity: 0 }}
+      transition={{ type: "spring", damping: 25, stiffness: 200 }}
+      className="sticky top-0 w-full max-w-[480px] mx-auto bg-gradient-brand border-b border-white/10 overflow-hidden shadow-lg z-[60]"
+    >
       <div className="w-full px-4 py-2.5 flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-sm bg-white backdrop-blur-md flex items-center justify-center overflow-hidden border border-white/20">
@@ -101,6 +108,6 @@ export const PWAInstallBanner = () => {
           </button>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };

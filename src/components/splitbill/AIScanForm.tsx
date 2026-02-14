@@ -14,7 +14,9 @@ import { scanReceipt, ReceiptScanResult, ReceiptItem } from "@/lib/AIService";
 import { LoadingModal } from "@/components/ui/LoadingModal";
 import { useAuthStore } from "@/lib/stores/authStore"; // Import auth store
 import { useRouter } from "next/navigation"; // Import useRouter
-import { FeatureBanner } from "@/components/ui/FeatureBanner"; // Import FeatureBanner
+// Removed unused FeatureBanner import
+
+import { AIScanQuotaBanner } from "@/components/ui/AIScanQuotaBanner";
 
 export const AIScanForm = () => {
   const [image, setImage] = useState<string | null>(null);
@@ -25,8 +27,21 @@ export const AIScanForm = () => {
 
   const { addExpense, setActivityName, addAdditionalExpense } =
     useSplitBillStore();
-  const { isAuthenticated } = useAuthStore(); // Get auth status
+  const { isAuthenticated, user, getCurrentUser, isInitialized } =
+    useAuthStore(); // Get user and getCurrentUser
   const router = useRouter();
+  const [isMounted, setIsMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  // Refresh user data on mount to ensure quota is up to date
+  React.useEffect(() => {
+    if (isAuthenticated) {
+      getCurrentUser();
+    }
+  }, [isAuthenticated, getCurrentUser]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -49,6 +64,9 @@ export const AIScanForm = () => {
     try {
       const result = await scanReceipt(image);
       setScanResult(result);
+
+      // Refresh user data to update remaining scan quota
+      await getCurrentUser();
     } catch (err: any) {
       console.error("Scan failed", err);
       setError(err.message || "Gagal membaca struk. Coba lagi!");
@@ -110,6 +128,26 @@ export const AIScanForm = () => {
     }).format(amt);
   };
 
+  // Show premium skeleton while initializing or before mounting (to avoid hydration mismatch)
+  if (!isMounted || !isInitialized) {
+    return (
+      <div className="space-y-4 py-2 animate-pulse">
+        <div className="relative overflow-hidden rounded-3xl p-6 bg-gradient-to-br from-primary/20 via-primary/10 to-violet-600/10 border border-primary/5">
+          <div className="relative z-10 flex flex-col items-center text-center gap-4">
+            <div className="w-16 h-16 rounded-3xl bg-primary/5 backdrop-blur-md flex items-center justify-center border border-primary/10">
+              <div className="w-8 h-8 rounded-lg bg-primary/20" />
+            </div>
+            <div className="space-y-2 w-full flex flex-col items-center">
+              <div className="h-6 w-32 bg-primary/20 rounded-full" />
+              <div className="h-3 w-48 bg-primary/10 rounded-full" />
+            </div>
+            <div className="w-full max-w-[200px] h-11 bg-primary/10 rounded-xl mt-2" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // Login Barrier for AI Scan
   if (!isAuthenticated) {
     return (
@@ -152,10 +190,45 @@ export const AIScanForm = () => {
             </Button>
           </div>
         </div>
+  
+      </div>
+    );
+  }
 
-        {/* Blurred Preview/Teaser background */}
-        <div className="absolute inset-0 top-6 z-0 px-2 opacity-40 blur-[10px] pointer-events-none grayscale brightness-125 contrast-75 overflow-hidden">
-          <div className="border-2 border-dashed border-slate-300 rounded-2xl h-[280px] w-full flex flex-col items-center justify-center gap-4 bg-slate-50"></div>
+  // Quota Exhausted Barrier - Only if strictly 0
+  const freeScanCount = user?.freeScanCount;
+  if (
+    isAuthenticated &&
+    freeScanCount !== undefined &&
+    freeScanCount <= 0 &&
+    !scanResult
+  ) {
+    return (
+      <div className="space-y-4 py-2 animate-in fade-in duration-500 relative">
+        <div className="relative overflow-hidden rounded-3xl p-6 bg-slate-900 text-white shadow-lg z-10">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 rounded-full blur-[80px] -mr-16 -mt-16 pointer-events-none" />
+
+          <div className="relative z-10 flex flex-col items-center text-center gap-4">
+            <div className="w-16 h-16 rounded-3xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20">
+              <Lock className="w-8 h-8 text-amber-400" />
+            </div>
+
+            <div className="space-y-2 max-w-[280px]">
+              <h3 className="text-xl font-bold tracking-tight text-white">
+                Scan Habis! 🚀
+              </h3>
+              <p className="text-xs text-white/70 leading-relaxed font-medium">
+                Kuota 10x free kamu udah habis. Hubungi admin buat lanjut ✨
+              </p>
+            </div>
+
+            <Button
+              onClick={() => router.push("/history")}
+              className="w-full max-w-[200px] h-11 bg-white hover:bg-white/90 text-slate-900 font-bold rounded-xl transition-all mt-2 text-base cursor-pointer border-0"
+            >
+              Lihat Riwayat
+            </Button>
+          </div>
         </div>
       </div>
     );
@@ -163,6 +236,10 @@ export const AIScanForm = () => {
 
   return (
     <div className="space-y-4 py-2 animate-in fade-in duration-500">
+      {/* Quota Info Banner - Premium AI Theme */}
+      {!scanResult && freeScanCount !== undefined && freeScanCount > 0 && (
+        <AIScanQuotaBanner freeScanCount={freeScanCount} />
+      )}
       {!image ? (
         <div
           onClick={() => fileInputRef.current?.click()}
@@ -206,7 +283,7 @@ export const AIScanForm = () => {
           {!scanResult ? (
             <div className="space-y-3">
               {error && (
-                <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-sm text-destructive text-[10px] font-bold uppercase text-center">
+                <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-md text-destructive text-[10px] font-bold uppercase text-center">
                   {error}
                 </div>
               )}
@@ -226,7 +303,7 @@ export const AIScanForm = () => {
                 <p className="text-xs font-bold uppercase">Scan Berhasil! ✨</p>
               </div>
 
-              <div className="bg-muted/30 p-4 rounded-xl border border-dashed border-primary/20 space-y-4">
+              <div className="bg-muted/30 p-4 rounded-lg border border-dashed border-primary/20 space-y-4">
                 {/* Merchant Name Preview */}
                 {scanResult.merchant_name && (
                   <div className="pb-2 border-b border-primary/10">

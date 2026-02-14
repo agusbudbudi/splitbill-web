@@ -6,6 +6,7 @@ import { Footer } from "@/components/layout/Footer";
 import { Banner } from "@/components/home/Banner";
 import { NavigationMenu } from "@/components/home/NavigationMenu";
 import { AIScanBanner } from "@/components/home/AIScanBanner";
+import { AIScanEncourageBanner } from "@/components/home/AIScanEncourageBanner";
 import { GettingStarted } from "@/components/home/GettingStarted";
 import { FeatureHighlights } from "@/components/home/FeatureHighlights";
 import { FloatingBadge } from "@/components/ui/FloatingBadge";
@@ -58,6 +59,12 @@ export default function Home() {
           </div>
 
           {isMounted && <OngoingSplitBillCard />}
+
+          {isMounted && people.length === 0 && (
+            <div>
+              <AIScanEncourageBanner />
+            </div>
+          )}
 
           {isMounted && !isAuthenticated && (
             <div>

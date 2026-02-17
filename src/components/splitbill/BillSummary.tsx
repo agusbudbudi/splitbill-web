@@ -204,10 +204,18 @@ export const BillSummary = ({
                 <h2 className="text-xl font-black text-foreground">
                   {activityName || "Aktivitas Tanpa Nama"}
                 </h2>
-                <p className="text-[10px] text-muted-foreground font-bold flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-primary/40" />
-                  Dibuat pada {currentDate}
-                </p>
+                <div className="flex items-center gap-2">
+                  <p className="text-[10px] text-muted-foreground font-bold flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-primary/40" />
+                    Dibuat pada {currentDate}
+                  </p>
+                  {typeof window !== "undefined" && 
+                    new URLSearchParams(window.location.search).get("new") === "true" && (
+                    <span className="text-[8px] font-black bg-primary text-white px-1.5 py-0.5 rounded-full shadow-sm shadow-primary/20">
+                      BARU
+                    </span>
+                  )}
+                </div>
               </div>
               <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center flex-shrink-0">
                 <ReceiptText className="w-6 h-6 text-primary" />

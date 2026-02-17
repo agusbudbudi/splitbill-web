@@ -51,7 +51,7 @@ export default function Home() {
     <div className="min-h-screen bg-background flex flex-col items-center relative">
       {/* Search Engine Optimization */}
       <h1 className="sr-only">
-        Split Bill Online - Aplikasi Bagi Tagihan & Patungan Gratis dengan Scan Foto
+        Split Bill Online - Aplikasi Bagi Tagihan Gratis dengan Scan Struk
       </h1>
       <script
         type="application/ld+json"
@@ -62,7 +62,7 @@ export default function Home() {
             name: "SplitBill Online",
             url: "https://splitbill.my.id",
             description:
-              "Split bill online gratis dengan scan foto struk. Aplikasi bagi tagihan paling praktis untuk patungan, split bill with tax, dan kelola keuangan bersama teman.",
+              "Split bill online gratis! Scan struk, hitung pajak otomatis, dan bagi tagihan praktis bareng teman. Aplikasi patungan terbaik yang 100% free, cepat & akurat.",
             applicationCategory: "FinanceApplication",
             operatingSystem: "Web",
             offers: {

@@ -14,6 +14,12 @@ interface AdItem {
 
 const SAMPLE_ADS: AdItem[] = [
   {
+    id: 0,
+    image: "/img/ads-teman-saya.png",
+    alt: "Teman Saya",
+    url: "/profile/friends",
+  },
+  {
     id: 1,
     image: "/img/ads-review.png",
     alt: "Review Split Bill",

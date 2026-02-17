@@ -17,6 +17,7 @@ interface SegmentedControlProps {
   onChange: (id: string) => void;
   className?: string;
   variant?: "primary" | "secondary";
+  id?: string;
 }
 
 export const SegmentedControl = ({
@@ -24,9 +25,11 @@ export const SegmentedControl = ({
   activeId,
   onChange,
   className,
+  id,
 }: SegmentedControlProps) => {
   return (
     <div
+      id={id}
       className={cn(
         "flex p-1 bg-muted/20 rounded-lg gap-1 transition-all border border-border/20",
         className,

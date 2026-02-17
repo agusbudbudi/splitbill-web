@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Suspense, useState } from "react";
+import React, { Suspense, useState, useEffect, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -43,6 +43,9 @@ import { SegmentedControl } from "@/components/ui/SegmentedControl";
 import confetti from "canvas-confetti";
 import { suggestEmoji } from "@/lib/emojiUtils";
 import { toast } from "sonner";
+import { useOnboardingStore } from "@/store/useOnboardingStore";
+import { TutorialOverlay, TutorialStep } from "@/components/onboarding/TutorialOverlay";
+
 
 const SplitBillContent = () => {
   const router = useRouter();
@@ -66,6 +69,69 @@ const SplitBillContent = () => {
   const [isAddWalletOpen, setIsAddWalletOpen] = useState(false);
   const [showFinalizeModal, setShowFinalizeModal] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
+
+  const hasSeenTutorial = useOnboardingStore((state) => state.hasSeenTutorial);
+  const setHasSeenTutorial = useOnboardingStore((state) => state.setHasSeenTutorial);
+  const _hasHydrated = useOnboardingStore((state) => state._hasHydrated);
+  
+  const [isTutorialOpen, setIsTutorialOpen] = useState(false);
+  const hasTriggeredRef = useRef(false);
+
+  useEffect(() => {
+    if (_hasHydrated && !hasSeenTutorial && step === 1 && !hasTriggeredRef.current) {
+      const timer = setTimeout(() => {
+        // Triple check latest state to be absolutely sure
+        if (!useOnboardingStore.getState().hasSeenTutorial) {
+          setIsTutorialOpen(true);
+          hasTriggeredRef.current = true;
+        }
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [_hasHydrated, hasSeenTutorial, step]);
+
+  const tutorialSteps: TutorialStep[] = [
+    {
+      id: "step-people",
+      targetId: "onboarding-people-list",
+      title: "Tambah Teman 👥",
+      content: "Pertama, tambahin dulu temen-temen yang mau diajak patungan. Bisa ketik manual atau pilih dari Besties Gua!",
+      position: "bottom",
+    },
+    {
+      id: "step-input",
+      targetId: "onboarding-input-method",
+      title: "Input Pengeluaran 📊",
+      content: "Pake AI Scan biar nggak capek ketik satu-satu! Tinggal foto struknya, AI yang bakal beresin sisanya. ✨",
+      position: "bottom",
+    },
+    {
+      id: "step-payment",
+      targetId: "onboarding-payment-methods",
+      title: "Metode Pembayaran 📥",
+      content: "Pilih kemana temen kamu harus bayar patungannya. Bisa pilih lebih dari satu lho!",
+      position: "top",
+    },
+  ];
+
+  const handleTutorialStepChange = (index: number) => {
+    // index 0 -> step 1 (People)
+    // index 1 -> step 2 (Input)
+    // index 2 -> step 3 (Payment)
+    const targetAppStep = index + 1;
+    if (step !== targetAppStep) {
+      router.push(`/split-bill?step=${targetAppStep}`);
+    }
+  };
+
+  const completeTutorial = () => {
+    setIsTutorialOpen(false);
+    setHasSeenTutorial(true);
+    // Reset back to Step 1 so user can start from the beginning
+    router.push("/split-bill?step=1");
+    toast.success("Keren! Sekarang kamu udah siap buat Split Bill kilat! 🚀");
+  };
+
 
   // Initialize from search params to handle back navigation
   const [isSaved, setIsSaved] = useState(searchParams.get("saved") === "true");
@@ -185,6 +251,7 @@ const SplitBillContent = () => {
             <Card className="border-primary/20 shadow-md">
               <CardContent className="p-1 sm:p-2">
                 <SegmentedControl
+                  id="onboarding-input-method"
                   options={[
                     {
                       id: "ai",
@@ -250,7 +317,7 @@ const SplitBillContent = () => {
               </CardContent>
             </Card>
 
-            <Card className="border-primary/20 shadow-md">
+            <Card id="onboarding-payment-methods" className="border-primary/20 shadow-md">
               <CardContent className="p-4 space-y-3">
                 <div className="flex items-center justify-between px-1">
                   <label className="text-sm font-bold flex items-center gap-2">
@@ -485,6 +552,17 @@ const SplitBillContent = () => {
         icon={CheckCircle2}
         confirmText="Ya, Simpan"
         cancelText="Batal"
+      />
+
+      <TutorialOverlay
+        steps={tutorialSteps}
+        isOpen={isTutorialOpen}
+        onClose={() => {
+          setIsTutorialOpen(false);
+          setHasSeenTutorial(true);
+        }}
+        onComplete={completeTutorial}
+        onStepChange={handleTutorialStepChange}
       />
     </div>
   );

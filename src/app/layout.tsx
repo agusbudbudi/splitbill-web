@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://splitbill.my.id"),
   title: "Split Bill Online - Aplikasi Bagi Tagihan & Patungan Gratis",
   description:
-    "Split bill online gratis dengan scan foto struk! Aplikasi bagi tagihan paling praktis untuk patungan, split bill with tax, dan kelola keuangan bersama teman. 100% free, cepat & akurat.",
+    "Split bill online gratis! Scan struk, hitung pajak otomatis, dan bagi tagihan praktis bareng teman. Aplikasi patungan terbaik yang 100% free, cepat & akurat.",
   keywords: [
     "split bill online",
     "split bill online free",
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Split Bill App - Bagi Tagihan Lebih Mudah",
     description:
-      "Split bill online gratis dengan scan foto! Bagi tagihan & patungan otomatis, support pajak. 100% free!",
+      "Split bill online gratis! Scan struk, hitung pajak otomatis, dan bagi tagihan praktis bareng teman. 100% free!",
     url: "https://splitbill.my.id",
     siteName: "Split Bill App",
     images: [
@@ -58,7 +58,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Split Bill Online - Gratis & Mudah",
-    description: "Split bill online gratis! Scan foto struk, hitung otomatis, bagi tagihan dengan pajak.",
+    description: "Split bill online gratis! Scan struk, hitung pajak otomatis, dan bagi tagihan praktis bareng teman.",
     images: ["/img/pwa-banner.png"],
   },
   appleWebApp: {

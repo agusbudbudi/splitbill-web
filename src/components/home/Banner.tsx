@@ -5,6 +5,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { fetchBanners, getCachedBanners } from "@/lib/api/banners";
+import { useRouter } from "next/navigation";
+import { useOnboardingStore } from "@/store/useOnboardingStore";
+import { useSplitBillStore } from "@/store/useSplitBillStore";
+import { demoData } from "@/lib/demoData";
+import { Sparkles, Play } from "lucide-react";
+import { Button } from "@/components/ui/Button";
+
 
 interface BannerItem {
   id: string | number;
@@ -59,6 +66,39 @@ export const Banner = () => {
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [loadedImages, setLoadedImages] = useState<Record<string | number, boolean>>({});
+  const router = useRouter();
+  const { setIsDemoMode, setHasSeenTutorial } = useOnboardingStore();
+  const { 
+    people, 
+    addPerson, 
+    addExpense, 
+    addAdditionalExpense, 
+    setActivityName,
+    clearDraftAfterFinalize 
+  } = useSplitBillStore();
+
+  const handleStartDemo = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    // Reset stores
+    clearDraftAfterFinalize();
+
+    // Populate with demo data
+    setActivityName(demoData.activityName);
+    demoData.people.forEach(p => addPerson(p));
+    demoData.expenses.forEach(e => addExpense(e));
+    demoData.additionalExpenses.forEach(ae => addAdditionalExpense(ae));
+
+    // Setup onboarding
+    setIsDemoMode(true);
+    setHasSeenTutorial(true); // Don't show tutorial during demo, or maybe show it?
+    // Let's show the tutorial during demo to make it more interactive
+
+    router.push("/split-bill");
+  };
+
 
   useEffect(() => {
     setIsMounted(true);
@@ -141,30 +181,39 @@ export const Banner = () => {
   return (
     <div
       ref={containerRef}
-      className="relative w-full overflow-hidden bg-gray-100 rounded-b-[20px]"
+      className="relative w-full overflow-hidden bg-gray-100 rounded-b-[20px] isolate z-0"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
       <div
-        className="flex transition-transform duration-500 ease-out"
+        className="flex transition-transform duration-500 ease-out will-change-transform"
         style={{ transform: `translateX(-${current * 100}%)` }}
       >
         {banners.map((banner, index) => (
           <Link
             key={banner.id}
             href={banner.href}
-            className="min-w-full block relative z-20 group"
+            className="min-w-full block relative z-20 group rounded-b-[20px] overflow-hidden"
           >
-            <div className="relative overflow-hidden cursor-pointer leading-[0]">
+            <div className="relative overflow-hidden cursor-pointer leading-[0] rounded-b-[20px]">
+              {/* Skeleton Loader */}
+              {!loadedImages[banner.id] && (
+                <div className="absolute inset-0 z-10 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 bg-[length:200%_100%] animate-[shimmer_1.5s_infinite] aspect-[480/280]" />
+              )}
+              
               <Image
                 src={banner.image}
                 alt={banner.alt}
                 width={480}
                 height={280}
-                className="w-full aspect-[480/280] block object-cover transition-transform duration-700 group-hover:scale-105"
+                className={cn(
+                  "w-full aspect-[480/280] block object-cover transition-all duration-700 group-hover:scale-105",
+                  !loadedImages[banner.id] ? "opacity-0" : "opacity-100"
+                )}
                 priority={index === 0}
                 draggable={false}
+                onLoad={() => setLoadedImages(prev => ({ ...prev, [banner.id]: true }))}
               />
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300" />
             </div>
@@ -187,6 +236,24 @@ export const Banner = () => {
           ))}
         </div>
       )}
+
+      {/* Demo Mode Button Overlay */}
+      <div className="absolute bottom-4 right-4 z-30 pointer-events-auto">
+        <Button
+          onClick={handleStartDemo}
+          className="rounded-full bg-white/90 hover:bg-white text-primary border border-primary/20 shadow-lg backdrop-blur-sm h-10 px-4 font-bold text-xs gap-2 transition-all hover:scale-105 active:scale-95"
+        >
+          <div className="p-1 bg-primary/10 rounded-full">
+            <Play className="w-3 h-3 fill-primary" />
+          </div>
+          Coba Demo
+          <div className="absolute -top-2 -right-1">
+            <div className="bg-primary text-white text-[8px] px-1.5 py-0.5 rounded-full shadow-sm font-black animate-pulse">
+              HOT
+            </div>
+          </div>
+        </Button>
+      </div>
     </div>
   );
 };

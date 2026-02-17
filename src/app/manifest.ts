@@ -4,7 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "Split Bill App",
     short_name: "SplitBill",
-    description: "Aplikasi pembagi tagihan yang simpel dan cepat",
+    description: "Split bill gratis! Scan struk, hitung pajak, dan bagi tagihan praktis bareng teman.",
     start_url: "/",
     display: "standalone",
     background_color: "#ffffff",

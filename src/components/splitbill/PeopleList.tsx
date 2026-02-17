@@ -13,6 +13,7 @@ const AVATAR_BASE_URL =
 
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
+import { OnboardingTooltip } from "@/components/onboarding/OnboardingTooltip";
 
 export const PeopleList = () => {
   const { people, addPerson, removePerson } = useSplitBillStore();
@@ -95,7 +96,7 @@ export const PeopleList = () => {
   const hasSavedItems = friends.length > 0 || groupsWithMembers.length > 0;
 
   return (
-    <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2">
+    <div id="onboarding-people-list" className="space-y-4 animate-in fade-in slide-in-from-bottom-2">
       {hasSavedItems && (
         <Card className="border-primary/20 shadow-md">
           <CardContent className="p-4 space-y-6">
@@ -103,10 +104,18 @@ export const PeopleList = () => {
             {groupsWithMembers.length > 0 && (
               <div className="space-y-3 mb-0">
                 <div className="flex items-center gap-2 px-1">
-                  <label className="text-sm font-bold text-foreground">
-                    Circle Gua 🤝
-                  </label>
+                  <OnboardingTooltip
+                    id="hint-saved-groups"
+                    content="Simpan temen tongkrongan kamu di Grup biar nggak repot nambahin satu-satu tiap kali Split Bill! 🤝"
+                    position="top"
+                    delay={2000}
+                  >
+                    <label className="text-sm font-bold text-foreground">
+                      Circle Gua 🤝
+                    </label>
+                  </OnboardingTooltip>
                   <span className="text-[9px] font-black bg-primary/10 text-primary px-2 py-0.5 rounded-full">
+
                     {groupsWithMembers.length} Grup
                   </span>
                 </div>
@@ -261,7 +270,7 @@ export const PeopleList = () => {
 
       <Card className="border-primary/20 shadow-md">
         <CardContent className="p-4 space-y-6">
-          <div className="space-y-3">
+          <div className="space-y-3 mb-2">
             <label className="text-sm font-bold text-foreground px-1">
               Tambah Teman 👥
             </label>

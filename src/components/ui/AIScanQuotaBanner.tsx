@@ -3,6 +3,7 @@
 import React from "react";
 import { Sparkles, ChevronRight } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 interface AIScanQuotaBannerProps {
@@ -31,9 +32,11 @@ export const AIScanQuotaBanner = ({
         <div className="relative z-10 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-500 overflow-hidden">
-              <img 
+              <Image 
                 src="/img/ai-icon.png" 
                 alt="AI Icon" 
+                width={28}
+                height={28}
                 className="w-7 h-7 object-contain" 
               />
             </div>

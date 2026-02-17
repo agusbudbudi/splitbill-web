@@ -3,6 +3,7 @@
 import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { Card, CardContent, CardHeader } from "@/components/ui/Card";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { useAuthStore, LoginCredentials } from "@/lib/stores/authStore";
@@ -152,10 +153,13 @@ export default function LoginPage() {
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
           >
             <Link href="/" className="inline-block">
-              <img
+              <Image
                 src="/img/logo-splitbill-black.png"
                 alt="SplitBill Logo"
+                width={160}
+                height={40}
                 className="h-10 w-auto mx-auto"
+                priority
               />
             </Link>
           </motion.div>

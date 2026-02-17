@@ -15,6 +15,7 @@ import { scanReceipt, ReceiptScanResult, ReceiptItem } from "@/lib/AIService";
 import { LoadingModal } from "@/components/ui/LoadingModal";
 import { useAuthStore } from "@/lib/stores/authStore"; // Import auth store
 import { useRouter } from "next/navigation"; // Import useRouter
+import Image from "next/image";
 // Removed unused FeatureBanner import
 
 import { AIScanQuotaBanner } from "@/components/ui/AIScanQuotaBanner";
@@ -268,10 +269,12 @@ export const AIScanForm = () => {
       ) : (
         <div className="space-y-4">
           <div className="relative aspect-[4/3] rounded-2xl overflow-hidden border border-primary/20 bg-muted">
-            <img
+            <Image
               src={image}
               alt="Receipt Preview"
-              className="w-full h-full object-contain"
+              fill
+              className="object-contain"
+              unoptimized={image.startsWith("data:")}
             />
             <button
               onClick={() => setImage(null)}

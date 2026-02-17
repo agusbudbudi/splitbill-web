@@ -30,6 +30,8 @@ const EWALLET_LOGOS: Record<string, { color: string; image: string }> = {
   Jenius: { color: "#00d4ff", image: "/img/logo-jenius.png" },
 };
 
+import Image from "next/image";
+
 export const PaymentMethodCard = ({
   method,
   onDelete,
@@ -98,21 +100,24 @@ export const PaymentMethodCard = ({
             <h3 className="text-lg sm:text-xl font-bold tracking-wide drop-shadow-md truncate max-w-[180px]">
               {method.providerName}
             </h3>
-            <div className="h-6 sm:h-7 w-auto flex items-center justify-end">
-              <img
+            <div className="h-6 sm:h-7 w-auto flex items-center justify-end relative">
+              <Image
                 src={logoInfo.image}
                 alt={method.providerName}
+                width={80}
+                height={28}
                 className="h-full w-auto object-contain brightness-0 invert filter drop-shadow-sm transition-transform duration-300 group-hover:scale-110"
-                onError={(e) => (e.currentTarget.style.display = "none")}
               />
             </div>
           </div>
 
           {/* Chip (Middle) */}
           <div className="mt-2 sm:mt-3">
-            <img
+            <Image
               src="/img/chip-icon.png"
               alt="chip"
+              width={40}
+              height={28}
               className="w-10 sm:w-8 h-auto rounded opacity-90"
             />
           </div>

@@ -2,6 +2,7 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 interface BrandingFooterProps {
   className?: string;
@@ -16,9 +17,11 @@ export const BrandingFooter = ({ className }: BrandingFooterProps) => {
       )}
     >
       <div className="flex items-center gap-0 opacity-40 grayscale group hover:grayscale-0 hover:opacity-100 transition-all duration-500">
-        <img
+        <Image
           src="/img/footer-icon.png"
           alt="logo"
+          width={32}
+          height={32}
           className="w-8 h-8 object-contain"
         />
         <span className="text-lg font-bold tracking-tighter text-foreground">

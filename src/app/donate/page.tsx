@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { toast } from "sonner";
 import { BrandingFooter } from "@/components/layout/BrandingFooter";
+import Image from "next/image";
 
 interface DonationMethodProps {
   logo: string;
@@ -29,11 +30,12 @@ const DonationMethod = ({
   return (
     <div className="flex items-center justify-between p-4 bg-muted/30 rounded-lg border border-border/50 group transition-all hover:bg-muted/50">
       <div className="flex items-center gap-4">
-        <div className="w-12 h-12 rounded-lg bg-white flex items-center justify-center p-1">
-          <img
+        <div className="w-12 h-12 rounded-lg bg-white flex items-center justify-center p-1 relative overflow-hidden">
+          <Image
             src={logo}
             alt={bankName}
-            className="w-full h-full object-contain"
+            fill
+            className="object-contain p-1"
           />
         </div>
         <div className="space-y-0.5">
@@ -81,14 +83,12 @@ export default function DonatePage() {
         {/* Banner Section */}
         <div className="w-full px-4 pt-4">
           <div className="relative aspect-[360/113] w-full overflow-hidden rounded-lg">
-            <img
+            <Image
               src="/img/banner-donate.png"
               alt="Donate Banner"
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                (e.target as HTMLImageElement).src =
-                  "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?q=80&w=2070&auto=format&fit=crop";
-              }}
+              fill
+              className="object-cover"
+              priority
             />
           </div>
         </div>
@@ -122,11 +122,12 @@ export default function DonatePage() {
             </div>
 
             <div className="mt-6 flex items-center gap-3 p-3 bg-primary/[0.03] rounded-xl border border-primary/5">
-              <div className="shrink-0 w-10 h-10 rounded-full overflow-hidden bg-white">
-                <img
+              <div className="shrink-0 w-10 h-10 rounded-full overflow-hidden bg-white relative">
+                <Image
                   src="/img/donate-icon.png"
                   alt="Donate Icon"
-                  className="w-full h-full object-cover"
+                  fill
+                  className="object-cover"
                 />
               </div>
               <p className="text-[12px] font-semibold text-primary/80">
@@ -156,13 +157,14 @@ export default function DonatePage() {
               Beri Ulasan
             </h3>
             <Card
-              className="overflow-hidden border border-border/50 shadow-sm rounded-2xl bg-card hover:bg-accent/10 transition-colors cursor-pointer"
+              className="overflow-hidden border border-border/50 shadow-sm rounded-2xl bg-card hover:bg-accent/10 transition-colors cursor-pointer relative aspect-[360/100]"
               onClick={() => (window.location.href = "/review")}
             >
-              <img
+              <Image
                 src="/img/banner-feedback.jpg"
                 alt="Banner Feedback"
-                className="w-full aspect-[360/100] object-cover"
+                fill
+                className="object-cover"
               />
             </Card>
           </section>

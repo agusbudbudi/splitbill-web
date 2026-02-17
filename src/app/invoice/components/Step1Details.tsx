@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { Upload, X, Camera } from "lucide-react";
+import Image from "next/image";
 import { useInvoiceStore } from "@/lib/stores/invoiceStore";
 import { generateInvoiceNumber } from "@/lib/utils/invoice";
 import { FormError } from "@/components/ui/FormError";
@@ -154,10 +155,12 @@ export function Step1Details() {
             </div>
           ) : (
             <div className="relative aspect-[2/0.63] rounded-2xl overflow-hidden border border-primary/20 bg-muted">
-              <img
+              <Image
                 src={logoPreview}
                 alt="Logo preview"
-                className="w-full h-full object-contain"
+                fill
+                className="object-contain"
+                unoptimized={logoPreview.startsWith("data:")}
               />
               <button
                 onClick={removeLogo}

@@ -3,6 +3,7 @@
 import React from "react";
 import { Wallet, Landmark } from "lucide-react";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 interface ProviderLogoProps {
   name: string;
@@ -45,6 +46,12 @@ export const ProviderLogo = ({
     lg: "w-16 h-16 p-2",
   };
 
+  const pixelSize = {
+    sm: 32,
+    md: 48,
+    lg: 64,
+  };
+
   const iconSizeClasses = {
     sm: "w-4 h-4",
     md: "w-6 h-6",
@@ -81,13 +88,12 @@ export const ProviderLogo = ({
         className,
       )}
     >
-      <img
+      <Image
         src={logoPath}
         alt={name}
+        width={pixelSize[size]}
+        height={pixelSize[size]}
         className="w-full h-full object-contain"
-        onError={(e) => {
-          e.currentTarget.style.display = "none";
-        }}
       />
     </div>
   );

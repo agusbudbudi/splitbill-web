@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import Image from "next/image";
 import { useInvoiceStore } from "@/lib/stores/invoiceStore";
 import { formatToIDR, generateAvatarUrl } from "@/lib/utils/invoice";
 import { FileCheck, Download, History, Home } from "lucide-react";
@@ -93,11 +94,15 @@ export function Step6Preview() {
               </p>
             </div>
             {currentInvoice.logo && (
-              <img
-                src={currentInvoice.logo}
-                alt="Logo"
-                className="h-12 w-auto"
-              />
+              <div className="relative h-12 w-32">
+                <Image
+                  src={currentInvoice.logo}
+                  alt="Logo"
+                  fill
+                  className="object-contain object-right"
+                  unoptimized={currentInvoice.logo.startsWith("data:")}
+                />
+              </div>
             )}
           </div>
 
@@ -279,16 +284,14 @@ export function Step6Preview() {
                       className="p-2.5 bg-muted/30 rounded-sm flex items-center gap-4"
                     >
                       {/* Logo or Placeholder */}
-                      <div className="w-12 h-12 rounded bg-white flex-shrink-0 flex items-center justify-center p-1">
+                      <div className="w-12 h-12 rounded bg-white flex-shrink-0 flex items-center justify-center p-1 relative overflow-hidden">
                         {method.logo &&
                         method.logo !== "/img/wallet-icon.png" ? (
-                          <img
+                          <Image
                             src={method.logo}
-                            alt={method.bankName}
-                            className="w-full h-full object-contain"
-                            onError={(e) => {
-                              e.currentTarget.style.display = "none";
-                            }}
+                            alt={method.bankName || method.name || "Payment Method"}
+                            fill
+                            className="object-contain p-1"
                           />
                         ) : (
                           <span className="text-[9px] font-bold text-muted-foreground">

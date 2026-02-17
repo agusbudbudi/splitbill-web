@@ -5,24 +5,30 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Banner } from "@/components/home/Banner";
 import { NavigationMenu } from "@/components/home/NavigationMenu";
-import { AIScanBanner } from "@/components/home/AIScanBanner";
-import { AIScanEncourageBanner } from "@/components/home/AIScanEncourageBanner";
-import { GettingStarted } from "@/components/home/GettingStarted";
-import { FeatureHighlights } from "@/components/home/FeatureHighlights";
 import { FloatingBadge } from "@/components/ui/FloatingBadge";
 import { OngoingSplitBillCard } from "@/components/home/OngoingSplitBillCard";
-import { LoginEncouragementCard } from "@/components/home/LoginEncouragementCard";
 import { useSplitBillStore } from "@/store/useSplitBillStore";
 import { useWalletStore } from "@/store/useWalletStore";
 import { cn } from "@/lib/utils";
 import { MerchandisingBanner } from "@/components/ui/MerchandisingBanner";
 import { useAuthStore } from "@/lib/stores/authStore";
-import { QuickStartScenarios } from "@/components/home/QuickStartScenarios";
-import { TrustHighlights } from "@/components/home/TrustHighlights";
-import { FAQSection } from "@/components/home/FAQSection";
-import { FAQCard } from "@/components/home/FAQCard";
-import { AdsCarousel } from "@/components/home/AdsCarousel";
-import { VisualFlowPreview } from "@/components/home/VisualFlowPreview";
+import dynamic from "next/dynamic";
+
+// Dynamic imports for below-the-fold components
+const GettingStarted = dynamic(() => import("@/components/home/GettingStarted").then(mod => mod.GettingStarted));
+const AIScanBanner = dynamic(() => import("@/components/home/AIScanBanner").then(mod => mod.AIScanBanner));
+const AIScanEncourageBanner = dynamic(() => import("@/components/home/AIScanEncourageBanner").then(mod => mod.AIScanEncourageBanner));
+const IntroSection = dynamic(() => import("@/components/home/IntroSection").then(mod => mod.IntroSection));
+const QuickStartScenarios = dynamic(() => import("@/components/home/QuickStartScenarios").then(mod => mod.QuickStartScenarios));
+const VisualFlowPreview = dynamic(() => import("@/components/home/VisualFlowPreview").then(mod => mod.VisualFlowPreview));
+const ShareEncouragement = dynamic(() => import("@/components/home/ShareEncouragement").then(mod => mod.ShareEncouragement));
+const AdsCarousel = dynamic(() => import("@/components/home/AdsCarousel").then(mod => mod.AdsCarousel));
+const FAQSection = dynamic(() => import("@/components/home/FAQSection").then(mod => mod.FAQSection));
+const FAQCard = dynamic(() => import("@/components/home/FAQCard").then(mod => mod.FAQCard));
+const TrustHighlights = dynamic(() => import("@/components/home/TrustHighlights").then(mod => mod.TrustHighlights));
+const SiteFooter = dynamic(() => import("@/components/layout/SiteFooter").then(mod => mod.SiteFooter));
+const FeatureHighlights = dynamic(() => import("@/components/home/FeatureHighlights").then(mod => mod.FeatureHighlights));
+const LoginEncouragementCard = dynamic(() => import("@/components/home/LoginEncouragementCard").then(mod => mod.LoginEncouragementCard));
 
 const BackgroundDecoration = () => (
   <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
@@ -45,7 +51,7 @@ export default function Home() {
     <div className="min-h-screen bg-background flex flex-col items-center relative">
       {/* Search Engine Optimization */}
       <h1 className="sr-only">
-        Split Bill App - Aplikasi Bagi Tagihan & Patungan Paling Praktis
+        Split Bill Online - Aplikasi Bagi Tagihan & Patungan Gratis dengan Scan Foto
       </h1>
       <script
         type="application/ld+json"
@@ -53,10 +59,10 @@ export default function Home() {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "WebApplication",
-            name: "SplitBill App",
+            name: "SplitBill Online",
             url: "https://splitbill.my.id",
             description:
-              "Aplikasi Split Bill paling praktis untuk bagi tagihan, patungan, dan kelola keuangan tongkrongan secara otomatis.",
+              "Split bill online gratis dengan scan foto struk. Aplikasi bagi tagihan paling praktis untuk patungan, split bill with tax, dan kelola keuangan bersama teman.",
             applicationCategory: "FinanceApplication",
             operatingSystem: "Web",
             offers: {
@@ -72,7 +78,9 @@ export default function Home() {
         }}
       />
       <BackgroundDecoration />
-      <MerchandisingBanner imageSrc="/img/banner-merchandising.png" />
+      {isMounted && isAuthenticated && (
+        <MerchandisingBanner imageSrc="/img/banner-merchandising.png" />
+      )}
       <Header transparent />
 
       <main className="w-full max-w-[480px] pb-24 relative z-10 -mt-14">
@@ -94,6 +102,7 @@ export default function Home() {
             </div>
           )}
 
+
           {isMounted && !isAuthenticated && (
             <div>
               <LoginEncouragementCard />
@@ -107,6 +116,12 @@ export default function Home() {
           <div>
             <AIScanBanner />
           </div>
+
+          {isMounted && !isAuthenticated && (
+            <div>
+              <IntroSection />
+            </div>
+          )}
 
           <div>
             <QuickStartScenarios />
@@ -125,10 +140,13 @@ export default function Home() {
           )}
 
           <VisualFlowPreview />
+          <ShareEncouragement />
           <AdsCarousel />
           {isMounted && isAuthenticated ? <FAQCard /> : <FAQSection />}
           {isMounted && !isAuthenticated && <TrustHighlights />}
         </div>
+        
+        {isMounted && !isAuthenticated && <SiteFooter />}
       </main>
 
       <Footer />

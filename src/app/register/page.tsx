@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { Card, CardContent, CardHeader } from "@/components/ui/Card";
 import { RegisterForm } from "@/components/auth/RegisterForm";
 import { useAuthStore } from "@/lib/stores/authStore";
@@ -56,10 +57,13 @@ export default function RegisterPage() {
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
           >
             <Link href="/" className="inline-block">
-              <img
+              <Image
                 src="/img/logo-splitbill-black.png"
                 alt="SplitBill Logo"
+                width={160}
+                height={40}
                 className="h-10 w-auto mx-auto"
+                priority
               />
             </Link>
           </motion.div>

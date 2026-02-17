@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import { usePWA } from "@/hooks/usePWA";
 import { useUIStore } from "@/lib/stores/uiStore";
+import Image from "next/image";
 
 export const PWAInstallBanner = () => {
   const { isInstallable, isStandalone, isIOS, installPWA } = usePWA();
@@ -75,9 +76,11 @@ export const PWAInstallBanner = () => {
       <div className="w-full px-4 py-2.5 flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-sm bg-white backdrop-blur-md flex items-center justify-center overflow-hidden border border-white/20">
-            <img
+            <Image
               src="/img/pwa-icon-192.png"
               alt="SplitBill Logo"
+              width={32}
+              height={32}
               className="w-full h-full object-cover"
             />
           </div>

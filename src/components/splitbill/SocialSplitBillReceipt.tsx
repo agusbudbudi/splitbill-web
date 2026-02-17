@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { formatToIDR } from "@/lib/utils";
 import {
   Users,
@@ -93,11 +94,12 @@ export const SocialSplitBillReceipt = React.forwardRef<
       {/* Branding */}
       <div className="relative z-10 w-full flex justify-between items-center mb-8">
         <div className="flex items-center gap-5">
-          <div className="w-20 h-20 bg-white rounded-2xl flex items-center justify-center border border-primary/5 p-3">
-            <img
+          <div className="w-20 h-20 bg-white rounded-2xl flex items-center justify-center border border-primary/5 p-3 relative overflow-hidden">
+            <Image
               src="/img/footer-icon.png"
               alt="SplitBill Logo"
-              className="w-full h-full object-contain"
+              fill
+              className="object-contain p-3"
             />
           </div>
           <div>
@@ -442,13 +444,11 @@ export const SocialSplitBillReceipt = React.forwardRef<
                       ].some((kw) =>
                         method.providerName.toLowerCase().includes(kw),
                       ) ? (
-                        <img
+                        <Image
                           src={`/img/logo-${method.providerName.toLowerCase()}.png`}
                           alt={method.providerName}
-                          className="w-full h-full object-contain"
-                          onError={(e) => {
-                            e.currentTarget.src = "/img/footer-icon.png";
-                          }}
+                          fill
+                          className="object-contain p-4"
                         />
                       ) : (
                         <div className="text-primary/40 font-black text-2xl uppercase">
@@ -483,7 +483,7 @@ export const SocialSplitBillReceipt = React.forwardRef<
           <span className="text-primary font-black">SplitBill</span>
         </p>
         <p className="text-primary font-black text-3xl mt-3 tracking-tighter">
-          www.splitbill.my.id
+          splitbill.my.id
         </p>
       </div>
     </div>

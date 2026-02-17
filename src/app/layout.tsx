@@ -22,24 +22,26 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://splitbill.my.id"),
-  title: "Split Bill App - Bagi Tagihan Lebih Mudah",
+  title: "Split Bill Online - Aplikasi Bagi Tagihan & Patungan Gratis",
   description:
-    "Aplikasi Split Bill paling praktis untuk bagi tagihan, patungan, dan kelola keuangan tongkrongan secara otomatis. Cepat, akurat, dan gratis!",
+    "Split bill online gratis dengan scan foto struk! Aplikasi bagi tagihan paling praktis untuk patungan, split bill with tax, dan kelola keuangan bersama teman. 100% free, cepat & akurat.",
   keywords: [
-    "split bill app",
+    "split bill online",
+    "split bill online free",
+    "split bill online photo",
+    "split bill online scan",
+    "splitbill app",
+    "split bill free",
+    "split bill online with tax",
     "aplikasi bagi tagihan",
     "patungan online",
-    "invoice builder",
-    "shared goals",
-    "manage money with friends",
-    "hitung patungan otomatis",
-    "splitbill indonesia",
+    "scan struk online",
   ],
   authors: [{ name: "SplitBill Team" }],
   openGraph: {
     title: "Split Bill App - Bagi Tagihan Lebih Mudah",
     description:
-      "Buat dan bagikan pembagian tagihan secara otomatis. Praktis dan cepat!",
+      "Split bill online gratis dengan scan foto! Bagi tagihan & patungan otomatis, support pajak. 100% free!",
     url: "https://splitbill.my.id",
     siteName: "Split Bill App",
     images: [
@@ -55,8 +57,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Split Bill App - Bagi Tagihan Lebih Mudah",
-    description: "Buat dan bagikan pembagian tagihan secara otomatis.",
+    title: "Split Bill Online - Gratis & Mudah",
+    description: "Split bill online gratis! Scan foto struk, hitung otomatis, bagi tagihan dengan pajak.",
     images: ["/img/pwa-banner.png"],
   },
   appleWebApp: {
@@ -78,7 +80,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="id" suppressHydrationWarning>
       <head>
         <script
           dangerouslySetInnerHTML={{

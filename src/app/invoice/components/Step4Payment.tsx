@@ -7,6 +7,7 @@ import { useInvoiceStore } from "@/lib/stores/invoiceStore";
 import { useWalletStore } from "@/store/useWalletStore";
 import { Check, CreditCard, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 import { PaymentMethod as InvoicePaymentMethod } from "@/lib/types/invoice";
 import { AddPaymentMethodBottomSheet } from "@/components/wallet/AddPaymentMethodBottomSheet";
 import { AddButton } from "@/components/ui/AddButton";
@@ -122,17 +123,15 @@ export function Step4Payment() {
                       <div className="flex items-center gap-3">
                         <div
                           className={cn(
-                            "w-10 h-10 rounded-sm flex items-center justify-center p-1.5 transition-colors overflow-hidden",
+                            "w-10 h-10 rounded-sm flex items-center justify-center p-1.5 transition-colors overflow-hidden relative",
                             selected ? "bg-white" : "bg-muted/30",
                           )}
                         >
-                          <img
+                          <Image
                             src={logoInfo.image}
                             alt={method.providerName}
-                            className="w-full h-full object-contain"
-                            onError={(e) => {
-                              e.currentTarget.style.display = "none";
-                            }}
+                            fill
+                            className="object-contain p-1.5"
                           />
                           <span className="text-[10px] font-bold text-muted-foreground hidden group-has-[img[style*='display: none']]:block">
                             {method.providerName.substring(0, 3)}

@@ -138,10 +138,32 @@ export default function ProfilePage() {
     }
   };
 
-  const generateShareAppMessage = () => {
-    const text =
-      "Biar pertemanan gak retak gara-gara urusan duit, bagi tagihan sat-set pake SplitBill aja! 💸✨ https://splitbill.my.id";
-    return `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+  const handleShare = async () => {
+    const shareData = {
+      title: "SplitBill Online - Bagi Tagihan Jadi Gampang! ✨",
+      text: "Guys, cobain deh SplitBill Online. Bisa scan struk otomatis pakai AI, hitung fair share, dan langsung dapet ringkasan pembayarannya. Praktis banget buat patungan! 🍱✈️",
+      url: "https://splitbill.my.id",
+    };
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch (err) {
+        if ((err as Error).name !== "AbortError") {
+          console.log("Error sharing:", err);
+        }
+      }
+    } else {
+      // Fallback: Copy to clipboard
+      try {
+        await navigator.clipboard.writeText(
+          `${shareData.text} \n\nCek di sini: ${shareData.url}`,
+        );
+        alert("Link berhasil di-copy ke clipboard!");
+      } catch (err) {
+        console.error("Failed to copy:", err);
+      }
+    }
   };
 
   return (
@@ -197,36 +219,6 @@ export default function ProfilePage() {
             </MenuGroup>
 
             <MenuGroup title="Preferensi & Masukan">
-              {/* TODO: Uncomment when dark mode is fully implemented */}
-              {/* <MenuItem
-                icon={Laptop}
-                label="Tema"
-                trailing={
-                  <button
-                    className="relative inline-flex h-8 w-14 items-center rounded-full bg-accent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 shadow-inner overflow-hidden group"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleTheme();
-                    }}
-                  >
-                      className={cn(
-                        "absolute flex h-7 w-7 items-center justify-center rounded-full bg-white transition-all duration-500 shadow-md z-10",
-                        isThemeDark ? "translate-x-6.5" : "translate-x-0.5",
-                      )}
-                    >
-                      {isThemeDark ? (
-                        <Moon className="w-4 h-4 text-primary fill-primary/10" />
-                      ) : (
-                        <Sun className="w-4 h-4 text-orange-400 fill-orange-400/10" />
-                      )}
-                    </span>
-                    <div className="flex w-full px-2.5 justify-between pointer-events-none opacity-40">
-                      <Sun className="w-3.5 h-3.5 text-orange-400" />
-                      <Moon className="w-3.5 h-3.5 text-primary" />
-                    </div>
-                  </button>
-                }
-              /> */}
               <MenuItem icon={Star} label="Ulasan & Feedback" href="/review" />
             </MenuGroup>
 
@@ -235,14 +227,10 @@ export default function ProfilePage() {
               <MenuItem
                 icon={Share2}
                 label="Share SplitBill"
-                href={generateShareAppMessage()}
+                onClick={handleShare}
                 trailing={
-                  <div className="w-8 h-8 rounded-full bg-[#25D366] flex items-center justify-center text-white shadow-sm group-hover:scale-110 transition-all duration-300 group-active:scale-95">
-                    <img
-                      src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
-                      alt="WA"
-                      className="w-5 h-5 brightness-0 invert"
-                    />
+                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary shadow-sm group-hover:scale-110 transition-all duration-300 group-active:scale-95">
+                    <Share2 className="w-4 h-4" />
                   </div>
                 }
               />
@@ -279,7 +267,7 @@ export default function ProfilePage() {
                   </a>
 
                   <a
-                    href="mailto:agusbudbudi@gmail.com"
+                    href="mailto:split.bill.apps@gmail.com"
                     className="flex items-center justify-between p-4 hover:bg-accent/40 transition-all group"
                   >
                     <div className="flex items-center gap-3">
@@ -289,7 +277,7 @@ export default function ProfilePage() {
                       </span>
                     </div>
                     <span className="text-xs font-medium text-muted-foreground/80">
-                      agusbudbudi@gmail.com
+                      split.bill.apps@gmail.com
                     </span>
                   </a>
 

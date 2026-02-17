@@ -12,8 +12,6 @@ import {
   FileText,
   ReceiptText,
   Clock,
-  Users,
-  CheckCircle2,
   Filter,
   X,
 } from "lucide-react";
@@ -25,6 +23,7 @@ import { SegmentedControl } from "@/components/ui/SegmentedControl";
 import { useTransactionFilter } from "@/hooks/useTransactionFilter";
 import { TransactionFilterBottomSheet } from "@/components/history/TransactionFilterBottomSheet";
 import { Badge } from "@/components/ui/Badge";
+import { EmptyState } from "@/components/ui/EmptyState";
 
 export const HistoryTab = () => {
   const { savedBills } = useWalletStore();
@@ -40,6 +39,8 @@ export const HistoryTab = () => {
     { id: "split-bill", label: "Split Bill", icon: ReceiptText },
     { id: "invoice", label: "Invoice", icon: FileText },
   ] as const;
+
+  type TabId = (typeof tabs)[number]["id"];
 
   // Calculate default 30 days filter (using local time)
   const last30DaysFilter = React.useMemo(() => {
@@ -81,68 +82,53 @@ export const HistoryTab = () => {
   const renderEmptyState = ({ type }: { type: "split-bill" | "invoice" }) => {
     if (type === "split-bill") {
       return (
-        <div className="flex flex-col items-center justify-center py-6 px-6 rounded-xl bg-gradient-to-br from-white to-primary/5">
-          <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6">
-            <ScrollText className="w-8 h-8 text-primary" />
-          </div>
-          <h3 className="font-bold text-lg text-foreground mb-2 text-center">
-            Belum Ada Transaksi
-          </h3>
-          <p className="text-xs text-muted-foreground text-center max-w-[300px] mb-8 leading-relaxed">
-            Riwayat split bill kamu akan muncul di sini setelah kamu
-            menyelesaikan transaksi pertamamu.
-          </p>
-          <Link href="/split-bill" className="w-full sm:w-auto">
-            <Button className="rounded-lg px-10 shadow-lg shadow-primary/20 w-full font-bold h-12">
-              <Plus className="w-5 h-5 mr-2" /> Buat Split Bill
-            </Button>
-          </Link>
-        </div>
+        <EmptyState
+          icon={ScrollText}
+          message="Belum Ada Transaksi"
+          subtitle="Riwayat split bill kamu akan muncul di sini setelah kamu menyelesaikan transaksi pertamamu."
+          action={
+            <Link href="/split-bill">
+              <Button className="rounded-lg px-10 shadow-lg shadow-primary/20 font-bold h-12">
+                <Plus className="w-5 h-5 mr-2" /> Buat Split Bill
+              </Button>
+            </Link>
+          }
+        />
       );
     }
 
     return (
-      <div className="flex flex-col items-center justify-center py-6 px-6 rounded-xl bg-gradient-to-br from-white to-primary/5">
-        <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6">
-          <FileText className="w-8 h-8 text-primary" />
-        </div>
-        <h3 className="font-bold text-lg text-foreground mb-2 text-center">
-          Belum Ada Invoice
-        </h3>
-        <p className="text-xs text-muted-foreground text-center max-w-[300px] mb-8 leading-relaxed">
-          Riwayat invoice kamu akan muncul di sini setelah kamu memfinalisasi
-          invoice pertamamu.
-        </p>
-        <Link href="/invoice/create" className="w-full sm:w-auto">
-          <Button className="rounded-lg px-10 shadow-lg shadow-primary/20 w-full font-bold h-12">
-            <Plus className="w-5 h-5 mr-2" /> Buat Invoice
-          </Button>
-        </Link>
-      </div>
+      <EmptyState
+        icon={FileText}
+        message="Belum Ada Invoice"
+        subtitle="Riwayat invoice kamu akan muncul di sini setelah kamu memfinalisasi invoice pertamamu."
+        action={
+          <Link href="/invoice/create">
+            <Button className="rounded-lg px-10 shadow-lg shadow-primary/20 font-bold h-12">
+              <Plus className="w-5 h-5 mr-2" /> Buat Invoice
+            </Button>
+          </Link>
+        }
+      />
     );
   };
 
   const renderFilteredEmptyState = () => (
-    <div className="flex flex-col items-center justify-center py-6 px-6 rounded-xl bg-gradient-to-br from-white to-primary/5">
-      <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-        <Filter className="w-8 h-8 text-primary" />
-      </div>
-      <h3 className="font-bold text-base text-foreground mb-2 text-center">
-        Tidak Ada {activeTab === "split-bill" ? "Transaksi" : "Invoice"}
-      </h3>
-      <p className="text-xs text-muted-foreground text-center max-w-[280px] mb-6">
-        Tidak ada {activeTab === "split-bill" ? "transaksi" : "invoice"} dalam
-        periode yang dipilih.
-      </p>
-      <Button
-        variant="outline"
-        onClick={currentFilter.resetFilter}
-        className="rounded-lg"
-      >
-        <X className="w-4 h-4 mr-2" />
-        Hapus Filter
-      </Button>
-    </div>
+    <EmptyState
+      icon={Filter}
+      message={`Tidak Ada ${activeTab === "split-bill" ? "Transaksi" : "Invoice"}`}
+      subtitle={`Tidak ada ${activeTab === "split-bill" ? "transaksi" : "invoice"} dalam periode yang dipilih.`}
+      action={
+        <Button
+          variant="outline"
+          onClick={currentFilter.resetFilter}
+          className="rounded-lg"
+        >
+          <X className="w-4 h-4 mr-2" />
+          Hapus Filter
+        </Button>
+      }
+    />
   );
 
   const renderSplitBillList = (data: typeof savedBills) => (
@@ -276,7 +262,7 @@ export const HistoryTab = () => {
           <SegmentedControl
             options={tabs}
             activeId={activeTab}
-            onChange={(id) => setActiveTab(id as any)}
+            onChange={(id) => setActiveTab(id as TabId)}
           />
         </div>
         <button

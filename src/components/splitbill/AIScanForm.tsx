@@ -8,6 +8,7 @@ import {
   X,
   CheckCircle2,
   Lock, // Import Lock icon
+  Info, // Import Info icon
 } from "lucide-react";
 import { useSplitBillStore } from "@/store/useSplitBillStore";
 import { scanReceipt, ReceiptScanResult, ReceiptItem } from "@/lib/AIService";
@@ -378,6 +379,21 @@ export const AIScanForm = () => {
                     )}
                   </div>
                 )}
+              </div>
+
+              {/* Info Banner: Editable After Import - V2 Design Style */}
+              <div className="flex gap-3 items-start p-4 bg-secondary/30 dark:bg-secondary/10 rounded-2xl border border-secondary/20">
+                <div className="p-2 bg-white rounded-xl border border-primary/10 shrink-0 flex items-center justify-center">
+                  <Info className="w-4 h-4 text-primary" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[10px] font-black uppercase text-secondary-foreground/60 tracking-wider leading-none mb-1.5">
+                    💡 Info Penting
+                  </p>
+                  <p className="text-xs leading-relaxed text-secondary-foreground font-medium">
+                    Jangan khawatir! Semua data bisa diedit setelah di-import jika ada yang belum sesuai.
+                  </p>
+                </div>
               </div>
 
               <div className="flex gap-2">

@@ -20,6 +20,7 @@ import {
   Sun,
   Moon,
   Heart,
+  Users,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
@@ -188,8 +189,9 @@ export default function ProfilePage() {
               </div>
             </Card>
 
-            {/* Groups */}
+            {/* Akun & Finansial Section */}
             <MenuGroup title="Akun & Finansial">
+              <MenuItem icon={Users} label="Teman Saya" href="/profile/friends" />
               <MenuItem icon={ReceiptText} label="Transaksi" href="/history" />
               <MenuItem icon={Wallet} label="Wallet" href="/wallet" />
             </MenuGroup>

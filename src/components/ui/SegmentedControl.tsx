@@ -24,12 +24,11 @@ export const SegmentedControl = ({
   activeId,
   onChange,
   className,
-  variant = "primary",
 }: SegmentedControlProps) => {
   return (
     <div
       className={cn(
-        "flex p-1 bg-muted/20 rounded-sm gap-1 transition-all",
+        "flex p-1 bg-muted/20 rounded-lg gap-1 transition-all border border-border/20",
         className,
       )}
     >

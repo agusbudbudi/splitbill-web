@@ -43,6 +43,34 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center relative">
+      {/* Search Engine Optimization */}
+      <h1 className="sr-only">
+        Split Bill App - Aplikasi Bagi Tagihan & Patungan Paling Praktis
+      </h1>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebApplication",
+            name: "SplitBill App",
+            url: "https://splitbill.my.id",
+            description:
+              "Aplikasi Split Bill paling praktis untuk bagi tagihan, patungan, dan kelola keuangan tongkrongan secara otomatis.",
+            applicationCategory: "FinanceApplication",
+            operatingSystem: "Web",
+            offers: {
+              "@type": "Offer",
+              price: "0",
+              priceCurrency: "IDR",
+            },
+            author: {
+              "@type": "Organization",
+              name: "SplitBill Team",
+            },
+          }),
+        }}
+      />
       <BackgroundDecoration />
       <MerchandisingBanner imageSrc="/img/banner-merchandising.png" />
       <Header transparent />

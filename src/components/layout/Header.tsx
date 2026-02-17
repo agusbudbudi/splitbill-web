@@ -129,7 +129,11 @@ export const Header = ({
             </div>
           ) : (
             <div className="w-full flex items-center justify-between">
-              <Link href="/" className="flex items-center gap-2 group">
+              <Link
+                href="/"
+                className="flex items-center gap-2 group"
+                aria-label="SplitBill Home"
+              >
                 <Image
                   src="/img/logo.png"
                   alt="SplitBill Logo"

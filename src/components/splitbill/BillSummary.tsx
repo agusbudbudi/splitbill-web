@@ -90,7 +90,7 @@ export const BillSummary = ({
       });
 
       const fileName = `SplitBill-${activityName?.replace(/\s+/g, "-") || "Summary"}-${new Date().getTime()}.png`;
-      const caption = `💸 Habis seru-seruan bareng di "${activityName || "Makan-makan"}"!\n\nTotal tagihannya ${formatToIDR(totalSpent)}. Biar pertemanan makin asik, yuk lunasin tagihannya ya! 😉✨\n\nCek rinciannya di gambar ini. Powered by Split Bill Web`;
+      const caption = `💸 Habis seru-seruan bareng di "${activityName || "Makan-makan"}"!\n\nTotal tagihannya ${formatToIDR(totalSpent)}. Biar pertemanan makin asik, yuk lunasin tagihannya ya! 😉✨\n\nCek rinciannya di gambar ini. Powered by splitbill.my.id`;
 
       // Try native share if available
       if (

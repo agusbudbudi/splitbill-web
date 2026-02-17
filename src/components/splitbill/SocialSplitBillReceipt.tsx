@@ -82,16 +82,16 @@ export const SocialSplitBillReceipt = React.forwardRef<
   return (
     <div
       ref={ref}
-      className="w-[1080px] bg-white p-16 min-h-[1080px] font-sans relative overflow-hidden flex flex-col items-center"
+      className="w-[1080px] bg-white pt-4 px-8 pb-8 min-h-[1080px] font-sans relative overflow-hidden flex flex-col items-center"
     >
       {/* Background Decorative Elements */}
-      <div className="absolute top-0 left-0 w-full h-[320px] bg-slate-50 z-0 rounded-b-[100px] border-b border-slate-100" />
+      <div className="absolute top-0 left-0 w-full h-[200px] bg-slate-50 z-0 rounded-b-[100px] border-b border-slate-100" />
       <div className="absolute top-20 right-[-100px] w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl z-0" />
       <div className="absolute top-[800px] left-[-200px] w-[600px] h-[600px] bg-purple-500/5 rounded-full blur-3xl z-0" />
       <div className="absolute bottom-[-100px] right-[-100px] w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl z-0" />
 
       {/* Branding */}
-      <div className="relative z-10 w-full flex justify-between items-center mb-12">
+      <div className="relative z-10 w-full flex justify-between items-center mb-8">
         <div className="flex items-center gap-5">
           <div className="w-20 h-20 bg-white rounded-2xl flex items-center justify-center border border-primary/5 p-3">
             <img
@@ -117,7 +117,7 @@ export const SocialSplitBillReceipt = React.forwardRef<
       </div>
 
       {/* Hero Section */}
-      <div className="relative z-10 w-full flex flex-col items-center text-center mt-10">
+      <div className="relative z-10 w-full flex flex-col items-center text-center mt-2">
         <div className="mb-8 relative">
           <div className="w-36 h-36 bg-white rounded-full flex items-center justify-center relative z-10 overflow-hidden border-4 border-primary/10">
             <ReceiptText className="w-16 h-16 text-primary" />

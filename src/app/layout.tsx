@@ -24,13 +24,16 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://splitbill.my.id"),
   title: "Split Bill App - Bagi Tagihan Lebih Mudah",
   description:
-    "Buat dan bagikan pembagian tagihan secara otomatis dengan Split Bill App. Praktis dan cepat!",
+    "Aplikasi Split Bill paling praktis untuk bagi tagihan, patungan, dan kelola keuangan tongkrongan secara otomatis. Cepat, akurat, dan gratis!",
   keywords: [
-    "split bill",
-    "bagi tagihan",
+    "split bill app",
+    "aplikasi bagi tagihan",
+    "patungan online",
     "invoice builder",
     "shared goals",
-    "patungan",
+    "manage money with friends",
+    "hitung patungan otomatis",
+    "splitbill indonesia",
   ],
   authors: [{ name: "SplitBill Team" }],
   openGraph: {
@@ -41,9 +44,10 @@ export const metadata: Metadata = {
     siteName: "Split Bill App",
     images: [
       {
-        url: "https://splitbill.my.id/img/pwa-banner.png",
+        url: "/img/pwa-banner.png",
         width: 1200,
         height: 630,
+        alt: "Split Bill App - Preview",
       },
     ],
     locale: "id_ID",
@@ -53,7 +57,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Split Bill App - Bagi Tagihan Lebih Mudah",
     description: "Buat dan bagikan pembagian tagihan secara otomatis.",
-    images: ["https://splitbill.my.id/img/pwa-banner.png"],
+    images: ["/img/pwa-banner.png"],
   },
   appleWebApp: {
     capable: true,
@@ -62,6 +66,9 @@ export const metadata: Metadata = {
   },
   icons: {
     apple: "/img/footer-icon.png",
+  },
+  alternates: {
+    canonical: "https://splitbill.my.id",
   },
 };
 

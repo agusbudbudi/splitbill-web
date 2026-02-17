@@ -42,6 +42,7 @@ import { InfoBanner } from "@/components/ui/InfoBanner";
 import { SegmentedControl } from "@/components/ui/SegmentedControl";
 import confetti from "canvas-confetti";
 import { suggestEmoji } from "@/lib/emojiUtils";
+import { toast } from "sonner";
 
 const SplitBillContent = () => {
   const router = useRouter();
@@ -128,6 +129,12 @@ const SplitBillContent = () => {
   };
 
   const nextStep = () => {
+    if (step === 1) {
+      if (people.length < 2) {
+        toast.error("Waduh, minimal harus ada 2 orang buat Split Bill nih! 👥");
+        return;
+      }
+    }
     if (step === 2) {
       const unassignedItems = expenses.filter(
         (e) => e.who.length === 0 || !e.paidBy,
@@ -418,21 +425,12 @@ const SplitBillContent = () => {
           {/* Solid background area for the actions */}
           <div className="bg-background px-4 pb-4 flex flex-col gap-3">
             {step === 1 && (
-              <>
-                {people.length < 2 && (
-                  <InfoBanner
-                    message="Tambahkan minimal 2 orang dulu ya untuk lanjut."
-                    variant="blue"
-                  />
-                )}
-                <Button
-                  onClick={nextStep}
-                  disabled={people.length < 2}
-                  className="w-full h-14 text-lg font-bold rounded-2xl shadow-xl shadow-primary/20 bg-primary text-white !disabled:opacity-100 disabled:bg-[#ede9fe] disabled:text-primary/40 disabled:shadow-none transition-all duration-300"
-                >
-                  Lanjutkan <ChevronRight className="ml-2 w-5 h-5" />
-                </Button>
-              </>
+              <Button
+                onClick={nextStep}
+                className="w-full h-14 text-lg font-bold rounded-2xl shadow-xl shadow-primary/20 bg-primary text-white transition-all duration-300 active:scale-95"
+              >
+                Lanjutkan <ChevronRight className="ml-2 w-5 h-5" />
+              </Button>
             )}
 
             {step === 2 && (

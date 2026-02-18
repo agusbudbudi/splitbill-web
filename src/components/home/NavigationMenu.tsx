@@ -54,7 +54,7 @@ const menuItems = [
 
 export const NavigationMenu = () => {
   return (
-    <div className="grid grid-cols-5 sm:flex sm:flex-wrap items-start justify-items-center justify-center gap-4 sm:gap-6 py-4 px-2 mb-0">
+    <div className="grid grid-cols-5 sm:flex sm:flex-wrap items-start justify-items-center justify-center gap-4 sm:gap-12 py-4 px-2 mb-0 lg:hidden">
       {menuItems.map((item) => (
         <Link
           key={item.id}

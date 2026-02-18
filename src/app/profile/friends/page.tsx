@@ -102,9 +102,13 @@ export default function FriendsPage() {
   return (
     <ProtectedRoute>
       <div className="min-h-screen bg-background flex flex-col items-center">
-        <Header title="Teman Saya" showBackButton />
+        <Header 
+          title="Teman Saya" 
+          showBackButton 
+        />
 
-        <main className="w-full max-w-[480px] p-4 space-y-4 pb-24">
+        <main className="w-full max-w-[600px] p-4 flex-1 flex flex-col relative">
+          <div className="space-y-4 pb-4">
           {/* Tab Switcher - Using Reusable SegmentedControl */}
           <SegmentedControl
             options={tabs}
@@ -187,14 +191,16 @@ export default function FriendsPage() {
             )}
           </div>
 
-          {/* FAB - Floating Action Button for Add */}
-          <div className="fixed bottom-12 left-1/2 -translate-x-1/2 w-full max-w-[480px] px-6 pointer-events-none z-40 flex justify-end">
+
+          {/* FAB - Floating Action Button for Add - Changed to sticky to align with content */}
+          <div className="sticky bottom-6 mt-auto w-full pointer-events-none z-40 flex justify-end pr-2 pb-6">
             <Button 
-              className="w-14 h-14 rounded-full shadow-lg bg-primary hover:bg-primary/90 flex items-center justify-center p-0 pointer-events-auto active:scale-95 transition-transform"
+              className="w-14 h-14 rounded-full shadow-xl bg-primary hover:bg-primary/90 flex items-center justify-center p-0 pointer-events-auto active:scale-95 transition-transform border-4 border-white"
               onClick={handleAddClick}
             >
               <Plus className="w-6 h-6 text-white" />
             </Button>
+          </div>
           </div>
 
           {/* Forms */}

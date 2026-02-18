@@ -120,7 +120,7 @@ export default function FAQPage() {
         onBack={() => window.history.back()}
       />
 
-      <main className="w-full max-w-[480px] px-4 pt-10 pb-20 space-y-8 relative z-10">
+      <main className="w-full max-w-[600px] px-4 pt-10 pb-20 space-y-8 relative z-10">
         {/* Search Header */}
         <div className="space-y-2 text-center">
           <h1 className="text-lg font-bold tracking-tight text-foreground">

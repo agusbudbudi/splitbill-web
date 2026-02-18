@@ -205,7 +205,7 @@ export default function InvoicePage() {
         </div>
       </Header>
 
-      <main className="w-full max-w-[480px] px-4 pt-10 pb-48 space-y-6 relative z-10">
+      <main className="flex-1 w-full max-w-[600px] px-4 pt-10 pb-10 space-y-6 relative z-10 flex flex-col">
         <div className="text-center space-y-2 animate-in fade-in slide-in-from-right-4 duration-500">
           <h2 className="text-2xl font-bold">{getStepTitle()}</h2>
           <p className="text-muted-foreground text-sm">{getStepSubtitle()}</p>
@@ -218,8 +218,8 @@ export default function InvoicePage() {
 
       {/* Sticky CTA Footer - Show for all steps less than 6 OR (step 6 IF not finalized) */}
       {(currentStep < 6 || (currentStep === 6 && !isFinalized)) && (
-        <div className="fixed bottom-0 left-0 right-0 z-50 pointer-events-none flex justify-center">
-          <div className="w-full max-w-[480px] relative pointer-events-auto flex flex-col">
+        <div className="sticky bottom-0 w-full z-50 pointer-events-none flex justify-center mt-auto">
+          <div className="w-full max-w-[600px] relative pointer-events-auto flex flex-col">
             <div className="bg-background px-4 pb-4 flex flex-col gap-3">
               {!canProceed() && getValidationMessage() && (
                 <InfoBanner message={getValidationMessage()!} variant="blue" />

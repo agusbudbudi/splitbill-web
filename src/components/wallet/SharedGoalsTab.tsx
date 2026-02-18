@@ -28,7 +28,7 @@ export const SharedGoalsTab = ({
   const { goals } = useSharedGoalsStore();
 
   return (
-    <div className="space-y-4 pb-24">
+    <div className="space-y-4">
       {goals.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-12 px-4 text-center border-2 border-dashed border-muted/40 rounded-2xl bg-muted/5">
           <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4 text-primary">

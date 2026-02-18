@@ -61,7 +61,7 @@ export const ContributionInputBottomSheet = ({
 
       <div
         className={cn(
-          "absolute bottom-0 w-full max-w-[480px] bg-white rounded-t-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] z-[110]",
+          "absolute bottom-0 w-full max-w-[600px] bg-white rounded-t-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] z-[110]",
           "animate-in slide-in-from-bottom-full duration-300 ease-out",
         )}
       >

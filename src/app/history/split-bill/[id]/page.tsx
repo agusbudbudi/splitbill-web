@@ -46,14 +46,14 @@ export default function SplitBillDetailPage() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center relative">
-      <div className="w-full max-w-[480px] min-h-screen flex flex-col relative bg-background">
+      <div className="w-full max-w-[600px] min-h-screen flex flex-col relative bg-background">
         <Header
           title="Detail Split Bill"
           showBackButton
           onBack={() => router.push("/history?tab=split-bill")}
         />
 
-        <main className="flex-1 p-4 pb-32 space-y-6">
+        <main className="flex-1 p-4 pb-10 space-y-6">
           <div
             onClick={() => router.push("/split-bill")}
             className="relative rounded-2xl p-5 text-white active:scale-[0.98] transition-all group cursor-pointer bg-brand-reversed"

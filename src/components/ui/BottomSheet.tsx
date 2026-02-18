@@ -51,7 +51,7 @@ export const BottomSheet = ({
       {/* Sheet Content */}
       <div
         className={cn(
-          "absolute bottom-0 w-full max-w-[480px] bg-white rounded-t-3xl shadow-2xl overflow-hidden flex flex-col transition-all",
+          "absolute bottom-0 w-full max-w-[600px] bg-white rounded-t-3xl shadow-2xl overflow-hidden flex flex-col transition-all",
           "animate-in slide-in-from-bottom-full duration-300 ease-out"
         )}
         style={{ maxHeight }}

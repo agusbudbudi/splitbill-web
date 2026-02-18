@@ -34,11 +34,11 @@ export const ReviewBanner: React.FC<ReviewBannerProps> = ({ onClose }) => {
       initial={{ y: 100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       exit={{ y: 100, opacity: 0 }}
-      className="fixed bottom-20 left-4 right-4 z-50 max-w-[448px] mx-auto"
+      className="sticky bottom-20 z-[45] w-full px-4 pointer-events-none"
     >
       <div
         onClick={() => router.push("/review")}
-        className="bg-primary text-primary-foreground rounded-2xl p-4 shadow-xl flex items-center justify-between cursor-pointer relative overflow-hidden group"
+        className="bg-primary text-primary-foreground rounded-2xl p-4 shadow-xl flex items-center justify-between cursor-pointer relative overflow-hidden group max-w-[600px] mx-auto pointer-events-auto"
       >
         {/* Background elements for visual interest */}
         <div className="absolute top-0 right-0 p-8 bg-white/10 rounded-full -mr-4 -mt-4 blur-xl"></div>

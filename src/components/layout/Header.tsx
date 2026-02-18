@@ -48,12 +48,23 @@ export const Header = ({
     if (!transparent) return;
 
     const handleScroll = () => {
-      // Change background immediately when user starts scrolling
-      setScrolled(window.scrollY > 0);
+      // Check both window scroll and container scroll for broader compatibility
+      const container = document.getElementById("main-scroll-container");
+      const scrollPos = container ? container.scrollTop : window.scrollY;
+      setScrolled(scrollPos > 10);
     };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    const container = document.getElementById("main-scroll-container");
+    const scrollTarget = container || window;
+
+    scrollTarget.addEventListener("scroll", handleScroll);
+    // Also listen to window just in case
+    if (container) window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      scrollTarget.removeEventListener("scroll", handleScroll);
+      if (container) window.removeEventListener("scroll", handleScroll);
+    };
   }, [transparent]);
 
   return (
@@ -65,7 +76,7 @@ export const Header = ({
     >
       <div
         className={cn(
-          "w-full max-w-[480px] text-white pointer-events-auto transition-colors duration-300",
+          "w-full max-w-[600px] text-white pointer-events-auto transition-colors duration-300",
           transparent
             ? scrolled
               ? "bg-primary"

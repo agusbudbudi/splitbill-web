@@ -504,7 +504,7 @@ export const BillSummary = ({
         </div>
       </Card>
 
-      <div className="space-y-3 mt-4">
+      <div className="space-y-3 mt-4 mb-0">
         <button
           onClick={handleShareSocial}
           disabled={isSharing}

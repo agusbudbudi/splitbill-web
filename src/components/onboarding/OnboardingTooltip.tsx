@@ -73,7 +73,7 @@ export const OnboardingTooltip = ({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
             className={cn(
-              "absolute z-50 px-3 py-2 bg-white rounded-xl shadow-xl border border-primary/10 min-w-[180px] max-w-[240px]",
+              "absolute z-50 px-4 py-4 bg-white rounded-md shadow-md border border-primary/10 min-w-[180px] max-w-[240px]",
               positionStyles[position]
             )}
           >

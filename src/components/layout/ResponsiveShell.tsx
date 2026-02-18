@@ -16,7 +16,7 @@ export const ResponsiveShell = ({ children }: ResponsiveShellProps) => {
 
   return (
     <div 
-      className="flex h-screen w-full bg-background overflow-hidden"
+      className="flex h-dvh w-full bg-background overflow-hidden"
       suppressHydrationWarning
     >
       <Sidebar />

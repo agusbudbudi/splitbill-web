@@ -48,7 +48,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center relative">
+    <div className="min-h-dvh bg-background flex flex-col items-center relative">
       {/* Search Engine Optimization */}
       <h1 className="sr-only">
         Split Bill Online - Aplikasi Bagi Tagihan Gratis dengan Scan Struk

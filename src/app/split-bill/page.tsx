@@ -212,6 +212,12 @@ const SplitBillContent = () => {
         return;
       }
     }
+    if (step === 3) {
+      toast.success("Split Bill Berhasil Dihitung! 💸✨", {
+        description: "Yuk cek rincian pembayarannya.",
+        duration: 3000,
+      });
+    }
     setValidationError(null);
     router.push(`/split-bill?step=${step + 1}`);
   };

@@ -62,7 +62,7 @@ export default function Home() {
             name: "SplitBill Online",
             url: "https://splitbill.my.id",
             description:
-              "Split bill online gratis! Scan struk, hitung pajak otomatis, dan bagi tagihan praktis bareng teman. Aplikasi patungan terbaik yang 100% free, cepat & akurat.",
+              "Split bill online gratis sat set! Scan struk otomatis, hitung pajak, dan bagi tagihan no drama bareng teman. Aplikasi patungan terbaik yang 100% free, praktis & akurat.",
             applicationCategory: "FinanceApplication",
             operatingSystem: "Web",
             offers: {

@@ -16,6 +16,7 @@ import { LoadingModal } from "@/components/ui/LoadingModal";
 import { useAuthStore } from "@/lib/stores/authStore"; // Import auth store
 import { useRouter } from "next/navigation"; // Import useRouter
 import Image from "next/image";
+import { toast } from "sonner";
 // Removed unused FeatureBanner import
 
 import { AIScanQuotaBanner } from "@/components/ui/AIScanQuotaBanner";
@@ -66,6 +67,12 @@ export const AIScanForm = () => {
     try {
       const result = await scanReceipt(image);
       setScanResult(result);
+
+      // Show success toast
+      toast.success("Scan Berhasil! ✨", {
+        description: "Data belanja kamu sudah terbaca otomatis.",
+        duration: 2000,
+      });
 
       // Refresh user data to update remaining scan quota
       await getCurrentUser();
@@ -120,6 +127,12 @@ export const AIScanForm = () => {
     // Reset
     setImage(null);
     setScanResult(null);
+
+    // Show success toast
+    toast.success("Berhasil import struk! 🧾✨", {
+      description: "Data belanja kamu sudah masuk ke daftar.",
+      duration: 3000,
+    });
   };
 
   const formatCurrency = (amt: number) => {

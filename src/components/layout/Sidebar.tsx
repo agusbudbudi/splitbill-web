@@ -13,7 +13,8 @@ import {
   Users,
   Heart,
   Star,
-  Share2
+  Share2,
+  User
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -94,8 +95,8 @@ export const Sidebar = () => {
     { label: "Home", href: "/", icon: Home },
     { label: "Teman Saya", href: "/profile/friends", icon: Users },
     { label: "Donasi", href: "/donate", icon: Heart },
-    { label: "Review", href: "/review", icon: Star },
     { label: "History", href: "/history", icon: History },
+    { label: "Profile", href: "/profile", icon: User },
   ];
 
   return (
@@ -127,10 +128,10 @@ export const Sidebar = () => {
                 <h2 className="text-4xl font-black tracking-tighter leading-none bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary to-indigo-500">
                   Split Bill Online
                 </h2>
-                <div className="flex items-start gap-2 max-w-[320px]">
+                <div className="flex items-start gap-2 max-w-[400px]">
                   <Sparkles className="w-4 h-4 text-primary shrink-0 mt-0.5" />
                   <p className="text-sm text-foreground/70 font-medium leading-relaxed">
-                    Hitung patungan & bagi tagihan jadi <span className="text-primary font-bold">lebih gampang</span>, <span className="text-primary font-bold">cepat</span>, dan <span className="text-primary font-bold">akurat</span>. ✨
+                    Bagi tagihan <span className="text-primary font-bold">sat set</span>, hitung patungan <span className="text-primary font-bold">anti ribet</span> & <span className="text-primary font-bold">akurat</span>. Link pembayaran langsung spill! 💸✨
                   </p>
                 </div>
               </div>

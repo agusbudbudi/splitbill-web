@@ -34,7 +34,7 @@ export const ReviewBanner: React.FC<ReviewBannerProps> = ({ onClose }) => {
       initial={{ y: 100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       exit={{ y: 100, opacity: 0 }}
-      className="sticky bottom-20 z-[45] w-full px-4 pointer-events-none"
+      className="sticky bottom-6 z-[45] w-full px-4 pointer-events-none"
     >
       <div
         onClick={() => router.push("/review")}

@@ -74,6 +74,8 @@ export const metadata: Metadata = {
   },
 };
 
+import { ResponsiveShell } from "@/components/layout/ResponsiveShell";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -107,8 +109,10 @@ export default function RootLayout({
         suppressHydrationWarning={true}
       >
         <ThemeProvider>
-          <PWAInstallBanner />
-          {children}
+          <ResponsiveShell>
+            <PWAInstallBanner />
+            {children}
+          </ResponsiveShell>
         </ThemeProvider>
         <Toaster
           richColors

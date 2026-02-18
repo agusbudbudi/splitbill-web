@@ -9,6 +9,7 @@ interface TabOption {
   label: string;
   icon?: LucideIcon;
   badge?: string;
+  rightContent?: React.ReactNode;
 }
 
 interface SegmentedControlProps {
@@ -55,6 +56,11 @@ export const SegmentedControl = ({
             />
           )}
           <span>{option.label}</span>
+          {option.rightContent && (
+            <div className="flex items-center">
+              {option.rightContent}
+            </div>
+          )}
           {option.badge && (
             <span className="bg-primary text-white text-[10px] px-1.5 py-[3px] rounded-full shadow-sm leading-none font-black animate-in zoom-in duration-300">
               {option.badge}

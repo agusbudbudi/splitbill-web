@@ -13,7 +13,7 @@ const AVATAR_BASE_URL =
 
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
-import { OnboardingTooltip } from "@/components/onboarding/OnboardingTooltip";
+import { InfoTooltip } from "@/components/ui/InfoTooltip";
 
 export const PeopleList = () => {
   const { people, addPerson, removePerson } = useSplitBillStore();
@@ -104,16 +104,16 @@ export const PeopleList = () => {
             {groupsWithMembers.length > 0 && (
               <div className="space-y-3 mb-0">
                 <div className="flex items-center gap-2 px-1">
-                  <OnboardingTooltip
-                    id="hint-saved-groups"
+                  <label className="text-sm font-bold text-foreground">
+                    Circle Gua 🤝
+                  </label>
+                  <InfoTooltip
                     content="Simpan temen tongkrongan kamu di Grup biar nggak repot nambahin satu-satu tiap kali Split Bill! 🤝"
                     position="top"
-                    delay={2000}
+                    asChild
                   >
-                    <label className="text-sm font-bold text-foreground">
-                      Circle Gua 🤝
-                    </label>
-                  </OnboardingTooltip>
+                    <Info className="w-3.5 h-3.5 text-primary/50 cursor-pointer" />
+                  </InfoTooltip>
                   <span className="text-[9px] font-black bg-primary/10 text-primary px-2 py-0.5 rounded-full">
 
                     {groupsWithMembers.length} Grup
@@ -303,7 +303,7 @@ export const PeopleList = () => {
               </span>
             </div>
             {people.length > 0 ? (
-              <div className="grid grid-cols-5 sm:grid-cols-6 gap-y-6 gap-x-2 animate-in fade-in slide-in-from-bottom-2">
+              <div className="grid grid-cols-5 sm:grid-cols-8 gap-y-6 gap-x-2 animate-in fade-in slide-in-from-bottom-2">
                 {people.map((name) => (
                   <div
                     key={name}

@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useSplitBillStore } from "@/store/useSplitBillStore";
 import { Card, CardContent } from "@/components/ui/Card";
 import { formatToIDR, cn } from "@/lib/utils";
@@ -12,6 +13,8 @@ import {
   Users,
   Copy,
   Check,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import { SplitBadge } from "./SplitBadge";
 import {
@@ -70,6 +73,16 @@ export const BillSummary = ({
   const selectedMethods = paymentMethods.filter((m) =>
     selectedPaymentMethodIds.includes(m.id),
   );
+  
+  // Manage expanded state per person for details
+  const [expandedPeople, setExpandedPeople] = React.useState<Record<string, boolean>>({});
+
+  const togglePerson = (name: string) => {
+    setExpandedPeople(prev => ({
+      ...prev,
+      [name]: !prev[name]
+    }));
+  };
 
   const [isSharing, setIsSharing] = React.useState(false);
   const socialReceiptRef = React.useRef<HTMLDivElement>(null);
@@ -318,7 +331,10 @@ export const BillSummary = ({
                       className="overflow-hidden rounded-lg border border-primary/10 bg-muted/5 transition-all hover:border-primary/20"
                     >
                       {/* Person Header */}
-                      <div className="bg-primary/5 px-3 py-2.5 flex items-center justify-between border-b border-primary/10">
+                      <div 
+                        onClick={() => togglePerson(name)}
+                        className="bg-primary/5 px-3 py-2.5 flex items-center justify-between border-b border-primary/10 cursor-pointer hover:bg-primary/10 transition-colors"
+                      >
                         <div className="flex items-center gap-2.5">
                           <div className="w-7 h-7 rounded-full border border-primary/10 overflow-hidden bg-white">
                             <img
@@ -327,7 +343,7 @@ export const BillSummary = ({
                               className="w-full h-full"
                             />
                           </div>
-                          <h4 className="font-bold text-sm tracking-tight">
+                          <h4 className="font-bold text-sm tracking-tight text-foreground">
                             {name}
                           </h4>
                           {badges[name]?.map((badge: string) => (
@@ -343,31 +359,42 @@ export const BillSummary = ({
                             </span>
                           ))}
                         </div>
-                        <div className="text-right">
-                          <div
-                            className={cn(
-                              "text-[9px] font-black uppercase tracking-tighter px-1.5 py-0.5 rounded-full inline-block",
-                              diff === 0
-                                ? "bg-muted text-muted-foreground"
-                                : isOwed
-                                  ? "bg-emerald-500/10 text-emerald-600"
-                                  : "bg-destructive/10 text-destructive",
-                            )}
-                          >
-                            {diff === 0 ? "Lunas" : isOwed ? "Terima" : "Bayar"}
+                        <div className="flex items-center gap-3">
+                          <div className="text-right">
+                            <div
+                              className={cn(
+                                "text-[9px] font-black uppercase tracking-tighter px-1.5 py-0.5 rounded-full inline-block",
+                                diff === 0
+                                  ? "bg-muted text-muted-foreground"
+                                  : isOwed
+                                    ? "bg-emerald-500/10 text-emerald-600"
+                                    : "bg-destructive/10 text-destructive",
+                              )}
+                            >
+                              {diff === 0 ? "Lunas" : isOwed ? "Terima" : "Bayar"}
+                            </div>
+                            <p
+                              className={cn(
+                                "text-xs font-black mt-0.5",
+                                diff === 0
+                                  ? "text-muted-foreground"
+                                  : isOwed
+                                    ? "text-emerald-600"
+                                    : "text-destructive",
+                              )}
+                            >
+                              {formatToIDR(Math.abs(diff))}
+                            </p>
                           </div>
-                          <p
-                            className={cn(
-                              "text-xs font-black mt-0.5",
-                              diff === 0
-                                ? "text-muted-foreground"
-                                : isOwed
-                                  ? "text-emerald-600"
-                                  : "text-destructive",
-                            )}
-                          >
-                            {formatToIDR(Math.abs(diff))}
-                          </p>
+                          {b.items.length > 0 && (
+                            <div className="text-muted-foreground">
+                              {expandedPeople[name] ? (
+                                <ChevronUp className="w-4 h-4" />
+                              ) : (
+                                <ChevronDown className="w-4 h-4" />
+                              )}
+                            </div>
+                          )}
                         </div>
                       </div>
 
@@ -392,40 +419,50 @@ export const BillSummary = ({
                       </div>
 
                       {/* Items List */}
-                      {b.items.length > 0 && (
-                        <div className="px-3 py-2 space-y-1.5 bg-white/20">
-                          {b.items.map((item: BillItem, idx: number) => (
-                            <div
-                              key={idx}
-                              className="flex justify-between items-start text-[11px]"
-                            >
-                              <div className="flex items-center gap-1.5 flex-wrap flex-1 min-w-0 pr-4">
-                                <span className="text-muted-foreground font-medium truncate">
-                                  {item.name}
-                                </span>
-                                {item.share < 0 && (
-                                  <span className="text-[8px] font-black uppercase px-1 rounded bg-destructive/10 text-destructive">
-                                    Disc
+                      <AnimatePresence>
+                        {b.items.length > 0 && expandedPeople[name] && (
+                          <motion.div 
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.3, ease: "easeInOut" }}
+                            className="overflow-hidden bg-white/20"
+                          >
+                            <div className="px-3 py-2 space-y-1.5">
+                              {b.items.map((item: BillItem, idx: number) => (
+                                <div
+                                  key={idx}
+                                  className="flex justify-between items-start text-[11px]"
+                                >
+                                  <div className="flex items-center gap-1.5 flex-wrap flex-1 min-w-0 pr-4">
+                                    <span className="text-muted-foreground font-medium truncate">
+                                      {item.name}
+                                    </span>
+                                    {item.share < 0 && (
+                                      <span className="text-[8px] font-black uppercase px-1 rounded bg-destructive/10 text-destructive">
+                                        Disc
+                                      </span>
+                                    )}
+                                    {item.isAdditional && (
+                                      <SplitBadge
+                                        type={
+                                          item.method === "prop"
+                                            ? "proportionally"
+                                            : "equally"
+                                        }
+                                        className="text-[8px] scale-90 origin-left"
+                                      />
+                                    )}
+                                  </div>
+                                  <span className="font-bold text-foreground/80 shrink-0">
+                                    {formatToIDR(item.share)}
                                   </span>
-                                )}
-                                {item.isAdditional && (
-                                  <SplitBadge
-                                    type={
-                                      item.method === "prop"
-                                        ? "proportionally"
-                                        : "equally"
-                                    }
-                                    className="text-[8px] scale-90 origin-left"
-                                  />
-                                )}
-                              </div>
-                              <span className="font-bold text-foreground/80 shrink-0">
-                                {formatToIDR(item.share)}
-                              </span>
+                                </div>
+                              ))}
                             </div>
-                          ))}
-                        </div>
-                      )}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </div>
                   );
                 })}
@@ -504,7 +541,7 @@ export const BillSummary = ({
         </div>
       </Card>
 
-      <div className="space-y-3 mt-4">
+      <div className="space-y-3 mt-4 mb-0">
         <button
           onClick={handleShareSocial}
           disabled={isSharing}

@@ -171,7 +171,7 @@ export default function ProfilePage() {
       <div className="min-h-screen bg-background flex flex-col items-center">
         <Header title="Profil & Pengaturan" showBackButton />
 
-        <main className="w-full max-w-[480px] pb-16">
+        <main className="w-full max-w-[600px] pb-10">
           {/* Banner Section */}
           <div className="w-full px-4 pt-4">
             <div className="relative aspect-[360/113] w-full overflow-hidden rounded-lg">

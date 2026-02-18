@@ -33,7 +33,7 @@ export const CollectionMoreBottomSheet = ({
       {/* Sheet Content */}
       <div
         className={cn(
-          "absolute bottom-0 w-full max-w-[480px] bg-white rounded-t-[32px] shadow-2xl overflow-hidden flex flex-col pb-10",
+          "absolute bottom-0 w-full max-w-[600px] bg-white rounded-t-[32px] shadow-2xl overflow-hidden flex flex-col pb-10",
           "animate-in slide-in-from-bottom-full duration-300 ease-out",
         )}
       >

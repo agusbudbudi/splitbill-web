@@ -62,14 +62,14 @@ export default function InvoiceDetailPage() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center relative">
-      <div className="w-full max-w-[480px] min-h-screen flex flex-col relative bg-background">
+      <div className="w-full max-w-[600px] min-h-screen flex flex-col relative bg-background">
         <Header
           title="Detail Invoice"
           showBackButton
           onBack={() => router.push("/history?tab=invoice")}
         />
 
-        <main className="flex-1 p-4 pb-32 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <main className="flex-1 p-4 pb-10 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
           {/* Main Info Card */}
           <Card className="border-none shadow-soft overflow-hidden rounded-3xl">
             <CardContent className="p-0">

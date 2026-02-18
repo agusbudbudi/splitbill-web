@@ -44,7 +44,7 @@ export const Footer = () => {
   ];
 
   return (
-    <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] bg-background/60 backdrop-blur-xl border-t border-primary/5 py-3 px-6 flex justify-around shadow-[0_-10px_30px_rgba(0,0,0,0.04)] z-40 pb-safe">
+    <div className="sticky bottom-0 w-full max-w-[600px] mx-auto bg-background/60 backdrop-blur-xl border-t border-primary/5 py-3 px-6 flex justify-around shadow-[0_-10px_30px_rgba(0,0,0,0.04)] z-40 pb-safe mt-auto lg:hidden">
       {menuItems.map((item) => {
         const active = isActive(item.path);
         const Icon = item.icon;

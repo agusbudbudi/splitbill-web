@@ -71,7 +71,7 @@ export const PWAInstallBanner = () => {
       animate={{ y: 0, opacity: 1 }}
       exit={{ y: -100, opacity: 0 }}
       transition={{ type: "spring", damping: 25, stiffness: 200 }}
-      className="sticky top-0 w-full max-w-[480px] mx-auto bg-gradient-brand border-b border-white/10 overflow-hidden shadow-lg z-[60]"
+      className="sticky top-0 w-full max-w-[600px] mx-auto bg-gradient-brand border-b border-white/10 overflow-hidden shadow-lg z-[60]"
     >
       <div className="w-full px-4 py-2.5 flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">

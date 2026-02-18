@@ -24,7 +24,6 @@ import {
   Pencil,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { createPortal } from "react-dom";
 import { toast } from "sonner";
 import { ShareGoalReceipt } from "@/components/goals/ShareGoalReceipt";
 import * as htmlToImage from "html-to-image";
@@ -34,6 +33,7 @@ import { Card, CardContent } from "@/components/ui/Card";
 import { EmptyState } from "@/components/ui/EmptyState";
 
 import { Header } from "@/components/layout/Header";
+import { Container } from "@/components/layout/Container";
 
 const AVATAR_BASE_URL =
   "https://api.dicebear.com/9.x/personas/svg?backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf&size=64&scale=100&seed=";
@@ -323,48 +323,46 @@ export const GoalDetailView = ({
     }
   };
 
-  return createPortal(
-    <div className="fixed inset-0 z-[100] flex justify-center pointer-events-auto bg-background overflow-y-auto scrollbar-hide">
+  return (
+    <>
       {/* Hidden Sharing Canvas */}
       <div className="fixed -left-[2000px] top-0 pointer-events-none">
         <ShareGoalReceipt ref={receiptRef} goal={goal} progress={progress} />
       </div>
-      <div className="w-full max-w-[480px] min-h-full flex flex-col relative bg-background">
-        {/* Primary Header Background */}
-        <div className="absolute top-0 left-0 w-full h-[250px] bg-primary z-0 rounded-b-[20px]" />
 
-        {/* Content Container */}
-        <div className="relative z-10 flex-1 flex flex-col pb-32">
-          {/* Sticky Header */}
-          <Header
-            title="Detail Goal"
-            showBackButton={true}
-            alignTitle="left"
-            onBack={onClose}
-            rightContent={
-              <div className="flex items-center gap-1">
-                <button
-                  onClick={handleShare}
-                  disabled={isSharing}
-                  className="text-white/80 hover:text-white hover:bg-white/10 p-2 rounded-full transition-colors disabled:opacity-50 cursor-pointer"
-                  title="Bagikan Progress"
-                >
-                  <Share2
-                    className={cn("w-5 h-5", isSharing && "animate-pulse")}
-                  />
-                </button>
-                <button
-                  onClick={() => setShowDeleteConfirm(true)}
-                  className="text-white/80 hover:text-white hover:bg-white/10 p-2 rounded-full transition-colors cursor-pointer"
-                >
-                  <Trash2 className="w-5 h-5" />
-                </button>
-              </div>
-            }
-          />
+      {/* Content Container */}
+      <div className="relative z-10 flex-1 flex flex-col pb-10">
+        {/* Sticky Header */}
+        <Header
+          title="Detail Goal"
+          showBackButton={true}
+          alignTitle="left"
+          transparent
+          onBack={onClose}
+          // className="px-4"
+          rightContent={
+            <div className="flex items-center gap-1">
+              <button
+                onClick={handleShare}
+                disabled={isSharing}
+                className="text-white/80 hover:text-white hover:bg-white/10 p-2 rounded-full transition-colors disabled:opacity-50 cursor-pointer"
+                title="Bagikan Progress"
+              >
+                <Share2
+                  className={cn("w-5 h-5", isSharing && "animate-pulse")}
+                />
+              </button>
+              <button
+                onClick={() => setShowDeleteConfirm(true)}
+                className="text-white/80 hover:text-white hover:bg-white/10 p-2 rounded-full transition-colors cursor-pointer"
+              >
+                <Trash2 className="w-5 h-5" />
+              </button>
+            </div>
+          }
+        />
 
-          {/* Scrollable Content Area */}
-          <div className="px-4">
+        <div className="px-4">
             {/* Hero Card - Overlapping */}
             <div className="mt-4 text-center text-white mb-4">
               <div className="flex items-center justify-center gap-2 mb-2">
@@ -867,19 +865,19 @@ export const GoalDetailView = ({
           </div>
         </div>
 
-        {/* Sticky CTA Footer - Matched with Split Bill Page logic */}
-        <div className="fixed bottom-0 left-0 right-0 z-[110] pointer-events-none flex justify-center">
-          <div className="w-full max-w-[480px] relative pointer-events-auto flex flex-col">
-            <div className="bg-background px-4 pb-10 pt-2 flex flex-col gap-3 border-t border-muted/20 shadow-[-0_-10px_30px_rgba(0,0,0,0.02)]">
-              <Button
-                onClick={() => setIsContributionSheetOpen(true)}
-                className="w-full h-14 text-lg font-bold rounded-2xl shadow-xl shadow-primary/20 bg-primary text-white active:scale-95 transition-all cursor-pointer"
-              >
-                <Plus className="w-5 h-5 mr-2" /> Tambah Tabungan
-              </Button>
-            </div>
+      {/* Sticky CTA Footer - Matched with Split Bill Page logic */}
+      <div className="sticky bottom-0 w-full z-[110] pointer-events-none flex justify-center mt-auto">
+        <div className="w-full relative pointer-events-auto flex flex-col px-0">
+          <div className="bg-background px-4 pb-4 pt-2 flex flex-col gap-3 border-t border-muted/20 shadow-[-0_-10px_30px_rgba(0,0,0,0.02)]">
+            <Button
+              onClick={() => setIsContributionSheetOpen(true)}
+              className="w-full h-14 text-lg font-bold rounded-2xl shadow-xl shadow-primary/20 bg-primary text-white active:scale-95 transition-all cursor-pointer"
+            >
+              <Plus className="w-5 h-5 mr-2" /> Tambah Tabungan
+            </Button>
           </div>
         </div>
+      </div>
 
         {/* Modals */}
         <ContributionInputBottomSheet
@@ -888,19 +886,17 @@ export const GoalDetailView = ({
           goal={goal}
         />
 
-        <ConfirmationModal
-          isOpen={showDeleteConfirm}
-          onClose={() => setShowDeleteConfirm(false)}
-          onConfirm={handleDelete}
-          title="Hapus Goal?"
-          description="Data tabungan akan hilang permanen. Yakin mau hapus?"
-          icon={Trash2}
-          confirmText="Ya, Hapus"
-          cancelText="Batal"
-          confirmButtonClassName="bg-red-600 text-white shadow-red-200"
-        />
-      </div>
-    </div>,
-    document.body,
+      <ConfirmationModal
+        isOpen={showDeleteConfirm}
+        onClose={() => setShowDeleteConfirm(false)}
+        onConfirm={handleDelete}
+        title="Hapus Goal?"
+        description="Data tabungan akan hilang permanen. Yakin mau hapus?"
+        icon={Trash2}
+        confirmText="Ya, Hapus"
+        cancelText="Batal"
+        confirmButtonClassName="bg-red-600 text-white shadow-red-200"
+      />
+    </>
   );
 };

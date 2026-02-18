@@ -80,7 +80,7 @@ export function ReviewForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="flex-1 flex flex-col space-y-6">
       {isInCooldown && (
         <div className="mb-4">
           <InfoBanner
@@ -212,13 +212,13 @@ export function ReviewForm() {
       </Card>
 
       {/* Sticky CTA Footer */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 pointer-events-none flex justify-center">
-        <div className="w-full max-w-[480px] relative pointer-events-auto flex flex-col">
+      <div className="sticky bottom-0 w-full z-50 pointer-events-none flex justify-center mt-auto">
+        <div className="w-full max-w-[600px] relative pointer-events-auto flex flex-col">
           {/* Solid background area for the actions */}
           <div className="bg-background px-4 pb-4 flex flex-col gap-3">
             <Button
               type="submit"
-              className="w-full h-14 rounded-2xl text-lg font-bold shadow-xl shadow-primary/20 bg-primary text-white"
+              className="w-full h-14 rounded-2xl text-lg font-bold shadow-xl shadow-primary/20 bg-primary text-white transition-all active:scale-95"
               disabled={isSubmitting || isInCooldown}
               loading={isSubmitting}
             >

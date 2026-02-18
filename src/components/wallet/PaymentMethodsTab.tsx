@@ -22,7 +22,7 @@ export const PaymentMethodsTab = () => {
   const ewalletMethods = paymentMethods.filter((m) => m.type === "ewallet");
 
   return (
-    <div className="space-y-6 pb-20">
+    <div className="flex-1 flex flex-col space-y-6 pb-4">
       {/* Empty State / Intro */}
       {paymentMethods.length === 0 && (
         <div className="flex flex-col items-center justify-center py-6 px-6 animate-in fade-in zoom-in duration-500 rounded-2xl bg-gradient-to-br from-white to-primary/5">
@@ -183,12 +183,13 @@ export const PaymentMethodsTab = () => {
         </div>
       </div>
 
-      {/* Floating Action Button for Add (if list not empty) */}
+
+      {/* Floating Action Button for Add (if list not empty) - Changed to sticky to align with content */}
       {paymentMethods.length > 0 && (
-        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 w-full max-w-[480px] px-6 pointer-events-none z-40 flex justify-end">
+        <div className="sticky bottom-12 mt-auto w-full pointer-events-none z-40 flex justify-end pr-2 pb-6">
           <Button
             onClick={() => setIsAddOpen(true)}
-            className="w-14 h-14 rounded-full shadow-lg bg-primary hover:bg-primary/90 flex items-center justify-center p-0 pointer-events-auto active:scale-95 transition-transform"
+            className="w-14 h-14 rounded-full shadow-xl bg-primary hover:bg-primary/90 flex items-center justify-center p-0 pointer-events-auto active:scale-95 transition-transform border-4 border-white"
           >
             <Plus className="w-6 h-6 text-white" />
           </Button>

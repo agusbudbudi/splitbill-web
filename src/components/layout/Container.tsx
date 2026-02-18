@@ -12,7 +12,7 @@ export const Container = ({
 }: ContainerProps) => {
   return (
     <div
-      className={cn("w-full max-w-[480px] px-4 mx-auto", className)}
+      className={cn("w-full max-w-[600px] px-4 mx-auto", className)}
       {...props}
     >
       {children}

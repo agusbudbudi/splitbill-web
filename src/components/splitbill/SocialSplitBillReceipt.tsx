@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import Image from "next/image";
 import { formatToIDR } from "@/lib/utils";
 import {
   Users,
@@ -94,12 +93,12 @@ export const SocialSplitBillReceipt = React.forwardRef<
       {/* Branding */}
       <div className="relative z-10 w-full flex justify-between items-center mb-8">
         <div className="flex items-center gap-5">
-          <div className="w-20 h-20 bg-white rounded-2xl flex items-center justify-center border border-primary/5 p-3 relative overflow-hidden">
-            <Image
+          <div className="w-20 h-20 bg-white rounded-2xl flex items-center justify-center border border-primary/5 relative overflow-hidden">
+            <img
               src="/img/footer-icon.png"
               alt="SplitBill Logo"
-              fill
-              className="object-contain p-3"
+              crossOrigin="anonymous"
+              className="w-full h-full object-contain p-2"
             />
           </div>
           <div>
@@ -361,6 +360,7 @@ export const SocialSplitBillReceipt = React.forwardRef<
                           <img
                             src={`${AVATAR_BASE_URL}${encodeURIComponent(inst.from)}`}
                             alt={inst.from}
+                            crossOrigin="anonymous"
                             className="w-full h-full object-cover"
                           />
                         </div>
@@ -371,6 +371,7 @@ export const SocialSplitBillReceipt = React.forwardRef<
                           <img
                             src={`${AVATAR_BASE_URL}${encodeURIComponent(inst.to)}`}
                             alt={inst.to}
+                            crossOrigin="anonymous"
                             className="w-full h-full object-cover"
                           />
                         </div>
@@ -423,7 +424,7 @@ export const SocialSplitBillReceipt = React.forwardRef<
                     key={method.id}
                     className="p-6 bg-white border border-slate-100 rounded-[35px] flex items-center gap-8"
                   >
-                    <div className="w-24 h-24 p-4 bg-slate-50 rounded-3xl flex items-center justify-center border border-slate-100 shrink-0">
+                    <div className="w-24 h-24 bg-slate-50 rounded-3xl flex items-center justify-center border border-slate-100 shrink-0 relative overflow-hidden">
                       {[
                         "bca",
                         "bni",
@@ -444,11 +445,11 @@ export const SocialSplitBillReceipt = React.forwardRef<
                       ].some((kw) =>
                         method.providerName.toLowerCase().includes(kw),
                       ) ? (
-                        <Image
+                        <img
                           src={`/img/logo-${method.providerName.toLowerCase()}.png`}
                           alt={method.providerName}
-                          fill
-                          className="object-contain p-4"
+                          crossOrigin="anonymous"
+                          className="w-full h-full object-contain p-2"
                         />
                       ) : (
                         <div className="text-primary/40 font-black text-2xl uppercase">

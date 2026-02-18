@@ -21,10 +21,10 @@ export const IntroSection = () => {
         
         <div className="space-y-2">
           <h2 className="text-xl font-bold text-foreground tracking-tight leading-tight">
-            Split Bill Jadi Lebih <span className="text-primary italic">Practical</span> ✨
+            Split Bill Jadi Lebih <span className="text-primary italic">Sat Set</span> & <span className="text-primary italic">Anti Ribet</span> ✨
           </h2>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            Aplikasi split bill online gratis untuk bagi tagihan dan patungan dengan teman. Scan foto struk otomatis, hitung fair share, dan selesaikan pembayaran dengan mudah.
+            Aplikasi bagi tagihan online gratis! Scan struk otomatis, hitung patungan fair share, dan selesaikan pembayaran no drama. 100% praktis & akurat!
           </p>
         </div>
       </div>

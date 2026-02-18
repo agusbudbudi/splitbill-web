@@ -62,7 +62,7 @@ export default function Home() {
             name: "SplitBill Online",
             url: "https://splitbill.my.id",
             description:
-              "Split bill online gratis! Scan struk, hitung pajak otomatis, dan bagi tagihan praktis bareng teman. Aplikasi patungan terbaik yang 100% free, cepat & akurat.",
+              "Split bill online gratis sat set! Scan struk otomatis, hitung pajak, dan bagi tagihan no drama bareng teman. Aplikasi patungan terbaik yang 100% free, praktis & akurat.",
             applicationCategory: "FinanceApplication",
             operatingSystem: "Web",
             offers: {
@@ -83,13 +83,13 @@ export default function Home() {
       )}
       <Header transparent />
 
-      <main className="w-full max-w-[480px] pb-24 relative z-10 -mt-14">
+      <main className="w-full max-w-[600px] relative z-10 -mt-14">
         {/* Hero Section */}
         <div className="w-full">
           <Banner />
         </div>
 
-        <div className="px-4 pt-4 space-y-4">
+        <div className="px-4 pt-4 space-y-4 pb-10">
           <div>
             <NavigationMenu />
           </div>

@@ -212,6 +212,12 @@ const SplitBillContent = () => {
         return;
       }
     }
+    if (step === 3) {
+      toast.success("Split Bill Berhasil Dihitung! 💸✨", {
+        description: "Yuk cek rincian pembayarannya.",
+        duration: 3000,
+      });
+    }
     setValidationError(null);
     router.push(`/split-bill?step=${step + 1}`);
   };
@@ -482,13 +488,13 @@ const SplitBillContent = () => {
         </div>
       </Header>
 
-      <main className="w-full max-w-[480px] px-4 pt-10 pb-40 space-y-8 relative z-10">
+      <main className="w-full max-w-[600px] px-4 pt-10 pb-10 space-y-8 relative z-10">
         {renderStep()}
       </main>
 
       {/* Sticky CTA Footer */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 pointer-events-none flex justify-center">
-        <div className="w-full max-w-[480px] relative pointer-events-auto flex flex-col">
+      <div className="sticky bottom-0 w-full z-50 pointer-events-none flex justify-center mt-auto">
+        <div className="w-full max-w-[600px] relative pointer-events-auto flex flex-col">
           {/* Solid background area for the actions */}
           <div className="bg-background px-4 pb-4 flex flex-col gap-3">
             {step === 1 && (

@@ -40,6 +40,7 @@ interface BillSummaryProps {
     activityName: string;
     date: string;
     selectedPaymentMethodIds?: string[];
+    paymentMethodSnapshots?: any[];
   };
   showDownload?: boolean;
   isPublic?: boolean;
@@ -51,7 +52,7 @@ export const BillSummary = ({
   isPublic = false,
 }: BillSummaryProps) => {
   const store = useSplitBillStore();
-  const { paymentMethods } = useWalletStore();
+  const { paymentMethods: storePaymentMethods } = useWalletStore();
 
   // Use props if provided, otherwise fall back to store
   const router = useRouter();
@@ -72,7 +73,12 @@ export const BillSummary = ({
     ? billData.selectedPaymentMethodIds || []
     : store.selectedPaymentMethodIds;
 
-  const selectedMethods = paymentMethods.filter((m) =>
+  // Use snapshots if available (for public view), otherwise fallback to store
+  const effectivePaymentMethods = billData?.paymentMethodSnapshots?.length 
+    ? billData.paymentMethodSnapshots 
+    : storePaymentMethods;
+
+  const selectedMethods = effectivePaymentMethods.filter((m: any) =>
     selectedPaymentMethodIds.includes(m.id),
   );
   

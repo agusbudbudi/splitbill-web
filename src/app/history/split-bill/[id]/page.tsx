@@ -46,9 +46,14 @@ export default function SplitBillDetailPage() {
       // 2. Fetch from API if not in store (direct link/refresh case)
       try {
         setIsLoading(true);
-        const { splitBillApi } = await import("@/lib/api/split-bills");
-        const fetchedBill = await splitBillApi.getById(id);
-        setBill(fetchedBill);
+        const { splitBillApi, mapBackendToFrontend } = await import("@/lib/api/split-bills");
+        const response = await splitBillApi.getById(id);
+        if (response.success && response.record) {
+          const mappedBill = mapBackendToFrontend(response.record);
+          setBill(mappedBill);
+        } else {
+          setError("Split bill tidak ditemukan");
+        }
       } catch (err) {
         console.error("Failed to fetch bill detail:", err);
         setError("Gagal memuat detail split bill");

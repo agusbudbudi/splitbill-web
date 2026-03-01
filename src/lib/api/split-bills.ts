@@ -60,6 +60,7 @@ export interface BackendSplitBillRecord {
   expenses: BackendExpense[];
   additionalExpenses: BackendAdditionalExpense[];
   paymentMethodIds: string[];
+  paymentMethodSnapshots: any[];
   summary: BackendSummary;
   status: "locked" | "editable";
   createdAt: string;
@@ -151,6 +152,14 @@ export const mapBackendToFrontend = (record: BackendSplitBillRecord) => {
       splitType: "equally" as const, // Backend doesn't store this, default to equally
     })),
     selectedPaymentMethodIds: record.paymentMethodIds,
+    paymentMethodSnapshots: record.paymentMethodSnapshots?.map(s => ({
+      id: s.id,
+      type: s.category === "bank_transfer" ? "bank" : "ewallet",
+      providerName: s.provider,
+      accountName: s.ownerName,
+      accountNumber: s.accountNumber,
+      phoneNumber: s.phoneNumber,
+    })) || [],
   };
 };
 

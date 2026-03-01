@@ -1,6 +1,11 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { Expense, AdditionalExpense } from "./useSplitBillStore";
+import {
+  splitBillApi,
+  mapFrontendToBackend,
+  mapBackendToFrontend,
+} from "@/lib/api/split-bills";
 
 export type PaymentMethodType = "bank" | "ewallet";
 
@@ -28,21 +33,29 @@ export interface SavedBill {
 interface WalletState {
   paymentMethods: PaymentMethod[];
   savedBills: SavedBill[];
+  isLoading: boolean;
+  error: string | null;
 
   // Payment Method Actions
   addPaymentMethod: (method: Omit<PaymentMethod, "id">) => string;
   removePaymentMethod: (id: string) => void;
 
   // History Actions
-  saveBill: (bill: Omit<SavedBill, "id" | "date">) => void;
-  deleteBill: (id: string) => void;
+  fetchBills: () => Promise<void>;
+  saveBill: (
+    bill: Omit<SavedBill, "id" | "date">,
+    summary?: any,
+  ) => Promise<string | undefined>;
+  deleteBill: (id: string) => Promise<void>;
 }
 
 export const useWalletStore = create<WalletState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       paymentMethods: [],
       savedBills: [],
+      isLoading: false,
+      error: null,
 
       addPaymentMethod: (method) => {
         const id = Math.random().toString(36).substring(7);
@@ -57,28 +70,85 @@ export const useWalletStore = create<WalletState>()(
           paymentMethods: state.paymentMethods.filter((m) => m.id !== id),
         })),
 
-      saveBill: (bill) => {
-        const id = Math.random().toString(36).substring(7);
-        set((state) => ({
-          savedBills: [
-            {
-              ...bill,
-              id,
-              date: new Date().toISOString(),
-            },
-            ...state.savedBills, // Newest first
-          ],
-        }));
-        return id;
+      fetchBills: async () => {
+        set({ isLoading: true, error: null });
+        try {
+          const response = await splitBillApi.getAll();
+          if (response.success) {
+            const mappedBills = response.records.map(mapBackendToFrontend);
+            set({ savedBills: mappedBills });
+          }
+        } catch (err: any) {
+          console.error("Failed to fetch bills from backend:", err);
+          // Don't set error here to allow fallback to local storage
+        } finally {
+          set({ isLoading: false });
+        }
       },
 
-      deleteBill: (id) =>
+      saveBill: async (bill, summary) => {
+        const tempId = Math.random().toString(36).substring(7);
+        const tempDate = new Date().toISOString();
+
+        const localBill: SavedBill = {
+          ...bill,
+          id: tempId,
+          date: tempDate,
+        };
+
+        // Update local state first for immediate UI feedback
+        set((state) => ({
+          savedBills: [localBill, ...state.savedBills],
+        }));
+
+        try {
+          if (summary) {
+            const payload = mapFrontendToBackend(localBill, summary);
+            const response = await splitBillApi.create(payload);
+
+            if (response.success) {
+              const backendBill = mapBackendToFrontend(response.record);
+
+              // Replace temp local bill with actual backend bill
+              set((state) => ({
+                savedBills: state.savedBills.map((b) =>
+                  b.id === tempId ? backendBill : b,
+                ),
+              }));
+              return backendBill.id;
+            }
+          }
+        } catch (err) {
+          console.error("Failed to save bill to backend:", err);
+          // Stay with local version if backend fails
+        }
+
+        return tempId;
+      },
+
+      deleteBill: async (id) => {
+        // Update local state first
         set((state) => ({
           savedBills: state.savedBills.filter((b) => b.id !== id),
-        })),
+        }));
+
+        try {
+          // If it's a MongoDB ID (usually 24 chars hex), call backend
+          if (/^[0-9a-fA-F]{24}$/.test(id)) {
+            await splitBillApi.delete(id);
+          }
+        } catch (err) {
+          console.error("Failed to delete bill from backend:", err);
+        }
+      },
     }),
     {
       name: "wallet-storage",
+      // Only persist paymentMethods locally, bills will be from backend
+      partialize: (state) => ({
+        paymentMethods: state.paymentMethods,
+        savedBills: state.savedBills,
+      }),
     },
   ),
 );

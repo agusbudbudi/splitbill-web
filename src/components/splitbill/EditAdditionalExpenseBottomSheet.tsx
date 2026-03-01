@@ -84,7 +84,7 @@ export const EditAdditionalExpenseBottomSheet = ({
       finalAmount = parseFloat(cleaned) || 0;
     }
 
-    if (!name || finalAmount <= 0 || selectedWho.length === 0 || !paidBy) {
+    if (!name || finalAmount === 0 || selectedWho.length === 0 || !paidBy) {
       toast.error("Mohon lengkapi semua data pengeluaran");
       return;
     }
@@ -239,33 +239,34 @@ export const EditAdditionalExpenseBottomSheet = ({
                     </button>
                   </div>
                   {isPercentage && (
-                    <div className="space-y-4">
-                      <div className="flex gap-2">
-                        {[5, 10, 11].map((p) => (
-                          <button
-                            key={p}
-                            onClick={() => setPercentageStr(p.toString())}
-                            className={cn(
-                              "flex-1 py-1.5 rounded-xl text-xs font-black border transition-all cursor-pointer",
-                              percentageStr === p.toString()
-                                ? "bg-primary/10 border-primary text-primary"
-                                : "bg-white border-primary/10 text-muted-foreground hover:border-primary/30",
-                            )}
-                          >
-                            {p}%
-                          </button>
-                        ))}
-                      </div>
-                      <p className="text-xs text-muted-foreground">
-                        {percentageStr}% dari subtotal {formatToIDR(subtotal)} ={" "}
-                        <span className="font-bold text-primary">
-                          {formatToIDR(
-                            (subtotal * (parseFloat(percentageStr) || 0)) / 100,
-                          )}
-                        </span>
-                      </p>
-                    </div>
-                  )}
+              <div className="space-y-2">
+                <div className="flex gap-2">
+                  {[5, 10, 11].map((p) => (
+                    <button
+                      key={p}
+                      onClick={() => setPercentageStr(p.toString())}
+                      className={cn(
+                        "flex-1 py-1 rounded-md text-[10px] font-black border transition-all cursor-pointer",
+                        percentageStr === p.toString()
+                          ? "bg-primary/10 border-primary text-primary"
+                          : "bg-white border-primary/10 text-muted-foreground hover:border-primary/30",
+                      )}
+                    >
+                      {p}%
+                    </button>
+                  ))}
+                </div>
+                <p className="text-[10px] text-muted-foreground px-1">
+                  {percentageStr || "0"}% dari subtotal {formatToIDR(subtotal)}{" "}
+                  ={" "}
+                  <span className="font-bold text-primary">
+                    {formatToIDR(
+                      (subtotal * (parseFloat(percentageStr) || 0)) / 100,
+                    )}
+                  </span>
+                </p>
+              </div>
+            )}
                 </div>
 
                 {/* Split Type Selector */}

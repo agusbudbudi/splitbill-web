@@ -63,7 +63,8 @@ const SplitBillContent = () => {
     clearDraftAfterFinalize,
   } = useSplitBillStore();
   const { paymentMethods, saveBill } = useWalletStore();
-  const { totalSpent } = useBillCalculations();
+  const calculationResult = useBillCalculations();
+  const { totalSpent } = calculationResult;
 
   const [activeTab, setActiveTab] = useState<"ai" | "manual">("ai");
   const [isAddWalletOpen, setIsAddWalletOpen] = useState(false);
@@ -139,16 +140,18 @@ const SplitBillContent = () => {
     searchParams.get("id"),
   );
 
-  const handleFinalize = () => {
-    const id =
-      (saveBill({
+  const handleFinalize = async () => {
+    const id = (await saveBill(
+      {
         activityName: activityName || "Aktivitas Split Bill",
         totalAmount: totalSpent,
         people,
         expenses,
         additionalExpenses,
         selectedPaymentMethodIds,
-      }) as unknown as string) || "";
+      },
+      calculationResult,
+    )) || "";
     setLastSavedId(id);
     setIsSaved(true);
     clearDraftAfterFinalize();

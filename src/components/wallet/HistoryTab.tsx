@@ -26,7 +26,7 @@ import { Badge } from "@/components/ui/Badge";
 import { EmptyState } from "@/components/ui/EmptyState";
 
 export const HistoryTab = () => {
-  const { savedBills } = useWalletStore();
+  const { savedBills, fetchBills, isLoading } = useWalletStore();
   const { invoiceHistory } = useInvoiceStore();
   const searchParams = useSearchParams();
   const defaultTab =
@@ -34,6 +34,12 @@ export const HistoryTab = () => {
   const [activeTab, setActiveTab] = React.useState<"split-bill" | "invoice">(
     defaultTab,
   );
+
+  React.useEffect(() => {
+    if (activeTab === "split-bill") {
+      fetchBills();
+    }
+  }, [activeTab, fetchBills]);
 
   const tabs = [
     { id: "split-bill", label: "Split Bill", icon: ReceiptText },

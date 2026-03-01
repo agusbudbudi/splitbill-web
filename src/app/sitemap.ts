@@ -12,6 +12,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/donate",
     "/faq",
     "/shared-goals",
+    "/privacy",
+    "/terms",
   ];
 
   return routes.map((route) => ({

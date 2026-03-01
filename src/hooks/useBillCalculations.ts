@@ -207,7 +207,7 @@ export const useBillCalculations = (
         }
       }
 
-      // 3. Si Paling Irit (Spent the least)
+      // 3. Si Paling Hemat (Spent the least)
       const lowestSpender = [...netBalances].sort((a, b) => {
         const spentA = balances[a.name].spent;
         const spentB = balances[b.name].spent;
@@ -220,7 +220,7 @@ export const useBillCalculations = (
         lowestSpender.name !== topSpender?.name &&
         badges[lowestSpender.name].length === 0 // Ensure only one badge
       ) {
-        badges[lowestSpender.name].push("Si Paling Irit");
+        badges[lowestSpender.name].push("Si Paling Hemat");
       }
     }
 

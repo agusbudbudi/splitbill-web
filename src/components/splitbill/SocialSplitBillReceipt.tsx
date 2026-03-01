@@ -53,7 +53,7 @@ export const SocialSplitBillReceipt = React.forwardRef<
         return "💳";
       case "Si Paling Sultan":
         return "👑";
-      case "Si Paling Irit":
+      case "Si Paling Hemat":
         return "🍃";
       default:
         return "✨";
@@ -66,7 +66,7 @@ export const SocialSplitBillReceipt = React.forwardRef<
         return "bg-emerald-50 text-emerald-600 border-emerald-100";
       case "Si Paling Sultan":
         return "bg-amber-50 text-amber-600 border-amber-100";
-      case "Si Paling Irit":
+      case "Si Paling Hemat":
         return "bg-blue-50 text-blue-600 border-blue-100";
       default:
         return "bg-primary/5 text-primary border-primary/10";

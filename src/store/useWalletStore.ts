@@ -103,7 +103,8 @@ export const useWalletStore = create<WalletState>()(
 
         try {
           if (summary) {
-            const payload = mapFrontendToBackend(localBill, summary);
+            const state = get();
+            const payload = mapFrontendToBackend(localBill, summary, state.paymentMethods);
             const response = await splitBillApi.create(payload);
 
             if (response.success) {

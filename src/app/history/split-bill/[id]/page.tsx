@@ -12,6 +12,7 @@ import { ReviewBanner } from "@/components/splitbill/ReviewBanner";
 import { AnimatePresence } from "framer-motion";
 
 import { useAuthStore } from "@/lib/stores/authStore";
+import { trackPublic, trackSplitBill } from "@/lib/gtag";
 
 export default function SplitBillDetailPage() {
   const params = useParams();
@@ -64,6 +65,12 @@ export default function SplitBillDetailPage() {
 
     loadBill();
   }, [id, savedBills]);
+
+  useEffect(() => {
+    if (bill && !isAuthenticated) {
+      trackPublic.openBill(id);
+    }
+  }, [bill, isAuthenticated, id]);
 
   if (isLoading) {
     return (

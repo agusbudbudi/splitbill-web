@@ -9,6 +9,7 @@ import { RegisterForm } from "@/components/auth/RegisterForm";
 import { useAuthStore } from "@/lib/stores/authStore";
 import { getErrorMessage } from "@/lib/auth/utils";
 import { motion } from "framer-motion";
+import { trackAuth } from "@/lib/gtag";
 import { Receipt, Wallet, CircleDollarSign, Coins } from "lucide-react";
 
 export default function RegisterPage() {
@@ -33,6 +34,7 @@ export default function RegisterPage() {
       setError(null);
       setSuccess(null);
       await register(name, email, password);
+      trackAuth.signUp();
       // Redirect to login page with success message
       router.push("/login?registered=true");
     } catch (err) {

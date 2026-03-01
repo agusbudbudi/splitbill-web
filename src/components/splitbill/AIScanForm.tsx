@@ -20,6 +20,7 @@ import { toast } from "sonner";
 // Removed unused FeatureBanner import
 
 import { AIScanQuotaBanner } from "@/components/ui/AIScanQuotaBanner";
+import { trackSplitBill } from "@/lib/gtag";
 
 export const AIScanForm = () => {
   const [image, setImage] = useState<string | null>(null);
@@ -61,12 +62,14 @@ export const AIScanForm = () => {
 
   const handleScan = async () => {
     if (!image) return;
+    trackSplitBill.aiScan("start");
     setIsScanning(true);
     setError(null);
 
     try {
       const result = await scanReceipt(image);
       setScanResult(result);
+      trackSplitBill.aiScan("success");
 
       // Show success toast
       toast.success("Scan Berhasil! ✨", {
@@ -78,6 +81,7 @@ export const AIScanForm = () => {
       await getCurrentUser();
     } catch (err: any) {
       console.error("Scan failed", err);
+      trackSplitBill.aiScan("error");
       setError(err.message || "Gagal membaca struk. Coba lagi!");
     } finally {
       setIsScanning(false);
@@ -127,6 +131,7 @@ export const AIScanForm = () => {
     // Reset
     setImage(null);
     setScanResult(null);
+    trackSplitBill.aiImport();
 
     // Show success toast
     toast.success("Berhasil import struk! 🧾✨", {

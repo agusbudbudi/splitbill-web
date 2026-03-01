@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/Card";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { useAuthStore, LoginCredentials } from "@/lib/stores/authStore";
 import { getErrorMessage } from "@/lib/auth/utils";
+import { trackAuth } from "@/lib/gtag";
 import {
   Loader2,
   Receipt,
@@ -52,6 +53,7 @@ function LoginContent() {
       setShowResend(false);
       setEmailForResend(credentials.email);
       await login(credentials);
+      trackAuth.login();
       setSuccess("Login berhasil! Mengalihkan...");
       router.push("/");
     } catch (err: any) {

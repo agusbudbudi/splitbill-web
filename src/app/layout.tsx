@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import { Toaster } from "sonner";
@@ -6,7 +6,7 @@ import "./globals.css";
 import { PWAInstallBanner } from "@/components/layout/PWAInstallBanner";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { GoogleAnalytics } from "@next/third-parties/google";
-import { trackGeneral } from "@/lib/gtag";
+import { AppEntryTracker } from "@/components/providers/AppEntryTracker";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -133,10 +133,4 @@ export default function RootLayout({
       </body>
     </html>
   );
-}
-function AppEntryTracker() {
-  useEffect(() => {
-    trackGeneral.appEntry();
-  }, []);
-  return null;
 }

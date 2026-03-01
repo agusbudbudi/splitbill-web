@@ -45,6 +45,7 @@ import { suggestEmoji } from "@/lib/emojiUtils";
 import { toast } from "sonner";
 import { useOnboardingStore } from "@/store/useOnboardingStore";
 import { TutorialOverlay, TutorialStep } from "@/components/onboarding/TutorialOverlay";
+import { trackSplitBill, trackSocial } from "@/lib/gtag";
 
 
 const SplitBillContent = () => {
@@ -77,6 +78,12 @@ const SplitBillContent = () => {
   
   const [isTutorialOpen, setIsTutorialOpen] = useState(false);
   const hasTriggeredRef = useRef(false);
+
+  useEffect(() => {
+    if (step === 1) {
+      trackSplitBill.start();
+    }
+  }, [step]);
 
   useEffect(() => {
     if (_hasHydrated && !hasSeenTutorial && step === 1 && !hasTriggeredRef.current) {
@@ -128,6 +135,7 @@ const SplitBillContent = () => {
   const completeTutorial = () => {
     setIsTutorialOpen(false);
     setHasSeenTutorial(true);
+    trackSocial.tutorialComplete();
     // Reset back to Step 1 so user can start from the beginning
     router.push("/split-bill?step=1");
     toast.success("Keren! Sekarang kamu udah siap buat Split Bill kilat! 🚀");
@@ -155,6 +163,12 @@ const SplitBillContent = () => {
     setLastSavedId(id);
     setIsSaved(true);
     clearDraftAfterFinalize();
+    trackSplitBill.save({
+      total_amount: totalSpent,
+      num_participants: people.length,
+      num_items: expenses.length + additionalExpenses.length,
+      activity_name: activityName || "Aktivitas Split Bill",
+    });
     setShowFinalizeModal(false);
 
     // 1. Update current URL to include saved=true so back navigation shows the success card
@@ -222,7 +236,10 @@ const SplitBillContent = () => {
       });
     }
     setValidationError(null);
-    router.push(`/split-bill?step=${step + 1}`);
+    const nextStepNum = step + 1;
+    const stepNames = ["", "Teman", "Bil", "Detail", "Hasil"];
+    trackSplitBill.stepComplete(nextStepNum, stepNames[nextStepNum] || "");
+    router.push(`/split-bill?step=${nextStepNum}`);
   };
 
   const prevStep = () => {

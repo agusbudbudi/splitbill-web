@@ -74,14 +74,28 @@ export interface CreateSplitBillPayload {
   expenses: BackendExpense[];
   additionalExpenses: BackendAdditionalExpense[];
   paymentMethodIds: string[];
+  paymentMethodSnapshots: any[];
   summary: BackendSummary;
 }
 
 // Mappers
 export const mapFrontendToBackend = (
   bill: any, // SavedBill from useWalletStore
-  summary: any // From useBillCalculations
+  summary: any, // From useBillCalculations
+  paymentMethods: any[] = [] // Full payment methods from store
 ): CreateSplitBillPayload => {
+  const selectedPaymentMethodIds = bill.selectedPaymentMethodIds || [];
+  const selectedMethods = paymentMethods.filter(m => selectedPaymentMethodIds.includes(m.id));
+
+  const paymentMethodSnapshots = selectedMethods.map(m => ({
+    id: m.id,
+    category: m.type === "bank" ? "bank_transfer" : "ewallet",
+    provider: m.providerName,
+    ownerName: m.accountName,
+    accountNumber: m.accountNumber,
+    phoneNumber: m.phoneNumber,
+  }));
+
   return {
     activityName: bill.activityName,
     occurredAt: bill.date || new Date().toISOString(),
@@ -105,7 +119,8 @@ export const mapFrontendToBackend = (
       participants: adx.who,
       createdAt: Date.now(), // Fallback
     })),
-    paymentMethodIds: bill.selectedPaymentMethodIds || [],
+    paymentMethodIds: selectedPaymentMethodIds,
+    paymentMethodSnapshots,
     summary: {
       total: summary.totalSpent,
       perParticipant: Object.entries(summary.balances || {}).map(([name, b]: [string, any]) => ({

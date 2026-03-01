@@ -8,6 +8,7 @@ import { ArrowLeft, Save, UserPlus, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { BottomSheet } from "@/components/ui/BottomSheet";
+import { trackSocial } from "@/lib/gtag";
 
 interface FriendFormProps {
   isOpen: boolean;
@@ -49,6 +50,7 @@ export const FriendForm = ({
       toast.success("Data teman berhasil diupdate!");
     } else {
       addFriend({ name, whatsapp });
+      trackSocial.addFriend();
       toast.success("Teman berhasil ditambahkan!");
     }
 

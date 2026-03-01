@@ -1,9 +1,12 @@
+import React, { useEffect } from "react";
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import { Toaster } from "sonner";
 import "./globals.css";
 import { PWAInstallBanner } from "@/components/layout/PWAInstallBanner";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
+import { GoogleAnalytics } from "@next/third-parties/google";
+import { trackGeneral } from "@/lib/gtag";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -81,8 +84,12 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const GA_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+
   return (
     <html lang="id" suppressHydrationWarning>
+      {GA_ID && <GoogleAnalytics gaId={GA_ID} />}
+      <AppEntryTracker />
       <head>
         <script
           dangerouslySetInnerHTML={{
@@ -126,4 +133,10 @@ export default function RootLayout({
       </body>
     </html>
   );
+}
+function AppEntryTracker() {
+  useEffect(() => {
+    trackGeneral.appEntry();
+  }, []);
+  return null;
 }

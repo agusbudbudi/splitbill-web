@@ -33,6 +33,7 @@ import { ProviderLogo } from "@/components/ui/ProviderLogo";
 import { Sparkles, Share2 } from "lucide-react";
 import * as htmlToImage from "html-to-image";
 import { SocialSplitBillReceipt } from "./SocialSplitBillReceipt";
+import { trackSplitBill } from "@/lib/gtag";
 
 interface BillSummaryProps {
   billData?: SplitBillData & {
@@ -131,6 +132,7 @@ export const BillSummary = ({
               title: activityName || "Split Bill Summary",
               text: caption,
             });
+            trackSplitBill.share("share_api", billData?.id || "");
             toast.success("Berhasil dibagikan! 📸✨", { id: toastId });
             return;
           }
@@ -171,6 +173,7 @@ export const BillSummary = ({
     if (typeof window === "undefined") return;
     const url = window.location.href.split("?")[0]; // Clean URL
     navigator.clipboard.writeText(url);
+    trackSplitBill.share("copy_link", billData?.id || "");
     toast.success("Link berhasil disalin! 🔗", {
       description: "Bagikan link ini ke teman-temanmu.",
     });

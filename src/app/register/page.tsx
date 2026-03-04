@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -10,10 +10,10 @@ import { useAuthStore } from "@/lib/stores/authStore";
 import { getErrorMessage } from "@/lib/auth/utils";
 import { motion } from "framer-motion";
 import { trackAuth } from "@/lib/gtag";
-import { Receipt, Wallet, CircleDollarSign, Coins } from "lucide-react";
+import { Receipt, Wallet, CircleDollarSign, Coins, Loader2 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 
-export default function RegisterPage() {
+function RegisterContent() {
   const router = useRouter();
   const { register, isLoading, isAuthenticated } = useAuthStore();
   const searchParams = useSearchParams();
@@ -47,6 +47,36 @@ export default function RegisterPage() {
     }
   };
 
+  return (
+    <Card className="border-border/50 shadow-soft backdrop-blur-sm bg-white/80 overflow-hidden relative">
+      <CardHeader className="sr-only">
+        <h2 className="text-xl font-bold">Daftar</h2>
+      </CardHeader>
+      <CardContent className="p-6 md:p-8 space-y-4">
+        <RegisterForm
+          onSubmit={handleRegister}
+          isLoading={isLoading}
+          error={error}
+          success={success}
+        />
+
+        <div className="text-center text-sm pt-2">
+          <span className="text-muted-foreground">
+            Sudah punya akun?{" "}
+          </span>
+          <Link
+            href="/login"
+            className="text-primary font-extrabold hover:text-primary/80 transition-colors"
+          >
+            Masuk sekarang
+          </Link>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+export default function RegisterPage() {
   return (
     <div className="relative min-h-screen bg-background flex flex-col items-center justify-start p-4 pt-16 md:pt-18">
       {/* Background decoration - subtle gradients */}
@@ -95,31 +125,17 @@ export default function RegisterPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          <Card className="border-border/50 shadow-soft backdrop-blur-sm bg-white/80 overflow-hidden relative">
-            <CardHeader className="sr-only">
-              <h2 className="text-xl font-bold">Daftar</h2>
-            </CardHeader>
-            <CardContent className="p-6 md:p-8 space-y-4">
-              <RegisterForm
-                onSubmit={handleRegister}
-                isLoading={isLoading}
-                error={error}
-                success={success}
-              />
-
-              <div className="text-center text-sm pt-2">
-                <span className="text-muted-foreground">
-                  Sudah punya akun?{" "}
-                </span>
-                <Link
-                  href="/login"
-                  className="text-primary font-extrabold hover:text-primary/80 transition-colors"
-                >
-                  Masuk sekarang
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
+          <Suspense
+            fallback={
+              <Card className="border-border/50 shadow-soft backdrop-blur-sm bg-white/80 overflow-hidden relative">
+                <CardContent className="p-12 flex items-center justify-center">
+                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                </CardContent>
+              </Card>
+            }
+          >
+            <RegisterContent />
+          </Suspense>
         </motion.div>
 
         {/* Footer info */}

@@ -147,10 +147,14 @@ export const useBillCalculations = (
       balance: b.paid - b.spent, // Positive means they are owed money, negative means they owe money
     }));
 
-    const creditors = netBalances
+    // CRITICAL: Work on a copy of netBalances for settlement 
+    // to avoid mutating the original values needed for badges
+    const settlementBalances = netBalances.map(b => ({ ...b }));
+
+    const creditors = settlementBalances
       .filter((b) => b.balance > 0.01)
       .sort((a, b) => b.balance - a.balance);
-    const debtors = netBalances
+    const debtors = settlementBalances
       .filter((b) => b.balance < -0.01)
       .sort((a, b) => a.balance - b.balance);
 
@@ -182,45 +186,39 @@ export const useBillCalculations = (
     people.forEach((name) => (badges[name] = []));
 
     if (people.length >= 2) {
-      // 1. Si Paling Traktir (Paid the most)
-      const topPayer = [...netBalances].sort((a, b) => {
-        const paidA = balances[a.name].paid;
-        const paidB = balances[b.name].paid;
-        return paidB - paidA;
-      })[0];
-      if (topPayer && balances[topPayer.name].paid > 0) {
-        badges[topPayer.name].push("Si Paling Traktir");
-      }
+      const activeSpenders = netBalances
+        .filter((b) => balances[b.name].spent > 0.1) // Use slightly higher threshold for safety
+        .sort((a, b) => balances[b.name].spent - balances[a.name].spent);
 
-      // 2. Si Paling Sultan (Spent the most)
-      const topSpender = [...netBalances].sort((a, b) => {
-        const spentA = balances[a.name].spent;
-        const spentB = balances[b.name].spent;
-        return spentB - spentA;
-      })[0];
+      if (activeSpenders.length > 0) {
+        // 1. Si Paling Traktir (Paid the most)
+        const topPayer = [...activeSpenders].sort((a, b) => {
+          const paidA = balances[a.name].paid;
+          const paidB = balances[b.name].paid;
+          return paidB - paidA;
+        })[0];
+        
+        if (topPayer && balances[topPayer.name].paid > 0.01) {
+          badges[topPayer.name].push("Si Paling Traktir");
+        }
 
-      if (topSpender && balances[topSpender.name].spent > 0) {
-        // Only add if they don't have a badge yet or we want to allow override logic
-        // But user says: only 1 label, priority Traktir
-        if (badges[topSpender.name].length === 0) {
+        // 2. Si Paling Sultan (Spent the most)
+        const topSpender = activeSpenders[0];
+        if (topSpender && badges[topSpender.name].length === 0) {
           badges[topSpender.name].push("Si Paling Sultan");
         }
-      }
 
-      // 3. Si Paling Hemat (Spent the least)
-      const lowestSpender = [...netBalances].sort((a, b) => {
-        const spentA = balances[a.name].spent;
-        const spentB = balances[b.name].spent;
-        return spentA - spentB;
-      })[0];
+        // 3. Si Paling Hemat (Spent the least among active)
+        // Refinement: Find the first person from the bottom up who doesn't have a badge yet.
+        // This ensures the badge appears even if the absolute lowest spender already has one.
+        const potentialLowestSpenders = [...activeSpenders].reverse();
+        const lowestSpenderCandidate = potentialLowestSpenders.find(
+          (s) => s.name !== topSpender?.name && badges[s.name].length === 0
+        );
 
-      if (
-        lowestSpender &&
-        balances[lowestSpender.name].spent > 0 &&
-        lowestSpender.name !== topSpender?.name &&
-        badges[lowestSpender.name].length === 0 // Ensure only one badge
-      ) {
-        badges[lowestSpender.name].push("Si Paling Hemat");
+        if (lowestSpenderCandidate && activeSpenders.length >= 2) {
+          badges[lowestSpenderCandidate.name].push("Si Paling Hemat");
+        }
       }
     }
 

@@ -562,84 +562,86 @@ export const BillSummary = ({
         </div>
       </Card>
 
-      <div className="space-y-3 mt-4 mb-0">
-        <div className="grid grid-cols-2 gap-2">
-          <button
-            onClick={handleShareSocial}
-            disabled={isSharing}
-            className={cn(
-              "h-12 rounded-lg font-bold gap-2 text-sm transition-all active:scale-[0.98] bg-primary text-white shadow-lg shadow-primary/20 flex items-center justify-center group cursor-pointer",
-              isSharing && "opacity-70 cursor-not-allowed",
-            )}
-          >
-            <Share2
+      {showDownload && (
+        <div className="space-y-3 mt-4 mb-0">
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              onClick={handleShareSocial}
+              disabled={isSharing}
               className={cn(
-                "w-4 h-4 group-hover:rotate-12 transition-transform",
-                isSharing && "animate-pulse",
+                "h-12 rounded-lg font-bold gap-2 text-sm transition-all active:scale-[0.98] bg-primary text-white shadow-lg shadow-primary/20 flex items-center justify-center group cursor-pointer",
+                isSharing && "opacity-70 cursor-not-allowed",
               )}
-            />
-            {isSharing ? "..." : "Bagikan"}
-          </button>
+            >
+              <Share2
+                className={cn(
+                  "w-4 h-4 group-hover:rotate-12 transition-transform",
+                  isSharing && "animate-pulse",
+                )}
+              />
+              {isSharing ? "..." : "Bagikan"}
+            </button>
 
-          <button
-            onClick={handleCopyLink}
-            className="h-12 rounded-lg font-bold gap-2 text-sm transition-all active:scale-[0.98] bg-white border border-primary/20 text-primary hover:bg-primary/5 flex items-center justify-center group cursor-pointer"
-          >
-            <Copy className="w-4 h-4 group-hover:scale-110 transition-transform" />
-            Salin Link
-          </button>
-        </div>
+            <button
+              onClick={handleCopyLink}
+              className="h-12 rounded-lg font-bold gap-2 text-sm transition-all active:scale-[0.98] bg-white border border-primary/20 text-primary hover:bg-primary/5 flex items-center justify-center group cursor-pointer"
+            >
+              <Copy className="w-4 h-4 group-hover:scale-110 transition-transform" />
+              Salin Link
+            </button>
+          </div>
 
-        {!isPublic && (
-          <button
-            onClick={() => {
-              const collections = useCollectMoneyStore.getState().collections;
-              const sourceId = billData?.id;
+          {!isPublic && (
+            <button
+              onClick={() => {
+                const collections = useCollectMoneyStore.getState().collections;
+                const sourceId = billData?.id;
 
-              // 1. If we have a sourceId, check if it already has a collection
-              if (sourceId) {
-                const existingCollection = collections.find(
-                  (c) => c.sourceId === sourceId,
-                );
-                if (existingCollection) {
-                  useCollectMoneyStore
-                    .getState()
-                    .setActiveCollection(existingCollection.id);
-                  router.push("/collect-money?autoOpen=true");
-                  toast.success("Membuka monitor status bayar...");
+                // 1. If we have a sourceId, check if it already has a collection
+                if (sourceId) {
+                  const existingCollection = collections.find(
+                    (c) => c.sourceId === sourceId,
+                  );
+                  if (existingCollection) {
+                    useCollectMoneyStore
+                      .getState()
+                      .setActiveCollection(existingCollection.id);
+                    router.push("/collect-money?autoOpen=true");
+                    toast.success("Membuka monitor status bayar...");
+                    return;
+                  }
+                }
+
+                // 2. If no existing collection or no sourceId (unsaved draft), create new
+                if (settlementInstructions.length === 0) {
+                  toast.success("Semua orang sudah lunas/impas! 🎉");
                   return;
                 }
-              }
 
-              // 2. If no existing collection or no sourceId (unsaved draft), create new
-              if (settlementInstructions.length === 0) {
-                toast.success("Semua orang sudah lunas/impas! 🎉");
-                return;
-              }
+                const payers = settlementInstructions.map((inst) => ({
+                  name: inst.from,
+                  amount: inst.amount,
+                  transferTo: inst.to,
+                }));
 
-              const payers = settlementInstructions.map((inst) => ({
-                name: inst.from,
-                amount: inst.amount,
-                transferTo: inst.to,
-              }));
+                useCollectMoneyStore.getState().createCollection(
+                  activityName || "Split Bill",
+                  payers,
+                  selectedPaymentMethodIds,
+                  sourceId, // Pass the sourceId to associate it
+                );
 
-              useCollectMoneyStore.getState().createCollection(
-                activityName || "Split Bill",
-                payers,
-                selectedPaymentMethodIds,
-                sourceId, // Pass the sourceId to associate it
-              );
-
-              router.push("/collect-money?autoOpen=true");
-              toast.success("Monitoring Patungan dibuat!");
-            }}
-            className="w-full h-12 rounded-lg font-bold gap-2 text-sm transition-all active:scale-[0.98] bg-white border border-primary/20 text-primary hover:bg-primary/5 flex items-center justify-center group cursor-pointer"
-          >
-            <PiggyBank className="w-4 h-4 group-hover:scale-110 transition-transform" />
-            Monitor Status Bayar
-          </button>
-        )}
-      </div>
+                router.push("/collect-money?autoOpen=true");
+                toast.success("Monitoring Patungan dibuat!");
+              }}
+              className="w-full h-12 rounded-lg font-bold gap-2 text-sm transition-all active:scale-[0.98] bg-white border border-primary/20 text-primary hover:bg-primary/5 flex items-center justify-center group cursor-pointer"
+            >
+              <PiggyBank className="w-4 h-4 group-hover:scale-110 transition-transform" />
+              Monitor Status Bayar
+            </button>
+          )}
+        </div>
+      )}
 
       {/* Hidden Social Receipt for Capture */}
       <div className="fixed -left-[2000px] top-0 pointer-events-none">

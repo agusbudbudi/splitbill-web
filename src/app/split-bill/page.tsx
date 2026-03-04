@@ -45,6 +45,7 @@ import { suggestEmoji } from "@/lib/emojiUtils";
 import { toast } from "sonner";
 import { useOnboardingStore } from "@/store/useOnboardingStore";
 import { TutorialOverlay, TutorialStep } from "@/components/onboarding/TutorialOverlay";
+import { useAuthStore } from "@/lib/stores/authStore";
 import { trackSplitBill, trackSocial } from "@/lib/gtag";
 
 
@@ -71,6 +72,8 @@ const SplitBillContent = () => {
   const [isAddWalletOpen, setIsAddWalletOpen] = useState(false);
   const [showFinalizeModal, setShowFinalizeModal] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
+  const [isFinalizing, setIsFinalizing] = useState(false);
+  const isFinalizingRef = useRef(false);
 
   const hasSeenTutorial = useOnboardingStore((state) => state.hasSeenTutorial);
   const setHasSeenTutorial = useOnboardingStore((state) => state.setHasSeenTutorial);
@@ -148,68 +151,96 @@ const SplitBillContent = () => {
     searchParams.get("id"),
   );
 
+  const { isAuthenticated } = useAuthStore();
+
   const handleFinalize = async () => {
-    const id = (await saveBill(
-      {
-        activityName: activityName || "Aktivitas Split Bill",
-        totalAmount: totalSpent,
-        people,
-        expenses,
-        additionalExpenses,
-        selectedPaymentMethodIds,
-      },
-      calculationResult,
-    )) || "";
-    setLastSavedId(id);
-    setIsSaved(true);
-    clearDraftAfterFinalize();
-    trackSplitBill.save({
-      total_amount: totalSpent,
-      num_participants: people.length,
-      num_items: expenses.length + additionalExpenses.length,
-      activity_name: activityName || "Aktivitas Split Bill",
-    });
-    setShowFinalizeModal(false);
+    if (isFinalizingRef.current) return;
+    
+    if (!isAuthenticated) {
+      const currentUrl = encodeURIComponent(`${window.location.pathname}${window.location.search}${window.location.search ? "&" : "?"}finalize=true`);
+      router.push(`/login?redirect=${currentUrl}`);
+      return;
+    }
 
-    // 1. Update current URL to include saved=true so back navigation shows the success card
-    router.replace(`/split-bill?step=4&saved=true&id=${id}`);
-
-    // 2. Navigate to detail page with new=true
-    setTimeout(() => {
-      router.push(`/history/split-bill/${id}?new=true`);
-    }, 100);
-
-    // Celeberation Effect
-    const duration = 3 * 1000;
-    const animationEnd = Date.now() + duration;
-    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
-
-    const randomInRange = (min: number, max: number) =>
-      Math.random() * (max - min) + min;
-
-    const interval: any = setInterval(function () {
-      const timeLeft = animationEnd - Date.now();
-
-      if (timeLeft <= 0) {
-        return clearInterval(interval);
-      }
-
-      const particleCount = 50 * (timeLeft / duration);
-      // since particles fall down, start a bit higher than random
-      confetti({
-        ...defaults,
-        particleCount,
-        origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
-        colors: ["#7c3aed", "#a78bfa", "#ddd6fe"],
+    try {
+      isFinalizingRef.current = true;
+      setIsFinalizing(true);
+      
+      const id = (await saveBill(
+        {
+          activityName: activityName || "Aktivitas Split Bill",
+          totalAmount: totalSpent,
+          people,
+          expenses,
+          additionalExpenses,
+          selectedPaymentMethodIds,
+        },
+        calculationResult,
+      )) || "";
+      setLastSavedId(id);
+      setIsSaved(true);
+      clearDraftAfterFinalize();
+      trackSplitBill.save({
+        total_amount: totalSpent,
+        num_participants: people.length,
+        num_items: expenses.length + additionalExpenses.length,
+        activity_name: activityName || "Aktivitas Split Bill",
       });
-      confetti({
-        ...defaults,
-        particleCount,
-        origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
-        colors: ["#7c3aed", "#a78bfa", "#ddd6fe"],
-      });
-    }, 250);
+      setShowFinalizeModal(false);
+
+      // 1. Update current URL to include saved=true so back navigation shows the success card
+      router.replace(`/split-bill?step=4&saved=true&id=${id}`);
+
+      // 2. Navigate to detail page with new=true
+      setTimeout(() => {
+        router.push(`/history/split-bill/${id}?new=true`);
+      }, 100);
+
+      // Celeberation Effect
+      const duration = 3 * 1000;
+      const animationEnd = Date.now() + duration;
+      const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+      const randomInRange = (min: number, max: number) =>
+        Math.random() * (max - min) + min;
+
+      const interval: any = setInterval(function () {
+        const timeLeft = animationEnd - Date.now();
+
+        if (timeLeft <= 0) {
+          return clearInterval(interval);
+        }
+
+        const particleCount = 50 * (timeLeft / duration);
+        // since particles fall down, start a bit higher than random
+        confetti({
+          ...defaults,
+          particleCount,
+          origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+          colors: ["#7c3aed", "#a78bfa", "#ddd6fe"],
+        });
+        confetti({
+          ...defaults,
+          particleCount,
+          origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+          colors: ["#7c3aed", "#a78bfa", "#ddd6fe"],
+        });
+      }, 250);
+    } finally {
+      // We don't necessarily need to reset isFinalizingRef.current to false here 
+      // because once isSaved is true, it shouldn't be called again anyway.
+      // But for robustness:
+      setIsFinalizing(false);
+    }
   };
+
+  // Auto-finalize after login
+  useEffect(() => {
+    const finalizeParam = searchParams.get("finalize") === "true";
+    if (finalizeParam && isAuthenticated && step === 4 && !isSaved && !isFinalizingRef.current) {
+      handleFinalize();
+    }
+  }, [isAuthenticated, searchParams, step, isSaved]);
 
   const nextStep = () => {
     if (step === 1) {
@@ -559,9 +590,19 @@ const SplitBillContent = () => {
             {step === 4 && !isSaved && (
               <Button
                 onClick={() => setShowFinalizeModal(true)}
-                className="w-full h-14 text-lg font-bold rounded-2xl bg-primary text-white shadow-xl shadow-primary/30 active:scale-95 transition-all"
+                disabled={isFinalizing}
+                className="w-full h-14 text-lg font-bold rounded-2xl bg-primary text-white shadow-xl shadow-primary/30 active:scale-95 transition-all !disabled:opacity-70"
               >
-                <CheckCircle2 className="mr-2 w-5 h-5" /> Selesaikan & Simpan
+                {isFinalizing ? (
+                  <>
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                    Menyimpan...
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle2 className="mr-2 w-5 h-5" /> Selesaikan & Simpan
+                  </>
+                )}
               </Button>
             )}
           </div>

@@ -42,9 +42,10 @@ function LoginContent() {
   // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
-      router.push("/");
+      const redirectPath = searchParams.get("redirect") || "/";
+      router.push(redirectPath);
     }
-  }, [isAuthenticated, router]);
+  }, [isAuthenticated, router, searchParams]);
 
   const handleLogin = async (credentials: LoginCredentials) => {
     try {
@@ -55,7 +56,9 @@ function LoginContent() {
       await login(credentials);
       trackAuth.login();
       setSuccess("Login berhasil! Mengalihkan...");
-      router.push("/");
+      
+      const redirectPath = searchParams.get("redirect") || "/";
+      router.push(redirectPath);
     } catch (err: any) {
       const errorMessage = getErrorMessage(err);
       setError(errorMessage);

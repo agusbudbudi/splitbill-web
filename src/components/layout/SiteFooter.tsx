@@ -50,6 +50,8 @@ export const SiteFooter = ({ className }: SiteFooterProps) => {
             <ul className="space-y-2.5">
               <li><Link href="/donate" className="text-sm font-medium hover:text-white/70 transition-colors">Donasi Geng Kamu</Link></li>
               <li><Link href="/faq" className="text-sm font-medium hover:text-white/70 transition-colors">Pusat Bantuan & FAQ</Link></li>
+              <li><Link href="/terms" className="text-sm font-medium hover:text-white/70 transition-colors">Syarat & Ketentuan</Link></li>
+              <li><Link href="/privacy" className="text-sm font-medium hover:text-white/70 transition-colors">Kebijakan Privasi</Link></li>
               <li>
                 <Link 
                   href="https://www.instagram.com/splitbill.app/" 

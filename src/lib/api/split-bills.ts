@@ -22,6 +22,7 @@ export interface BackendAdditionalExpense {
   amount: number;
   paidBy: string;
   participants: string[];
+  splitType: "equally" | "proportionally";
   createdAt: number;
 }
 
@@ -117,6 +118,7 @@ export const mapFrontendToBackend = (
       amount: adx.amount,
       paidBy: adx.paidBy,
       participants: adx.who,
+      splitType: adx.splitType || "equally",
       createdAt: Date.now(), // Fallback
     })),
     paymentMethodIds: selectedPaymentMethodIds,
@@ -164,7 +166,7 @@ export const mapBackendToFrontend = (record: BackendSplitBillRecord) => {
       amount: adx.amount,
       who: adx.participants,
       paidBy: adx.paidBy,
-      splitType: "equally" as const, // Backend doesn't store this, default to equally
+      splitType: adx.splitType || "equally",
     })),
     selectedPaymentMethodIds: record.paymentMethodIds,
     paymentMethodSnapshots: record.paymentMethodSnapshots?.map(s => ({

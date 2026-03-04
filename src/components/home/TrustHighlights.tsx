@@ -9,7 +9,7 @@ const highlights = [
     icon: ShieldCheck,
     title: "Privacy First",
     description:
-      "Data kamu hanya disimpan di browsermu, kami tidak menyimpannya di server.",
+      "Data kamu tersimpan aman di server kami, bisa diakses kapan saja dari perangkat mana saja.",
     color: "text-emerald-500",
     bgColor: "bg-emerald-50",
   },
@@ -75,12 +75,12 @@ export const TrustHighlights = () => {
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 border border-slate-200">
           <Lock className="w-3 h-3 text-slate-400" />
           <span className="text-[9px] font-bold text-slate-500 uppercase tracking-tighter">
-            End-to-End Local Storage
+            Secure Cloud Storage
           </span>
         </div>
         <p className="text-[10px] text-muted-foreground text-center max-w-[280px]">
-          Kami percaya data keuanganmu adalah privasimu. Tidak ada data yang
-          kami jual atau berikan ke pihak ketiga.
+          Data keuanganmu tersimpan aman dan terenkripsi. Kami berkomitmen untuk
+          menjaga privasimu sepenuh hati.
         </p>
       </div>
     </section>

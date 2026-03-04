@@ -3,7 +3,7 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/Card";
 import { cn } from "@/lib/utils";
-import { LucideIcon } from "lucide-react";
+import { LucideIcon, ArrowUpRight } from "lucide-react";
 
 interface ActionCardProps {
   title: string;
@@ -48,6 +48,11 @@ export const ActionCard = ({
           <p className="text-[10px] text-muted-foreground/80 leading-snug font-medium">
             {description}
           </p>
+        </div>
+
+        {/* Clickable Indicator Icon */}
+        <div className="absolute p-2 top-3 right-3 opacity-20 group-hover:opacity-60 transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 border border-foreground/30 rounded-full">
+          <ArrowUpRight className="w-3.5 h-3.5 text-foreground" />
         </div>
       </CardContent>
     </Card>

@@ -11,19 +11,22 @@ import { getErrorMessage } from "@/lib/auth/utils";
 import { motion } from "framer-motion";
 import { trackAuth } from "@/lib/gtag";
 import { Receipt, Wallet, CircleDollarSign, Coins } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 
 export default function RegisterPage() {
   const router = useRouter();
   const { register, isLoading, isAuthenticated } = useAuthStore();
+  const searchParams = useSearchParams();
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
   // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
-      router.push("/");
+      const redirectPath = searchParams.get("redirect") || "/";
+      router.push(redirectPath);
     }
-  }, [isAuthenticated, router]);
+  }, [isAuthenticated, router, searchParams]);
 
   const handleRegister = async (
     name: string,
@@ -35,8 +38,10 @@ export default function RegisterPage() {
       setSuccess(null);
       await register(name, email, password);
       trackAuth.signUp();
-      // Redirect to login page with success message
-      router.push("/login?registered=true");
+      // Redirect to login page with success message and preserve redirect param
+      const redirectParam = searchParams.get("redirect");
+      const loginUrl = `/login?registered=true${redirectParam ? `&redirect=${encodeURIComponent(redirectParam)}` : ""}`;
+      router.push(loginUrl);
     } catch (err) {
       setError(getErrorMessage(err));
     }

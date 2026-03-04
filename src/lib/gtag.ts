@@ -17,6 +17,58 @@ export const trackEvent = (eventName: string, eventParams?: Record<string, any>)
 };
 
 /**
+ * Identify user with User-ID and set base properties
+ * @param userId Unique identifier for the user
+ * @param properties Additional user properties
+ */
+export const identifyUser = (userId: string, properties?: Record<string, any>) => {
+  if (typeof window !== "undefined" && window.gtag) {
+    if (process.env.NODE_ENV === "development") {
+      console.log(`[GA Identify]: ${userId}`, properties);
+    }
+    window.gtag("config", GA_MEASUREMENT_ID!, {
+      user_id: userId,
+    });
+    if (properties) {
+      setUserProperties(properties);
+    }
+  }
+};
+
+/**
+ * Clear user identification (on logout)
+ */
+export const clearUser = () => {
+  if (typeof window !== "undefined" && window.gtag) {
+    if (process.env.NODE_ENV === "development") {
+      console.log("[GA Clear User]");
+    }
+    window.gtag("config", GA_MEASUREMENT_ID!, {
+      user_id: null,
+    });
+  }
+};
+
+/**
+ * Set user properties
+ * @param properties Key-value pairs of user attributes
+ */
+export const setUserProperties = (properties: Record<string, any>) => {
+  if (typeof window !== "undefined" && window.gtag) {
+    if (process.env.NODE_ENV === "development") {
+      console.log("[GA User Properties]:", properties);
+    }
+    window.gtag("set", "user_properties", properties);
+  }
+};
+
+declare global {
+  interface Window {
+    gtag?: (...args: any[]) => void;
+  }
+}
+
+/**
  * Predefined Event Trackers for Consistency
  */
 export const trackAuth = {

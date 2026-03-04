@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { User } from "@/lib/api/auth";
 import * as authApi from "@/lib/api/auth";
 import { hasTokens, clearTokens } from "@/lib/auth/tokens";
+import { identifyUser, clearUser } from "@/lib/gtag";
 
 export interface LoginCredentials {
   email: string;
@@ -40,6 +41,13 @@ export const useAuthStore = create<AuthState>((set) => ({
         isAuthenticated: true,
         isLoading: false,
         isInitialized: true,
+      });
+
+      // Track User-ID and Properties
+      identifyUser(response.user.id, {
+        email: response.user.email,
+        name: response.user.name,
+        user_type: "registered",
       });
 
       // Store user data in localStorage for offline access
@@ -82,6 +90,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       if (typeof window !== "undefined") {
         localStorage.removeItem("currentUser");
       }
+      clearUser();
       set({
         user: null,
         isAuthenticated: false,
@@ -119,6 +128,13 @@ export const useAuthStore = create<AuthState>((set) => ({
         isAuthenticated: true,
         isLoading: false,
         isInitialized: true,
+      });
+
+      // Track User-ID and Properties on Init
+      identifyUser(user.id, {
+        email: user.email,
+        name: user.name,
+        user_type: "registered",
       });
 
       // Update localStorage

@@ -25,7 +25,7 @@ export const LoginEncouragementCard = () => {
           <h3 className="font-bold text-foreground text-sm">
             Simpan data kamu
           </h3>
-          <p className="text-xs text-muted-foreground font-medium max-w-[200px] leading-relaxed">
+          <p className="text-xs text-muted-foreground font-medium max-w-[250px] leading-relaxed">
             Login untuk menyimpan riwayat split bill dan akses dari perangkat
             mana saja.
           </p>

@@ -239,23 +239,27 @@ export const EditAdditionalExpenseBottomSheet = ({
                     </button>
                   </div>
                   {isPercentage && (
-              <div className="space-y-2">
-                <div className="flex gap-2">
-                  {[5, 10, 11].map((p) => (
-                    <button
-                      key={p}
-                      onClick={() => setPercentageStr(p.toString())}
-                      className={cn(
-                        "flex-1 py-1 rounded-md text-[10px] font-black border transition-all cursor-pointer",
-                        percentageStr === p.toString()
-                          ? "bg-primary/10 border-primary text-primary"
-                          : "bg-white border-primary/10 text-muted-foreground hover:border-primary/30",
-                      )}
-                    >
-                      {p}%
-                    </button>
-                  ))}
-                </div>
+                    <div className="space-y-2">
+                      <div className="flex gap-2">
+                        {(name.toLowerCase().includes("diskon") ||
+                        name.toLowerCase().includes("discount")
+                          ? [-5, -10, -20]
+                          : [5, 10, 11]
+                        ).map((p) => (
+                          <button
+                            key={p}
+                            onClick={() => setPercentageStr(p.toString())}
+                            className={cn(
+                              "flex-1 py-1 rounded-md text-[10px] font-black border transition-all cursor-pointer",
+                              percentageStr === p.toString()
+                                ? "bg-primary/10 border-primary text-primary"
+                                : "bg-white border-primary/10 text-muted-foreground hover:border-primary/30",
+                            )}
+                          >
+                            {p}%
+                          </button>
+                        ))}
+                      </div>
                 <p className="text-[10px] text-muted-foreground px-1">
                   {percentageStr || "0"}% dari subtotal {formatToIDR(subtotal)}{" "}
                   ={" "}

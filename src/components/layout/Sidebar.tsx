@@ -47,7 +47,6 @@ const menuItems = [
     id: "collect",
     label: "Patungan",
     image: "/img/menu-collect-money.png",
-    badge: "New",
     href: "/collect-money",
   },
   {

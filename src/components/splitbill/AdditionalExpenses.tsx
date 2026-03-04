@@ -348,7 +348,10 @@ export const AdditionalExpenses = () => {
             {isPercentage && (
               <div className="space-y-2">
                 <div className="flex gap-2">
-                  {[5, 10, 11].map((p) => (
+                  {(selectedType.id === "discount"
+                    ? [-5, -10, -11]
+                    : [5, 10, 11]
+                  ).map((p) => (
                     <button
                       key={p}
                       onClick={() => setPercentageStr(p.toString())}

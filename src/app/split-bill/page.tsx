@@ -47,6 +47,7 @@ import { useOnboardingStore } from "@/store/useOnboardingStore";
 import { TutorialOverlay, TutorialStep } from "@/components/onboarding/TutorialOverlay";
 import { useAuthStore } from "@/lib/stores/authStore";
 import { trackSplitBill, trackSocial } from "@/lib/gtag";
+import { EmptyState } from "@/components/ui/EmptyState";
 
 
 const SplitBillContent = () => {
@@ -305,6 +306,25 @@ const SplitBillContent = () => {
               </p>
             </div>
 
+            {people.length < 2 && (
+              <Card 
+                onClick={prevStep}
+                className="border-amber-200 bg-amber-50/50 cursor-pointer hover:bg-amber-100/50 transition-colors animate-in fade-in zoom-in-95 duration-300"
+              >
+                <CardContent className="p-4 flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-full bg-amber-500/10 flex items-center justify-center shrink-0">
+                    <Users className="w-5 h-5 text-amber-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-amber-800 text-sm">Waduh, belum ada teman nih! 👥</h4>
+                    <p className="text-xs text-amber-700/70 mt-0.5">
+                      Tap di sini buat tambahin teman yang mau diajak patungan dulu ya.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
             <Card className="border-primary/20 shadow-md">
               <CardContent className="p-1 sm:p-2">
                 <SegmentedControl
@@ -464,16 +484,36 @@ const SplitBillContent = () => {
                 Ini rincian siapa bayar ke siapa.
               </p>
             </div>
-            <BillSummary showDownload={false} />
-            <div className="flex flex-col gap-3">
-              <Button
-                onClick={() => router.push("/")}
-                variant="outline"
-                className="w-full h-14 font-bold rounded-2xl border-primary/20 text-primary shadow-none hover:shadow-none hover:bg-primary/5 transition-all"
-              >
-                Kembali ke Beranda
-              </Button>
-            </div>
+
+            {expenses.length === 0 ? (
+              <EmptyState
+                icon={ReceiptText}
+                message="Belum Ada Item 📝"
+                subtitle="Wah, item belanjanya masih kosong nih. Yuk isi dulu biar bisa di-split!"
+                action={
+                  <Button
+                    onClick={() => router.push("/split-bill?step=1")}
+                    variant="outline"
+                    className="h-12 px-8 font-bold rounded-md border-primary/20 text-primary shadow-none hover:shadow-none hover:bg-primary/5 transition-all"
+                  >
+                    Tambah Item & Teman
+                  </Button>
+                }
+              />
+            ) : (
+              <>
+                <BillSummary showDownload={false} />
+                <div className="flex flex-col gap-3">
+                  <Button
+                    onClick={() => router.push("/split-bill?step=1")}
+                    variant="outline"
+                    className="w-full h-14 font-bold rounded-2xl border-primary/20 text-primary shadow-none hover:shadow-none hover:bg-primary/5 transition-all"
+                  >
+                    Mulai Ulang Split Bill
+                  </Button>
+                </div>
+              </>
+            )}
           </div>
         );
       default:
@@ -562,7 +602,7 @@ const SplitBillContent = () => {
                 {validationError && (
                   <InfoBanner message={validationError} variant="blue" />
                 )}
-                {expenses.length === 0 && (
+                {expenses.length === 0 && people.length >= 2 && (
                   <InfoBanner
                     message="Isi detail transaksinya dulu ya kak!"
                     variant="blue"
@@ -587,7 +627,7 @@ const SplitBillContent = () => {
               </Button>
             )}
 
-            {step === 4 && !isSaved && (
+            {step === 4 && !isSaved && expenses.length > 0 && (
               <Button
                 onClick={() => setShowFinalizeModal(true)}
                 disabled={isFinalizing}

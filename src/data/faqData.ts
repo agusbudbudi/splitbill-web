@@ -173,7 +173,7 @@ export const faqData: FAQItem[] = [
     answer:
       "Shared Goals adalah fitur yang membantu kamu dan teman-teman menabung bersama untuk tujuan tertentu, seperti liburan, beli kado, atau makan bersama. Kamu bisa memantau progress tabungan secara real-time.",
     category: "shared-goals",
-    showOnLanding: true,
+    showOnLanding: false,
   },
   {
     id: "21",
@@ -213,7 +213,7 @@ export const faqData: FAQItem[] = [
     answer:
       "Collect Money adalah fitur patungan praktis untuk keperluan yang tidak punya struk fisik, seperti iuran kas, kado teman, atau donasi. Kamu cukup tentukan nominal target atau buat patungan terbuka.",
     category: "collect-money",
-    showOnLanding: true,
+    showOnLanding: false,
   },
   {
     id: "26",
@@ -237,7 +237,7 @@ export const faqData: FAQItem[] = [
     answer:
       "Fitur Wallet adalah tempat kamu menyimpan nomor rekening dan akun e-wallet (seperti BCA, GoPay, OVO). Data ini akan ditampilkan otomatis saat kamu menagih utang ke teman-teman.",
     category: "wallet",
-    showOnLanding: true,
+    showOnLanding: false,
   },
   {
     id: "29",

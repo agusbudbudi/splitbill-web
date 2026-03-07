@@ -29,6 +29,7 @@ const TrustHighlights = dynamic(() => import("@/components/home/TrustHighlights"
 const SiteFooter = dynamic(() => import("@/components/layout/SiteFooter").then(mod => mod.SiteFooter));
 const FeatureHighlights = dynamic(() => import("@/components/home/FeatureHighlights").then(mod => mod.FeatureHighlights));
 const LoginEncouragementCard = dynamic(() => import("@/components/home/LoginEncouragementCard").then(mod => mod.LoginEncouragementCard));
+const TestimonialSlider = dynamic(() => import("@/components/home/TestimonialSlider").then(mod => mod.TestimonialSlider));
 
 const BackgroundDecoration = () => (
   <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
@@ -123,9 +124,11 @@ export default function Home() {
             </div>
           )}
 
-          <div>
-            <QuickStartScenarios />
-          </div>
+          {isMounted && isAuthenticated && (
+            <div>
+              <QuickStartScenarios />
+            </div>
+          )}
 
           {/* Dashboard Section */}
           {isMounted && isAuthenticated && (
@@ -140,6 +143,12 @@ export default function Home() {
           )}
 
           <VisualFlowPreview />
+          
+          {isMounted && !isAuthenticated && (
+            <div className="pt-2">
+              <TestimonialSlider />
+            </div>
+          )}
           <ShareEncouragement />
           <AdsCarousel />
           {isMounted && isAuthenticated ? <FAQCard /> : <FAQSection />}

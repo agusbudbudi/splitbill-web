@@ -12,5 +12,6 @@ export const API_ENDPOINTS = {
     RESEND_VERIFICATION: "/api/auth/resend-verification",
   },
   REVIEWS: "/api/reviews",
+  PUBLIC_REVIEWS: "/api/reviews/public",
   GEMINI_SCAN: "/api/gemini-scan",
 } as const;

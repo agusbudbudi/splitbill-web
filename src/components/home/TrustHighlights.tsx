@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { ShieldCheck, UserX, Sparkles, Lock, Zap } from "lucide-react";
+import { ShieldCheck, UserX, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const highlights = [
@@ -69,19 +69,6 @@ export const TrustHighlights = () => {
             </div>
           </div>
         ))}
-      </div>
-
-      <div className="pt-2 flex flex-col items-center gap-3">
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 border border-slate-200">
-          <Lock className="w-3 h-3 text-slate-400" />
-          <span className="text-[9px] font-bold text-slate-500 uppercase tracking-tighter">
-            Secure Cloud Storage
-          </span>
-        </div>
-        <p className="text-[10px] text-muted-foreground text-center max-w-[280px]">
-          Data keuanganmu tersimpan aman dan terenkripsi. Kami berkomitmen untuk
-          menjaga privasimu sepenuh hati.
-        </p>
       </div>
     </section>
   );

@@ -18,6 +18,12 @@ export interface ReviewData {
   phone?: string | null;
 }
 
+export interface Review extends ReviewData {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export function useReview() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [remainingCooldown, setRemainingCooldown] = useState(0);
@@ -120,8 +126,25 @@ export function useReview() {
       .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
   };
 
+  const getReviews = useCallback(async (limit: number = 5) => {
+    try {
+      const response = await apiClient.request<{
+        success: boolean;
+        data: { reviews: Review[] };
+      }>(`${API_ENDPOINTS.PUBLIC_REVIEWS}?limit=${limit}`, {
+        method: "GET",
+        skipAuth: true,
+      });
+      return response.data.reviews;
+    } catch (error) {
+      console.error("Error fetching reviews:", error);
+      return [];
+    }
+  }, []);
+
   return {
     submitReview,
+    getReviews,
     isSubmitting,
     remainingCooldown,
     formatCountdown,

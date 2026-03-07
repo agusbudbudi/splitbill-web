@@ -59,7 +59,7 @@ export const AIScanQuotaBanner = ({
                 <p className="text-sm font-bold text-slate-800">
                   {freeScanCount === maxScanCount ? (
                     <>
-                      <span className="text-slate-800 font-bold text-xs">Gratis {maxScanCount}x Scan Struk! 🎉</span>
+                      <span className="text-slate-800 font-bold text-xs">Gratis {maxScanCount}x Scan Struk pake AI 🎉</span>
                     </>   
                   ) : freeScanCount === 0 ? (
                     <>
@@ -89,7 +89,7 @@ export const AIScanQuotaBanner = ({
           </div>
 
           {showRedirect && (
-            <div className="pt-4 border-t border-slate-50">
+            <div className="pt-4">
               <Link href="/split-bill?step=1" className="block">
                 <Button className="w-full text-xs font-bold gap-2 rounded-md shadow-lg shadow-primary/20 group/btn transition-all duration-300">
                   Mulai Split Bill Sekarang

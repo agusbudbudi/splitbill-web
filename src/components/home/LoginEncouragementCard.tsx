@@ -1,11 +1,9 @@
-"use client";
-
-import React from "react";
-import Link from "next/link";
+import { LogIn, Sparkles } from "lucide-react";
+import { useAuthStore } from "@/lib/stores/authStore";
+import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { LogIn } from "lucide-react";
-import { useAuthStore } from "@/lib/stores/authStore";
+import Link from "next/link";
 
 export const LoginEncouragementCard = () => {
   const { isAuthenticated } = useAuthStore();
@@ -15,26 +13,28 @@ export const LoginEncouragementCard = () => {
   }
 
   return (
-    <Card className="rounded-[1.2rem] bg-white/80 backdrop-blur-xs text-card-foreground border-none shadow-soft overflow-hidden relative">
-      <div className="absolute top-0 right-0 p-8 opacity-[0.03] rotate-12 pointer-events-none">
-        <LogIn className="w-32 h-32" />
-      </div>
+    <Card className="rounded-3xl bg-white/70 backdrop-blur-md border border-white/50 shadow-soft overflow-hidden">
+      <CardContent className="p-4 flex items-center gap-4">
+        {/* Compact Icon */}
+        <div className="shrink-0 w-11 h-11 rounded-2xl bg-primary/10 flex items-center justify-center">
+          <LogIn className="w-5 h-5 text-primary" />
+        </div>
 
-      <CardContent className="p-5 flex items-center justify-between gap-4 relative z-10">
-        <div className="space-y-1">
-          <h3 className="font-bold text-foreground text-sm">
-            Simpan data kamu
+        {/* Text Content */}
+        <div className="flex-1 space-y-0.5">
+          <h3 className="font-bold text-foreground text-[13px] tracking-tight flex items-center gap-1.5">
+            Simpan Data Otomatis <Sparkles className="w-3 h-3 text-amber-500" />
           </h3>
-          <p className="text-xs text-muted-foreground font-medium max-w-[250px] leading-relaxed">
-            Login untuk menyimpan riwayat split bill dan akses dari perangkat
-            mana saja.
+          <p className="text-[10.5px] text-muted-foreground font-medium leading-tight">
+            Login biar riwayat split bill kamu aman & bisa diakses di mana saja.
           </p>
         </div>
 
+        {/* Action Button */}
         <Link href="/login">
           <Button
             size="sm"
-            className="h-9 px-4 rounded-xl shadow-lg shadow-primary/20"
+            className="h-9 px-4 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 shadow-md shadow-primary/10 font-bold text-xs"
           >
             Masuk
           </Button>

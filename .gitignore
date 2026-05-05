@@ -48,3 +48,5 @@ public/sw.js
 public/sw.js.map
 public/workbox-*.js
 public/swe-worker-*.js
+
+CLAUDE.md

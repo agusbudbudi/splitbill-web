@@ -213,7 +213,7 @@ export default function OrderDetailPage() {
               <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-widest px-1">
                 Rincian Paket
               </h3>
-              <Card className="border-border/50 shadow-sm rounded-2xl overflow-hidden">
+            <Card className="border-border/50 shadow-sm rounded-2xl overflow-hidden">
                 <CardContent className="p-5 space-y-4">
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
@@ -255,6 +255,43 @@ export default function OrderDetailPage() {
               </Card>
             </div>
           )}
+
+          {/* Rincian Harga */}
+          <div className="space-y-4">
+            <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-widest px-1">
+              Rincian Harga
+            </h3>
+            <Card className="border-border/50 shadow-sm rounded-2xl overflow-hidden">
+              <CardContent className="p-0 divide-y divide-border/50">
+                <div className="p-4 flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground font-medium">
+                    Harga Paket
+                  </span>
+                  <span className="font-bold text-foreground">
+                    {formatToIDR(order.qrisData?.amount || order.amount)}
+                  </span>
+                </div>
+                {order.qrisData?.fee > 0 && (
+                  <div className="p-4 flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground font-medium">
+                      Biaya Admin
+                    </span>
+                    <span className="font-bold text-foreground">
+                      {formatToIDR(order.qrisData?.fee || 0)}
+                    </span>
+                  </div>
+                )}
+                <div className="p-4 flex items-center justify-between bg-primary/[0.02]">
+                  <span className="text-sm font-black text-foreground uppercase">
+                    Total Pembayaran
+                  </span>
+                  <span className="text-lg font-black text-primary">
+                    {formatToIDR(order.qrisData?.total_payment || order.amount)}
+                  </span>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
 
           {/* Payment Details if Paid */}
           {order.status === "paid" && order.paidAt && (

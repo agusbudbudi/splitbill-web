@@ -130,7 +130,7 @@ export default function OrdersPage() {
                     </div>
                     <div className="text-right flex flex-col items-end justify-between py-0.5">
                       <p className="text-sm font-black text-foreground">
-                        {formatToIDR(order.amount)}
+                        {formatToIDR(order.totalPayment || order.amount)}
                       </p>
                       <div className="flex items-center gap-1 group-hover:gap-1.5 transition-all">
                         <span className="text-[10px] text-primary font-bold">

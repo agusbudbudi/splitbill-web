@@ -28,5 +28,6 @@ export interface Order {
   expiresAt: string;
   paymentMethod?: string;
   paidAt?: string;
+  totalPayment?: number;
   createdAt?: string;
 }

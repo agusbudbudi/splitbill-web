@@ -35,8 +35,9 @@ export async function getOrder(orderId: string): Promise<Order> {
 }
 
 export async function getOrders(): Promise<Order[]> {
-  const response = await apiClient.request<{ success: boolean; data: Order[] }>(
-    API_ENDPOINTS.ORDERS.LIST,
-  );
-  return response.data;
+  const response = await apiClient.request<{
+    success: boolean;
+    data: { orders: Order[]; pagination: any };
+  }>(API_ENDPOINTS.ORDERS.LIST);
+  return response.data.orders;
 }

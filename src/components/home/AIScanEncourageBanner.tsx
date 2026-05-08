@@ -6,11 +6,13 @@ import { AIScanQuotaBanner } from "@/components/ui/AIScanQuotaBanner";
 
 export const AIScanEncourageBanner = () => {
   const { user } = useAuthStore();
-  const freeScanCount = user?.freeScanCount ?? 10;
+  const isSubscribed = user?.subscriptionStatus === "active";
+  const freeScanCount = user?.freeScanCount ?? 5;
 
   return (
     <AIScanQuotaBanner 
       freeScanCount={freeScanCount} 
+      isSubscribed={isSubscribed}
       showRedirect={true} 
     />
   );

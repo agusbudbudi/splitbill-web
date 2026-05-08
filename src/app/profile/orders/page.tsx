@@ -4,12 +4,12 @@ import React, { useEffect, useState } from "react";
 import { Header } from "@/components/layout/Header";
 import { useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/Card";
-import { 
-  ShoppingBag, 
-  ChevronRight, 
-  Clock, 
+import {
+  ShoppingBag,
+  ChevronRight,
+  Clock,
   Calendar,
-  AlertCircle
+  AlertCircle,
 } from "lucide-react";
 import { getOrders } from "@/lib/api/subscription";
 import type { Order } from "@/lib/types/subscription";
@@ -65,7 +65,10 @@ export default function OrdersPage() {
           {isLoading ? (
             <div className="space-y-4">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="h-24 w-full bg-muted animate-pulse rounded-xl" />
+                <div
+                  key={i}
+                  className="h-24 w-full bg-muted animate-pulse rounded-xl"
+                />
               ))}
             </div>
           ) : error ? (
@@ -74,7 +77,7 @@ export default function OrdersPage() {
               message="Terjadi Kesalahan"
               subtitle={error}
               action={
-                <button 
+                <button
                   onClick={() => window.location.reload()}
                   className="text-primary font-bold text-sm"
                 >
@@ -82,27 +85,15 @@ export default function OrdersPage() {
                 </button>
               }
             />
-          ) : orders.length === 0 ? (
-            <EmptyState
-              icon={ShoppingBag}
-              message="Belum Ada Pesanan"
-              subtitle="Riwayat pesanan langganan kamu akan muncul di sini."
-              action={
-                <button 
-                  onClick={() => router.push("/subscription")}
-                  className="bg-primary text-white px-6 py-2 rounded-lg font-bold text-sm shadow-lg shadow-primary/20"
-                >
-                  Pilih Paket
-                </button>
-              }
-            />
-          ) : (
+          ) : Array.isArray(orders) && orders.length > 0 ? (
             <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
               {orders.map((order) => (
-                <Card 
+                <Card
                   key={order.orderId}
                   className="border-none shadow-soft hover:shadow-lg hover:shadow-primary/5 transition-all cursor-pointer group overflow-hidden"
-                  onClick={() => router.push(`/profile/orders/${order.orderId}`)}
+                  onClick={() =>
+                    router.push(`/profile/orders/${order.orderId}`)
+                  }
                 >
                   <CardContent className="p-4 flex items-stretch justify-between">
                     <div className="flex items-center gap-4">
@@ -114,10 +105,17 @@ export default function OrdersPage() {
                           {order.snapshot?.name || "Subscription Plan"}
                         </p>
                         <div className="flex items-center gap-2">
-                          <Badge className={cn("text-[9px] px-1.5 py-0 uppercase font-black tracking-wider", getStatusColor(order.status))}>
+                          <Badge
+                            className={cn(
+                              "text-[9px] px-1.5 py-0 uppercase font-black tracking-wider",
+                              getStatusColor(order.status),
+                            )}
+                          >
                             {order.status}
                           </Badge>
-                          <span className="text-[10px] text-muted-foreground">•</span>
+                          <span className="text-[10px] text-muted-foreground">
+                            •
+                          </span>
                           <div className="flex items-center gap-1 opacity-60">
                             <Calendar className="w-2.5 h-2.5" />
                             <p className="text-[9px] font-medium">
@@ -135,7 +133,9 @@ export default function OrdersPage() {
                         {formatToIDR(order.amount)}
                       </p>
                       <div className="flex items-center gap-1 group-hover:gap-1.5 transition-all">
-                        <span className="text-[10px] text-primary font-bold">Detail</span>
+                        <span className="text-[10px] text-primary font-bold">
+                          Detail
+                        </span>
                         <ChevronRight className="w-3 h-3 text-primary transition-colors" />
                       </div>
                     </div>
@@ -143,6 +143,20 @@ export default function OrdersPage() {
                 </Card>
               ))}
             </div>
+          ) : (
+            <EmptyState
+              icon={ShoppingBag}
+              message="Belum Ada Pesanan"
+              subtitle="Riwayat pesanan langganan kamu akan muncul di sini."
+              action={
+                <button
+                  onClick={() => router.push("/subscription")}
+                  className="bg-primary text-white px-6 py-2 rounded-sm font-bold text-sm shadow-lg shadow-primary/20 cursor-pointer"
+                >
+                  Pilih Paket Langganan
+                </button>
+              }
+            />
           )}
         </main>
       </div>

@@ -129,7 +129,7 @@ export function SubscriptionCard({
         {/* CTA */}
         <div className="mt-auto pt-1">
           <Button
-            className="w-full"
+            className="w-full border-1 border-primary/50"
             variant={isBestValue ? "default" : "outline"}
             onClick={() => onBuy?.(pkg._id)}
             disabled={isProcessing}

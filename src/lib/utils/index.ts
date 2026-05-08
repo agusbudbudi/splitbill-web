@@ -37,12 +37,22 @@ export function formatRelativeTime(dateInput: string | Date | undefined) {
   }
 }
 
-export function formatDate(dateInput: string | Date | undefined) {
+export function formatDate(
+  dateInput: string | Date | undefined,
+  includeTime = false,
+) {
   if (!dateInput) return "";
   const date = typeof dateInput === "string" ? new Date(dateInput) : dateInput;
-  return date.toLocaleDateString("id-ID", {
+  const options: Intl.DateTimeFormatOptions = {
     day: "numeric",
     month: "long",
     year: "numeric",
-  });
+  };
+
+  if (includeTime) {
+    options.hour = "2-digit";
+    options.minute = "2-digit";
+  }
+
+  return date.toLocaleDateString("id-ID", options);
 }

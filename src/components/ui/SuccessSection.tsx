@@ -38,13 +38,13 @@ export function SuccessSection({
     >
       <div className="space-y-6 w-full flex flex-col items-center">
         <div className="space-y-6 w-full">
-          <AnimatedCheckmark className="mb-2" />
-          
+          <AnimatedCheckmark className="mb-6" />
+
           <div className="space-y-2">
-            <h3 className="font-black text-2xl text-foreground tracking-tight sm:text-3xl">
+            <h3 className="font-black text-xl text-foreground tracking-tight sm:text-2xl">
               {title}
             </h3>
-            <p className="text-muted-foreground font-medium max-w-[400px] mx-auto text-base">
+            <p className="text-sm text-muted-foreground font-medium max-w-[360px] mx-auto text-base">
               {subtitle}
             </p>
           </div>
@@ -52,7 +52,7 @@ export function SuccessSection({
 
         {children}
 
-        <div className="flex flex-col sm:flex-row w-full gap-3 pt-4 px-4 max-w-lg mx-auto justify-center">
+        <div className="flex flex-col sm:flex-row w-full gap-3 mx-auto justify-center">
           {actions.map((action, index) => {
             const ActionIcon = action.icon;
             return (
@@ -61,8 +61,8 @@ export function SuccessSection({
                 variant={action.variant || "default"}
                 onClick={action.onClick}
                 className={cn(
-                  "flex-1 h-16 sm:h-14 rounded-2xl font-bold transition-all active:scale-95 text-lg sm:text-base whitespace-nowrap",
-                  action.variant === "default" && "shadow-xl shadow-primary/20",
+                  "flex-1 h-16 sm:h-12 rounded-md font-bold transition-all active:scale-95 text-lg sm:text-base whitespace-nowrap",
+                  action.variant === "default" && "shadow-lg shadow-primary/20",
                   action.className,
                 )}
               >

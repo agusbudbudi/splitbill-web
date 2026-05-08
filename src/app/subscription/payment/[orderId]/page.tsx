@@ -157,7 +157,7 @@ export default function PaymentPage() {
         <main className="w-full max-w-[600px] p-4 flex flex-col items-center min-h-[80vh] space-y-6">
           <SuccessSection
             title="Pembayaran Berhasil!"
-            subtitle={`Selamat! Paket ${order.snapshot.name} kamu sekarang aktif. Nikmati fitur premium tanpa batas.`}
+            subtitle={`Selamat! Paket ${order.snapshot?.name || "-"} kamu sekarang aktif. Nikmati fitur premium tanpa batas.`}
             icon={CheckCircle2}
             className="pt-8"
             actions={[
@@ -173,7 +173,7 @@ export default function PaymentPage() {
               },
             ]}
           >
-            <Card className="w-full p-6 border-none bg-white shadow-soft rounded-3xl animate-in fade-in zoom-in-95 duration-700 delay-300 fill-mode-both text-left">
+            <Card className="w-full p-6 border-none bg-white shadow-soft rounded-lg animate-in fade-in zoom-in-95 duration-700 delay-300 fill-mode-both text-left">
               <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-50">
                 <span className="text-sm font-bold text-slate-400 uppercase tracking-wider">
                   Ringkasan Transaksi
@@ -217,10 +217,10 @@ export default function PaymentPage() {
                 </div>
                 <div className="h-px bg-slate-50 my-2" />
                 <div className="flex justify-between items-center pt-2">
-                  <span className="text-sm font-black text-slate-900 uppercase tracking-wide">
+                  <span className="text-sm font-bold text-slate-900 uppercase tracking-wide">
                     Total Terbayar
                   </span>
-                  <span className="text-2xl font-black text-primary tracking-tight">
+                  <span className="text-xl font-bold text-primary tracking-tight">
                     {formatToIDR(order.qrisData?.total_payment || order.amount)}
                   </span>
                 </div>
@@ -295,7 +295,7 @@ export default function PaymentPage() {
                 Paket
               </p>
               <p className="text-sm font-bold text-foreground/80">
-                {order.snapshot.name}
+                {order.snapshot?.name || "-"}
               </p>
             </div>
             <div className="text-right space-y-0.5">

@@ -21,6 +21,8 @@ import {
   Moon,
   Heart,
   Users,
+  Crown,
+  ShoppingBag,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
@@ -192,17 +194,38 @@ export default function ProfilePage() {
             <Card className="p-4 border border-border/50 shadow-sm rounded-lg bg-card">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-primary/20 bg-primary/5 shadow-sm">
-                    <img
-                      src={avatarUrl}
-                      alt="User Avatar"
-                      className="w-full h-full object-cover"
-                    />
+                  <div
+                    className={cn(
+                      "relative flex items-center justify-center rounded-full transition-all duration-500",
+                      authUser?.subscriptionStatus === "active"
+                        ? "w-14 h-14 p-[3px] bg-gradient-gold shadow-[0_0_15px_rgba(246,226,122,0.3)]"
+                        : "w-12 h-12 border-2 border-primary/20 bg-primary/5 shadow-sm",
+                    )}
+                  >
+                    <div className="w-full h-full rounded-full overflow-hidden bg-white/20">
+                      <img
+                        src={avatarUrl}
+                        alt="User Avatar"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    {authUser?.subscriptionStatus === "active" && (
+                      <div className="absolute -top-0 -right-0 w-4 h-4 bg-gradient-gold rounded-full flex items-center justify-center shadow-lg z-10">
+                        <Crown className="w-2.5 h-2.5 text-white fill-white" />
+                      </div>
+                    )}
                   </div>
-                  <div className="space-y-0.5">
-                    <h2 className="font-bold text-lg leading-tight tracking-tight text-foreground">
-                      {user.name}
-                    </h2>
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <h2 className="font-bold text-lg leading-tight tracking-tight text-foreground">
+                        {user.name}
+                      </h2>
+                      {authUser?.subscriptionStatus === "active" && (
+                        <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-gradient-gold text-[10px] font-black text-white uppercase tracking-wider">
+                          <span>Premium</span>
+                        </div>
+                      )}
+                    </div>
                     <p className="text-[13px] font-medium text-muted-foreground">
                       {user.email}
                     </p>
@@ -213,9 +236,39 @@ export default function ProfilePage() {
 
             {/* Akun & Finansial Section */}
             <MenuGroup title="Akun & Finansial">
-              <MenuItem icon={Users} label="Teman Saya" href="/profile/friends" />
-              <MenuItem icon={ReceiptText} label="Transaksi" href="/history" />
+              <MenuItem
+                icon={Users}
+                label="Teman Saya"
+                href="/profile/friends"
+              />
+              <MenuItem icon={ReceiptText} label="History" href="/history" />
               <MenuItem icon={Wallet} label="Wallet" href="/wallet" />
+
+              {/* HIDE SUBSCRIPTION ENTRY POINTS FOR INTERNAL TEST */}
+              {false && (
+                <>
+                  <MenuItem
+                    icon={ShoppingBag}
+                    label="Pesanan Saya"
+                    href="/profile/orders"
+                  />
+                  <MenuItem
+                    icon={Crown}
+                    label="Membership"
+                    href="/membership"
+                    trailing={
+                      <div className="flex items-center gap-2">
+                        {authUser?.subscriptionStatus === "active" && (
+                          <div className="px-2 py-0.5 rounded-full bg-green-500/10 text-[10px] font-bold text-green-600 border border-green-500/20">
+                            Active
+                          </div>
+                        )}
+                        <ChevronRight className="w-4 h-4 text-muted-foreground/60 group-hover:translate-x-0.5 transition-transform" />
+                      </div>
+                    }
+                  />
+                </>
+              )}
             </MenuGroup>
 
             <MenuGroup title="Preferensi & Masukan">

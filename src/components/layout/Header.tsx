@@ -3,7 +3,7 @@
 import React, { useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Sprout, ArrowLeft, LogIn, MessageCircle } from "lucide-react";
+import { Sprout, ArrowLeft, LogIn, MessageCircle, Crown } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/lib/stores/authStore";
@@ -168,16 +168,28 @@ export const Header = ({
                   <Link
                     href="/profile"
                     className={cn(
-                      "flex items-center justify-center overflow-hidden rounded-full border-2 border-white/30 w-8 h-8 hover:border-white transition-all bg-white/10 backdrop-blur-sm",
+                      "group relative flex items-center justify-center rounded-full transition-all duration-300",
+                      user?.subscriptionStatus === "active"
+                        ? "w-9 h-9 p-[2px] bg-gradient-gold shadow-[0_0_10px_rgba(246,226,122,0.4)] hover:scale-105"
+                        : "w-8 h-8 border-2 border-white/30 hover:border-white bg-white/10 backdrop-blur-sm",
                       transparent &&
-                        "drop-shadow-[0_2px_4px_rgba(0,0,0,0.2)] border-white/30",
+                        !scrolled &&
+                        user?.subscriptionStatus !== "active" &&
+                        "drop-shadow-[0_2px_4px_rgba(0,0,0,0.2)]",
                     )}
                   >
-                    <img
-                      src={`https://api.dicebear.com/9.x/personas/svg?backgroundColor=b6e3f4&scale=100&seed=${user?.email || "default"}`}
-                      alt="Profile"
-                      className="w-full h-full object-cover"
-                    />
+                    <div className="w-full h-full rounded-full overflow-hidden bg-white/20">
+                      <img
+                        src={`https://api.dicebear.com/9.x/personas/svg?backgroundColor=b6e3f4&scale=100&seed=${user?.email || "default"}`}
+                        alt="Profile"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    {user?.subscriptionStatus === "active" && (
+                      <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-gold rounded-full flex items-center justify-center shadow-sm z-10">
+                        <Crown className="w-2 h-2 text-white fill-white" />
+                      </div>
+                    )}
                   </Link>
                 ) : (
                   <Link href="/login">

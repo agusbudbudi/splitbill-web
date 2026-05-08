@@ -210,7 +210,6 @@ export const AIScanForm = () => {
             </Button>
           </div>
         </div>
-  
       </div>
     );
   }
@@ -221,32 +220,40 @@ export const AIScanForm = () => {
     isAuthenticated &&
     freeScanCount !== undefined &&
     freeScanCount <= 0 &&
+    user?.subscriptionStatus !== "active" &&
     !scanResult
   ) {
     return (
       <div className="space-y-4 py-2 animate-in fade-in duration-500 relative">
-        <div className="relative overflow-hidden rounded-3xl p-6 bg-slate-900 text-white shadow-lg z-10">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 rounded-full blur-[80px] -mr-16 -mt-16 pointer-events-none" />
+        <div className="relative overflow-hidden rounded-lg bg-gradient-to-b from-primary/10 via-transparent to-transparent p-8">
+          {/* Background Glows */}
+          <div className="absolute -top-24 -right-24 w-64 h-64 bg-primary/20 rounded-full blur-[80px]" />
+          <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-indigo-500/10 rounded-full blur-[80px]" />
 
-          <div className="relative z-10 flex flex-col items-center text-center gap-4">
-            <div className="w-16 h-16 rounded-3xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20">
-              <Lock className="w-8 h-8 text-amber-400" />
+          <div className="relative z-10 flex flex-col items-center text-center gap-6">
+            <div className="w-16 h-16 rounded-3xl bg-gradient-to-br from-primary to-indigo-600 flex items-center justify-center shadow-lg shadow-primary/30 rotate-3">
+              <Sparkles className="w-8 h-8 text-white animate-pulse" />
             </div>
 
-            <div className="space-y-2 max-w-[280px]">
-              <h3 className="text-xl font-bold tracking-tight text-white">
+            <div className="space-y-2 max-w-[360px]">
+              <h3 className="text-2xl font-black tracking-tight text-foreground">
                 Scan Habis! 🚀
               </h3>
-              <p className="text-xs text-white/70 leading-relaxed font-medium">
-                Kuota 10x free kamu udah habis. Hubungi admin buat lanjut ✨
+              <p className="text-sm text-muted-foreground leading-relaxed font-medium">
+                Kamu telah menggunakan semua kuota gratis. Upgrade ke{" "}
+                <span className="text-primary font-bold">Premium</span> untuk{" "}
+                <span className="text-foreground font-bold underline decoration-primary/50">
+                  Scan Tanpa Batas
+                </span>{" "}
+                dan fitur eksklusif lainnya! ✨
               </p>
             </div>
 
             <Button
-              onClick={() => router.push("/history")}
-              className="w-full max-w-[200px] h-11 bg-white hover:bg-white/90 text-slate-900 font-bold rounded-xl transition-all mt-2 text-base cursor-pointer border-0"
+              onClick={() => router.push("/subscription")}
+              className="w-full max-w-[240px] h-12 bg-primary hover:bg-primary/90 text-white font-black rounded-xl transition-all mt-2 text-base cursor-pointer shadow-lg shadow-primary/25"
             >
-              Lihat Riwayat
+              Upgrade ke Premium
             </Button>
           </div>
         </div>
@@ -257,8 +264,11 @@ export const AIScanForm = () => {
   return (
     <div className="space-y-4 py-2 animate-in fade-in duration-500">
       {/* Quota Info Banner - Premium AI Theme */}
-      {!scanResult && freeScanCount !== undefined && freeScanCount > 0 && (
-        <AIScanQuotaBanner freeScanCount={freeScanCount} />
+      {!scanResult && freeScanCount !== undefined && (freeScanCount > 0 || user?.subscriptionStatus === "active") && (
+        <AIScanQuotaBanner 
+          freeScanCount={freeScanCount} 
+          isSubscribed={user?.subscriptionStatus === "active"}
+        />
       )}
       {!image ? (
         <div
@@ -412,7 +422,8 @@ export const AIScanForm = () => {
                     💡 Info Penting
                   </p>
                   <p className="text-xs leading-relaxed text-secondary-foreground font-medium">
-                    Jangan khawatir! Semua data bisa diedit setelah di-import jika ada yang belum sesuai.
+                    Jangan khawatir! Semua data bisa diedit setelah di-import
+                    jika ada yang belum sesuai.
                   </p>
                 </div>
               </div>

@@ -30,6 +30,7 @@ class ApiClient {
         "Content-Type": "application/json",
         ...fetchOptions.headers,
       },
+      cache: "no-store",
       ...fetchOptions,
     };
 

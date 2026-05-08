@@ -14,4 +14,10 @@ export const API_ENDPOINTS = {
   REVIEWS: "/api/reviews",
   PUBLIC_REVIEWS: "/api/reviews/public",
   GEMINI_SCAN: "/api/gemini-scan",
+  SUBSCRIPTION_PACKAGES_PUBLIC: "/api/subscription-packages/public",
+  ORDERS: {
+    CREATE: "/api/orders/create",
+    LIST: "/api/orders",
+    BY_ID: (id: string) => `/api/orders/${id}`,
+  },
 } as const;

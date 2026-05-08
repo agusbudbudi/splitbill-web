@@ -140,6 +140,16 @@
   background: linear-gradient(135deg, #7dd3fc 0%, #479fea 100%) !important;
 }
 
+@utility bg-gradient-gold {
+  background: linear-gradient(135deg, #f6e27a 0%, #f1c40f 50%, #d4af37 100%);
+}
+
+@utility text-gradient-gold-bright {
+  background: linear-gradient(135deg, #fff2ac 0%, #f1c40f 50%, #fff2ac 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
 @utility scrollbar-hide {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */

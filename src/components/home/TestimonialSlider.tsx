@@ -11,12 +11,10 @@ export const TestimonialSlider = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    console.log("TestimonialSlider: Fetching reviews...");
     const fetchReviews = async () => {
       setIsLoading(true);
       try {
         const data = await getReviews(5);
-        console.log("TestimonialSlider: Fetched reviews:", data);
         setReviews(data);
       } catch (err) {
         console.error("TestimonialSlider: Fetch error:", err);
@@ -36,7 +34,6 @@ export const TestimonialSlider = () => {
   }
 
   if (reviews.length === 0) {
-    console.log("TestimonialSlider: No reviews, showing placeholder.");
     return (
       <section className="space-y-4">
         <div className="flex items-center gap-3 px-1">
@@ -78,9 +75,9 @@ export const TestimonialSlider = () => {
       {/* Horizontal Scroll Container with Bleed Effect */}
       <div className="relative -mx-4 overflow-hidden pt-2">
         <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide px-4 scroll-pl-4">
-          {reviews.map((review) => (
+          {reviews.map((review, idx) => (
             <div
-              key={review.id}
+              key={review.id || `testimonial-${idx}`}
               className="flex-shrink-0 w-[280px] snap-start"
             >
               <TestimonialCard review={review} />
@@ -93,7 +90,7 @@ export const TestimonialSlider = () => {
       <div className="flex justify-center gap-1.5 sm:hidden">
         {reviews.map((_, idx) => (
           <div
-            key={idx}
+            key={`dot-${idx}`}
             className="w-1.5 h-1.5 rounded-full bg-primary/20"
           />
         ))}

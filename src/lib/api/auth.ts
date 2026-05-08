@@ -7,6 +7,15 @@ export interface User {
   name: string;
   email: string;
   freeScanCount?: number;
+  subscriptionStatus?: "free" | "active" | "expired";
+  subscriptionPlan?: string;
+  subscriptionExpiry?: string;
+  order?: {
+    orderId: string;
+    paidAt: string;
+    snapshot: any;
+  };
+  createdAt?: string;
 }
 
 export interface LoginCredentials {

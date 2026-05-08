@@ -48,7 +48,9 @@ export const usePWA = () => {
       setDeferredPrompt(null);
       setIsInstallable(false);
       setIsStandalone(true);
-      console.log("PWA was installed");
+      if (process.env.NODE_ENV === "development") {
+        console.log("PWA was installed");
+      }
     };
 
     window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);

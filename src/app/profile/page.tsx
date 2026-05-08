@@ -21,6 +21,8 @@ import {
   Moon,
   Heart,
   Users,
+  Crown,
+  ShoppingBag,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
@@ -199,10 +201,18 @@ export default function ProfilePage() {
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <div className="space-y-0.5">
-                    <h2 className="font-bold text-lg leading-tight tracking-tight text-foreground">
-                      {user.name}
-                    </h2>
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <h2 className="font-bold text-lg leading-tight tracking-tight text-foreground">
+                        {user.name}
+                      </h2>
+                      {authUser?.subscriptionStatus === "active" && (
+                        <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-gradient-to-r from-yellow-400 to-amber-500 text-[10px] font-black text-white uppercase tracking-wider">
+                          <Crown className="w-3 h-3 fill-white" />
+                          <span>Premium</span>
+                        </div>
+                      )}
+                    </div>
                     <p className="text-[13px] font-medium text-muted-foreground">
                       {user.email}
                     </p>
@@ -213,9 +223,33 @@ export default function ProfilePage() {
 
             {/* Akun & Finansial Section */}
             <MenuGroup title="Akun & Finansial">
-              <MenuItem icon={Users} label="Teman Saya" href="/profile/friends" />
-              <MenuItem icon={ReceiptText} label="Transaksi" href="/history" />
+              <MenuItem
+                icon={Users}
+                label="Teman Saya"
+                href="/profile/friends"
+              />
+              <MenuItem icon={ReceiptText} label="History" href="/history" />
+              <MenuItem
+                icon={ShoppingBag}
+                label="Pesanan Saya"
+                href="/profile/orders"
+              />
               <MenuItem icon={Wallet} label="Wallet" href="/wallet" />
+              <MenuItem
+                icon={Crown}
+                label="Subscription"
+                href="/subscription"
+                trailing={
+                  <div className="flex items-center gap-2">
+                    {authUser?.subscriptionStatus === "active" && (
+                      <div className="px-2 py-0.5 rounded-full bg-green-500/10 text-[10px] font-bold text-green-600 border border-green-500/20">
+                        Active
+                      </div>
+                    )}
+                    <ChevronRight className="w-4 h-4 text-muted-foreground/60 group-hover:translate-x-0.5 transition-transform" />
+                  </div>
+                }
+              />
             </MenuGroup>
 
             <MenuGroup title="Preferensi & Masukan">

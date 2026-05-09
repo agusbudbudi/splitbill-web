@@ -111,7 +111,10 @@ export const AddPaymentMethodBottomSheet = ({
         <div className="flex items-center justify-between px-6 py-2 border-b border-primary/5">
           <div className="flex items-center gap-2">
             <button
-              onClick={onClose}
+              onClick={() => {
+                trackWallet.dropOff();
+                onClose();
+              }}
               className="p-2 -ml-2 text-muted-foreground hover:text-foreground rounded-full hover:bg-muted/10 transition-colors cursor-pointer"
             >
               <ArrowLeft className="w-5 h-5" />

@@ -80,14 +80,15 @@ export const trackSubscription = {
   viewPlans: () => trackEvent("view_subscription_plans"),
   initiateCheckout: (planId: string) => trackEvent("initiate_checkout", { plan_id: planId }),
   purchaseSuccess: (planId: string, amount: number) => trackEvent("purchase_success", { plan_id: planId, amount }),
+  premiumFeatureClick: (featureName: string) => trackEvent("premium_feature_click", { feature_name: featureName }),
 };
 
 export const trackSplitBill = {
   start: () => trackEvent("split_bill_start"),
   stepComplete: (stepNumber: number, stepName: string) => 
     trackEvent("split_bill_step_complete", { step_number: stepNumber, step_name: stepName }),
-  aiScan: (status: "start" | "success" | "error") => 
-    trackEvent("ai_scan_receipt", { status }),
+  aiScan: (status: "start" | "success" | "error", retryCount?: number) => 
+    trackEvent("ai_scan_receipt", { status, retry_count: retryCount || 0 }),
   aiImport: () => trackEvent("ai_import_result"),
   inputMethod: (method: "ai" | "manual") => trackEvent("split_bill_input_method", { method }),
   save: (params: { total_amount: number; num_participants: number; num_items: number; activity_name: string }) => 
@@ -117,4 +118,11 @@ export const trackGeneral = {
 export const trackWallet = {
   addMethod: (type: string) => trackEvent("add_payment_method", { method_type: type }),
   copyAccount: (provider: string) => trackEvent("copy_payment_account", { provider }),
+  dropOff: () => trackEvent("drop_off_payment_method"),
+};
+
+export const trackMarketing = {
+  setPersona: (persona: string) => setUserProperties({ marketing_persona: persona }),
+  setSocialEngagement: (bestiesCount: number) => setUserProperties({ besties_count: bestiesCount }),
+  setUsageIntensity: (totalBills: number) => setUserProperties({ total_bills_created: totalBills }),
 };

@@ -27,6 +27,7 @@ export const AIScanForm = () => {
   const [isScanning, setIsScanning] = useState(false);
   const [scanResult, setScanResult] = useState<ReceiptScanResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { addExpense, setActivityName, addAdditionalExpense } =
@@ -55,6 +56,7 @@ export const AIScanForm = () => {
         setImage(reader.result as string);
         setScanResult(null);
         setError(null);
+        setRetryCount(0);
       };
       reader.readAsDataURL(file);
     }
@@ -69,7 +71,8 @@ export const AIScanForm = () => {
     try {
       const result = await scanReceipt(image);
       setScanResult(result);
-      trackSplitBill.aiScan("success");
+      trackSplitBill.aiScan("success", retryCount);
+      setRetryCount(0);
 
       // Show success toast
       toast.success("Scan Berhasil! ✨", {
@@ -81,7 +84,9 @@ export const AIScanForm = () => {
       await getCurrentUser();
     } catch (err: any) {
       console.error("Scan failed", err);
-      trackSplitBill.aiScan("error");
+      const newRetryCount = retryCount + 1;
+      setRetryCount(newRetryCount);
+      trackSplitBill.aiScan("error", newRetryCount);
       setError(err.message || "Gagal membaca struk. Coba lagi!");
     } finally {
       setIsScanning(false);
@@ -204,6 +209,7 @@ export const AIScanForm = () => {
 
             <Button
               onClick={() => {
+                trackSubscription.premiumFeatureClick("ai_scan_login_barrier");
                 trackSubscription.initiateCheckout("login_barrier");
                 router.push("/login");
               }}
@@ -254,6 +260,7 @@ export const AIScanForm = () => {
 
             <Button
               onClick={() => {
+                trackSubscription.premiumFeatureClick("ai_scan_quota_barrier");
                 trackSubscription.initiateCheckout("quota_barrier");
                 router.push("/subscription");
               }}

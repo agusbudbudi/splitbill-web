@@ -19,6 +19,7 @@ export interface Order {
   type: "subscription" | string;
   status: "pending" | "paid" | "expired" | "failed";
   amount: number;
+  packageId: string;
   snapshot: any;
   qrisData: {
     image?: string;

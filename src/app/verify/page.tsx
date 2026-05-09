@@ -4,10 +4,11 @@ import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Card, CardContent, CardHeader } from "@/components/ui/Card";
-import { verifyEmail } from "@/lib/api/auth";
+import { verifyEmail, resendVerification } from "@/lib/api/auth";
 import { getErrorMessage } from "@/lib/auth/utils";
-import { CheckCircle2, XCircle, Loader2 } from "lucide-react";
+import { CheckCircle2, XCircle, Loader2, Mail } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
 
 function VerifyContent() {
   const searchParams = useSearchParams();
@@ -18,6 +19,12 @@ function VerifyContent() {
     "loading",
   );
   const [message, setMessage] = useState("");
+  const [showResendForm, setShowResendForm] = useState(false);
+  const [email, setEmail] = useState("");
+  const [resendStatus, setResendStatus] = useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
+  const [resendMessage, setResendMessage] = useState("");
 
   useEffect(() => {
     if (!token) {
@@ -39,6 +46,21 @@ function VerifyContent() {
 
     verify();
   }, [token]);
+
+  const handleResend = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) return;
+
+    setResendStatus("loading");
+    try {
+      const response = await resendVerification(email);
+      setResendStatus("success");
+      setResendMessage(response.message);
+    } catch (error) {
+      setResendStatus("error");
+      setResendMessage(getErrorMessage(error));
+    }
+  };
 
   return (
     <Card className="border-border/50 shadow-soft w-full max-w-md">
@@ -83,9 +105,68 @@ function VerifyContent() {
                 atau minta link baru.
               </p>
             </div>
-            <Button variant="outline" className="w-full" asChild>
-              <Link href="/login">Kembali ke Login</Link>
-            </Button>
+
+            {!showResendForm ? (
+              <div className="w-full space-y-3">
+                <Button
+                  className="w-full"
+                  onClick={() => setShowResendForm(true)}
+                >
+                  Kirim Ulang Email Verifikasi
+                </Button>
+                <Button variant="outline" className="w-full" asChild>
+                  <Link href="/login">Kembali ke Login</Link>
+                </Button>
+              </div>
+            ) : (
+              <form onSubmit={handleResend} className="w-full space-y-4">
+                {resendStatus === "success" ? (
+                  <div className="bg-green-500/10 text-green-600 p-4 rounded-sm text-sm border border-green-500/20 flex items-start gap-3">
+                    <Mail className="h-5 w-5 shrink-0 mt-0.5" />
+                    <p>{resendMessage}</p>
+                  </div>
+                ) : (
+                  <>
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium px-1">
+                        Masukkan Email Anda
+                      </label>
+                      <Input
+                        type="email"
+                        placeholder="nama@email.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                        disabled={resendStatus === "loading"}
+                      />
+                    </div>
+                    {resendStatus === "error" && (
+                      <p className="text-destructive text-sm px-1">
+                        {resendMessage}
+                      </p>
+                    )}
+                    <Button
+                      type="submit"
+                      className="w-full"
+                      disabled={resendStatus === "loading"}
+                    >
+                      {resendStatus === "loading" ? (
+                        <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                      ) : null}
+                      Kirim Link Baru
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      className="w-full"
+                      onClick={() => setShowResendForm(false)}
+                      disabled={resendStatus === "loading"}
+                    >
+                      Batal
+                    </Button>
+                  </>
+                )}
+              </form>
+            )}
           </>
         )}
       </CardContent>

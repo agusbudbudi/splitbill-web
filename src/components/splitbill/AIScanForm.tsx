@@ -20,7 +20,7 @@ import { toast } from "sonner";
 // Removed unused FeatureBanner import
 
 import { AIScanQuotaBanner } from "@/components/ui/AIScanQuotaBanner";
-import { trackSplitBill } from "@/lib/gtag";
+import { trackSplitBill, trackSubscription } from "@/lib/gtag";
 
 export const AIScanForm = () => {
   const [image, setImage] = useState<string | null>(null);
@@ -203,7 +203,10 @@ export const AIScanForm = () => {
             </div>
 
             <Button
-              onClick={() => router.push("/login")}
+              onClick={() => {
+                trackSubscription.initiateCheckout("login_barrier");
+                router.push("/login");
+              }}
               className="w-full max-w-[200px] h-11 bg-white hover:bg-white/90 text-primary font-bold rounded-xl shadow-lg shadow-black/5 border-0 transition-all hover:scale-[1.02] active:scale-[0.98] mt-2 text-base"
             >
               Login Sekarang
@@ -250,7 +253,10 @@ export const AIScanForm = () => {
             </div>
 
             <Button
-              onClick={() => router.push("/subscription")}
+              onClick={() => {
+                trackSubscription.initiateCheckout("quota_barrier");
+                router.push("/subscription");
+              }}
               className="w-full max-w-[240px] h-12 bg-primary hover:bg-primary/90 text-white font-black rounded-xl transition-all mt-2 text-base cursor-pointer shadow-lg shadow-primary/25"
             >
               Upgrade ke Premium

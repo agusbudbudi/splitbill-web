@@ -13,6 +13,7 @@ import {
 import type { SubscriptionPackage } from "@/lib/types/subscription";
 import { getAccessToken } from "@/lib/auth/tokens";
 import { useOrderStore } from "@/store/useOrderStore";
+import { trackSubscription } from "@/lib/gtag";
 
 export default function SubscriptionPage() {
   const router = useRouter();
@@ -36,6 +37,7 @@ export default function SubscriptionPage() {
     };
 
     fetchData();
+    trackSubscription.viewPlans();
   }, []);
 
   const handleBuy = async (packageId: string) => {
@@ -47,6 +49,7 @@ export default function SubscriptionPage() {
     }
 
     setProcessingId(packageId);
+    trackSubscription.initiateCheckout(packageId);
     try {
       const order = await createOrder(packageId, "subscription");
       setCurrentOrder(order);

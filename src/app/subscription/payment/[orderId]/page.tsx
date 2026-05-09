@@ -23,6 +23,7 @@ import type { Order } from "@/lib/types/subscription";
 import { cn, formatToIDR } from "@/lib/utils";
 import { SuccessSection } from "@/components/ui/SuccessSection";
 import { useOrderStore } from "@/store/useOrderStore";
+import { trackSubscription } from "@/lib/gtag";
 
 export default function PaymentPage() {
   const { orderId } = useParams();
@@ -104,6 +105,7 @@ export default function PaymentPage() {
 
   useEffect(() => {
     if (order?.status === "paid") {
+      trackSubscription.purchaseSuccess(order.packageId, order.amount);
       import("canvas-confetti").then((confetti) => {
         confetti.default({
           particleCount: 150,

@@ -14,6 +14,7 @@ const AVATAR_BASE_URL =
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { InfoTooltip } from "@/components/ui/InfoTooltip";
+import { trackSocial } from "@/lib/gtag";
 
 export const PeopleList = () => {
   const { people, addPerson, removePerson } = useSplitBillStore();
@@ -54,6 +55,7 @@ export const PeopleList = () => {
     } else {
       addPerson(friend.name);
       useFriend(friend.id);
+      trackSocial.useSuggestion("friend");
     }
   };
 
@@ -74,6 +76,7 @@ export const PeopleList = () => {
         }
         useFriend(friend.id);
       });
+      trackSocial.useSuggestion("group");
     }
   };
 

@@ -13,6 +13,7 @@ import {
   WifiOff,
   LayoutGrid,
 } from "lucide-react";
+import { trackWallet } from "@/lib/gtag";
 
 export const PaymentMethodsTab = () => {
   const { paymentMethods, removePaymentMethod } = useWalletStore();
@@ -118,6 +119,7 @@ export const PaymentMethodsTab = () => {
 
                   const fullMessage = `Halo! Ini rincian akun pembayaran saya:\n\n${text}\nDibagikan via SplitBill App 🚀`;
 
+                  trackWallet.copyAccount("all_methods");
                   if (navigator.share) {
                     navigator.share({
                       title: "My Payment Methods",

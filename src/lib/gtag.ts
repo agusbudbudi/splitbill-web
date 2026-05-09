@@ -8,11 +8,11 @@ export const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
  * @param eventParams Additional parameters for the event
  */
 export const trackEvent = (eventName: string, eventParams?: Record<string, any>) => {
-  if (typeof window !== "undefined" && GA_MEASUREMENT_ID) {
+  if (typeof window !== "undefined" && window.gtag && GA_MEASUREMENT_ID) {
     if (process.env.NODE_ENV === "development") {
       console.log(`[GA Event]: ${eventName}`, eventParams);
     }
-    sendGAEvent({ event: eventName, ...eventParams });
+    window.gtag("event", eventName, eventParams);
   }
 };
 
@@ -76,6 +76,12 @@ export const trackAuth = {
   signUp: () => trackEvent("sign_up"),
 };
 
+export const trackSubscription = {
+  viewPlans: () => trackEvent("view_subscription_plans"),
+  initiateCheckout: (planId: string) => trackEvent("initiate_checkout", { plan_id: planId }),
+  purchaseSuccess: (planId: string, amount: number) => trackEvent("purchase_success", { plan_id: planId, amount }),
+};
+
 export const trackSplitBill = {
   start: () => trackEvent("split_bill_start"),
   stepComplete: (stepNumber: number, stepName: string) => 
@@ -83,10 +89,14 @@ export const trackSplitBill = {
   aiScan: (status: "start" | "success" | "error") => 
     trackEvent("ai_scan_receipt", { status }),
   aiImport: () => trackEvent("ai_import_result"),
+  inputMethod: (method: "ai" | "manual") => trackEvent("split_bill_input_method", { method }),
   save: (params: { total_amount: number; num_participants: number; num_items: number; activity_name: string }) => 
     trackEvent("save_split_bill", params),
-  share: (method: "share_api" | "copy_link", id: string) => 
+  share: (method: "share_api" | "copy_link" | "download_image", id: string) => 
     trackEvent("share_split_bill", { method, id }),
+  validationError: (step: number, errorMessage: string) => 
+    trackEvent("form_validation_error", { step, error_message: errorMessage }),
+  delete: (id: string) => trackEvent("delete_split_bill", { id }),
 };
 
 export const trackPublic = {
@@ -95,9 +105,16 @@ export const trackPublic = {
 
 export const trackSocial = {
   addFriend: () => trackEvent("add_friend"),
+  useSuggestion: (type: "friend" | "group") => trackEvent("use_besties_suggestion", { type }),
   tutorialComplete: () => trackEvent("tutorial_complete"),
 };
 
 export const trackGeneral = {
   appEntry: () => trackEvent("app_entry"),
+  viewHistory: () => trackEvent("view_split_bill_history"),
+};
+
+export const trackWallet = {
+  addMethod: (type: string) => trackEvent("add_payment_method", { method_type: type }),
+  copyAccount: (provider: string) => trackEvent("copy_payment_account", { provider }),
 };

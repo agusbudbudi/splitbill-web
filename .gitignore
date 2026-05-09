@@ -50,3 +50,4 @@ public/workbox-*.js
 public/swe-worker-*.js
 
 CLAUDE.md
+doc/

@@ -8,6 +8,7 @@ import { X, Save, ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { createPortal } from "react-dom";
+import { trackWallet } from "@/lib/gtag";
 
 interface AddPaymentMethodBottomSheetProps {
   isOpen: boolean;
@@ -69,6 +70,7 @@ export const AddPaymentMethodBottomSheet = ({
     }
 
     toast.success("Metode pembayaran berhasil ditambahkan! 🎉");
+    trackWallet.addMethod(selectedProvider.type);
     resetForm();
     onClose();
   };

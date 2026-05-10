@@ -247,7 +247,7 @@ const SplitBillContent = () => {
   }, [isAuthenticated, searchParams, step, isSaved]);
 
   const nextStep = () => {
-    if (step === 1) {
+    if (step === 1 && people.length < 2) {
       const errorMsg = "Waduh, minimal harus ada 2 orang buat Split Bill nih! 👥";
       toast.error(errorMsg);
       trackSplitBill.validationError(step, errorMsg);

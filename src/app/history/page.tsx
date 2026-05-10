@@ -5,9 +5,15 @@ import { Header } from "@/components/layout/Header";
 import { useRouter } from "next/navigation";
 import { Footer } from "@/components/layout/Footer";
 import { HistoryTab } from "@/components/wallet/HistoryTab";
+import { trackGeneral } from "@/lib/gtag";
 
 export default function HistoryPage() {
   const router = useRouter();
+
+  React.useEffect(() => {
+    trackGeneral.viewHistory();
+  }, []);
+
   return (
     <div className="min-h-screen bg-background flex flex-col items-center relative">
       <div className="w-full max-w-[600px] min-h-screen flex flex-col relative bg-background">

@@ -61,7 +61,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Split Bill Online - Gratis & Mudah",
-    description: "Split bill online gratis! Scan struk, hitung pajak otomatis, dan bagi tagihan praktis bareng teman.",
+    description:
+      "Split bill online gratis! Scan struk, hitung pajak otomatis, dan bagi tagihan praktis bareng teman.",
     images: ["/img/pwa-banner.png"],
   },
   appleWebApp: {
@@ -88,8 +89,6 @@ export default function RootLayout({
 
   return (
     <html lang="id" suppressHydrationWarning>
-      {GA_ID && <GoogleAnalytics gaId={GA_ID} />}
-      <AppEntryTracker />
       <head>
         <script
           dangerouslySetInnerHTML={{
@@ -115,6 +114,8 @@ export default function RootLayout({
         className={`${inter.variable} antialiased`}
         suppressHydrationWarning={true}
       >
+        {GA_ID && <GoogleAnalytics gaId={GA_ID} />}
+        <AppEntryTracker />
         <ThemeProvider>
           <ResponsiveShell>
             <PWAInstallBanner />

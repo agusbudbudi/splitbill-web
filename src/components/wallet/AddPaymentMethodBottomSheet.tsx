@@ -8,6 +8,7 @@ import { X, Save, ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { createPortal } from "react-dom";
+import { trackWallet } from "@/lib/gtag";
 
 interface AddPaymentMethodBottomSheetProps {
   isOpen: boolean;
@@ -69,6 +70,7 @@ export const AddPaymentMethodBottomSheet = ({
     }
 
     toast.success("Metode pembayaran berhasil ditambahkan! 🎉");
+    trackWallet.addMethod(selectedProvider.type);
     resetForm();
     onClose();
   };
@@ -109,7 +111,10 @@ export const AddPaymentMethodBottomSheet = ({
         <div className="flex items-center justify-between px-6 py-2 border-b border-primary/5">
           <div className="flex items-center gap-2">
             <button
-              onClick={onClose}
+              onClick={() => {
+                trackWallet.dropOff();
+                onClose();
+              }}
               className="p-2 -ml-2 text-muted-foreground hover:text-foreground rounded-full hover:bg-muted/10 transition-colors cursor-pointer"
             >
               <ArrowLeft className="w-5 h-5" />

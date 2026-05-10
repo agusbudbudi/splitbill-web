@@ -33,7 +33,7 @@ import { ProviderLogo } from "@/components/ui/ProviderLogo";
 import { Sparkles, Share2 } from "lucide-react";
 import * as htmlToImage from "html-to-image";
 import { SocialSplitBillReceipt } from "./SocialSplitBillReceipt";
-import { trackSplitBill } from "@/lib/gtag";
+import { trackSplitBill, trackWallet } from "@/lib/gtag";
 
 interface BillSummaryProps {
   billData?: SplitBillData & {
@@ -150,6 +150,8 @@ export const BillSummary = ({
       link.href = dataUrl;
       link.click();
 
+      trackSplitBill.share("download_image", billData?.id || "");
+
       toast.success("Gambar berhasil dibuat! Tinggal share deh. 📸✨", {
         id: toastId,
       });
@@ -161,8 +163,11 @@ export const BillSummary = ({
     }
   };
 
-  const handleCopy = (text: string, label: string) => {
+  const handleCopy = (text: string, label: string, provider?: string) => {
     navigator.clipboard.writeText(text);
+    if (label === "Nomor rekening" && provider) {
+      trackWallet.copyAccount(provider);
+    }
     toast.success(`${label} berhasil disalin! 📋`, {
       description: text,
       duration: 2000,
@@ -505,6 +510,7 @@ export const BillSummary = ({
                         handleCopy(
                           method.accountNumber || method.phoneNumber || "",
                           "Nomor rekening",
+                          method.providerName,
                         )
                       }
                       className="p-3 bg-primary/5 border border-primary/10 rounded-lg flex items-center gap-3 cursor-pointer hover:bg-primary/10 transition-all active:scale-[0.98] group/copy"

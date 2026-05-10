@@ -46,7 +46,7 @@ import { toast } from "sonner";
 import { useOnboardingStore } from "@/store/useOnboardingStore";
 import { TutorialOverlay, TutorialStep } from "@/components/onboarding/TutorialOverlay";
 import { useAuthStore } from "@/lib/stores/authStore";
-import { trackSplitBill, trackSocial } from "@/lib/gtag";
+import { trackSplitBill, trackSocial, trackWallet } from "@/lib/gtag";
 import { EmptyState } from "@/components/ui/EmptyState";
 
 
@@ -86,6 +86,9 @@ const SplitBillContent = () => {
   useEffect(() => {
     if (step === 1) {
       trackSplitBill.start();
+    }
+    if (step === 2) {
+      trackSplitBill.inputMethod(activeTab);
     }
   }, [step]);
 
@@ -245,19 +248,19 @@ const SplitBillContent = () => {
 
   const nextStep = () => {
     if (step === 1) {
-      if (people.length < 2) {
-        toast.error("Waduh, minimal harus ada 2 orang buat Split Bill nih! 👥");
-        return;
-      }
+      const errorMsg = "Waduh, minimal harus ada 2 orang buat Split Bill nih! 👥";
+      toast.error(errorMsg);
+      trackSplitBill.validationError(step, errorMsg);
+      return;
     }
     if (step === 2) {
       const unassignedItems = expenses.filter(
         (e) => e.who.length === 0 || !e.paidBy,
       );
       if (unassignedItems.length > 0) {
-        setValidationError(
-          "Beberapa item belum di-assign 'Split dengan' atau 'Dibayar oleh'. Tolong lengkapi dulu ya!",
-        );
+        const errorMsg = "Beberapa item belum di-assign 'Split dengan' atau 'Dibayar oleh'. Tolong lengkapi dulu ya!";
+        setValidationError(errorMsg);
+        trackSplitBill.validationError(step, errorMsg);
         return;
       }
     }
@@ -339,7 +342,11 @@ const SplitBillContent = () => {
                     { id: "manual", label: "Manual", icon: ClipboardList },
                   ]}
                   activeId={activeTab}
-                  onChange={(id) => setActiveTab(id as any)}
+                  onChange={(id) => {
+                    const method = id as "ai" | "manual";
+                    setActiveTab(method);
+                    trackSplitBill.inputMethod(method);
+                  }}
                   className="mb-4"
                 />
 

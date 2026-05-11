@@ -16,6 +16,7 @@ export interface User {
     snapshot: any;
   };
   createdAt?: string;
+  hasClaimedReviewReward?: boolean;
 }
 
 export interface LoginCredentials {

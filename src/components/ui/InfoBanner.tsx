@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 interface InfoBannerProps {
   message: string;
   subtitle?: string;
-  variant?: "blue" | "amber" | "primary" | "destructive";
+  variant?: "blue" | "amber" | "primary" | "destructive" | "green";
   icon?: LucideIcon;
   layout?: "horizontal" | "vertical";
   className?: string;
@@ -49,6 +49,13 @@ export const InfoBanner = ({
       icon: "text-destructive",
       text: "text-destructive",
       subtitle: "text-destructive/60",
+    },
+    green: {
+      container: "bg-green-50 border-green-200",
+      iconBg: "bg-green-500/10",
+      icon: "text-green-600",
+      text: "text-green-700",
+      subtitle: "text-green-600/60",
     },
   };
 

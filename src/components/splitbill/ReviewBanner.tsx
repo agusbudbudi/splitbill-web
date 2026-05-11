@@ -3,6 +3,7 @@ import { ThumbsUp, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/Button";
+import { useAuthStore } from "@/lib/stores/authStore";
 
 interface ReviewBannerProps {
   onClose?: () => void;
@@ -10,7 +11,10 @@ interface ReviewBannerProps {
 
 export const ReviewBanner: React.FC<ReviewBannerProps> = ({ onClose }) => {
   const router = useRouter();
-  const [isVisible, setIsVisible] = useState(true);
+   const [isVisible, setIsVisible] = useState(true);
+  const { user, isAuthenticated } = useAuthStore();
+
+  const showRewardCopy = !isAuthenticated || (isAuthenticated && !user?.hasClaimedReviewReward);
 
   // Auto-hide logic can be added here if needed, but for now we keep it persistent until closed
   // or user navigates away.
@@ -49,9 +53,13 @@ export const ReviewBanner: React.FC<ReviewBannerProps> = ({ onClose }) => {
             <ThumbsUp className="w-5 h-5 text-white fill-white/20" />
           </div>
           <div className="flex flex-col">
-            <h4 className="font-bold text-sm">Suka aplikasinya?</h4>
+            <h4 className="font-bold text-sm">
+              {showRewardCopy ? "Bonus +5 Kuota Scan AI 🎁" : "Suka aplikasinya?"}
+            </h4>
             <p className="text-xs text-primary-foreground/80">
-              Bantu kami kasih rating bintang 5 ya! ⭐
+              {showRewardCopy 
+                ? "Kirim review pertama kamu sekarang!" 
+                : "Bantu kami kasih rating bintang 5 ya! ⭐"}
             </p>
           </div>
         </div>

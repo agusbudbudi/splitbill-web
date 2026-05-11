@@ -68,7 +68,11 @@ export function useReview() {
     setIsSubmitting(true);
 
     try {
-      await apiClient.request(API_ENDPOINTS.REVIEWS, {
+      const response = await apiClient.request<{
+        success: boolean;
+        message: string;
+        rewardEarned?: boolean;
+      }>(API_ENDPOINTS.REVIEWS, {
         method: "POST",
         body: JSON.stringify(data),
       });
@@ -79,7 +83,8 @@ export function useReview() {
 
       return {
         success: true,
-        message: "Terima kasih! Ulasan kamu sudah tersimpan 🙏",
+        message: response.message || "Terima kasih! Ulasan kamu sudah tersimpan 🙏",
+        rewardEarned: response.rewardEarned,
       };
     } catch (error) {
       console.error("Error submitting review:", error);
@@ -107,6 +112,7 @@ export function useReview() {
           success: true,
           message:
             "Review tersimpan secara lokal. Akan disinkronkan saat koneksi tersedia.",
+          rewardEarned: false,
         };
       } catch (localError) {
         throw new Error("Gagal mengirim review. Silakan coba lagi.");

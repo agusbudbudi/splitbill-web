@@ -10,6 +10,8 @@ import { Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { InfoBanner } from "@/components/ui/InfoBanner";
+import { useAuthStore } from "@/lib/stores/authStore";
+import { useEffect } from "react";
 
 export function ReviewForm() {
   const {
@@ -20,7 +22,9 @@ export function ReviewForm() {
     isInCooldown,
   } = useReview();
 
-  const [rating, setRating] = useState(0);
+  const { user, isAuthenticated, initialize, getCurrentUser } = useAuthStore();
+
+  const [rating, setRating] = useState(5);
   const [hoverRating, setHoverRating] = useState(0);
   const [name, setName] = useState("");
   const [review, setReview] = useState("");
@@ -28,6 +32,14 @@ export function ReviewForm() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // Prefill user data if logged in
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      if (!name) setName(user.name);
+      if (!email) setEmail(user.email);
+    }
+  }, [isAuthenticated, user, name, email]);
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
@@ -65,14 +77,19 @@ export function ReviewForm() {
       });
 
       if (result.success) {
-        toast.success(result.message);
+        toast.success(result.rewardEarned ? "Review & Reward Berhasil! 🎉" : "Review Berhasil Dikirim! 🙏");
         // Reset form
-        setRating(0);
+        setRating(5);
         setName("");
         setReview("");
         setContactPermission(false);
         setEmail("");
         setPhone("");
+
+        // Refresh user data to update quota and reward status
+        if (isAuthenticated) {
+          await getCurrentUser();
+        }
       }
     } catch (error: any) {
       toast.error(error.message);
@@ -81,17 +98,31 @@ export function ReviewForm() {
 
   return (
     <form onSubmit={handleSubmit} className="flex-1 flex flex-col space-y-6">
-      {isInCooldown && (
-        <div className="mb-4">
-          <InfoBanner
-            variant="amber"
-            message={`Kamu sudah mengirim review. Tunggu ${formatCountdown(remainingCooldown)} untuk mengirim review berikutnya.`}
-            className="mb-4"
-          />
-        </div>
+      {!isAuthenticated && (
+        <InfoBanner
+          variant="blue"
+          message="Login untuk dapatkan reward +5 kuota scan AI setelah kirim review!"
+          className="mb-4"
+        />
       )}
 
-      <Card className="p-6 space-y-6">
+      {isAuthenticated && !user?.hasClaimedReviewReward && (
+        <InfoBanner
+          variant="primary"
+          message="Kirim review pertamamu dan dapatkan bonus +5 kuota scan AI! 🎁"
+          className="mb-4"
+        />
+      )}
+
+      {isAuthenticated && user?.hasClaimedReviewReward && (
+        <InfoBanner
+          variant="green"
+          message="Selamat kamu berhasil mendapatkan +5 kuota scan AI 🎉"
+          className="mb-4"
+        />
+      )}
+
+      <Card className="p-6 space-y-6 mb-4">
         <div className="space-y-4 text-center">
           <h2 className="text-lg font-bold">Beri Ulasan & Feedback</h2>
           <p className="text-sm text-foreground/60">
@@ -210,6 +241,16 @@ export function ReviewForm() {
           )}
         </div>
       </Card>
+
+      {isInCooldown && (
+        <div className="mb-0">
+          <InfoBanner
+            variant="amber"
+            message={`Kamu sudah mengirim review. Tunggu 1 jam untuk mengirim review berikutnya.`}
+            className="mb-4"
+          />
+        </div>
+      )}
 
       {/* Sticky CTA Footer */}
       <div className="sticky bottom-0 w-full z-50 pointer-events-none flex justify-center mt-auto">

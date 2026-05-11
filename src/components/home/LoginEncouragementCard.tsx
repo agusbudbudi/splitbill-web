@@ -13,7 +13,7 @@ export const LoginEncouragementCard = () => {
   }
 
   return (
-    <Card className="rounded-3xl bg-white/70 backdrop-blur-md border border-white/50 shadow-soft overflow-hidden">
+    <Card className="rounded-lg bg-white/70 backdrop-blur-md border border-white/50 shadow-soft overflow-hidden">
       <CardContent className="p-4 flex items-center gap-4">
         {/* Compact Icon */}
         <div className="shrink-0 w-11 h-11 rounded-2xl bg-primary/10 flex items-center justify-center">
@@ -22,11 +22,11 @@ export const LoginEncouragementCard = () => {
 
         {/* Text Content */}
         <div className="flex-1 space-y-0.5">
-          <h3 className="font-bold text-foreground text-[13px] tracking-tight flex items-center gap-1.5">
+          <h3 className="font-bold text-foreground text-sm flex items-center gap-1.5">
             Simpan Data Otomatis <Sparkles className="w-3 h-3 text-amber-500" />
           </h3>
-          <p className="text-[10.5px] text-muted-foreground font-medium leading-tight">
-            Login biar riwayat split bill kamu aman & bisa diakses di mana saja.
+          <p className="text-xs text-muted-foreground font-medium">
+            Login biar riwayat split bill aman & bisa diakses kapan aja.
           </p>
         </div>
 

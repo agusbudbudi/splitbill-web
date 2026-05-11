@@ -53,14 +53,17 @@ export const GettingStarted = () => {
   return (
     <section className="space-y-4">
       <div className="px-1">
-        <h2 className="text-md font-bold text-foreground/70">
-          Mulai Cepat ⚡️
-        </h2>
+        <h2 className="text-md font-bold text-foreground">Mulai Cepat ⚡️</h2>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
         {guideItems.map((item) => (
-          <Link key={item.title} href={item.href} rel="nofollow">
+          <Link
+            key={item.title}
+            href={item.href}
+            rel="nofollow"
+            className="h-full"
+          >
             <ActionCard
               title={item.title}
               description={item.desc}

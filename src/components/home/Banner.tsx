@@ -12,7 +12,6 @@ import { demoData } from "@/lib/demoData";
 import { Sparkles, Play } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 
-
 interface BannerItem {
   id: string | number;
   image: string;
@@ -66,16 +65,18 @@ export const Banner = () => {
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [loadedImages, setLoadedImages] = useState<Record<string | number, boolean>>({});
+  const [loadedImages, setLoadedImages] = useState<
+    Record<string | number, boolean>
+  >({});
   const router = useRouter();
   const { setIsDemoMode, setHasSeenTutorial } = useOnboardingStore();
-  const { 
-    people, 
-    addPerson, 
-    addExpense, 
-    addAdditionalExpense, 
+  const {
+    people,
+    addPerson,
+    addExpense,
+    addAdditionalExpense,
     setActivityName,
-    clearDraftAfterFinalize 
+    clearDraftAfterFinalize,
   } = useSplitBillStore();
 
   const handleStartDemo = (e: React.MouseEvent) => {
@@ -87,9 +88,9 @@ export const Banner = () => {
 
     // Populate with demo data
     setActivityName(demoData.activityName);
-    demoData.people.forEach(p => addPerson(p));
-    demoData.expenses.forEach(e => addExpense(e));
-    demoData.additionalExpenses.forEach(ae => addAdditionalExpense(ae));
+    demoData.people.forEach((p) => addPerson(p));
+    demoData.expenses.forEach((e) => addExpense(e));
+    demoData.additionalExpenses.forEach((ae) => addAdditionalExpense(ae));
 
     // Setup onboarding
     setIsDemoMode(true);
@@ -98,7 +99,6 @@ export const Banner = () => {
 
     router.push("/split-bill");
   };
-
 
   useEffect(() => {
     setIsMounted(true);
@@ -201,7 +201,7 @@ export const Banner = () => {
               {!loadedImages[banner.id] && (
                 <div className="absolute inset-0 z-10 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 bg-[length:200%_100%] animate-[shimmer_1.5s_infinite] aspect-[480/280]" />
               )}
-              
+
               <Image
                 src={banner.image}
                 alt={banner.alt}
@@ -209,11 +209,13 @@ export const Banner = () => {
                 height={280}
                 className={cn(
                   "w-full aspect-[480/280] block object-cover transition-all duration-700 group-hover:scale-105",
-                  !loadedImages[banner.id] ? "opacity-0" : "opacity-100"
+                  !loadedImages[banner.id] ? "opacity-0" : "opacity-100",
                 )}
                 priority={index === 0}
                 draggable={false}
-                onLoad={() => setLoadedImages(prev => ({ ...prev, [banner.id]: true }))}
+                onLoad={() =>
+                  setLoadedImages((prev) => ({ ...prev, [banner.id]: true }))
+                }
               />
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300" />
             </div>

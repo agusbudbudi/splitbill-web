@@ -31,7 +31,7 @@ const FAQItem = ({
       >
         <span
           className={cn(
-            "text-xs font-bold transition-colors duration-300",
+            "text-sm font-bold transition-colors duration-300",
             isOpen ? "text-primary" : "text-foreground/80",
           )}
         >
@@ -50,7 +50,7 @@ const FAQItem = ({
           isOpen ? "max-h-40 opacity-100 pb-4 px-2" : "max-h-0 opacity-0",
         )}
       >
-        <p className="text-[11px] text-muted-foreground leading-relaxed">
+        <p className="text-xs text-muted-foreground leading-relaxed">
           {answer}
         </p>
       </div>
@@ -69,20 +69,17 @@ export const FAQSection = () => {
   return (
     <section className="space-y-6">
       <div className="flex items-center gap-3 px-1">
-        <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
-          <Info className="w-5 h-5 text-primary" />
-        </div>
         <div className="space-y-0.5">
-          <h2 className="text-sm font-bold text-foreground/80 tracking-tight">
+          <h2 className="text-md font-bold text-foreground">
             Pertanyaan Populer
           </h2>
-          <p className="text-[10px] text-muted-foreground font-medium">
+          <p className="text-xs text-muted-foreground font-medium">
             Mungkin yang kamu cari ada di sini
           </p>
         </div>
       </div>
 
-      <div className="bg-white/50 border border-white backdrop-blur-sm rounded-3xl p-2 shadow-soft">
+      <div className="bg-white border border-white backdrop-blur-sm rounded-lg p-2 shadow-soft">
         {landingFaqs.map((faq, idx) => (
           <FAQItem
             key={faq.id}
@@ -94,23 +91,12 @@ export const FAQSection = () => {
         ))}
       </div>
 
-      <div className="flex flex-col items-center gap-4">
-        <Link href="/faq">
-          <button className="text-[11px] font-bold text-primary bg-primary/5 px-4 py-2 rounded-full hover:bg-primary/10 transition-all cursor-pointer">
+      <div className="flex flex-col items-center gap-4 w-full pb-4">
+        <Link href="/faq" className="w-full">
+          <button className="w-full text-md font-bold text-primary bg-primary/5 px-4 py-3 rounded-lg hover:bg-primary/10 transition-all cursor-pointer">
             Lihat Semua Pertanyaan
           </button>
         </Link>
-        {/* <p className="text-[10px] text-muted-foreground">
-          Masih ada pertanyaan? Hubungi kami lewat{" "}
-          <a
-            href="https://api.whatsapp.com/send?phone=6285559496968&text=Hi%20Admin%20%F0%9F%91%8B%0AMau%20tanya%20dong%20soal%20aplikasi%20split%20bill%20%F0%9F%99%8F"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-primary font-bold hover:underline"
-          >
-            Support
-          </a>
-        </p> */}
       </div>
     </section>
   );

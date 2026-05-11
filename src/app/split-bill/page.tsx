@@ -398,6 +398,30 @@ const SplitBillContent = () => {
                   }}
                   className="bg-white border-primary/10 h-12"
                 />
+
+                <div className="flex flex-wrap gap-2 pt-1">
+                  {[
+                    { name: "Makan Bareng", emoji: "🍱" },
+                    { name: "Liburan", emoji: "✈️" },
+                    { name: "Patungan Kado", emoji: "🎁" },
+                    { name: "Tagihan", emoji: "🏠" },
+                    { name: "Belanja", emoji: "🛒" },
+                  ].map((pick) => (
+                    <button
+                      key={pick.name}
+                      onClick={() => setActivityName(`${pick.emoji} ${pick.name}`)}
+                      className={cn(
+                        "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold transition-all active:scale-95",
+                        activityName === `${pick.emoji} ${pick.name}`
+                          ? "bg-primary text-white shadow-sm"
+                          : "bg-primary/5 text-primary/70 hover:bg-primary/10 border border-primary/10"
+                      )}
+                    >
+                      <span>{pick.emoji}</span>
+                      <span>{pick.name}</span>
+                    </button>
+                  ))}
+                </div>
               </CardContent>
             </Card>
 

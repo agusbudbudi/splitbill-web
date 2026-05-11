@@ -21,7 +21,7 @@ export const FAQCard = () => {
                   <h3 className="text-foreground font-bold text-sm tracking-tight">
                     Ada Pertanyaan?
                   </h3>
-                  <p className="text-muted-foreground text-[10px] font-medium">
+                  <p className="text-muted-foreground text-xs font-medium">
                     Lihat FAQ atau Hubungi Support Kami
                   </p>
                 </div>

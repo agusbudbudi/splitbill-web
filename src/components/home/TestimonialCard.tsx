@@ -11,7 +11,10 @@ interface TestimonialCardProps {
   className?: string;
 }
 
-export const TestimonialCard = ({ review, className }: TestimonialCardProps) => {
+export const TestimonialCard = ({
+  review,
+  className,
+}: TestimonialCardProps) => {
   const getInitials = (name: string) => {
     return name
       .split(" ")
@@ -31,7 +34,12 @@ export const TestimonialCard = ({ review, className }: TestimonialCardProps) => 
   };
 
   return (
-    <Card className={cn("overflow-hidden border border-primary/10 shadow-soft h-full", className)}>
+    <Card
+      className={cn(
+        "overflow-hidden border border-primary/10 shadow-soft h-full",
+        className,
+      )}
+    >
       <CardContent className="p-5 flex flex-col h-full gap-3">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm">

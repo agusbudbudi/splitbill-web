@@ -10,7 +10,13 @@ import { useAuthStore } from "@/lib/stores/authStore";
 import { getErrorMessage } from "@/lib/auth/utils";
 import { motion } from "framer-motion";
 import { trackAuth } from "@/lib/gtag";
-import { Receipt, Wallet, CircleDollarSign, Coins, Loader2 } from "lucide-react";
+import {
+  Receipt,
+  Wallet,
+  CircleDollarSign,
+  Coins,
+  Loader2,
+} from "lucide-react";
 import { useSearchParams } from "next/navigation";
 
 function RegisterContent() {
@@ -61,9 +67,7 @@ function RegisterContent() {
         />
 
         <div className="text-center text-sm pt-2">
-          <span className="text-muted-foreground">
-            Sudah punya akun?{" "}
-          </span>
+          <span className="text-muted-foreground">Sudah punya akun? </span>
           <Link
             href="/login"
             className="text-primary font-extrabold hover:text-primary/80 transition-colors"
@@ -143,7 +147,7 @@ export default function RegisterPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
-          className="text-center text-[10px] font-medium text-muted-foreground/40 "
+          className="text-center text-xs font-medium text-muted-foreground/40 "
         >
           &copy; 2026 SplitBill • Smart Way to Split Expenses
         </motion.p>

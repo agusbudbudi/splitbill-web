@@ -237,38 +237,32 @@ export default function ProfilePage() {
             {/* Akun & Finansial Section */}
             <MenuGroup title="Akun & Finansial">
               <MenuItem
+                icon={Crown}
+                label="Membership"
+                href="/membership"
+                trailing={
+                  <div className="flex items-center gap-2">
+                    {authUser?.subscriptionStatus === "active" && (
+                      <div className="px-2 py-0.5 rounded-full bg-green-500/10 text-[10px] font-bold text-green-600 border border-green-500/20">
+                        Active
+                      </div>
+                    )}
+                    <ChevronRight className="w-4 h-4 text-muted-foreground/60 group-hover:translate-x-0.5 transition-transform" />
+                  </div>
+                }
+              />
+              <MenuItem
+                icon={ShoppingBag}
+                label="Pesanan Saya"
+                href="/profile/orders"
+              />
+              <MenuItem
                 icon={Users}
                 label="Teman Saya"
                 href="/profile/friends"
               />
               <MenuItem icon={ReceiptText} label="History" href="/history" />
               <MenuItem icon={Wallet} label="Wallet" href="/wallet" />
-
-              {/* HIDE SUBSCRIPTION ENTRY POINTS FOR INTERNAL TEST */}
-              {false && (
-                <>
-                  <MenuItem
-                    icon={ShoppingBag}
-                    label="Pesanan Saya"
-                    href="/profile/orders"
-                  />
-                  <MenuItem
-                    icon={Crown}
-                    label="Membership"
-                    href="/membership"
-                    trailing={
-                      <div className="flex items-center gap-2">
-                        {authUser?.subscriptionStatus === "active" && (
-                          <div className="px-2 py-0.5 rounded-full bg-green-500/10 text-[10px] font-bold text-green-600 border border-green-500/20">
-                            Active
-                          </div>
-                        )}
-                        <ChevronRight className="w-4 h-4 text-muted-foreground/60 group-hover:translate-x-0.5 transition-transform" />
-                      </div>
-                    }
-                  />
-                </>
-              )}
             </MenuGroup>
 
             <MenuGroup title="Preferensi & Masukan">

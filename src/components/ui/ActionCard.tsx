@@ -27,12 +27,12 @@ export const ActionCard = ({
   return (
     <Card
       className={cn(
-        "rounded-[1.2rem] bg-white/80 backdrop-blur-xs text-card-foreground border-none shadow-soft hover:shadow-lg hover:shadow-primary/5 transition-all cursor-pointer group overflow-hidden",
+        "rounded-lg bg-white backdrop-blur-xs text-card-foreground border-none shadow-soft hover:shadow-lg hover:shadow-primary/5 transition-all cursor-pointer group overflow-hidden h-full",
         className,
       )}
       onClick={onClick}
     >
-      <CardContent className="p-4 flex flex-col gap-3">
+      <CardContent className="p-4 flex flex-col gap-3 h-full">
         <div
           className={cn(
             "w-10 h-10 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110",
@@ -42,17 +42,15 @@ export const ActionCard = ({
           <Icon className={cn("w-5 h-5", color)} />
         </div>
         <div className="space-y-1">
-          <h3 className="text-xs font-black text-foreground/80 leading-tight">
-            {title}
-          </h3>
-          <p className="text-[10px] text-muted-foreground/80 leading-snug font-medium">
+          <h3 className="text-sm font-bold text-foreground">{title}</h3>
+          <p className="text-xs text-muted-foreground/80 leading-snug font-medium">
             {description}
           </p>
         </div>
 
         {/* Clickable Indicator Icon */}
-        <div className="absolute p-2 top-3 right-3 opacity-20 group-hover:opacity-60 transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 border border-foreground/30 rounded-full">
-          <ArrowUpRight className="w-3.5 h-3.5 text-foreground" />
+        <div className="absolute p-2 top-3 right-3 opacity-20 group-hover:opacity-100 transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 border border-foreground/30 group-hover:border-primary/30 rounded-full">
+          <ArrowUpRight className="w-3.5 h-3.5 text-foreground group-hover:text-primary transition-colors" />
         </div>
       </CardContent>
     </Card>

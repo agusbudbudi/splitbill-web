@@ -3,7 +3,7 @@
 import React, { useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Sprout, ArrowLeft, LogIn, MessageCircle, Crown } from "lucide-react";
+import { ArrowLeft, LogIn, MessageCircle, Crown } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/lib/stores/authStore";
@@ -20,6 +20,7 @@ interface HeaderProps {
   transparent?: boolean;
   rightContent?: React.ReactNode;
   alignTitle?: "center" | "left";
+  sticky?: boolean;
 }
 
 export const Header = ({
@@ -32,6 +33,7 @@ export const Header = ({
   transparent = false,
   rightContent,
   alignTitle = "center",
+  sticky = true,
 }: HeaderProps) => {
   const router = useRouter();
   const { user, isAuthenticated, initialize } = useAuthStore();
@@ -70,8 +72,9 @@ export const Header = ({
   return (
     <header
       className={cn(
-        "sticky z-50 w-full flex flex-col items-center pointer-events-none transition-all duration-500",
-        isPWABannerVisible ? "top-[52px]" : "top-0",
+        "z-50 w-full flex flex-col items-center pointer-events-none transition-all duration-500",
+        sticky && "sticky",
+        sticky && (isPWABannerVisible ? "top-[52px]" : "top-0"),
       )}
     >
       <div
@@ -156,13 +159,6 @@ export const Header = ({
               </Link>
 
               <div className="flex items-center gap-3">
-                <Link
-                  href="/donate"
-                  className="flex items-center gap-1.5 text-white/90 hover:text-white hover:bg-white/10 transition-colors h-8 px-3 rounded-sm"
-                >
-                  <Sprout className="w-4 h-4" />
-                  <span className="text-xs font-bold">Donasi</span>
-                </Link>
 
                 {isAuthenticated ? (
                   <Link

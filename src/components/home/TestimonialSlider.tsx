@@ -14,8 +14,10 @@ export const TestimonialSlider = () => {
     const fetchReviews = async () => {
       setIsLoading(true);
       try {
-        const data = await getReviews(5);
-        setReviews(data);
+        const data = await getReviews(10, true);
+        // Filter reviews to ensure only those marked for landing page are shown
+        const filteredReviews = data.filter((review) => review.showOnLanding);
+        setReviews(filteredReviews);
       } catch (err) {
         console.error("TestimonialSlider: Fetch error:", err);
       } finally {
@@ -34,47 +36,25 @@ export const TestimonialSlider = () => {
   }
 
   if (reviews.length === 0) {
-    return (
-      <section className="space-y-4">
-        <div className="flex items-center gap-3 px-1">
-          <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
-            <Sparkles className="w-5 h-5 text-primary" />
-          </div>
-          <div className="space-y-0.5">
-            <h2 className="text-sm font-bold text-foreground/80 tracking-tight">
-              Apa Kata Mereka? ✨
-            </h2>
-            <p className="text-[10px] text-muted-foreground font-medium">
-              Ulasan jujur dari pengguna setia SplitBill.
-            </p>
-          </div>
-        </div>
-        <div className="px-1 text-center py-6 bg-white/30 backdrop-blur-sm rounded-3xl border border-white/50 shadow-soft italic text-[11px] text-muted-foreground">
-          Belum ada ulasan saat ini. Jadilah yang pertama memberikan ulasan! 😊
-        </div>
-      </section>
-    );
+    return null;
   }
 
   return (
     <section className="space-y-4">
       <div className="flex items-center gap-3 px-1">
-        <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
-          <Sparkles className="w-5 h-5 text-primary" />
-        </div>
         <div className="space-y-0.5">
-          <h2 className="text-sm font-bold text-foreground/80 tracking-tight">
+          <h2 className="text-md font-bold text-foreground">
             Apa Kata Mereka? ✨
           </h2>
-          <p className="text-[10px] text-muted-foreground font-medium">
-            Ulasan jujur dari pengguna setia SplitBill.
+          <p className="text-xs text-muted-foreground font-medium">
+            ⭐ 4.9/5 rating dan 200+ split bill dibuat
           </p>
         </div>
       </div>
 
       {/* Horizontal Scroll Container with Bleed Effect */}
       <div className="relative -mx-4 overflow-hidden pt-2">
-        <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide px-4 scroll-pl-4">
+        <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide px-4 scroll-pl-4">
           {reviews.map((review, idx) => (
             <div
               key={review.id || `testimonial-${idx}`}
@@ -84,16 +64,6 @@ export const TestimonialSlider = () => {
             </div>
           ))}
         </div>
-      </div>
-
-      {/* Scroll Indicator */}
-      <div className="flex justify-center gap-1.5 sm:hidden">
-        {reviews.map((_, idx) => (
-          <div
-            key={`dot-${idx}`}
-            className="w-1.5 h-1.5 rounded-full bg-primary/20"
-          />
-        ))}
       </div>
     </section>
   );

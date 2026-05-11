@@ -66,15 +66,15 @@ export const FeatureHighlights = () => {
                     <div className={cn("p-1.5 rounded-lg", item.bgColor)}>
                       <item.icon className={cn("w-4 h-4", item.color)} />
                     </div>
-                    <span className="text-2xl font-black tracking-tighter text-foreground/80">
+                    <span className="text-2xl font-black tracking-tighter text-foreground">
                       {item.value}
                     </span>
                   </div>
                   <div>
-                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                    <p className="text-xs font-bold text-muted-foreground">
                       {item.title}
                     </p>
-                    <p className="text-[9px] text-muted-foreground/60 leading-none">
+                    <p className="text-xs text-muted-foreground/60 leading-none">
                       {item.label}
                     </p>
                   </div>

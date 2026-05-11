@@ -41,7 +41,7 @@ export const ShareEncouragement = () => {
   return (
     <Card
       onClick={handleShare}
-      className="border-none shadow-soft bg-gradient-to-br from-primary/10 to-primary/5 cursor-pointer active:scale-[0.98] transition-all duration-300 group relative overflow-hidden"
+      className="border-1 border-primary/20 shadow-soft bg-gradient-to-br from-primary/20 via-primary/10 to-primary/5 cursor-pointer active:scale-[0.98] transition-all duration-300 group relative overflow-hidden"
     >
       <CardContent className="p-5 flex items-center gap-4 relative z-10">
         <div className="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center text-primary shrink-0 transition-transform duration-500 group-hover:rotate-12 group-hover:scale-110">
@@ -58,13 +58,9 @@ export const ShareEncouragement = () => {
                 <CheckCircle2 className="w-3 h-3" /> Link Berhasil Di-copy!
               </span>
             ) : (
-              "Bantu teman-temanmu biar gak pusing lagi bagi tagihan."
+              "Bantu temanmu biar gak pusing lagi bagi tagihan"
             )}
           </p>
-        </div>
-
-        <div className="w-8 h-8 rounded-full bg-white/50 backdrop-blur-sm flex items-center justify-center transition-transform duration-300 group-hover:translate-x-1">
-          <Share2 className="w-4 h-4 text-primary/70" />
         </div>
       </CardContent>
     </Card>

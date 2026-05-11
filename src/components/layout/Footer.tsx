@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { ReceiptText, ScrollText, Target, History, Home } from "lucide-react";
+import { ReceiptText, ScrollText, History, Home } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -30,11 +30,6 @@ export const Footer = () => {
       path: "/invoice",
       label: "Invoice",
       icon: ScrollText,
-    },
-    {
-      path: "/shared-goals",
-      label: "Goals",
-      icon: Target,
     },
     {
       path: "/history",

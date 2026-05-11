@@ -44,7 +44,7 @@ export const AdsCarousel = () => {
     const isExternal = ad.url.startsWith("http");
 
     const Content = (
-      <div className="relative aspect-[1080/1350] w-[160px] overflow-hidden rounded-2xl shadow-soft border border-white/50 backdrop-blur-sm">
+      <div className="relative aspect-[1080/1350] w-[178px] overflow-hidden rounded-2xl shadow-soft border border-white/50 backdrop-blur-sm">
         <Image
           src={ad.image}
           alt={ad.alt}
@@ -79,11 +79,11 @@ export const AdsCarousel = () => {
     <section className="space-y-4">
       <div className="flex items-center gap-3 px-1">
         <div className="space-y-0.5">
-          <h2 className="text-sm font-bold text-foreground/80 tracking-tight">
-            Apa yang Terbaru? 🤩
+          <h2 className="text-md font-bold text-foreground">
+            Tips & Update 🤩
           </h2>
-          <p className="text-[10px] text-muted-foreground font-medium">
-            Jangan sampai ketinggalan penawaran menarik!
+          <p className="text-xs text-muted-foreground font-medium">
+            Jangan sampai ketinggalan info menarik!
           </p>
         </div>
       </div>

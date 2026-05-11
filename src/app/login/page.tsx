@@ -56,7 +56,7 @@ function LoginContent() {
       await login(credentials);
       trackAuth.login();
       setSuccess("Login berhasil! Mengalihkan...");
-      
+
       const redirectPath = searchParams.get("redirect") || "/";
       router.push(redirectPath);
     } catch (err: any) {
@@ -212,7 +212,7 @@ export default function LoginPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
-          className="text-center text-[10px] font-medium text-muted-foreground/40 "
+          className="text-center text-xs font-medium text-muted-foreground/40 "
         >
           &copy; 2026 SplitBill • Smart Way to Split Expenses
         </motion.p>

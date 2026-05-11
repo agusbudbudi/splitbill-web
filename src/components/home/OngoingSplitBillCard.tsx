@@ -59,7 +59,7 @@ export const OngoingSplitBillCard = () => {
                   <h3 className="text-foreground font-bold text-sm tracking-tight">
                     {activityName || "Split Bill Berjalan"}
                   </h3>
-                  <p className="text-muted-foreground text-[10px] font-medium">
+                  <p className="text-muted-foreground text-xs font-medium">
                     {itemCount} item • Rp {totalAmount.toLocaleString("id-ID")}
                   </p>
                 </div>
@@ -74,7 +74,7 @@ export const OngoingSplitBillCard = () => {
             {people.length > 0 && (
               <div className="flex items-center gap-2 pl-1">
                 <Users className="w-3.5 h-3.5 text-primary/60" />
-                <p className="text-[11px] text-muted-foreground">
+                <p className="text-xs text-muted-foreground">
                   <span className="font-semibold text-foreground">
                     {getFriendsList()}
                   </span>{" "}

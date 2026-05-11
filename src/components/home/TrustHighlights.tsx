@@ -35,35 +35,32 @@ export const TrustHighlights = () => {
   return (
     <section className="space-y-6">
       <div className="flex items-center gap-3 px-1">
-        <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
-          <Sparkles className="w-5 h-5 text-primary" />
-        </div>
         <div className="space-y-0.5">
-          <h2 className="text-sm font-bold text-foreground/80 tracking-tight">
+          <h2 className="text-md font-bold text-foreground">
             Kenapa SplitBill? 🤔
           </h2>
-          <p className="text-[10px] text-muted-foreground font-medium">
+          <p className="text-xs text-muted-foreground font-medium">
             Aman, Cepat, & Tanpa Ribet
           </p>
         </div>
       </div>
 
-      <div className="bg-white/20 border border-white backdrop-blur-sm rounded-3xl p-5 shadow-soft space-y-6">
+      <div className="bg-white border border-white backdrop-blur-sm rounded-lg p-5 shadow-soft space-y-6">
         {highlights.map((item, idx) => (
           <div key={idx} className="flex items-start gap-4">
             <div
               className={cn(
-                "shrink-0 w-9 h-9 rounded-xl flex items-center justify-center",
+                "shrink-0 w-9 h-9 rounded-sm flex items-center justify-center",
                 item.bgColor,
               )}
             >
               <item.icon className={cn("w-5 h-5", item.color)} />
             </div>
             <div className="space-y-0.5">
-              <h3 className="text-xs font-bold text-foreground tracking-tight">
+              <h3 className="text-sm font-bold text-foreground tracking-tight">
                 {item.title}
               </h3>
-              <p className="text-[10px] text-muted-foreground leading-relaxed">
+              <p className="text-xs text-muted-foreground leading-relaxed">
                 {item.description}
               </p>
             </div>

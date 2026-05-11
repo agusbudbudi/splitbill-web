@@ -15,21 +15,86 @@ import { useAuthStore } from "@/lib/stores/authStore";
 import dynamic from "next/dynamic";
 
 // Dynamic imports for below-the-fold components
-const GettingStarted = dynamic(() => import("@/components/home/GettingStarted").then(mod => mod.GettingStarted));
-const AIScanBanner = dynamic(() => import("@/components/home/AIScanBanner").then(mod => mod.AIScanBanner));
-const AIScanEncourageBanner = dynamic(() => import("@/components/home/AIScanEncourageBanner").then(mod => mod.AIScanEncourageBanner));
-const IntroSection = dynamic(() => import("@/components/home/IntroSection").then(mod => mod.IntroSection));
-const QuickStartScenarios = dynamic(() => import("@/components/home/QuickStartScenarios").then(mod => mod.QuickStartScenarios));
-const VisualFlowPreview = dynamic(() => import("@/components/home/VisualFlowPreview").then(mod => mod.VisualFlowPreview));
-const ShareEncouragement = dynamic(() => import("@/components/home/ShareEncouragement").then(mod => mod.ShareEncouragement));
-const AdsCarousel = dynamic(() => import("@/components/home/AdsCarousel").then(mod => mod.AdsCarousel));
-const FAQSection = dynamic(() => import("@/components/home/FAQSection").then(mod => mod.FAQSection));
-const FAQCard = dynamic(() => import("@/components/home/FAQCard").then(mod => mod.FAQCard));
-const TrustHighlights = dynamic(() => import("@/components/home/TrustHighlights").then(mod => mod.TrustHighlights));
-const SiteFooter = dynamic(() => import("@/components/layout/SiteFooter").then(mod => mod.SiteFooter));
-const FeatureHighlights = dynamic(() => import("@/components/home/FeatureHighlights").then(mod => mod.FeatureHighlights));
-const LoginEncouragementCard = dynamic(() => import("@/components/home/LoginEncouragementCard").then(mod => mod.LoginEncouragementCard));
-const TestimonialSlider = dynamic(() => import("@/components/home/TestimonialSlider").then(mod => mod.TestimonialSlider));
+const GettingStarted = dynamic(
+  () =>
+    import("@/components/home/GettingStarted").then((mod) => mod.GettingStarted),
+  { ssr: false },
+);
+const AIScanBanner = dynamic(
+  () =>
+    import("@/components/home/AIScanBanner").then((mod) => mod.AIScanBanner),
+  { ssr: false },
+);
+const AIScanEncourageBanner = dynamic(
+  () =>
+    import("@/components/home/AIScanEncourageBanner").then(
+      (mod) => mod.AIScanEncourageBanner,
+    ),
+  { ssr: false },
+);
+const IntroSection = dynamic(
+  () =>
+    import("@/components/home/IntroSection").then((mod) => mod.IntroSection),
+  { ssr: false },
+);
+const VisualFlowPreview = dynamic(
+  () =>
+    import("@/components/home/VisualFlowPreview").then(
+      (mod) => mod.VisualFlowPreview,
+    ),
+  { ssr: false },
+);
+const ShareEncouragement = dynamic(
+  () =>
+    import("@/components/home/ShareEncouragement").then(
+      (mod) => mod.ShareEncouragement,
+    ),
+  { ssr: false },
+);
+const AdsCarousel = dynamic(
+  () => import("@/components/home/AdsCarousel").then((mod) => mod.AdsCarousel),
+  { ssr: false },
+);
+const FAQSection = dynamic(
+  () => import("@/components/home/FAQSection").then((mod) => mod.FAQSection),
+  { ssr: false },
+);
+const FAQCard = dynamic(
+  () => import("@/components/home/FAQCard").then((mod) => mod.FAQCard),
+  { ssr: false },
+);
+const TrustHighlights = dynamic(
+  () =>
+    import("@/components/home/TrustHighlights").then(
+      (mod) => mod.TrustHighlights,
+    ),
+  { ssr: false },
+);
+const SiteFooter = dynamic(
+  () => import("@/components/layout/SiteFooter").then((mod) => mod.SiteFooter),
+  { ssr: false },
+);
+const FeatureHighlights = dynamic(
+  () =>
+    import("@/components/home/FeatureHighlights").then(
+      (mod) => mod.FeatureHighlights,
+    ),
+  { ssr: false },
+);
+const LoginEncouragementCard = dynamic(
+  () =>
+    import("@/components/home/LoginEncouragementCard").then(
+      (mod) => mod.LoginEncouragementCard,
+    ),
+  { ssr: false },
+);
+const TestimonialSlider = dynamic(
+  () =>
+    import("@/components/home/TestimonialSlider").then(
+      (mod) => mod.TestimonialSlider,
+    ),
+  { ssr: false },
+);
 
 const BackgroundDecoration = () => (
   <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
@@ -90,7 +155,7 @@ export default function Home() {
           <Banner />
         </div>
 
-        <div className="px-4 pt-4 space-y-4 pb-10">
+        <div className="px-4 pt-4 space-y-4 pb-6">
           <div>
             <NavigationMenu />
           </div>
@@ -102,7 +167,6 @@ export default function Home() {
               <AIScanEncourageBanner />
             </div>
           )}
-
 
           {isMounted && !isAuthenticated && (
             <div>
@@ -124,17 +188,13 @@ export default function Home() {
             </div>
           )}
 
-          {isMounted && isAuthenticated && (
-            <div>
-              <QuickStartScenarios />
-            </div>
-          )}
+
 
           {/* Dashboard Section */}
           {isMounted && isAuthenticated && (
             <section className="space-y-4">
               <div className="flex items-center gap-2 px-1">
-                <h2 className="text-sm font-bold text-foreground/70">
+                <h2 className="text-md font-bold text-foreground">
                   Progress Kamu 🙌
                 </h2>
               </div>
@@ -143,7 +203,7 @@ export default function Home() {
           )}
 
           <VisualFlowPreview />
-          
+
           {isMounted && !isAuthenticated && (
             <div className="pt-2">
               <TestimonialSlider />
@@ -154,7 +214,7 @@ export default function Home() {
           {isMounted && isAuthenticated ? <FAQCard /> : <FAQSection />}
           {isMounted && !isAuthenticated && <TrustHighlights />}
         </div>
-        
+
         {isMounted && !isAuthenticated && <SiteFooter />}
       </main>
 

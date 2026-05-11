@@ -48,37 +48,16 @@ export const HistoryTab = () => {
 
   type TabId = (typeof tabs)[number]["id"];
 
-  // Calculate default 30 days filter (using local time)
-  const last30DaysFilter = React.useMemo(() => {
-    const toLocalDateString = (date: Date) => {
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      const day = String(date.getDate()).padStart(2, "0");
-      return `${year}-${month}-${day}`;
-    };
-
-    const today = new Date();
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(today.getDate() - 30);
-
-    return {
-      dateFrom: toLocalDateString(thirtyDaysAgo),
-      dateTo: toLocalDateString(today),
-    };
-  }, []);
-
   // Filter for Split Bill
   const splitBillFilter = useTransactionFilter({
     data: savedBills,
     getDate: (bill) => bill.date,
-    initialFilters: last30DaysFilter,
   });
 
   // Filter for Invoice
   const invoiceFilter = useTransactionFilter({
     data: invoiceHistory,
     getDate: (invoice) => invoice.createdAt,
-    initialFilters: last30DaysFilter,
   });
 
   // Get current filter based on active tab

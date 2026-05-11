@@ -16,64 +16,7 @@ import {
 import { cn } from "@/lib/utils";
 import { faqData, FAQItem as FAQItemType } from "@/data/faqData";
 import { Input } from "@/components/ui/Input";
-
-const FAQItem = ({
-  question,
-  answer,
-  isOpen,
-  onToggle,
-}: {
-  question: string;
-  answer: string;
-  isOpen: boolean;
-  onToggle: () => void;
-}) => {
-  return (
-    <div
-      className={cn(
-        "border-b border-primary/5 last:border-0 transition-all duration-300",
-        isOpen ? "bg-primary/[0.02]" : "hover:bg-primary/[0.01]",
-      )}
-    >
-      <button
-        onClick={onToggle}
-        className="w-full py-5 px-4 flex items-start justify-between text-left gap-4 cursor-pointer"
-      >
-        <span
-          className={cn(
-            "text-sm font-bold transition-colors duration-300 leading-snug",
-            isOpen ? "text-primary" : "text-foreground/80",
-          )}
-        >
-          {question}
-        </span>
-        <div
-          className={cn(
-            "shrink-0 w-6 h-6 rounded-full flex items-center justify-center transition-all duration-300",
-            isOpen ? "bg-primary text-white" : "bg-primary/5 text-primary/40",
-          )}
-        >
-          <ChevronDown
-            className={cn(
-              "w-3.5 h-3.5 transition-transform duration-300",
-              isOpen && "rotate-180",
-            )}
-          />
-        </div>
-      </button>
-      <div
-        className={cn(
-          "overflow-hidden transition-all duration-300 ease-in-out",
-          isOpen ? "max-h-60 opacity-100 pb-6 px-4" : "max-h-0 opacity-0",
-        )}
-      >
-        <p className="text-[12px] text-muted-foreground leading-relaxed">
-          {answer}
-        </p>
-      </div>
-    </div>
-  );
-};
+import { FAQItem } from "@/components/ui/FAQItem";
 
 export default function FAQPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -123,10 +66,10 @@ export default function FAQPage() {
       <main className="w-full max-w-[600px] px-4 pt-10 pb-20 space-y-8 relative z-10">
         {/* Search Header */}
         <div className="space-y-2 text-center">
-          <h1 className="text-lg font-bold tracking-tight text-foreground">
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">
             Ada yang bisa kami bantu? ✨
           </h1>
-          <p className="text-xs text-muted-foreground font-medium">
+          <p className="text-sm text-muted-foreground font-medium">
             Banyak yang nanya hal ini juga lho.
           </p>
 
@@ -147,7 +90,7 @@ export default function FAQPage() {
             <button
               onClick={() => handleCategoryClick(null)}
               className={cn(
-                "px-4 py-2 rounded-sm text-[10px] font-bold transition-all border cursor-pointer",
+                "px-4 py-2 rounded-sm text-xs font-bold transition-all border cursor-pointer",
                 !selectedCategory
                   ? "bg-primary text-white border-primary shadow-sm"
                   : "bg-white text-muted-foreground border-primary/10 hover:border-primary/30",
@@ -160,7 +103,7 @@ export default function FAQPage() {
                 key={cat}
                 onClick={() => handleCategoryClick(cat)}
                 className={cn(
-                  "px-4 py-2 rounded-sm text-[10px] font-bold transition-all border capitalize cursor-pointer",
+                  "px-4 py-2 rounded-sm text-xs font-bold transition-all border capitalize cursor-pointer",
                   selectedCategory === cat
                     ? "bg-primary text-white border-primary shadow-sm"
                     : "bg-white text-muted-foreground border-primary/10 hover:border-primary/30",
@@ -184,7 +127,7 @@ export default function FAQPage() {
         <div className="space-y-6">
           {paginatedFaqs.length > 0 ? (
             <div className="space-y-4">
-              <div className="bg-white border border-primary/10 rounded-3xl overflow-hidden shadow-soft">
+              <div className="bg-white border border-primary/10 rounded-lg overflow-hidden shadow-soft">
                 {paginatedFaqs.map((faq) => (
                   <FAQItem
                     key={faq.id}
@@ -201,7 +144,7 @@ export default function FAQPage() {
               {/* Pagination Controls */}
               {totalPages > 1 && (
                 <div className="flex items-center justify-between px-2 pt-2">
-                  <p className="text-[10px] text-muted-foreground font-medium">
+                  <p className="text-xs text-muted-foreground font-medium">
                     Halaman{" "}
                     <span className="text-foreground">{currentPage}</span> dari{" "}
                     {totalPages}
@@ -254,7 +197,7 @@ export default function FAQPage() {
               <h3 className="text-sm font-bold text-foreground">
                 Masih Bingung?
               </h3>
-              <p className="text-[10px] text-muted-foreground">
+              <p className="text-xs text-muted-foreground">
                 Chat admin aja kalau butuh bantuan cepat.
               </p>
             </div>
@@ -265,7 +208,7 @@ export default function FAQPage() {
             rel="noopener noreferrer"
             className="block w-full"
           >
-            <button className="w-full h-12 bg-white border border-primary/20 text-primary font-bold text-xs rounded-2xl flex items-center justify-center gap-2 hover:bg-primary/5 transition-all cursor-pointer">
+            <button className="w-full h-12 bg-white border border-primary/20 text-primary font-bold text-sm rounded-2xl flex items-center justify-center gap-2 hover:bg-primary/5 transition-all cursor-pointer">
               Hubungi Support <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </a>

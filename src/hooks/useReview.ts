@@ -22,6 +22,7 @@ export interface Review extends ReviewData {
   id: string;
   createdAt: string;
   updatedAt: string;
+  showOnLanding?: boolean;
 }
 
 export function useReview() {
@@ -126,21 +127,29 @@ export function useReview() {
       .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
   };
 
-  const getReviews = useCallback(async (limit: number = 5) => {
-    try {
-      const response = await apiClient.request<{
-        success: boolean;
-        data: { reviews: Review[] };
-      }>(`${API_ENDPOINTS.PUBLIC_REVIEWS}?limit=${limit}`, {
-        method: "GET",
-        skipAuth: true,
-      });
-      return response.data.reviews;
-    } catch (error) {
-      console.error("Error fetching reviews:", error);
-      return [];
-    }
-  }, []);
+  const getReviews = useCallback(
+    async (limit: number = 5, showOnLanding?: boolean) => {
+      try {
+        let url = `${API_ENDPOINTS.PUBLIC_REVIEWS}?limit=${limit}`;
+        if (showOnLanding !== undefined) {
+          url += `&showOnLanding=${showOnLanding}`;
+        }
+
+        const response = await apiClient.request<{
+          success: boolean;
+          data: { reviews: Review[] };
+        }>(url, {
+          method: "GET",
+          skipAuth: true,
+        });
+        return response.data.reviews;
+      } catch (error) {
+        console.error("Error fetching reviews:", error);
+        return [];
+      }
+    },
+    [],
+  );
 
   return {
     submitReview,

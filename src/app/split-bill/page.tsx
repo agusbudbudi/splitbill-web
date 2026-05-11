@@ -44,11 +44,14 @@ import confetti from "canvas-confetti";
 import { suggestEmoji } from "@/lib/emojiUtils";
 import { toast } from "sonner";
 import { useOnboardingStore } from "@/store/useOnboardingStore";
-import { TutorialOverlay, TutorialStep } from "@/components/onboarding/TutorialOverlay";
+import {
+  TutorialOverlay,
+  TutorialStep,
+} from "@/components/onboarding/TutorialOverlay";
 import { useAuthStore } from "@/lib/stores/authStore";
 import { trackSplitBill, trackSocial, trackWallet } from "@/lib/gtag";
 import { EmptyState } from "@/components/ui/EmptyState";
-
+import { useUIStore } from "@/lib/stores/uiStore";
 
 const SplitBillContent = () => {
   const router = useRouter();
@@ -77,9 +80,11 @@ const SplitBillContent = () => {
   const isFinalizingRef = useRef(false);
 
   const hasSeenTutorial = useOnboardingStore((state) => state.hasSeenTutorial);
-  const setHasSeenTutorial = useOnboardingStore((state) => state.setHasSeenTutorial);
+  const setHasSeenTutorial = useOnboardingStore(
+    (state) => state.setHasSeenTutorial,
+  );
   const _hasHydrated = useOnboardingStore((state) => state._hasHydrated);
-  
+
   const [isTutorialOpen, setIsTutorialOpen] = useState(false);
   const hasTriggeredRef = useRef(false);
 
@@ -93,7 +98,12 @@ const SplitBillContent = () => {
   }, [step]);
 
   useEffect(() => {
-    if (_hasHydrated && !hasSeenTutorial && step === 1 && !hasTriggeredRef.current) {
+    if (
+      _hasHydrated &&
+      !hasSeenTutorial &&
+      step === 1 &&
+      !hasTriggeredRef.current
+    ) {
       const timer = setTimeout(() => {
         // Triple check latest state to be absolutely sure
         if (!useOnboardingStore.getState().hasSeenTutorial) {
@@ -110,21 +120,24 @@ const SplitBillContent = () => {
       id: "step-people",
       targetId: "onboarding-people-list",
       title: "Tambah Teman 👥",
-      content: "Pertama, tambahin dulu temen-temen yang mau diajak patungan. Bisa ketik manual atau pilih dari Besties Gua!",
+      content:
+        "Pertama, tambahin dulu temen-temen yang mau diajak patungan. Bisa ketik manual atau pilih dari Besties Gua!",
       position: "bottom",
     },
     {
       id: "step-input",
       targetId: "onboarding-input-method",
       title: "Input Pengeluaran 📊",
-      content: "Pake AI Scan biar nggak capek ketik satu-satu! Tinggal foto struknya, AI yang bakal beresin sisanya. ✨",
+      content:
+        "Pake AI Scan biar nggak capek ketik satu-satu! Tinggal foto struknya, AI yang bakal beresin sisanya. ✨",
       position: "bottom",
     },
     {
       id: "step-payment",
       targetId: "onboarding-payment-methods",
       title: "Metode Pembayaran 📥",
-      content: "Pilih kemana temen kamu harus bayar patungannya. Bisa pilih lebih dari satu lho!",
+      content:
+        "Pilih kemana temen kamu harus bayar patungannya. Bisa pilih lebih dari satu lho!",
       position: "top",
     },
   ];
@@ -148,7 +161,6 @@ const SplitBillContent = () => {
     toast.success("Keren! Sekarang kamu udah siap buat Split Bill kilat! 🚀");
   };
 
-
   // Initialize from search params to handle back navigation
   const [isSaved, setIsSaved] = useState(searchParams.get("saved") === "true");
   const [lastSavedId, setLastSavedId] = useState<string | null>(
@@ -156,12 +168,15 @@ const SplitBillContent = () => {
   );
 
   const { isAuthenticated } = useAuthStore();
+  const { isPWABannerVisible } = useUIStore();
 
   const handleFinalize = async () => {
     if (isFinalizingRef.current) return;
-    
+
     if (!isAuthenticated) {
-      const currentUrl = encodeURIComponent(`${window.location.pathname}${window.location.search}${window.location.search ? "&" : "?"}finalize=true`);
+      const currentUrl = encodeURIComponent(
+        `${window.location.pathname}${window.location.search}${window.location.search ? "&" : "?"}finalize=true`,
+      );
       router.push(`/login?redirect=${currentUrl}`);
       return;
     }
@@ -169,18 +184,19 @@ const SplitBillContent = () => {
     try {
       isFinalizingRef.current = true;
       setIsFinalizing(true);
-      
-      const id = (await saveBill(
-        {
-          activityName: activityName || "Aktivitas Split Bill",
-          totalAmount: totalSpent,
-          people,
-          expenses,
-          additionalExpenses,
-          selectedPaymentMethodIds,
-        },
-        calculationResult,
-      )) || "";
+
+      const id =
+        (await saveBill(
+          {
+            activityName: activityName || "Aktivitas Split Bill",
+            totalAmount: totalSpent,
+            people,
+            expenses,
+            additionalExpenses,
+            selectedPaymentMethodIds,
+          },
+          calculationResult,
+        )) || "";
       setLastSavedId(id);
       setIsSaved(true);
       clearDraftAfterFinalize();
@@ -231,7 +247,7 @@ const SplitBillContent = () => {
         });
       }, 250);
     } finally {
-      // We don't necessarily need to reset isFinalizingRef.current to false here 
+      // We don't necessarily need to reset isFinalizingRef.current to false here
       // because once isSaved is true, it shouldn't be called again anyway.
       // But for robustness:
       setIsFinalizing(false);
@@ -241,14 +257,21 @@ const SplitBillContent = () => {
   // Auto-finalize after login
   useEffect(() => {
     const finalizeParam = searchParams.get("finalize") === "true";
-    if (finalizeParam && isAuthenticated && step === 4 && !isSaved && !isFinalizingRef.current) {
+    if (
+      finalizeParam &&
+      isAuthenticated &&
+      step === 4 &&
+      !isSaved &&
+      !isFinalizingRef.current
+    ) {
       handleFinalize();
     }
   }, [isAuthenticated, searchParams, step, isSaved]);
 
   const nextStep = () => {
     if (step === 1 && people.length < 2) {
-      const errorMsg = "Waduh, minimal harus ada 2 orang buat Split Bill nih! 👥";
+      const errorMsg =
+        "Waduh, minimal harus ada 2 orang buat Split Bill nih! 👥";
       toast.error(errorMsg);
       trackSplitBill.validationError(step, errorMsg);
       return;
@@ -258,7 +281,8 @@ const SplitBillContent = () => {
         (e) => e.who.length === 0 || !e.paidBy,
       );
       if (unassignedItems.length > 0) {
-        const errorMsg = "Beberapa item belum di-assign 'Split dengan' atau 'Dibayar oleh'. Tolong lengkapi dulu ya!";
+        const errorMsg =
+          "Beberapa item belum di-assign 'Split dengan' atau 'Dibayar oleh'. Tolong lengkapi dulu ya!";
         setValidationError(errorMsg);
         trackSplitBill.validationError(step, errorMsg);
         return;
@@ -310,7 +334,7 @@ const SplitBillContent = () => {
             </div>
 
             {people.length < 2 && (
-              <Card 
+              <Card
                 onClick={prevStep}
                 className="border-amber-200 bg-amber-50/50 cursor-pointer hover:bg-amber-100/50 transition-colors animate-in fade-in zoom-in-95 duration-300"
               >
@@ -319,9 +343,12 @@ const SplitBillContent = () => {
                     <Users className="w-5 h-5 text-amber-600" />
                   </div>
                   <div>
-                    <h4 className="font-bold text-amber-800 text-sm">Waduh, belum ada teman nih! 👥</h4>
+                    <h4 className="font-bold text-amber-800 text-sm">
+                      Waduh, belum ada teman nih! 👥
+                    </h4>
                     <p className="text-xs text-amber-700/70 mt-0.5">
-                      Tap di sini buat tambahin teman yang mau diajak patungan dulu ya.
+                      Tap di sini buat tambahin teman yang mau diajak patungan
+                      dulu ya.
                     </p>
                   </div>
                 </CardContent>
@@ -409,12 +436,14 @@ const SplitBillContent = () => {
                   ].map((pick) => (
                     <button
                       key={pick.name}
-                      onClick={() => setActivityName(`${pick.emoji} ${pick.name}`)}
+                      onClick={() =>
+                        setActivityName(`${pick.emoji} ${pick.name}`)
+                      }
                       className={cn(
                         "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold transition-all active:scale-95",
                         activityName === `${pick.emoji} ${pick.name}`
                           ? "bg-primary text-white shadow-sm"
-                          : "bg-primary/5 text-primary/70 hover:bg-primary/10 border border-primary/10"
+                          : "bg-primary/5 text-primary/70 hover:bg-primary/10 border border-primary/10",
                       )}
                     >
                       <span>{pick.emoji}</span>
@@ -425,7 +454,10 @@ const SplitBillContent = () => {
               </CardContent>
             </Card>
 
-            <Card id="onboarding-payment-methods" className="border-primary/20 shadow-md">
+            <Card
+              id="onboarding-payment-methods"
+              className="border-primary/20 shadow-md"
+            >
               <CardContent className="p-4 space-y-3">
                 <div className="flex items-center justify-between px-1">
                   <label className="text-sm font-bold flex items-center gap-2">
@@ -551,7 +583,6 @@ const SplitBillContent = () => {
         return null;
     }
   };
-
   const steps = [
     { id: 1, label: "Teman", icon: Users },
     { id: 2, label: "Bil", icon: ReceiptText },
@@ -565,50 +596,55 @@ const SplitBillContent = () => {
         title="Split Bill"
         showBackButton
         onBack={prevStep}
-        className="pb-10 rounded-b-xl shadow-lg shadow-primary/20"
-      >
-        {/* Stepper Inside Header */}
-        <div className="flex justify-between items-center px-8 relative">
-          <div className="absolute top-1/2 left-12 right-12 h-0.5 bg-white/20 -translate-y-1/2 z-0" />
-          <div className="absolute top-1/2 left-12 right-12 h-0.5 -translate-y-1/2 z-0 overflow-hidden">
-            <div
-              className="h-full bg-white transition-all duration-500 ease-in-out"
-              style={{ width: `${((step - 1) / (steps.length - 1)) * 100}%` }}
-            />
-          </div>
-          {steps.map((s) => (
-            <div
-              key={s.id}
-              className={cn(
-                "relative z-10 w-8 h-8 rounded-full flex flex-col items-center justify-center transition-all duration-500 border-2",
-                step === s.id
-                  ? "bg-white border-white scale-110 shadow-lg shadow-black/10"
-                  : step > s.id
-                    ? "bg-white border-white"
-                    : "bg-primary border-white/40 text-white/40",
-              )}
-            >
-              <s.icon
-                className={cn(
-                  "w-4 h-4 font-bold transition-colors duration-500",
-                  step >= s.id ? "text-primary" : "text-white/40",
-                )}
-              />
+        sticky={true}
+        className="rounded-b-none shadow-none"
+      />
 
-              <span
+      {/* Sticky Stepper Row */}
+      {!isSaved && (
+        <div className="w-full flex flex-col items-center -mt-px relative z-20">
+          <div className="w-full max-w-[600px] bg-primary flex justify-between items-center px-8 pt-2 pb-10 rounded-b-2xl shadow-lg shadow-primary/20 relative">
+            <div className="absolute top-[30%] left-12 right-12 h-0.5 bg-white/20 z-0" />
+            <div className="absolute top-[30%] left-12 right-12 h-0.5 z-0 overflow-hidden">
+              <div
+                className="h-full bg-white transition-all duration-500 ease-in-out"
+                style={{ width: `${((step - 1) / (steps.length - 1)) * 100}%` }}
+              />
+            </div>
+            {steps.map((s) => (
+              <div
+                key={s.id}
                 className={cn(
-                  "absolute -bottom-5 text-[9px] font-bold uppercase tracking-tighter whitespace-nowrap transition-colors duration-500",
+                  "relative z-10 w-8 h-8 rounded-full flex flex-col items-center justify-center transition-all duration-500 border-2",
                   step === s.id
-                    ? "text-white opacity-100"
-                    : "text-white/40 opacity-50",
+                    ? "bg-white border-white scale-110 shadow-lg shadow-black/10"
+                    : step > s.id
+                      ? "bg-white border-white"
+                      : "bg-primary border-white/40 text-white/40",
                 )}
               >
-                {s.label}
-              </span>
-            </div>
-          ))}
+                <s.icon
+                  className={cn(
+                    "w-4 h-4 font-bold transition-colors duration-500",
+                    step >= s.id ? "text-primary" : "text-white/40",
+                  )}
+                />
+
+                <span
+                  className={cn(
+                    "absolute -bottom-5 text-[9px] font-bold uppercase tracking-tighter whitespace-nowrap transition-colors duration-500",
+                    step === s.id
+                      ? "text-white opacity-100"
+                      : "text-white/40 opacity-50",
+                  )}
+                >
+                  {s.label}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
-      </Header>
+      )}
 
       <main className="w-full max-w-[600px] px-4 pt-10 pb-10 space-y-8 relative z-10">
         {renderStep()}
@@ -671,7 +707,8 @@ const SplitBillContent = () => {
                   </>
                 ) : (
                   <>
-                    <CheckCircle2 className="mr-2 w-5 h-5" /> Selesaikan & Simpan
+                    <CheckCircle2 className="mr-2 w-5 h-5" /> Selesaikan &
+                    Simpan
                   </>
                 )}
               </Button>

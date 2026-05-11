@@ -27,7 +27,7 @@ export const ActionCard = ({
   return (
     <Card
       className={cn(
-        "rounded-[1.2rem] bg-white/80 backdrop-blur-xs text-card-foreground border-none shadow-soft hover:shadow-lg hover:shadow-primary/5 transition-all cursor-pointer group overflow-hidden h-full",
+        "rounded-lg bg-white backdrop-blur-xs text-card-foreground border-none shadow-soft hover:shadow-lg hover:shadow-primary/5 transition-all cursor-pointer group overflow-hidden h-full",
         className,
       )}
       onClick={onClick}

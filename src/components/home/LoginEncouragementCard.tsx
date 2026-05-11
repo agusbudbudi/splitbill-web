@@ -33,8 +33,9 @@ export const LoginEncouragementCard = () => {
         {/* Action Button */}
         <Link href="/login">
           <Button
+            variant="secondary"
             size="sm"
-            className="h-9 px-4 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 shadow-md shadow-primary/10 font-bold text-xs"
+            className="h-9 px-4 rounded-xl font-bold text-xs shadow-none border border-primary/5"
           >
             Masuk
           </Button>

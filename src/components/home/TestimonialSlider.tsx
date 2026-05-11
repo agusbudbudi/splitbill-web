@@ -47,7 +47,7 @@ export const TestimonialSlider = () => {
             Apa Kata Mereka? ✨
           </h2>
           <p className="text-xs text-muted-foreground font-medium">
-            Ulasan jujur dari pengguna setia SplitBill.
+            ⭐ 4.9/5 rating dan 200+ split bill dibuat
           </p>
         </div>
       </div>

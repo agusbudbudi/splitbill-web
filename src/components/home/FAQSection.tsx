@@ -6,57 +6,8 @@ import { cn } from "@/lib/utils";
 
 import { faqData } from "@/data/faqData";
 import Link from "next/link";
+import { FAQItem } from "@/components/ui/FAQItem";
 
-const FAQItem = ({
-  question,
-  answer,
-  isOpen,
-  onToggle,
-}: {
-  question: string;
-  answer: string;
-  isOpen: boolean;
-  onToggle: () => void;
-}) => {
-  return (
-    <div
-      className={cn(
-        "border-b border-primary/5 last:border-0 transition-all duration-300",
-        isOpen ? "bg-primary/[0.02]" : "hover:bg-primary/[0.01]",
-      )}
-    >
-      <button
-        onClick={onToggle}
-        className="w-full py-4 px-2 flex items-center justify-between text-left gap-4 cursor-pointer"
-      >
-        <span
-          className={cn(
-            "text-sm font-bold transition-colors duration-300",
-            isOpen ? "text-primary" : "text-foreground/80",
-          )}
-        >
-          {question}
-        </span>
-        <ChevronDown
-          className={cn(
-            "w-4 h-4 text-muted-foreground/50 transition-transform duration-300 shrink-0",
-            isOpen && "rotate-180 text-primary",
-          )}
-        />
-      </button>
-      <div
-        className={cn(
-          "overflow-hidden transition-all duration-300 ease-in-out",
-          isOpen ? "max-h-40 opacity-100 pb-4 px-2" : "max-h-0 opacity-0",
-        )}
-      >
-        <p className="text-xs text-muted-foreground leading-relaxed">
-          {answer}
-        </p>
-      </div>
-    </div>
-  );
-};
 
 export const FAQSection = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(null);

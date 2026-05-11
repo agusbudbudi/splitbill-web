@@ -6,10 +6,10 @@ import { FeatureBanner } from "@/components/ui/FeatureBanner";
 export const AIScanBanner = () => {
   return (
     <FeatureBanner
-      title="Scan Bill dengan AI 🎉"
+      title="Split Bill dari Foto Struk"
       description={
         <>
-          Cukup upload bill kamu, <br />
+          Cukup upload foto struk, <br />
           <span className="font-bold text-primary">
             sisanya biar AI yang urus.
           </span>

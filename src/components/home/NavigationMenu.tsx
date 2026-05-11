@@ -24,19 +24,19 @@ const menuItems = [
     href: "/split-bill",
   },
   {
-    id: "invoice",
-    label: "Invoice",
-    image: "/img/menu-invoice.png",
-    badge: "Populer",
-    href: "/invoice",
-  },
-  {
     id: "nabung",
     label: "SharedGoal",
     badge: "New",
     image: "/img/menu-shared-goal.png",
     href: "/shared-goals",
   },
+  {
+    id: "invoice",
+    label: "Invoice",
+    image: "/img/menu-invoice.png",
+    href: "/invoice",
+  },
+
   {
     id: "collect",
     label: "Patungan",

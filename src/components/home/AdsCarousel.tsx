@@ -80,7 +80,7 @@ export const AdsCarousel = () => {
       <div className="flex items-center gap-3 px-1">
         <div className="space-y-0.5">
           <h2 className="text-md font-bold text-foreground">
-            Apa yang Terbaru? 🤩
+            Tips & Update 🤩
           </h2>
           <p className="text-xs text-muted-foreground font-medium">
             Jangan sampai ketinggalan info menarik!

@@ -3,7 +3,6 @@
 import React, { Suspense, useState, useEffect, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
 import { PeopleList } from "@/components/splitbill/PeopleList";
 import { ManualInputForm } from "@/components/splitbill/ManualInputForm";
 import { AIScanForm } from "@/components/splitbill/AIScanForm";
@@ -14,7 +13,7 @@ import { Card, CardContent } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { useSplitBillStore } from "@/store/useSplitBillStore";
-import { useWalletStore } from "@/store/useWalletStore";
+import { useWalletStore, type PaymentMethod } from "@/store/useWalletStore";
 import { useBillCalculations } from "@/hooks/useBillCalculations";
 import { WalletSelectionCard } from "@/components/wallet/WalletSelectionCard";
 import { AddPaymentMethodBottomSheet } from "@/components/wallet/AddPaymentMethodBottomSheet";
@@ -24,12 +23,10 @@ import {
   PenLine,
   CheckSquare,
   Plus,
-  ChevronLeft,
   ChevronRight,
   Sparkles,
   ClipboardList,
   Rocket,
-  Download,
   CheckCircle2,
   FileCheck,
   Home,
@@ -224,7 +221,7 @@ const SplitBillContent = () => {
       const randomInRange = (min: number, max: number) =>
         Math.random() * (max - min) + min;
 
-      const interval: any = setInterval(function () {
+      const interval: ReturnType<typeof setInterval> = setInterval(function () {
         const timeLeft = animationEnd - Date.now();
 
         if (timeLeft <= 0) {
@@ -314,12 +311,13 @@ const SplitBillContent = () => {
       case 1:
         return (
           <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
-            <div className="text-center space-y-2">
+            <div className="flex flex-col items-center text-center gap-2">
               <h2 className="text-2xl font-bold">Siapa aja nih? 👥</h2>
-              <p className="text-muted-foreground text-sm">
-                Tambahkan teman-teman yang ikut patungan.
+              <p className="text-muted-foreground text-sm max-w-[360px]">
+                Tambahkan minimal 2 orang untuk mulai split bill.
               </p>
             </div>
+
             <PeopleList />
           </div>
         );
@@ -479,7 +477,7 @@ const SplitBillContent = () => {
                   </Card>
 
                   {paymentMethods.length > 0 ? (
-                    paymentMethods.map((method: any) => (
+                    paymentMethods.map((method: PaymentMethod) => (
                       <WalletSelectionCard
                         key={method.id}
                         method={method}
@@ -603,9 +601,9 @@ const SplitBillContent = () => {
       {/* Sticky Stepper Row */}
       {!isSaved && (
         <div className="w-full flex flex-col items-center -mt-px relative z-20">
-          <div className="w-full max-w-[600px] bg-primary flex justify-between items-center px-8 pt-2 pb-10 rounded-b-2xl shadow-lg shadow-primary/20 relative">
-            <div className="absolute top-[30%] left-12 right-12 h-0.5 bg-white/20 z-0" />
-            <div className="absolute top-[30%] left-12 right-12 h-0.5 z-0 overflow-hidden">
+          <div className="w-full max-w-[600px] bg-primary flex justify-between items-center px-8 pt-2 pb-8 rounded-b-2xl shadow-lg shadow-primary/20 relative">
+            <div className="absolute top-[32%] left-12 right-12 h-0.5 bg-white/20 z-0" />
+            <div className="absolute top-[32%] left-12 right-12 h-0.5 z-0 overflow-hidden">
               <div
                 className="h-full bg-white transition-all duration-500 ease-in-out"
                 style={{ width: `${((step - 1) / (steps.length - 1)) * 100}%` }}
@@ -658,9 +656,17 @@ const SplitBillContent = () => {
             {step === 1 && (
               <Button
                 onClick={nextStep}
-                className="w-full h-14 text-lg font-bold rounded-2xl shadow-xl shadow-primary/20 bg-primary text-white transition-all duration-300 active:scale-95"
+                className={cn(
+                  "w-full h-14 text-lg font-bold rounded-2xl shadow-xl transition-all duration-300 active:scale-95",
+                  people.length >= 2
+                    ? "bg-primary text-white shadow-primary/20"
+                    : "bg-primary/10 text-primary shadow-none opacity-80",
+                )}
               >
-                Lanjutkan <ChevronRight className="ml-2 w-5 h-5" />
+                {people.length < 2
+                  ? `Tambah ${2 - people.length} Orang Lagi`
+                  : "Lanjut ke Input Pengeluaran"}
+                <ChevronRight className="ml-2 w-5 h-5" />
               </Button>
             )}
 

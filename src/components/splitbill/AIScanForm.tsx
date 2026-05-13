@@ -189,9 +189,6 @@ export const AIScanForm = () => {
               <div className="w-16 h-16 rounded-3xl bg-white/20 backdrop-blur-md flex items-center justify-center shadow-lg shadow-black/5 relative border border-white/30">
                 <Sparkles className="w-8 h-8 text-white fill-white/30" />
               </div>
-              <div className="absolute -top-1 -right-1 bg-amber-300 text-[9px] font-black text-amber-950 px-1.5 py-0.5 rounded-full border border-white/20 shadow-sm">
-                PRO
-              </div>
             </div>
 
             <div className="space-y-2 max-w-[280px]">

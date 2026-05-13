@@ -139,10 +139,13 @@ export const AdditionalExpenses = () => {
   return (
     <Card className="border-primary/20 shadow-md">
       <CardContent className="p-4 space-y-4">
-        <div className="flex items-center justify-between">
-          <label className="text-sm font-semibold text-foreground flex items-center gap-2">
+        <div className="flex items-center justify-between px-1">
+          <label className="text-sm font-bold flex items-center gap-2">
             Biaya Tambahan
-            <Badge variant="secondary" className="text-[10px] px-2 h-5">
+            <Badge
+              variant="secondary"
+              className="text-[10px] font-bold px-2 h-5"
+            >
               Tax / Service
             </Badge>
           </label>
@@ -198,7 +201,7 @@ export const AdditionalExpenses = () => {
                     {adx.who.map((name) => (
                       <div
                         key={name}
-                        className="flex items-center gap-1.5 bg-primary/5 rounded-full pl-0.5 pr-2.5 py-1 border border-primary/5"
+                        className="flex items-center gap-1.5 bg-primary/5 rounded-full pl-1 pr-2.5 py-1 border border-primary/5"
                         title={name}
                       >
                         <img
@@ -259,10 +262,10 @@ export const AdditionalExpenses = () => {
             ))}
           </div>
         ) : (
-          <div className="bg-muted/10 p-3 rounded-lg border border-primary/10 space-y-4 animate-in slide-in-from-top-2">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-muted-foreground flex items-center gap-1">
-                <selectedType.icon className="w-3.5 h-3.5" />
+          <div className="bg-white p-4 rounded-2xl border border-primary/10 space-y-4 animate-in slide-in-from-top-2">
+            <div className="flex items-center justify-between px-1">
+              <span className="text-sm font-bold flex items-center gap-2 text-primary">
+                <selectedType.icon className="w-4 h-4" />
                 {selectedType.label}
               </span>
               <button
@@ -379,18 +382,18 @@ export const AdditionalExpenses = () => {
             )}
 
             {/* Split Type Selector */}
-            <div className="space-y-2">
-              <label className="text-[10px] font-bold uppercase text-muted-foreground">
+            <div className="space-y-3">
+              <label className="text-sm font-bold px-1">
                 Metode Bagi (Split)
               </label>
-              <div className="flex p-1 bg-white/50 rounded-lg border border-primary/10">
+              <div className="flex p-1 bg-primary/5 rounded-xl border border-primary/10">
                 <button
                   onClick={() => setSplitType("proportionally")}
                   className={cn(
-                    "flex-1 py-1.5 rounded-md text-[10px] font-bold transition-all cursor-pointer",
+                    "flex-1 py-2 rounded-lg text-[10px] font-bold transition-all cursor-pointer",
                     splitType === "proportionally"
                       ? "bg-primary text-white shadow-sm"
-                      : "text-muted-foreground hover:bg-white/80",
+                      : "text-primary/60 hover:bg-white/80",
                   )}
                 >
                   PROPORSIONAL (%)
@@ -398,16 +401,16 @@ export const AdditionalExpenses = () => {
                 <button
                   onClick={() => setSplitType("equally")}
                   className={cn(
-                    "flex-1 py-1.5 rounded-md text-[10px] font-bold transition-all cursor-pointer",
+                    "flex-1 py-2 rounded-lg text-[10px] font-bold transition-all cursor-pointer",
                     splitType === "equally"
                       ? "bg-primary text-white shadow-sm"
-                      : "text-muted-foreground hover:bg-white/80",
+                      : "text-primary/60 hover:bg-white/80",
                   )}
                 >
                   BAGI RATA (=)
                 </button>
               </div>
-              <p className="text-[9px] text-muted-foreground italic px-1">
+              <p className="text-[10px] text-muted-foreground/60 italic px-1 leading-tight">
                 {splitType === "proportionally"
                   ? "*Tagihan dibagi berdasarkan jumlah belanja masing-masing orang."
                   : "*Tagihan dibagi sama rata ke semua orang yang terpilih."}
@@ -415,36 +418,34 @@ export const AdditionalExpenses = () => {
             </div>
 
             {/* Split With Section */}
-            <div className="space-y-2">
-              <label className="text-[10px] font-bold uppercase text-muted-foreground">
+            <div className="space-y-3 border-t border-primary/10 pt-4">
+              <label className="text-sm font-bold px-1">
                 Split dengan Siapa
               </label>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-4">
                 {people.map((name) => (
                   <PersonSelector
                     key={name}
                     name={name}
                     isSelected={selectedWho.includes(name)}
                     onClick={handleToggleWho}
-                    size="sm"
+                    size="md"
                   />
                 ))}
               </div>
             </div>
 
             {/* Paid By Section */}
-            <div className="space-y-2">
-              <label className="text-[10px] font-bold uppercase text-muted-foreground">
-                Dibayar oleh
-              </label>
-              <div className="flex flex-wrap gap-2">
+            <div className="space-y-3 border-t border-primary/10 pt-4">
+              <label className="text-sm font-bold px-1">Dibayar oleh</label>
+              <div className="flex flex-wrap gap-4">
                 {people.map((name) => (
                   <PersonSelector
                     key={name}
                     name={name}
                     isSelected={paidBy === name}
                     onClick={setPaidBy}
-                    size="sm"
+                    size="md"
                   />
                 ))}
               </div>

@@ -34,7 +34,7 @@ interface FriendState {
   // Link Actions
   addFriendToGroup: (friendId: string, groupId: string) => void;
   removeFriendFromGroup: (friendId: string, groupId: string) => void;
-  useFriend: (id: string) => void;
+  trackFriendUsage: (id: string) => void;
 
   // Helper
   getFriendsInGroup: (groupId: string) => Friend[];
@@ -108,7 +108,7 @@ export const useFriendStore = create<FriendState>()(
           ),
         })),
 
-      useFriend: (id) =>
+      trackFriendUsage: (id) =>
         set((state) => ({
           friends: state.friends.map((f) =>
             f.id === id

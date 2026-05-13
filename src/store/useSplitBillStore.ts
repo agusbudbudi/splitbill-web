@@ -25,6 +25,9 @@ interface SplitBillState {
   additionalExpenses: AdditionalExpense[];
   selectedPaymentMethodIds: string[];
 
+  lastPaidBy: string;
+  lastWho: string[];
+
   // Actions
   setActivityName: (name: string) => void;
   setSelectedPaymentMethodIds: (ids: string[]) => void;
@@ -35,6 +38,8 @@ interface SplitBillState {
   addExpense: (expense: Omit<Expense, "id">) => void;
   updateExpense: (id: string, expense: Partial<Expense>) => void;
   removeExpense: (id: string) => void;
+  setAllExpensesPaidBy: (name: string) => void;
+  setAllExpensesWho: (names: string[]) => void;
 
   addAdditionalExpense: (expense: Omit<AdditionalExpense, "id">) => void;
   updateAdditionalExpense: (
@@ -42,7 +47,10 @@ interface SplitBillState {
     expense: Partial<AdditionalExpense>,
   ) => void;
   removeAdditionalExpense: (id: string) => void;
+  setAllAdditionalExpensesPaidBy: (name: string) => void;
+  setAllAdditionalExpensesWho: (names: string[]) => void;
 
+  setLastAssignment: (paidBy: string, who: string[]) => void;
   clearDraftAfterFinalize: () => void;
 }
 
@@ -54,6 +62,8 @@ export const useSplitBillStore = create<SplitBillState>()(
       expenses: [],
       additionalExpenses: [],
       selectedPaymentMethodIds: [],
+      lastPaidBy: "",
+      lastWho: [],
 
       setActivityName: (activityName) => set({ activityName }),
       setSelectedPaymentMethodIds: (ids) =>
@@ -79,6 +89,8 @@ export const useSplitBillStore = create<SplitBillState>()(
             who: e.who.filter((w) => w !== name),
             paidBy: e.paidBy === name ? "" : e.paidBy,
           })),
+          lastPaidBy: state.lastPaidBy === name ? "" : state.lastPaidBy,
+          lastWho: state.lastWho.filter((w) => w !== name),
         })),
 
       addExpense: (expense) =>
@@ -87,6 +99,8 @@ export const useSplitBillStore = create<SplitBillState>()(
             ...state.expenses,
             { ...expense, id: Math.random().toString(36).substring(7) },
           ],
+          lastPaidBy: expense.paidBy || state.lastPaidBy,
+          lastWho: expense.who.length > 0 ? expense.who : state.lastWho,
         })),
 
       updateExpense: (id, updatedExpense) =>
@@ -94,11 +108,25 @@ export const useSplitBillStore = create<SplitBillState>()(
           expenses: state.expenses.map((e) =>
             e.id === id ? { ...e, ...updatedExpense } : e,
           ),
+          lastPaidBy: updatedExpense.paidBy || state.lastPaidBy,
+          lastWho: updatedExpense.who || state.lastWho,
         })),
 
       removeExpense: (id) =>
         set((state) => ({
           expenses: state.expenses.filter((e) => e.id !== id),
+        })),
+
+      setAllExpensesPaidBy: (name) =>
+        set((state) => ({
+          expenses: state.expenses.map((e) => ({ ...e, paidBy: name })),
+          lastPaidBy: name,
+        })),
+
+      setAllExpensesWho: (names) =>
+        set((state) => ({
+          expenses: state.expenses.map((e) => ({ ...e, who: names })),
+          lastWho: names,
         })),
 
       addAdditionalExpense: (expense) =>
@@ -107,6 +135,8 @@ export const useSplitBillStore = create<SplitBillState>()(
             ...state.additionalExpenses,
             { ...expense, id: Math.random().toString(36).substring(7) },
           ],
+          lastPaidBy: expense.paidBy || state.lastPaidBy,
+          lastWho: expense.who.length > 0 ? expense.who : state.lastWho,
         })),
 
       updateAdditionalExpense: (id, updatedExpense) =>
@@ -114,6 +144,8 @@ export const useSplitBillStore = create<SplitBillState>()(
           additionalExpenses: state.additionalExpenses.map((e) =>
             e.id === id ? { ...e, ...updatedExpense } : e,
           ),
+          lastPaidBy: updatedExpense.paidBy || state.lastPaidBy,
+          lastWho: updatedExpense.who || state.lastWho,
         })),
 
       removeAdditionalExpense: (id) =>
@@ -122,6 +154,30 @@ export const useSplitBillStore = create<SplitBillState>()(
             (e) => e.id !== id,
           ),
         })),
+
+      setAllAdditionalExpensesPaidBy: (name) =>
+        set((state) => ({
+          additionalExpenses: state.additionalExpenses.map((e) => ({
+            ...e,
+            paidBy: name,
+          })),
+          lastPaidBy: name,
+        })),
+
+      setAllAdditionalExpensesWho: (names) =>
+        set((state) => ({
+          additionalExpenses: state.additionalExpenses.map((e) => ({
+            ...e,
+            who: names,
+          })),
+          lastWho: names,
+        })),
+
+      setLastAssignment: (paidBy, who) =>
+        set({
+          lastPaidBy: paidBy,
+          lastWho: who,
+        }),
 
       clearDraftAfterFinalize: () =>
         set({

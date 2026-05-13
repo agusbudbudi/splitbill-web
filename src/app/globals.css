@@ -185,6 +185,21 @@ body {
   pointer-events: auto;
 }
 
+/* Custom Sonner Close Button Position */
+[data-sonner-toast] [data-close-button] {
+  left: unset !important;
+  right: 10px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  border-radius: 100% !important;
+  background: var(--background) !important;
+  border: 1px solid var(--border) !important;
+}
+
+[data-sonner-toast] {
+  padding-right: 40px !important; /* Make space for the close button */
+}
+
 /* Prevent auto-zoom on mobile inputs */
 @media screen and (max-width: 768px) {
   input,

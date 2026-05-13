@@ -124,6 +124,7 @@ export default function RootLayout({
         </ThemeProvider>
         <Toaster
           richColors
+          closeButton
           position="top-center"
           toastOptions={{
             style: {

@@ -40,9 +40,9 @@ export const QuickAssignHeader = () => {
   };
 
   return (
-    <Card className="rounded-3xl bg-white border border-primary/10 shadow-sm overflow-hidden animate-in fade-in slide-in-from-top-4 duration-500">
+    <Card className="rounded-3xl bg-white shadow-sm overflow-hidden animate-in fade-in slide-in-from-top-4 duration-500">
       {/* Subtotal Section */}
-      <div className="bg-primary/5 p-4 border-b border-primary/10 flex justify-between items-center">
+      <div className="bg-primary/10 p-4 flex justify-between items-center">
         <div className="space-y-0.5">
           <p className="text-[10px] font-black uppercase text-primary/40 tracking-wider leading-none">
             Subtotal Belanja

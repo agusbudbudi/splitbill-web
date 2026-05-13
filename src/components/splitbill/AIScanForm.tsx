@@ -1,14 +1,14 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/Button";
 import {
   Sparkles,
   Camera,
   X,
   CheckCircle2,
-  Lock, // Import Lock icon
-  Info, // Import Info icon
+  Info,
+  ImagePlus,
 } from "lucide-react";
 import { useSplitBillStore } from "@/store/useSplitBillStore";
 import { scanReceipt, ReceiptScanResult, ReceiptItem } from "@/lib/AIService";
@@ -29,6 +29,7 @@ export const AIScanForm = () => {
   const [error, setError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
 
   const { addExpense, setActivityName, addAdditionalExpense } =
     useSplitBillStore();
@@ -60,7 +61,17 @@ export const AIScanForm = () => {
       };
       reader.readAsDataURL(file);
     }
+    // Reset input value so the same file can be re-selected
+    e.target.value = "";
   };
+
+  const handleCameraCapture = useCallback(() => {
+    cameraInputRef.current?.click();
+  }, []);
+
+  const handleGalleryUpload = useCallback(() => {
+    fileInputRef.current?.click();
+  }, []);
 
   const handleScan = async () => {
     if (!image) return;
@@ -87,7 +98,9 @@ export const AIScanForm = () => {
       const newRetryCount = retryCount + 1;
       setRetryCount(newRetryCount);
       trackSplitBill.aiScan("error", newRetryCount);
-      setError(err.message || "Gagal membaca struk. Coba lagi!");
+      setError(
+        "Waduh, AI-nya lagi sibuk nih. Kamu bisa lanjut ngopi dulu atau ketik manual aja ya! ☕️",
+      );
     } finally {
       setIsScanning(false);
     }
@@ -177,43 +190,49 @@ export const AIScanForm = () => {
   if (!isAuthenticated) {
     return (
       <div className="space-y-4 py-2 animate-in fade-in duration-500 relative">
-        {/* Premium Banner */}
-        <div className="relative overflow-hidden rounded-3xl p-6 bg-gradient-to-br from-primary via-primary/90 to-violet-600 text-white shadow-lg shadow-primary/20 z-10">
-          {/* Decorative Elements */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-[80px] -mr-16 -mt-16 pointer-events-none" />
-          <div className="absolute bottom-0 left-0 w-40 h-40 bg-indigo-500/30 rounded-full blur-[60px] -ml-10 -mb-10 pointer-events-none" />
+        <div className="relative p-[1.5px] rounded-3xl bg-gradient-to-br from-violet-400 via-pink-400 to-primary/60 shadow-lg shadow-primary/5 overflow-hidden">
+          <div className="relative overflow-hidden bg-white rounded-[calc(1.5rem-1.5px)] p-6">
+            {/* Subtle background glow */}
+            <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-24 h-24 bg-violet-500/5 rounded-full blur-2xl -ml-12 -mb-12 pointer-events-none" />
 
-          <div className="relative z-10 flex flex-col items-center text-center gap-4">
-            <div className="relative">
-              <div className="absolute inset-0 bg-white/20 blur-xl rounded-full animate-pulse" />
-              <div className="w-16 h-16 rounded-3xl bg-white/20 backdrop-blur-md flex items-center justify-center shadow-lg shadow-black/5 relative border border-white/30">
-                <Sparkles className="w-8 h-8 text-white fill-white/30" />
+            <div className="relative z-10 flex flex-col items-center text-center gap-4">
+              <div className="w-14 h-14 rounded-full bg-primary/5 flex items-center justify-center border border-primary/10 shadow-inner">
+                <Image
+                  src="/img/ai-icon.png"
+                  alt="AI Icon"
+                  width={32}
+                  height={32}
+                  className="w-8 h-8 object-contain"
+                />
               </div>
-            </div>
 
-            <div className="space-y-2 max-w-[280px]">
-              <h3 className="text-xl font-bold tracking-tight text-white drop-shadow-sm">
-                Unlock AI Scan
-              </h3>
-              <p className="text-xs text-white/90 leading-relaxed font-medium">
-                Login untuk akses fitur{" "}
-                <span className="bg-white/20 px-1 rounded text-white font-bold">
-                  Scan Struk Otomatis
-                </span>
-                . Hemat waktu tanpa ketik manual!
-              </p>
-            </div>
+              <div className="space-y-1 max-w-[340px]">
+                <h3 className="text-xl font-bold text-foreground">
+                  Cukup Login buat Scan Struk
+                </h3>
+                <p className="text-xs text-muted-foreground leading-relaxed font-medium">
+                  Gak perlu ribet ketik manual! Cukup login dan nikmati fitur{" "}
+                  <span className="text-primary font-bold">
+                    Scan Struk Otomatis
+                  </span>{" "}
+                  secara gratis. ✨
+                </p>
+              </div>
 
-            <Button
-              onClick={() => {
-                trackSubscription.premiumFeatureClick("ai_scan_login_barrier");
-                trackSubscription.initiateCheckout("login_barrier");
-                router.push("/login");
-              }}
-              className="w-full max-w-[200px] h-11 bg-white hover:bg-white/90 text-primary font-bold rounded-xl shadow-lg shadow-black/5 border-0 transition-all hover:scale-[1.02] active:scale-[0.98] mt-2 text-base"
-            >
-              Login Sekarang
-            </Button>
+              <Button
+                onClick={() => {
+                  trackSubscription.premiumFeatureClick(
+                    "ai_scan_login_barrier",
+                  );
+                  trackSubscription.initiateCheckout("login_barrier");
+                  router.push("/login");
+                }}
+                className="w-full max-w-[200px] h-10 bg-primary hover:bg-primary/90 text-white font-bold rounded-md shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] active:scale-[0.98] mt-1 text-sm"
+              >
+                Login Sekarang
+              </Button>
+            </div>
           </div>
         </div>
       </div>
@@ -231,40 +250,50 @@ export const AIScanForm = () => {
   ) {
     return (
       <div className="space-y-4 py-2 animate-in fade-in duration-500 relative">
-        <div className="relative overflow-hidden rounded-lg bg-gradient-to-b from-primary/10 via-transparent to-transparent p-8">
-          {/* Background Glows */}
-          <div className="absolute -top-24 -right-24 w-64 h-64 bg-primary/20 rounded-full blur-[80px]" />
-          <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-indigo-500/10 rounded-full blur-[80px]" />
+        <div className="relative p-[1.5px] rounded-3xl bg-gradient-to-br from-violet-400 via-pink-400 to-primary/60 shadow-lg shadow-primary/5 overflow-hidden">
+          <div className="relative overflow-hidden bg-white rounded-[calc(1.5rem-1.5px)] p-6">
+            {/* Subtle background glow */}
+            <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-24 h-24 bg-violet-500/5 rounded-full blur-2xl -ml-12 -mb-12 pointer-events-none" />
 
-          <div className="relative z-10 flex flex-col items-center text-center gap-6">
-            <div className="w-16 h-16 rounded-3xl bg-gradient-to-br from-primary to-indigo-600 flex items-center justify-center shadow-lg shadow-primary/30 rotate-3">
-              <Sparkles className="w-8 h-8 text-white animate-pulse" />
+            <div className="relative z-10 flex flex-col items-center text-center gap-4">
+              <div className="w-14 h-14 rounded-full bg-primary/5 flex items-center justify-center border border-primary/10 shadow-inner">
+                <Image
+                  src="/img/ai-icon.png"
+                  alt="AI Icon"
+                  width={32}
+                  height={32}
+                  className="w-8 h-8 object-contain"
+                />
+              </div>
+
+              <div className="space-y-1 max-w-[340px]">
+                <h3 className="text-xl font-bold tracking-tight text-foreground">
+                  Scan Habis! 🚀
+                </h3>
+                <p className="text-xs text-muted-foreground leading-relaxed font-medium">
+                  Kuota gratis kamu sudah habis. Upgrade ke{" "}
+                  <span className="text-primary font-bold">Premium</span> untuk{" "}
+                  <span className="text-foreground font-bold">
+                    Scan Tanpa Batas
+                  </span>{" "}
+                  dan fitur eksklusif lainnya!
+                </p>
+              </div>
+
+              <Button
+                onClick={() => {
+                  trackSubscription.premiumFeatureClick(
+                    "ai_scan_quota_barrier",
+                  );
+                  trackSubscription.initiateCheckout("quota_barrier");
+                  router.push("/subscription");
+                }}
+                className="w-full max-w-[200px] h-10 bg-primary hover:bg-primary/90 text-white font-bold rounded-md shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] active:scale-[0.98] mt-1 text-sm"
+              >
+                Upgrade ke Premium
+              </Button>
             </div>
-
-            <div className="space-y-2 max-w-[360px]">
-              <h3 className="text-2xl font-black tracking-tight text-foreground">
-                Scan Habis! 🚀
-              </h3>
-              <p className="text-sm text-muted-foreground leading-relaxed font-medium">
-                Kamu telah menggunakan semua kuota gratis. Upgrade ke{" "}
-                <span className="text-primary font-bold">Premium</span> untuk{" "}
-                <span className="text-foreground font-bold underline decoration-primary/50">
-                  Scan Tanpa Batas
-                </span>{" "}
-                dan fitur eksklusif lainnya! ✨
-              </p>
-            </div>
-
-            <Button
-              onClick={() => {
-                trackSubscription.premiumFeatureClick("ai_scan_quota_barrier");
-                trackSubscription.initiateCheckout("quota_barrier");
-                router.push("/subscription");
-              }}
-              className="w-full max-w-[240px] h-12 bg-primary hover:bg-primary/90 text-white font-black rounded-xl transition-all mt-2 text-base cursor-pointer shadow-lg shadow-primary/25"
-            >
-              Upgrade ke Premium
-            </Button>
           </div>
         </div>
       </div>
@@ -274,28 +303,46 @@ export const AIScanForm = () => {
   return (
     <div className="space-y-4 py-2 animate-in fade-in duration-500">
       {/* Quota Info Banner - Premium AI Theme */}
-      {!scanResult && freeScanCount !== undefined && (freeScanCount > 0 || user?.subscriptionStatus === "active") && (
-        <AIScanQuotaBanner 
-          freeScanCount={freeScanCount} 
-          isSubscribed={user?.subscriptionStatus === "active"}
-        />
-      )}
+      {!scanResult &&
+        freeScanCount !== undefined &&
+        (freeScanCount > 0 || user?.subscriptionStatus === "active") && (
+          <AIScanQuotaBanner
+            freeScanCount={freeScanCount}
+            isSubscribed={user?.subscriptionStatus === "active"}
+          />
+        )}
       {!image ? (
-        <div
-          onClick={() => fileInputRef.current?.click()}
-          className="border-2 border-dashed border-primary/20 rounded-2xl py-8 flex flex-col items-center justify-center gap-4 bg-primary/5 hover:bg-primary/10 transition-colors cursor-pointer group"
-        >
-          <div className="w-16 h-16 rounded-full bg-white shadow-soft flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
-            <Camera className="w-8 h-8" />
+        <>
+          {/* Camera capture area — tap to open camera directly */}
+          <div
+            onClick={handleCameraCapture}
+            className="border-2 border-dashed border-primary/20 rounded-2xl py-8 flex flex-col items-center justify-center gap-4 bg-primary/5 hover:bg-primary/10 transition-colors cursor-pointer group"
+          >
+            <div className="w-16 h-16 rounded-full bg-white shadow-soft flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+              <Camera className="w-8 h-8" />
+            </div>
+            <div className="text-center">
+              <p className="font-bold text-sm text-foreground">
+                Foto Struk Sekarang
+              </p>
+              <p className="text-[10px] text-muted-foreground mt-1">
+                Tap untuk buka kamera
+              </p>
+            </div>
           </div>
-          <div className="text-center">
-            <p className="font-bold text-sm text-foreground">
-              Ambil Foto Struk
-            </p>
-            <p className="text-[10px] text-muted-foreground mt-1">
-              Atau klik untuk upload
-            </p>
-          </div>
+
+          {/* Upload from gallery — secondary small button */}
+          <button
+            onClick={handleGalleryUpload}
+            className="w-full flex items-center justify-center gap-2 py-2.5 rounded-md border border-primary/15 bg-transparent hover:bg-primary/5 transition-colors active:scale-[0.98] cursor-pointer"
+          >
+            <ImagePlus className="w-3.5 h-3.5 text-muted-foreground" />
+            <span className="text-xs font-semibold text-muted-foreground">
+              Upload dari Galeri
+            </span>
+          </button>
+
+          {/* Hidden inputs */}
           <input
             type="file"
             ref={fileInputRef}
@@ -303,7 +350,15 @@ export const AIScanForm = () => {
             accept="image/*"
             className="hidden"
           />
-        </div>
+          <input
+            type="file"
+            ref={cameraInputRef}
+            onChange={handleFileChange}
+            accept="image/*"
+            capture="environment"
+            className="hidden"
+          />
+        </>
       ) : (
         <div className="space-y-4">
           <div className="relative aspect-[4/3] rounded-2xl overflow-hidden border border-primary/20 bg-muted">
@@ -325,7 +380,7 @@ export const AIScanForm = () => {
           {!scanResult ? (
             <div className="space-y-3">
               {error && (
-                <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-md text-destructive text-[10px] font-bold uppercase text-center">
+                <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-md text-destructive text-[10px] font-bold text-center">
                   {error}
                 </div>
               )}
@@ -457,17 +512,21 @@ export const AIScanForm = () => {
 
       {/* Benefits info */}
       {!image && (
-        <div className="flex gap-3 items-start p-3 bg-muted/20 rounded-xl">
-          <div className="p-2 bg-white rounded-lg shadow-sm">
-            <Sparkles className="w-4 h-4 text-primary" />
+        <div className="flex gap-3 items-start p-3 bg-muted/20 rounded-md">
+          <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0">
+            <Image
+              src="/img/ai-info-icon.png"
+              alt="AI Scan"
+              width={40}
+              height={40}
+              className="w-full h-full object-contain rounded-full"
+            />
           </div>
           <div>
-            <p className="text-[10px] font-bold uppercase text-muted-foreground">
-              Kelebihan Scan AI
-            </p>
-            <p className="text-[11px] leading-relaxed mt-0.5">
-              Automatis deteksi menu, harga, dan total pajak tanpa perlu ketik
-              manual satu-satu.
+            <p className="text-sm font-bold text-primary">Kelebihan Scan AI</p>
+            <p className="text-xs leading-relaxed mt-0.5">
+              Otomatis deteksi item, harga, dan pajak tanpa perlu ketik manual
+              satu-satu. Hemat waktu & tenaga! ⚡
             </p>
           </div>
         </div>

@@ -29,9 +29,52 @@ export const TestimonialSlider = () => {
 
   if (isLoading) {
     return (
-      <div className="w-full py-8 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </div>
+      <section className="space-y-4">
+        {/* Header skeleton */}
+        <div className="flex items-center gap-3 px-1">
+          <div className="space-y-1.5">
+            <div className="h-4 w-36 rounded-md bg-muted animate-pulse" />
+            <div className="h-3 w-52 rounded-md bg-muted animate-pulse opacity-60" />
+          </div>
+        </div>
+
+        {/* Card skeletons */}
+        <div className="relative -mx-4 overflow-hidden pt-2">
+          <div className="flex gap-4 px-4">
+            {[0, 1, 2].map((i) => (
+              <div
+                key={i}
+                className="flex-shrink-0 w-[280px] rounded-2xl border border-border/50 bg-muted/30 p-4 space-y-3"
+                style={{ animationDelay: `${i * 100}ms` }}
+              >
+                {/* Stars */}
+                <div className="flex gap-1">
+                  {[0, 1, 2, 3, 4].map((s) => (
+                    <div
+                      key={s}
+                      className="h-3 w-3 rounded-sm bg-muted animate-pulse"
+                    />
+                  ))}
+                </div>
+                {/* Review text lines */}
+                <div className="space-y-2">
+                  <div className="h-3 w-full rounded bg-muted animate-pulse" />
+                  <div className="h-3 w-4/5 rounded bg-muted animate-pulse opacity-70" />
+                  <div className="h-3 w-3/5 rounded bg-muted animate-pulse opacity-50" />
+                </div>
+                {/* Avatar + name */}
+                <div className="flex items-center gap-2 pt-1">
+                  <div className="h-8 w-8 rounded-full bg-muted animate-pulse" />
+                  <div className="space-y-1">
+                    <div className="h-3 w-20 rounded bg-muted animate-pulse" />
+                    <div className="h-2.5 w-14 rounded bg-muted animate-pulse opacity-60" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
     );
   }
 

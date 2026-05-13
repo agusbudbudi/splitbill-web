@@ -465,7 +465,7 @@ const SplitBillContent = () => {
               </div>
 
               {/* Lock Indicator Overlay */}
-              <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-background via-background/80 to-transparent flex items-end justify-center pb-2 z-20">
+              <div className="absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-background via-background/80 to-transparent flex items-end justify-center pb-2 z-20">
                 <div className="flex items-center gap-2 px-4 py-1.5 bg-white border border-primary/10 rounded-full shadow-lg shadow-primary/5 ">
                   <span className="text-xs font-bold text-primary">
                     Selesaikan Detail di Bawah ✨

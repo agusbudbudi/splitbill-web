@@ -41,7 +41,7 @@ export function SuccessSection({
           <AnimatedCheckmark className="mb-6" />
 
           <div className="space-y-2">
-            <h3 className="font-black text-xl text-foreground tracking-tight sm:text-2xl">
+            <h3 className="font-bold text-xl text-foreground tracking-tight sm:text-2xl">
               {title}
             </h3>
             <p className="text-sm text-muted-foreground font-medium max-w-[360px] mx-auto text-base">
@@ -61,7 +61,7 @@ export function SuccessSection({
                 variant={action.variant || "default"}
                 onClick={action.onClick}
                 className={cn(
-                  "flex-1 h-16 sm:h-12 rounded-md font-bold transition-all active:scale-95 text-lg sm:text-base whitespace-nowrap",
+                  "flex-1 h-20 sm:h-12 rounded-md font-bold transition-all active:scale-95 text-lg sm:text-base whitespace-nowrap",
                   action.variant === "default" && "shadow-lg shadow-primary/20",
                   action.className,
                 )}

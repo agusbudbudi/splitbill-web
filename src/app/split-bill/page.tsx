@@ -9,6 +9,7 @@ import { AIScanForm } from "@/components/splitbill/AIScanForm";
 import { ExpenseList } from "@/components/splitbill/ExpenseList";
 import { AdditionalExpenses } from "@/components/splitbill/AdditionalExpenses";
 import { BillSummary } from "@/components/splitbill/BillSummary";
+import { SaveBillNudge } from "@/components/splitbill/SaveBillNudge";
 import { Card, CardContent } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
@@ -31,9 +32,10 @@ import {
   FileCheck,
   Home,
   History as HistoryIcon,
+  RotateCcw,
 } from "lucide-react";
 import { SuccessSection } from "@/components/ui/SuccessSection";
-import { cn } from "@/lib/utils";
+import { cn, formatToIDR } from "@/lib/utils";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import { InfoBanner } from "@/components/ui/InfoBanner";
 import { SegmentedControl } from "@/components/ui/SegmentedControl";
@@ -65,6 +67,14 @@ const SplitBillContent = () => {
     togglePaymentMethodSelection,
     clearDraftAfterFinalize,
   } = useSplitBillStore();
+
+  const unassignedCount = expenses.filter(
+    (e) => e.who.length === 0 || !e.paidBy,
+  ).length;
+  const unassignedAdxCount = additionalExpenses.filter(
+    (e) => e.who.length === 0 || !e.paidBy,
+  ).length;
+
   const { paymentMethods, saveBill } = useWalletStore();
   const calculationResult = useBillCalculations();
   const { totalSpent } = calculationResult;
@@ -167,6 +177,38 @@ const SplitBillContent = () => {
   const { isAuthenticated } = useAuthStore();
   const { isPWABannerVisible } = useUIStore();
 
+  const triggerConfetti = () => {
+    const duration = 3 * 1000;
+    const animationEnd = Date.now() + duration;
+    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 50 };
+
+    const randomInRange = (min: number, max: number) =>
+      Math.random() * (max - min) + min;
+
+    const interval: ReturnType<typeof setInterval> = setInterval(function () {
+      const timeLeft = animationEnd - Date.now();
+
+      if (timeLeft <= 0) {
+        return clearInterval(interval);
+      }
+
+      const particleCount = 50 * (timeLeft / duration);
+      // since particles fall down, start a bit higher than random
+      confetti({
+        ...defaults,
+        particleCount,
+        origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+        colors: ["#7c3aed", "#a78bfa", "#ddd6fe"],
+      });
+      confetti({
+        ...defaults,
+        particleCount,
+        origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+        colors: ["#7c3aed", "#a78bfa", "#ddd6fe"],
+      });
+    }, 250);
+  };
+
   const handleFinalize = async () => {
     if (isFinalizingRef.current) return;
 
@@ -214,35 +256,7 @@ const SplitBillContent = () => {
       }, 100);
 
       // Celeberation Effect
-      const duration = 3 * 1000;
-      const animationEnd = Date.now() + duration;
-      const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
-
-      const randomInRange = (min: number, max: number) =>
-        Math.random() * (max - min) + min;
-
-      const interval: ReturnType<typeof setInterval> = setInterval(function () {
-        const timeLeft = animationEnd - Date.now();
-
-        if (timeLeft <= 0) {
-          return clearInterval(interval);
-        }
-
-        const particleCount = 50 * (timeLeft / duration);
-        // since particles fall down, start a bit higher than random
-        confetti({
-          ...defaults,
-          particleCount,
-          origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
-          colors: ["#7c3aed", "#a78bfa", "#ddd6fe"],
-        });
-        confetti({
-          ...defaults,
-          particleCount,
-          origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
-          colors: ["#7c3aed", "#a78bfa", "#ddd6fe"],
-        });
-      }, 250);
+      triggerConfetti();
     } finally {
       // We don't necessarily need to reset isFinalizingRef.current to false here
       // because once isSaved is true, it shouldn't be called again anyway.
@@ -290,6 +304,7 @@ const SplitBillContent = () => {
         description: "Yuk cek rincian pembayarannya.",
         duration: 3000,
       });
+      triggerConfetti();
     }
     setValidationError(null);
     const nextStepNum = step + 1;
@@ -322,12 +337,13 @@ const SplitBillContent = () => {
           </div>
         );
       case 2:
+        const subtotal = expenses.reduce((acc, curr) => acc + curr.amount, 0);
         return (
           <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
-            <div className="text-center space-y-2">
+            <div className="flex flex-col items-center text-center gap-2">
               <h2 className="text-2xl font-bold">Input Pengeluaran 📊</h2>
-              <p className="text-muted-foreground text-sm">
-                Scan struk pake AI atau input manual satu-satu.
+              <p className="text-muted-foreground text-sm max-w-[360px]">
+                Scan struk pake AI biar cepet, atau input manual satu-satu.
               </p>
             </div>
 
@@ -353,7 +369,7 @@ const SplitBillContent = () => {
               </Card>
             )}
 
-            <Card className="border-primary/20 shadow-md">
+            <Card className="rounded-xl bg-white backdrop-blur-xs shadow-soft text-card-foreground shadow-soft">
               <CardContent className="p-1 sm:p-2">
                 <SegmentedControl
                   id="onboarding-input-method"
@@ -392,37 +408,110 @@ const SplitBillContent = () => {
       case 3:
         return (
           <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
-            <div className="text-center space-y-2">
-              <h2 className="text-2xl font-bold">Detail Aktivitas ✈️</h2>
+            {/* Bill Quick View - Realistic Ticket Style */}
+            <div className="relative group">
+              <div
+                className="bg-white border-x border-primary/10 p-8 pt-6 pb-14 relative"
+                style={{
+                  filter: "drop-shadow(0 10px 15px -3px rgba(0, 0, 0, 0.05))",
+                  maskImage:
+                    "linear-gradient(to bottom, black 85%, transparent 100%)",
+                  WebkitMaskImage:
+                    "linear-gradient(to bottom, black 85%, transparent 100%)",
+                }}
+              >
+                {/* Ticket Punch Notches (Sides) */}
+                <div className="absolute top-1/2 -left-3 w-6 h-6 bg-background border border-primary/10 rounded-full z-10 -translate-y-1/2 shadow-inner" />
+                <div className="absolute top-1/2 -right-3 w-6 h-6 bg-background border border-primary/10 rounded-full z-10 -translate-y-1/2 shadow-inner" />
+
+                {/* Decorative Pattern Background */}
+                <div className="absolute inset-0 opacity-[0.02] pointer-events-none bg-[radial-gradient(#7c3aed_1px,transparent_1px)] [background-size:12px_12px]" />
+
+                <div className="relative z-10 flex items-center justify-between">
+                  <div className="space-y-1">
+                    <p className="text-[10px] font-black uppercase text-primary/40 tracking-widest">
+                      Estimasi Tagihan
+                    </p>
+                    <h3 className="text-3xl font-black text-primary/90 tracking-tighter">
+                      {formatToIDR(totalSpent)}
+                    </h3>
+                    <div className="flex items-center gap-1.5 pt-0.5">
+                      <div className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                      <p className="text-[9px] font-bold text-amber-600/80 uppercase tracking-tight">
+                        Menunggu Detail Aktivitas...
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex -space-x-2 items-center">
+                    {people.slice(0, 4).map((name, i) => (
+                      <div
+                        key={i}
+                        className="w-8 h-8 rounded-full border-2 border-white overflow-hidden bg-white shadow-md ring-1 ring-primary/5"
+                      >
+                        <img
+                          src={`https://api.dicebear.com/9.x/personas/png?backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf&seed=${encodeURIComponent(name)}&size=120`}
+                          alt={name}
+                        />
+                      </div>
+                    ))}
+                    {people.length > 4 && (
+                      <div className="w-8 h-8 rounded-full border-2 border-white bg-primary/20 flex items-center justify-center text-[10px] font-bold text-primary shadow-md ring-1 ring-primary/5">
+                        +{people.length - 4}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Lock Indicator Overlay */}
+              <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-background via-background/80 to-transparent flex items-end justify-center pb-2 z-20">
+                <div className="flex items-center gap-2 px-4 py-1.5 bg-white border border-primary/10 rounded-full shadow-lg shadow-primary/5 ">
+                  <span className="text-xs font-bold text-primary">
+                    Selesaikan Detail di Bawah ✨
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="text-center space-y-1 pt-2">
+              <h2 className="text-2xl font-bold tracking-tight">
+                Langkah Terakhir! 🚀
+              </h2>
               <p className="text-muted-foreground text-sm">
                 Nama kegiatannya apa & mau dibayar kemana?
               </p>
             </div>
 
-            <Card className="border-primary/20 shadow-md">
-              <CardContent className="p-4 space-y-2">
-                <label className="text-sm font-bold flex items-center gap-1.5 px-1">
-                  BTW habis jalan kemana nih? ✈️
-                </label>
-                <Input
-                  placeholder="Contoh: Makan Ramen, Liburan Bali"
-                  value={activityName}
-                  onChange={(e) => {
-                    const newValue = e.target.value;
-                    const emoji = suggestEmoji(newValue);
+            <Card className="border-primary/10 shadow-soft">
+              <CardContent className="p-5 space-y-4">
+                <div className="flex items-center gap-2 px-1">
+                  <PenLine className="w-4 h-4 text-primary" />
+                  <label className="text-sm font-bold text-foreground">
+                    BTW habis jalan kemana nih? ✈️
+                  </label>
+                </div>
 
-                    if (emoji && !newValue.includes(emoji)) {
-                      // Check if it already starts with another emoji from our map
-                      const hasEmoji = /^\p{Emoji}/u.test(newValue);
-                      if (!hasEmoji) {
-                        setActivityName(`${emoji} ${newValue}`);
-                        return;
+                <div className="relative">
+                  <Input
+                    placeholder="Contoh: Makan Ramen, Liburan Bali"
+                    value={activityName}
+                    onChange={(e) => {
+                      const newValue = e.target.value;
+                      const emoji = suggestEmoji(newValue);
+
+                      if (emoji && !newValue.includes(emoji)) {
+                        const hasEmoji = /^\p{Emoji}/u.test(newValue);
+                        if (!hasEmoji) {
+                          setActivityName(`${emoji} ${newValue}`);
+                          return;
+                        }
                       }
-                    }
-                    setActivityName(newValue);
-                  }}
-                  className="bg-white border-primary/10 h-12"
-                />
+                      setActivityName(newValue);
+                    }}
+                    className="bg-white border-primary/10 h-12 text-sm font-bold px-4 focus-visible:ring-primary/20"
+                  />
+                </div>
 
                 <div className="flex flex-wrap gap-2 pt-1">
                   {[
@@ -438,7 +527,7 @@ const SplitBillContent = () => {
                         setActivityName(`${pick.emoji} ${pick.name}`)
                       }
                       className={cn(
-                        "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold transition-all active:scale-95",
+                        "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold transition-all active:scale-95 cursor-pointer",
                         activityName === `${pick.emoji} ${pick.name}`
                           ? "bg-primary text-white shadow-sm"
                           : "bg-primary/5 text-primary/70 hover:bg-primary/10 border border-primary/10",
@@ -454,12 +543,12 @@ const SplitBillContent = () => {
 
             <Card
               id="onboarding-payment-methods"
-              className="border-primary/20 shadow-md"
+              className="border-primary/10 shadow-soft"
             >
-              <CardContent className="p-4 space-y-3">
+              <CardContent className="p-5 space-y-4">
                 <div className="flex items-center justify-between px-1">
                   <label className="text-sm font-bold flex items-center gap-2">
-                    Metode Pembayaran 📥
+                    Bayar Kemana? 📥
                   </label>
                   {selectedPaymentMethodIds.length > 0 && (
                     <span className="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
@@ -468,10 +557,14 @@ const SplitBillContent = () => {
                   )}
                 </div>
 
+                <p className="text-[11px] text-muted-foreground px-1 -mt-2 leading-relaxed">
+                  Pilih dompet kamu biar temen gampang bayarnya.
+                </p>
+
                 <div className="flex items-center gap-3 overflow-x-auto pb-2 scrollbar-hide -mx-1 px-1">
                   <Card
                     onClick={() => setIsAddWalletOpen(true)}
-                    className="shrink-0 w-20 h-20 rounded-lg border-1 border-dashed border-primary/20 flex flex-col items-center justify-center gap-2 text-primary/40 hover:text-primary hover:border-primary/40 hover:bg-primary/5 transition-all active:scale-95 cursor-pointer bg-white"
+                    className="shrink-0 w-20 h-20 rounded-lg border-1 border-dashed border-primary/20 flex flex-col items-center justify-center gap-2 text-primary/40 hover:text-primary hover:border-primary/40 hover:bg-primary/5 transition-all active:scale-95 cursor-pointer bg-white shadow-none"
                   >
                     <Plus className="w-5 h-5" />
                   </Card>
@@ -488,9 +581,12 @@ const SplitBillContent = () => {
                       />
                     ))
                   ) : (
-                    <Card className="flex-1 flex items-center justify-center h-20 rounded-lg bg-muted/5 border border-dashed border-muted-foreground/10 px-4 text-center">
-                      <p className="text-[9px] text-muted-foreground leading-tight">
-                        Belum ada dompet tersimpan. Klik + buat tambah.
+                    <Card className="flex-1 flex items-center justify-center h-20 rounded-lg bg-muted/5 border border-dashed border-muted-foreground/10 px-4 text-center shadow-none">
+                      <p className="text-[11px] text-muted-foreground leading-tight">
+                        Belum ada dompet tersimpan. <br />
+                        <span className="font-bold underline cursor-pointer">
+                          Tambah yuk!
+                        </span>
                       </p>
                     </Card>
                   )}
@@ -563,13 +659,22 @@ const SplitBillContent = () => {
               />
             ) : (
               <>
+                {!isSaved && (
+                  <SaveBillNudge
+                    onSave={() => setShowFinalizeModal(true)}
+                    className="animate-in slide-in-from-top-4 duration-700"
+                  />
+                )}
+
                 <BillSummary showDownload={false} />
-                <div className="flex flex-col gap-3">
+
+                <div className="flex flex-col items-center gap-3 pt-4">
                   <Button
                     onClick={() => router.push("/split-bill?step=1")}
-                    variant="outline"
-                    className="w-full h-14 font-bold rounded-2xl border-primary/20 text-primary shadow-none hover:shadow-none hover:bg-primary/5 transition-all"
+                    variant="ghost"
+                    className="text-muted-foreground hover:text-primary font-bold text-xs transition-colors"
                   >
+                    <RotateCcw className="w-3.5 h-3.5 mr-2" />
                     Mulai Ulang Split Bill
                   </Button>
                 </div>
@@ -644,7 +749,7 @@ const SplitBillContent = () => {
         </div>
       )}
 
-      <main className="w-full max-w-[600px] px-4 pt-10 pb-10 space-y-8 relative z-10">
+      <main className="w-full max-w-[600px] px-4 pt-8 pb-8 space-y-8 relative z-10">
         {renderStep()}
       </main>
 
@@ -675,18 +780,27 @@ const SplitBillContent = () => {
                 {validationError && (
                   <InfoBanner message={validationError} variant="blue" />
                 )}
-                {expenses.length === 0 && people.length >= 2 && (
-                  <InfoBanner
-                    message="Isi detail transaksinya dulu ya kak!"
-                    variant="blue"
-                  />
-                )}
+
                 <Button
                   onClick={nextStep}
                   disabled={expenses.length === 0}
-                  className="w-full h-14 text-lg font-bold rounded-2xl shadow-xl shadow-primary/20 bg-primary text-white !disabled:opacity-100 disabled:bg-[#ede9fe] disabled:text-primary/40 disabled:shadow-none transition-all duration-300"
+                  className={cn(
+                    "w-full h-14 text-lg font-bold rounded-2xl shadow-xl transition-all duration-300",
+                    expenses.length > 0 &&
+                      unassignedCount === 0 &&
+                      unassignedAdxCount === 0
+                      ? "bg-emerald-600 text-white shadow-emerald-200"
+                      : "bg-primary text-white shadow-primary/20",
+                    expenses.length === 0 &&
+                      "opacity-100 bg-[#ede9fe] text-primary/40 shadow-none",
+                  )}
                 >
-                  Lanjutkan <ChevronRight className="ml-2 w-5 h-5" />
+                  {expenses.length > 0 &&
+                  unassignedCount === 0 &&
+                  unassignedAdxCount === 0
+                    ? "Berhasil, Lanjutkan! ✅"
+                    : "Lanjutkan"}
+                  <ChevronRight className="ml-2 w-5 h-5" />
                 </Button>
               </>
             )}
@@ -713,8 +827,7 @@ const SplitBillContent = () => {
                   </>
                 ) : (
                   <>
-                    <CheckCircle2 className="mr-2 w-5 h-5" /> Selesaikan &
-                    Simpan
+                    <CheckCircle2 className="mr-2 w-5 h-5" /> Simpan & Share ✨
                   </>
                 )}
               </Button>

@@ -49,8 +49,12 @@ export const AIScanForm = () => {
   const [scanResult, setScanResult] = useState<ReceiptScanResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
+  const [imageSource, setImageSource] = useState<"camera" | "gallery" | null>(
+    null,
+  );
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
+  const scanStartTimeRef = useRef<number | null>(null);
 
   const { addExpense, setActivityName, addAdditionalExpense } =
     useSplitBillStore();
@@ -87,24 +91,28 @@ export const AIScanForm = () => {
   };
 
   const handleCameraCapture = useCallback(() => {
+    setImageSource("camera");
+    trackSplitBill.selectImage("camera");
     cameraInputRef.current?.click();
   }, []);
 
   const handleGalleryUpload = useCallback(() => {
+    setImageSource("gallery");
+    trackSplitBill.selectImage("gallery");
     fileInputRef.current?.click();
   }, []);
 
   const handleScan = async () => {
     if (!image) return;
-    trackSplitBill.aiScan("start");
+    trackSplitBill.aiScan("start", retryCount, imageSource || undefined);
     setIsScanning(true);
     setError(null);
+    scanStartTimeRef.current = Date.now();
 
     try {
       const result = await scanReceipt(image);
+      const duration = Date.now() - (scanStartTimeRef.current || Date.now());
       setScanResult(result);
-      trackSplitBill.aiScan("success", retryCount);
-      setRetryCount(0);
 
       // Show success toast
       toast.success("Scan Berhasil! ✨", {
@@ -112,18 +120,34 @@ export const AIScanForm = () => {
         duration: 2000,
       });
 
+      trackSplitBill.aiScan(
+        "success",
+        retryCount,
+        imageSource || undefined,
+        duration,
+        result.items?.length || 0,
+      );
+      setRetryCount(0);
+
       // Refresh user data to update remaining scan quota
       await getCurrentUser();
     } catch (err: any) {
       console.error("Scan failed", err);
+      const duration = Date.now() - (scanStartTimeRef.current || Date.now());
       const newRetryCount = retryCount + 1;
       setRetryCount(newRetryCount);
-      trackSplitBill.aiScan("error", newRetryCount);
       setError(
         "Waduh, AI-nya lagi sibuk nih. Kamu bisa lanjut ngopi dulu atau ketik manual aja ya! ☕️",
       );
+      trackSplitBill.aiScan(
+        "error",
+        newRetryCount,
+        imageSource || undefined,
+        duration,
+      );
     } finally {
       setIsScanning(false);
+      scanStartTimeRef.current = null;
     }
   };
 
@@ -170,13 +194,13 @@ export const AIScanForm = () => {
     // Reset
     setImage(null);
     setScanResult(null);
-    trackSplitBill.aiImport();
-
     // Show success toast
     toast.success("Berhasil import struk! 🧾✨", {
       description: "Data belanja kamu sudah masuk ke daftar.",
       duration: 3000,
     });
+
+    trackSplitBill.aiImport(scanResult.items?.length || 0);
   };
 
   const formatCurrency = (amt: number) => {
@@ -393,7 +417,10 @@ export const AIScanForm = () => {
               unoptimized={image.startsWith("data:")}
             />
             <button
-              onClick={() => setImage(null)}
+              onClick={() => {
+                trackSplitBill.removeImage();
+                setImage(null);
+              }}
               className="absolute top-2 right-2 w-8 h-8 rounded-full bg-black/50 text-white flex items-center justify-center backdrop-blur-md cursor-pointer"
             >
               <X className="w-4 h-4" />
@@ -519,7 +546,11 @@ export const AIScanForm = () => {
               <div className="flex gap-2">
                 <Button
                   variant="outline"
-                  onClick={() => setImage(null)}
+                  onClick={() => {
+                    trackSplitBill.aiRetry();
+                    setImage(null);
+                    setImageSource(null);
+                  }}
                   className="flex-1"
                 >
                   Ulangi

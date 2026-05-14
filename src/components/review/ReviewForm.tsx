@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { InfoBanner } from "@/components/ui/InfoBanner";
 import { useAuthStore } from "@/lib/stores/authStore";
 import { useEffect } from "react";
+import Link from "next/link";
 
 export function ReviewForm() {
   const {
@@ -101,7 +102,11 @@ export function ReviewForm() {
       {!isAuthenticated && (
         <InfoBanner
           variant="blue"
-          message="Login untuk dapatkan reward +5 kuota scan AI setelah kirim review!"
+          message={
+            <>
+              <Link href="/login?redirect=/review" className="font-bold underline underline-offset-2 hover:opacity-80 transition-opacity">Login</Link> untuk dapatkan reward +5 kuota scan AI setelah kirim review!
+            </>
+          }
           className="mb-4"
         />
       )}

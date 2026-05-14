@@ -95,6 +95,13 @@ const TestimonialSlider = dynamic(
     ),
   { ssr: false },
 );
+const ReviewRewardBanner = dynamic(
+  () =>
+    import("@/components/home/ReviewRewardBanner").then(
+      (mod) => mod.ReviewRewardBanner,
+    ),
+  { ssr: false },
+);
 
 const BackgroundDecoration = () => (
   <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
@@ -189,6 +196,8 @@ export default function Home() {
           )}
 
 
+
+          {isMounted && <ReviewRewardBanner />}
 
           {/* Dashboard Section */}
           {isMounted && isAuthenticated && (

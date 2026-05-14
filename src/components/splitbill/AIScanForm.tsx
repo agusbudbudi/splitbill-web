@@ -26,7 +26,7 @@ const AIScanBenefits = () => (
   <div className="flex gap-3 items-start p-4 bg-primary/5 rounded-2xl border border-primary/10 transition-all hover:bg-primary/[0.07]">
     <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0">
       <Image
-        src="/img/ai-info-icon.png"
+        src="/img/icon-ai-info.png"
         alt="AI Scan"
         width={40}
         height={40}
@@ -274,7 +274,9 @@ export const AIScanForm = () => {
                     "ai_scan_login_barrier",
                   );
                   trackSubscription.initiateCheckout("login_barrier");
-                  router.push("/login");
+                  router.push(
+                    `/login?redirect=${encodeURIComponent("/split-bill?step=2")}`,
+                  );
                 }}
                 className="w-full max-w-[200px] h-10 bg-primary hover:bg-primary/90 text-white font-bold rounded-md shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] active:scale-[0.98] mt-1 text-sm"
               >

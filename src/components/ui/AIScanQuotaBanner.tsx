@@ -56,8 +56,8 @@ export const AIScanQuotaBanner = ({
                       : freeScanCount === maxScanCount
                         ? "Gift spesial buat kamu "
                         : isExhausted
-                          ? "Kuota Scan Habis"
-                          : "Sisa Kuota Scan Struk AI"}
+                          ? "Yah, Scan-nya Abis!"
+                          : "Sisa Scan Kamu Nih!"}
                   </p>
                   <div
                     className={cn(
@@ -86,25 +86,24 @@ export const AIScanQuotaBanner = ({
                 <p className="text-sm font-bold text-slate-800">
                   {isSubscribed ? (
                     <span className="text-slate-800 font-bold text-xs">
-                      Kamu bebas scan struk sepuasnya tanpa batas! 👑
+                      Bebas scan sepuasnya tanpa limit, gas terooos! 👑
                     </span>
                   ) : freeScanCount === maxScanCount ? (
                     <>
                       <span className="text-slate-800 font-bold text-xs">
-                        Gratis {maxScanCount}x Scan Struk pake AI 🎉
+                        Ada {maxScanCount}x scan gratis nih, sikat gais! 🔥
                       </span>
                     </>
                   ) : isExhausted ? (
                     <>
                       <span className="text-slate-800 font-bold text-xs">
-                        Tenang masih bisa input manual kok ✍️
+                        Yah scan abis, gas input manual dulu yuk! ✍️
                       </span>
                     </>
                   ) : (
                     <>
-                      {freeScanCount}{" "}
                       <span className="text-slate-800 font-bold text-xs">
-                        dari {maxScanCount} Scan Gratis
+                        Sisa {freeScanCount}x scan gratis nih, gas! ✨
                       </span>
                     </>
                   )}
@@ -131,7 +130,7 @@ export const AIScanQuotaBanner = ({
           {showRedirect && (
             <div className="pt-4">
               <Link href="/split-bill?step=1" className="block">
-                <Button className="w-full text-xs font-bold gap-2 rounded-md shadow-lg shadow-primary/20 group/btn transition-all duration-300">
+                <Button className="w-full text-sm font-bold gap-2 rounded-md shadow-lg shadow-primary/20 group/btn transition-all duration-300">
                   Mulai Split Bill Sekarang
                   <ChevronRight className="w-4 h-4 group-hover/btn:translate-x-0.5 transition-transform" />
                 </Button>

@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/Card";
 import { useSplitBillStore } from "@/store/useSplitBillStore";
 import { ChevronRight, ReceiptText, Users } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 export const OngoingSplitBillCard = () => {
@@ -51,8 +52,15 @@ export const OngoingSplitBillCard = () => {
             {/* Header */}
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                  <ReceiptText className="w-5 h-5 text-primary" />
+                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 overflow-hidden">
+                  <Image
+                    src="/img/icon-bill.jpg"
+                    alt="Bill Icon"
+                    width={40}
+                    height={40}
+                    className="w-full h-full object-contain"
+                    unoptimized
+                  />
                 </div>
 
                 <div className="space-y-0.5">

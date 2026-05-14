@@ -102,17 +102,34 @@ export const trackSplitBill = {
       item_count: itemCount
     }),
   aiRetry: () => trackEvent("ai_scan_retry"),
-  aiImport: (itemCount?: number) => trackEvent("ai_import_result", { item_count: itemCount }),
+  aiImport: (itemCount?: number, merchantName?: string) => 
+    trackEvent("ai_import_result", { 
+      item_count: itemCount,
+      merchant_name: merchantName,
+      has_merchant: !!merchantName
+    }),
   selectImage: (source: "camera" | "gallery") => trackEvent("ai_select_image", { source }),
   removeImage: () => trackEvent("ai_remove_image"),
+  quickPickActivity: (name: string) => trackEvent("quick_pick_activity", { activity_name: name }),
+  calculate: (params: { total_amount: number; num_participants: number }) => 
+    trackEvent("calculate_split_bill", params),
+  autofillView: (name: string) => trackEvent("activity_name_autofill_view", { name }),
   inputMethod: (method: "ai" | "manual") => trackEvent("split_bill_input_method", { method }),
   save: (params: { total_amount: number; num_participants: number; num_items: number; activity_name: string }) => 
     trackEvent("save_split_bill", params),
-  share: (method: "share_api" | "copy_link" | "download_image", id: string) => 
+  share: (method: "share_api" | "copy_link" | "download_image" | "share_button", id: string) => 
     trackEvent("share_split_bill", { method, id }),
+  reEntry: () => trackEvent("re_entry_split_bill"),
+  monitorStatus: (id?: string) => trackEvent("monitor_payment_status_click", { bill_id: id }),
   validationError: (step: number, errorMessage: string) => 
     trackEvent("form_validation_error", { step, error_message: errorMessage }),
+  finalizeModalView: () => trackEvent("finalize_modal_view"),
+  finalizeConfirm: () => trackEvent("finalize_modal_confirm"),
+  finalizeCancel: () => trackEvent("finalize_modal_cancel"),
+  restart: () => trackEvent("restart_split_bill"),
   delete: (id: string) => trackEvent("delete_split_bill", { id }),
+  toggleDetails: (name: string, isOpen: boolean) => 
+    trackEvent("toggle_person_details", { person_name: name, is_open: isOpen }),
 };
 
 export const trackPublic = {
@@ -128,10 +145,15 @@ export const trackSocial = {
 export const trackGeneral = {
   appEntry: () => trackEvent("app_entry"),
   viewHistory: () => trackEvent("view_split_bill_history"),
+  reviewBannerClick: () => trackEvent("review_banner_click"),
+  reviewBannerClose: () => trackEvent("review_banner_close"),
 };
 
 export const trackWallet = {
+  addMethodInitiate: () => trackEvent("add_payment_method_start"),
   addMethod: (type: string) => trackEvent("add_payment_method", { method_type: type }),
+  selectPaymentMethod: (id: string, isSelected: boolean) => 
+    trackEvent("select_payment_method", { method_id: id, is_selected: isSelected }),
   copyAccount: (provider: string) => trackEvent("copy_payment_account", { provider }),
   dropOff: () => trackEvent("drop_off_payment_method"),
 };

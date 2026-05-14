@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/Button";
 import { useAuthStore } from "@/lib/stores/authStore";
+import { trackGeneral } from "@/lib/gtag";
 
 interface ReviewBannerProps {
   onClose?: () => void;
@@ -20,6 +21,7 @@ export const ReviewBanner: React.FC<ReviewBannerProps> = ({ onClose }) => {
   // or user navigates away.
 
   const handleClose = () => {
+    trackGeneral.reviewBannerClose();
     setIsVisible(false);
     if (onClose) {
       onClose();
@@ -41,7 +43,10 @@ export const ReviewBanner: React.FC<ReviewBannerProps> = ({ onClose }) => {
       className="sticky bottom-6 z-[45] w-full px-4 pointer-events-none"
     >
       <div
-        onClick={() => router.push("/review")}
+        onClick={() => {
+          trackGeneral.reviewBannerClick();
+          router.push("/review");
+        }}
         className="bg-primary text-primary-foreground rounded-2xl p-4 shadow-xl flex items-center justify-between cursor-pointer relative overflow-hidden group max-w-[600px] mx-auto pointer-events-auto"
       >
         {/* Background elements for visual interest */}

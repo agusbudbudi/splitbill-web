@@ -5,8 +5,8 @@ import { Info, LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface InfoBannerProps {
-  message: string;
-  subtitle?: string;
+  message: React.ReactNode;
+  subtitle?: React.ReactNode;
   variant?: "blue" | "amber" | "primary" | "destructive" | "green";
   icon?: LucideIcon;
   layout?: "horizontal" | "vertical";

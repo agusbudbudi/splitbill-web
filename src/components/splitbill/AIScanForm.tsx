@@ -22,6 +22,27 @@ import { toast } from "sonner";
 import { AIScanQuotaBanner } from "@/components/ui/AIScanQuotaBanner";
 import { trackSplitBill, trackSubscription } from "@/lib/gtag";
 
+const AIScanBenefits = () => (
+  <div className="flex gap-3 items-start p-4 bg-primary/5 rounded-2xl border border-primary/10 transition-all hover:bg-primary/[0.07]">
+    <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0">
+      <Image
+        src="/img/ai-info-icon.png"
+        alt="AI Scan"
+        width={40}
+        height={40}
+        className="w-full h-full object-contain rounded-full"
+      />
+    </div>
+    <div>
+      <p className="text-sm font-bold text-primary">Kelebihan Scan AI</p>
+      <p className="text-[11px] leading-relaxed mt-0.5 text-muted-foreground font-medium">
+        Otomatis deteksi item, harga, dan pajak tanpa perlu ketik manual
+        satu-satu. Hemat waktu & tenaga! ⚡
+      </p>
+    </div>
+  </div>
+);
+
 export const AIScanForm = () => {
   const [image, setImage] = useState<string | null>(null);
   const [isScanning, setIsScanning] = useState(false);
@@ -235,6 +256,7 @@ export const AIScanForm = () => {
             </div>
           </div>
         </div>
+        <AIScanBenefits />
       </div>
     );
   }
@@ -296,6 +318,7 @@ export const AIScanForm = () => {
             </div>
           </div>
         </div>
+        <AIScanBenefits />
       </div>
     );
   }
@@ -511,26 +534,7 @@ export const AIScanForm = () => {
       )}
 
       {/* Benefits info */}
-      {!image && (
-        <div className="flex gap-3 items-start p-3 bg-muted/20 rounded-md">
-          <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0">
-            <Image
-              src="/img/ai-info-icon.png"
-              alt="AI Scan"
-              width={40}
-              height={40}
-              className="w-full h-full object-contain rounded-full"
-            />
-          </div>
-          <div>
-            <p className="text-sm font-bold text-primary">Kelebihan Scan AI</p>
-            <p className="text-xs leading-relaxed mt-0.5">
-              Otomatis deteksi item, harga, dan pajak tanpa perlu ketik manual
-              satu-satu. Hemat waktu & tenaga! ⚡
-            </p>
-          </div>
-        </div>
-      )}
+      {!scanResult && <AIScanBenefits />}
       <LoadingModal isOpen={isScanning} />
     </div>
   );

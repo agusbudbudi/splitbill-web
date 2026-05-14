@@ -102,6 +102,9 @@ const SplitBillContent = () => {
     if (step === 2) {
       trackSplitBill.inputMethod(activeTab);
     }
+    if (step === 3 && activityName) {
+      trackSplitBill.autofillView(activityName);
+    }
   }, [step]);
 
   useEffect(() => {
@@ -305,6 +308,13 @@ const SplitBillContent = () => {
         duration: 3000,
       });
       triggerConfetti();
+      trackSplitBill.calculate({
+        total_amount: totalSpent,
+        num_participants: people.length,
+      });
+      if (activityName) {
+        trackSplitBill.autofillView(activityName);
+      }
     }
     setValidationError(null);
     const nextStepNum = step + 1;
@@ -523,9 +533,10 @@ const SplitBillContent = () => {
                   ].map((pick) => (
                     <button
                       key={pick.name}
-                      onClick={() =>
-                        setActivityName(`${pick.emoji} ${pick.name}`)
-                      }
+                      onClick={() => {
+                        setActivityName(`${pick.emoji} ${pick.name}`);
+                        trackSplitBill.quickPickActivity(pick.name);
+                      }}
                       className={cn(
                         "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold transition-all active:scale-95 cursor-pointer",
                         activityName === `${pick.emoji} ${pick.name}`
@@ -563,7 +574,10 @@ const SplitBillContent = () => {
 
                 <div className="flex items-center gap-3 overflow-x-auto pb-2 scrollbar-hide -mx-1 px-1">
                   <Card
-                    onClick={() => setIsAddWalletOpen(true)}
+                    onClick={() => {
+                      setIsAddWalletOpen(true);
+                      trackWallet.addMethodInitiate();
+                    }}
                     className="shrink-0 w-20 h-20 rounded-lg border-1 border-dashed border-primary/20 flex flex-col items-center justify-center gap-2 text-primary/40 hover:text-primary hover:border-primary/40 hover:bg-primary/5 transition-all active:scale-95 cursor-pointer bg-white shadow-none"
                   >
                     <Plus className="w-5 h-5" />
@@ -577,7 +591,16 @@ const SplitBillContent = () => {
                         isSelected={selectedPaymentMethodIds.includes(
                           method.id,
                         )}
-                        onClick={() => togglePaymentMethodSelection(method.id)}
+                        onClick={() => {
+                          const isSelected = !selectedPaymentMethodIds.includes(
+                            method.id,
+                          );
+                          togglePaymentMethodSelection(method.id);
+                          trackWallet.selectPaymentMethod(
+                            method.id,
+                            isSelected,
+                          );
+                        }}
                       />
                     ))
                   ) : (
@@ -661,7 +684,10 @@ const SplitBillContent = () => {
               <>
                 {!isSaved && (
                   <SaveBillNudge
-                    onSave={() => setShowFinalizeModal(true)}
+                    onSave={() => {
+                      trackSplitBill.finalizeModalView();
+                      setShowFinalizeModal(true);
+                    }}
                     className="animate-in slide-in-from-top-4 duration-700"
                   />
                 )}
@@ -670,7 +696,10 @@ const SplitBillContent = () => {
 
                 <div className="flex flex-col items-center gap-3 pt-4">
                   <Button
-                    onClick={() => router.push("/split-bill?step=1")}
+                    onClick={() => {
+                      trackSplitBill.restart();
+                      router.push("/split-bill?step=1");
+                    }}
                     variant="ghost"
                     className="text-muted-foreground hover:text-primary font-bold text-xs transition-colors"
                   >
@@ -816,7 +845,10 @@ const SplitBillContent = () => {
 
             {step === 4 && !isSaved && expenses.length > 0 && (
               <Button
-                onClick={() => setShowFinalizeModal(true)}
+                onClick={() => {
+                  trackSplitBill.finalizeModalView();
+                  setShowFinalizeModal(true);
+                }}
                 disabled={isFinalizing}
                 className="w-full h-14 text-lg font-bold rounded-2xl bg-primary text-white shadow-xl shadow-primary/30 active:scale-95 transition-all !disabled:opacity-70"
               >
@@ -839,8 +871,14 @@ const SplitBillContent = () => {
       {/* Finalize Modal */}
       <ConfirmationModal
         isOpen={showFinalizeModal}
-        onClose={() => setShowFinalizeModal(false)}
-        onConfirm={handleFinalize}
+        onClose={() => {
+          trackSplitBill.finalizeCancel();
+          setShowFinalizeModal(false);
+        }}
+        onConfirm={() => {
+          trackSplitBill.finalizeConfirm();
+          handleFinalize();
+        }}
         title="Simpan ke Riwayat"
         description="Kamu yakin ingin menyelesaikan split bill ini? Data yang disimpan akan muncul di riwayat transaksi kamu."
         icon={CheckCircle2}

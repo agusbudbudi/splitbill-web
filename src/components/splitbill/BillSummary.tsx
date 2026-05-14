@@ -89,10 +89,12 @@ export const BillSummary = ({
   >({});
 
   const togglePerson = (name: string) => {
+    const isNowOpen = !expandedPeople[name];
     setExpandedPeople((prev) => ({
       ...prev,
-      [name]: !prev[name],
+      [name]: isNowOpen,
     }));
+    trackSplitBill.toggleDetails(name, isNowOpen);
   };
 
   const [isSharing, setIsSharing] = React.useState(false);
@@ -596,7 +598,10 @@ export const BillSummary = ({
           )}
         >
           <button
-            onClick={handleShareSocial}
+            onClick={() => {
+              trackSplitBill.share("share_button", billData?.id || "");
+              handleShareSocial();
+            }}
             disabled={isSharing || !showDownload}
             className={cn(
               "h-12 rounded-lg font-bold gap-2 text-sm transition-all active:scale-[0.98] bg-primary text-white shadow-lg shadow-primary/20 flex items-center justify-center group cursor-pointer",
@@ -629,6 +634,7 @@ export const BillSummary = ({
           <button
             onClick={() => {
               if (!showDownload) return;
+              trackSplitBill.monitorStatus(billData?.id);
               const collections = useCollectMoneyStore.getState().collections;
               const sourceId = billData?.id;
 

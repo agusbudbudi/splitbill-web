@@ -108,7 +108,10 @@ function SplitBillDetailContent() {
 
       <main className="flex-1 p-4 pb-10 space-y-6">
         <div
-          onClick={() => router.push("/split-bill")}
+          onClick={() => {
+            trackSplitBill.reEntry();
+            router.push("/split-bill");
+          }}
           className="relative rounded-2xl p-5 text-white active:scale-[0.98] transition-all group cursor-pointer bg-brand-reversed"
         >
           <div className="absolute -top-1 right-4 p-1 opacity-100 transition-transform group-hover:scale-110 group-hover:rotate-6 z-20">

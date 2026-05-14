@@ -200,7 +200,10 @@ export const AIScanForm = () => {
       duration: 3000,
     });
 
-    trackSplitBill.aiImport(scanResult.items?.length || 0);
+    trackSplitBill.aiImport(
+      scanResult.items?.length || 0,
+      scanResult.merchant_name || undefined,
+    );
   };
 
   const formatCurrency = (amt: number) => {

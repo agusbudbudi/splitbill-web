@@ -87,9 +87,24 @@ export const trackSplitBill = {
   start: () => trackEvent("split_bill_start"),
   stepComplete: (stepNumber: number, stepName: string) => 
     trackEvent("split_bill_step_complete", { step_number: stepNumber, step_name: stepName }),
-  aiScan: (status: "start" | "success" | "error", retryCount?: number) => 
-    trackEvent("ai_scan_receipt", { status, retry_count: retryCount || 0 }),
-  aiImport: () => trackEvent("ai_import_result"),
+  aiScan: (
+    status: "start" | "success" | "error", 
+    retryCount?: number, 
+    source?: "camera" | "gallery",
+    duration?: number,
+    itemCount?: number
+  ) => 
+    trackEvent("ai_scan_receipt", { 
+      status, 
+      retry_count: retryCount || 0,
+      image_source: source || "unknown",
+      duration_ms: duration,
+      item_count: itemCount
+    }),
+  aiRetry: () => trackEvent("ai_scan_retry"),
+  aiImport: (itemCount?: number) => trackEvent("ai_import_result", { item_count: itemCount }),
+  selectImage: (source: "camera" | "gallery") => trackEvent("ai_select_image", { source }),
+  removeImage: () => trackEvent("ai_remove_image"),
   inputMethod: (method: "ai" | "manual") => trackEvent("split_bill_input_method", { method }),
   save: (params: { total_amount: number; num_participants: number; num_items: number; activity_name: string }) => 
     trackEvent("save_split_bill", params),

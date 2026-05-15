@@ -1,25 +1,21 @@
-"use client";
+import type { Metadata } from "next";
+import WalletClientPage from "./WalletClientPage";
 
-import React, { useState } from "react";
-import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
-import { PaymentMethodsTab } from "@/components/wallet/PaymentMethodsTab";
+export const metadata: Metadata = {
+  title: "Wallet & Metode Pembayaran - Atur Rekening Split Bill",
+  description: "Kelola metode pembayaran favoritmu (BCA, Mandiri, GoPay, OVO, dll). Tambahkan detail rekening untuk memudahkan teman mentransfer hasil split bill secara instan.",
+  keywords: [
+    "metode pembayaran split bill",
+    "rekening bank online",
+    "dompet digital indonesia",
+    "atur pembayaran patungan",
+    "split bill wallet",
+  ],
+  alternates: {
+    canonical: "https://splitbill.my.id/wallet",
+  },
+};
 
 export default function WalletPage() {
-  return (
-    <div className="min-h-screen bg-background flex flex-col items-center relative">
-      <div className="w-full max-w-[600px] min-h-screen flex flex-col relative bg-background">
-        <Header title="Digital Wallet" showBackButton />
-
-        {/* Content */}
-        <main className="flex-1 w-full flex flex-col p-4 relative">
-          <div className="animate-in fade-in slide-in-from-bottom-2 duration-300 flex-1 flex flex-col">
-            <PaymentMethodsTab />
-          </div>
-        </main>
-
-        <Footer />
-      </div>
-    </div>
-  );
+  return <WalletClientPage />;
 }

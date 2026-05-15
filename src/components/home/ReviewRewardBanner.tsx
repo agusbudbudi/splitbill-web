@@ -46,7 +46,7 @@ export const ReviewRewardBanner = () => {
           <div className="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-500 overflow-hidden">
             <Image
               src="/img/icon-rewards.jpg"
-              alt="Rewards Icon"
+              alt="Bonus Scan Struk AI — Reward untuk review dan feedback pengguna"
               width={48}
               height={48}
               className="w-full h-full object-contain"

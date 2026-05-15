@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Users, Camera, Share2, Zap, Sparkles } from "lucide-react";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 const steps = [
@@ -54,9 +55,11 @@ export const VisualFlowPreview = () => {
               <div className="relative bg-white border border-white backdrop-blur-sm rounded-md overflow-hidden shadow-soft hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 group h-full flex flex-col">
                 {/* Step Image */}
                 <div className="relative w-full aspect-[1/1] overflow-hidden bg-muted">
-                  <img
+                  <Image
                     src={step.image}
-                    alt={step.title}
+                    alt={`Panduan Split Bill Langkah ${step.number}: ${step.title} — ${step.description}`}
+                    width={180}
+                    height={180}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
 

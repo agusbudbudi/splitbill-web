@@ -42,7 +42,7 @@ export const AIScanQuotaBanner = ({
               <div className="w-10 h-10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-500 overflow-hidden">
                 <Image
                   src="/img/ai-icon.png"
-                  alt="AI Icon"
+                  alt="Ikon AI Scan Struk — Fitur unggulan SplitBill Online untuk bagi tagihan otomatis"
                   width={28}
                   height={28}
                   className="w-7 h-7 object-contain"

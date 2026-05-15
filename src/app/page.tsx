@@ -1,233 +1,68 @@
-"use client";
+/**
+ * Homepage — Server Component
+ *
+ * Exports page-level metadata so Next.js App Router renders proper
+ * <title>, <meta description>, Open Graph, and canonical tags.
+ *
+ * All UI logic lives in HomePageClient (Client Component) which is still
+ * SSR'd on the first request — the key difference is that its sub-components
+ * no longer use `ssr: false`, so Googlebot sees the full HTML.
+ */
 
-import React, { useState } from "react";
-import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
-import { Banner } from "@/components/home/Banner";
-import { NavigationMenu } from "@/components/home/NavigationMenu";
-import { FloatingBadge } from "@/components/ui/FloatingBadge";
-import { OngoingSplitBillCard } from "@/components/home/OngoingSplitBillCard";
-import { useSplitBillStore } from "@/store/useSplitBillStore";
-import { useWalletStore } from "@/store/useWalletStore";
-import { cn } from "@/lib/utils";
-import { MerchandisingBanner } from "@/components/ui/MerchandisingBanner";
-import { useAuthStore } from "@/lib/stores/authStore";
-import dynamic from "next/dynamic";
+import type { Metadata } from "next";
+import { HomePageClient } from "@/components/home/HomePageClient";
 
-// Dynamic imports for below-the-fold components
-const GettingStarted = dynamic(
-  () =>
-    import("@/components/home/GettingStarted").then((mod) => mod.GettingStarted),
-  { ssr: false },
-);
-const AIScanBanner = dynamic(
-  () =>
-    import("@/components/home/AIScanBanner").then((mod) => mod.AIScanBanner),
-  { ssr: false },
-);
-const AIScanEncourageBanner = dynamic(
-  () =>
-    import("@/components/home/AIScanEncourageBanner").then(
-      (mod) => mod.AIScanEncourageBanner,
-    ),
-  { ssr: false },
-);
-const IntroSection = dynamic(
-  () =>
-    import("@/components/home/IntroSection").then((mod) => mod.IntroSection),
-  { ssr: false },
-);
-const VisualFlowPreview = dynamic(
-  () =>
-    import("@/components/home/VisualFlowPreview").then(
-      (mod) => mod.VisualFlowPreview,
-    ),
-  { ssr: false },
-);
-const ShareEncouragement = dynamic(
-  () =>
-    import("@/components/home/ShareEncouragement").then(
-      (mod) => mod.ShareEncouragement,
-    ),
-  { ssr: false },
-);
-const AdsCarousel = dynamic(
-  () => import("@/components/home/AdsCarousel").then((mod) => mod.AdsCarousel),
-  { ssr: false },
-);
-const FAQSection = dynamic(
-  () => import("@/components/home/FAQSection").then((mod) => mod.FAQSection),
-  { ssr: false },
-);
-const FAQCard = dynamic(
-  () => import("@/components/home/FAQCard").then((mod) => mod.FAQCard),
-  { ssr: false },
-);
-const TrustHighlights = dynamic(
-  () =>
-    import("@/components/home/TrustHighlights").then(
-      (mod) => mod.TrustHighlights,
-    ),
-  { ssr: false },
-);
-const SiteFooter = dynamic(
-  () => import("@/components/layout/SiteFooter").then((mod) => mod.SiteFooter),
-  { ssr: false },
-);
-const FeatureHighlights = dynamic(
-  () =>
-    import("@/components/home/FeatureHighlights").then(
-      (mod) => mod.FeatureHighlights,
-    ),
-  { ssr: false },
-);
-const LoginEncouragementCard = dynamic(
-  () =>
-    import("@/components/home/LoginEncouragementCard").then(
-      (mod) => mod.LoginEncouragementCard,
-    ),
-  { ssr: false },
-);
-const TestimonialSlider = dynamic(
-  () =>
-    import("@/components/home/TestimonialSlider").then(
-      (mod) => mod.TestimonialSlider,
-    ),
-  { ssr: false },
-);
-const ReviewRewardBanner = dynamic(
-  () =>
-    import("@/components/home/ReviewRewardBanner").then(
-      (mod) => mod.ReviewRewardBanner,
-    ),
-  { ssr: false },
-);
+export const metadata: Metadata = {
+  title: "Split Bill Online - Aplikasi Bagi Tagihan & Patungan Gratis",
+  description:
+    "Split bill online gratis! Scan struk, hitung pajak otomatis, dan bagi tagihan praktis bareng teman. Aplikasi patungan terbaik yang 100% free, cepat & akurat.",
+  keywords: [
+    "split bill online",
+    "split bill online free",
+    "split bill online photo",
+    "split bill online scan",
+    "splitbill app",
+    "split bill free",
+    "split bill online with tax",
+    "aplikasi bagi tagihan",
+    "patungan online",
+    "scan struk online",
+    "cara split bill",
+    "bagi tagihan restoran",
+    "hitung patungan otomatis",
+  ],
+  authors: [{ name: "SplitBill Team" }],
+  openGraph: {
+    title: "Split Bill App - Bagi Tagihan Lebih Mudah",
+    description:
+      "Split bill online gratis! Scan struk, hitung pajak otomatis, dan bagi tagihan praktis bareng teman. 100% free!",
+    url: "https://splitbill.my.id",
+    siteName: "Split Bill App",
+    images: [
+      {
+        url: "/img/pwa-banner.png",
+        width: 1200,
+        height: 630,
+        alt: "Split Bill App — Aplikasi Bagi Tagihan Online Gratis",
+      },
+    ],
+    locale: "id_ID",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Split Bill Online - Gratis & Mudah",
+    description:
+      "Split bill online gratis! Scan struk, hitung pajak otomatis, dan bagi tagihan praktis bareng teman.",
+    images: ["/img/pwa-banner.png"],
+  },
+  alternates: {
+    canonical: "https://splitbill.my.id",
+  },
+};
 
-const BackgroundDecoration = () => (
-  <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
-    <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[120px]" />
-    <div className="absolute bottom-[10%] right-[-10%] w-[50%] h-[50%] bg-indigo-500/5 rounded-full blur-[150px]" />
-  </div>
-);
-
+// Structured data schemas — injected via HomePageClient for flexibility,
+// but defined here so they're co-located with the page.
 export default function Home() {
-  const { isAuthenticated } = useAuthStore();
-  const expenses = useSplitBillStore((state) => state.expenses);
-  const people = useSplitBillStore((state) => state.people);
-  const [isMounted, setIsMounted] = useState(false);
-
-  React.useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  return (
-    <div className="min-h-dvh bg-background flex flex-col items-center relative">
-      {/* Search Engine Optimization */}
-      <h1 className="sr-only">
-        Split Bill Online - Aplikasi Bagi Tagihan Gratis dengan Scan Struk
-      </h1>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "WebApplication",
-            name: "SplitBill Online",
-            url: "https://splitbill.my.id",
-            description:
-              "Split bill online gratis sat set! Scan struk otomatis, hitung pajak, dan bagi tagihan no drama bareng teman. Aplikasi patungan terbaik yang 100% free, praktis & akurat.",
-            applicationCategory: "FinanceApplication",
-            operatingSystem: "Web",
-            offers: {
-              "@type": "Offer",
-              price: "0",
-              priceCurrency: "IDR",
-            },
-            author: {
-              "@type": "Organization",
-              name: "SplitBill Team",
-            },
-          }),
-        }}
-      />
-      <BackgroundDecoration />
-      {isMounted && isAuthenticated && (
-        <MerchandisingBanner imageSrc="/img/banner-merchandising.png" />
-      )}
-      <Header transparent />
-
-      <main className="w-full max-w-[600px] relative z-10 -mt-14">
-        {/* Hero Section */}
-        <div className="w-full">
-          <Banner />
-        </div>
-
-        <div className="px-4 pt-4 space-y-4 pb-6">
-          <div>
-            <NavigationMenu />
-          </div>
-
-          {isMounted && <OngoingSplitBillCard />}
-
-          {isMounted && people.length === 0 && (
-            <div>
-              <AIScanEncourageBanner />
-            </div>
-          )}
-
-          {isMounted && !isAuthenticated && (
-            <div>
-              <LoginEncouragementCard />
-            </div>
-          )}
-
-          <div>
-            <GettingStarted />
-          </div>
-
-          <div>
-            <AIScanBanner />
-          </div>
-
-          {isMounted && !isAuthenticated && (
-            <div>
-              <IntroSection />
-            </div>
-          )}
-
-
-
-          {isMounted && <ReviewRewardBanner />}
-
-          {/* Dashboard Section */}
-          {isMounted && isAuthenticated && (
-            <section className="space-y-4">
-              <div className="flex items-center gap-2 px-1">
-                <h2 className="text-md font-bold text-foreground">
-                  Progress Kamu 🙌
-                </h2>
-              </div>
-              <FeatureHighlights />
-            </section>
-          )}
-
-          <VisualFlowPreview />
-
-          {isMounted && !isAuthenticated && (
-            <div className="pt-2">
-              <TestimonialSlider />
-            </div>
-          )}
-          <ShareEncouragement />
-          <AdsCarousel />
-          {isMounted && isAuthenticated ? <FAQCard /> : <FAQSection />}
-          {isMounted && !isAuthenticated && <TrustHighlights />}
-        </div>
-
-        {isMounted && !isAuthenticated && <SiteFooter />}
-      </main>
-
-      <Footer />
-    </div>
-  );
+  return <HomePageClient />;
 }

@@ -170,6 +170,11 @@ export function RegisterForm({
             {emailError}
           </p>
         )}
+        {!emailError && (
+          <p className="text-[10px] text-muted-foreground font-medium ml-1">
+            Pastikan email aktif ya, buat verifikasi sat set!
+          </p>
+        )}
       </div>
 
       <div className="space-y-1 group">

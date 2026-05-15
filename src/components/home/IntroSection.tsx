@@ -12,7 +12,7 @@ export const IntroSection = () => {
         <div className="bg-transparent">
           <Image
             src="/img/logo-splitbill-black.png"
-            alt="SplitBill Logo"
+            alt="SplitBill Online — Aplikasi Bagi Tagihan Gratis & Scan Struk AI"
             width={100}
             height={28}
             className="h-8 w-auto object-contain"

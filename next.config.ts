@@ -22,6 +22,18 @@ const nextConfig: NextConfig = {
         port: "",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "splitbill.my.id",
+        port: "",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "splitbillbe.netlify.app",
+        port: "",
+        pathname: "/**",
+      },
     ],
   },
 };

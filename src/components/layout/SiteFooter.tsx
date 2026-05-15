@@ -13,9 +13,12 @@ interface SiteFooterProps {
 export const SiteFooter = ({ className }: SiteFooterProps) => {
   return (
     <footer
-      className={cn("bg-primary text-white pt-10 pb-10 px-6 -mb-12", className)}
+      className={cn(
+        "w-full max-w-[600px] mx-auto bg-primary text-white pt-10 pb-10 px-6 mb-0",
+        className,
+      )}
     >
-      <div className="flex flex-col space-y-8 max-w-[600px] mx-auto">
+      <div className="flex flex-col space-y-8">
         {/* Brand Section */}
         <div className="space-y-4">
           <div className="flex items-center gap-2">

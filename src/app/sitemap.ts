@@ -1,4 +1,6 @@
 import { MetadataRoute } from "next";
+import { fetchBlogs } from "@/lib/api/blog";
+
 interface RouteConfig {
   path: string;
   priority: number;
@@ -7,6 +9,7 @@ interface RouteConfig {
 
 const routeConfigs: RouteConfig[] = [
   { path: "", priority: 1.0, changeFrequency: "daily" },
+  { path: "/blog", priority: 0.9, changeFrequency: "daily" },
   { path: "/split-bill", priority: 0.9, changeFrequency: "weekly" },
   { path: "/collect-money", priority: 0.8, changeFrequency: "weekly" },
   { path: "/shared-goals", priority: 0.8, changeFrequency: "weekly" },
@@ -22,14 +25,33 @@ const routeConfigs: RouteConfig[] = [
   { path: "/terms", priority: 0.2, changeFrequency: "yearly" },
 ];
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://splitbill.my.id";
   const now = new Date();
 
-  return routeConfigs.map(({ path, priority, changeFrequency }) => ({
+  // Static routes
+  const staticRoutes = routeConfigs.map(({ path, priority, changeFrequency }) => ({
     url: `${baseUrl}${path}`,
     lastModified: now,
     changeFrequency,
     priority,
   }));
+
+  // Dynamic Blog routes
+  let blogRoutes: MetadataRoute.Sitemap = [];
+  try {
+    const blogsRes = await fetchBlogs({ limit: 1000 });
+    if (blogsRes.success && blogsRes.data) {
+      blogRoutes = blogsRes.data.map((blog) => ({
+        url: `${baseUrl}/blog/${blog.slug}`,
+        lastModified: new Date(blog.updatedAt || blog.publishedAt || blog.createdAt),
+        changeFrequency: "weekly" as const,
+        priority: 0.7,
+      }));
+    }
+  } catch (error) {
+    console.error("Failed to fetch blogs for sitemap:", error);
+  }
+
+  return [...staticRoutes, ...blogRoutes];
 }

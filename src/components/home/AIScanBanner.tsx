@@ -18,6 +18,7 @@ export const AIScanBanner = () => {
       ctaText="Mulai Scan Bill"
       ctaHref="/split-bill?step=2"
       illustration="/img/feature-splitbill-scan.png"
+      illustrationAlt="Ilustrasi Scan Struk AI — Foto struk belanja untuk bagi tagihan otomatis"
       variant="secondary"
     />
   );

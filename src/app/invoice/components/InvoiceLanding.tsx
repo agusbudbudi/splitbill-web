@@ -64,6 +64,7 @@ export const InvoiceLanding = () => {
         ctaText={hasItems ? "Lanjutkan Buat Invoice" : "Buat Invoice Baru"}
         ctaHref="/invoice/create"
         illustration="/img/feature-invoice.png"
+        illustrationAlt="Ilustrasi Buat Invoice Online — Buat tagihan profesional dengan cepat dan mudah"
         variant="secondary"
       />
       {/* Stats Highlight Card */}

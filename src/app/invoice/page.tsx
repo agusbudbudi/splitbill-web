@@ -1,26 +1,57 @@
-"use client";
+import type { Metadata } from "next";
+import InvoiceClientPage from "./InvoiceClientPage";
 
-import React from "react";
-import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
-import { InvoiceLanding } from "./components/InvoiceLanding";
-import { useRouter } from "next/navigation";
+export const metadata: Metadata = {
+  title: "Buat Invoice Online Gratis - Cepat & Profesional",
+  description: "Buat invoice profesional secara online dan gratis. Cocok untuk freelancer, bisnis kecil, atau penagihan jasa. Mudah digunakan, bisa langsung download PDF.",
+  keywords: [
+    "buat invoice online",
+    "invoice gratis",
+    "invoice generator free",
+    "aplikasi penagihan online",
+    "invoice freelancer indonesia",
+  ],
+  alternates: {
+    canonical: "https://splitbill.my.id/invoice",
+  },
+  openGraph: {
+    title: "Buat Invoice Online Gratis - SplitBill.my.id",
+    description: "Buat invoice profesional secara online dan gratis. Cepat, mudah, dan bisa langsung download PDF.",
+    url: "https://splitbill.my.id/invoice",
+    siteName: "Split Bill App",
+    locale: "id_ID",
+    type: "website",
+  },
+};
 
-export default function InvoiceHomePage() {
-  const router = useRouter();
+export default function InvoicePage() {
+  // Generate Breadcrumb Schema
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: "https://splitbill.my.id",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Invoice",
+        item: "https://splitbill.my.id/invoice",
+      },
+    ],
+  };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center relative">
-      {/* Purple background behind header and top banner */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[600px] h-[150px] bg-primary z-0 rounded-b-[20px]" />
-
-      <Header title="Invoice" showBackButton onBack={() => router.push("/")} />
-
-      <main className="flex-1 w-full max-w-[600px] px-4 pt-4 pb-10 space-y-8 relative z-10 flex flex-col">
-        <InvoiceLanding />
-      </main>
-
-      <Footer />
-    </div>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <InvoiceClientPage />
+    </>
   );
 }

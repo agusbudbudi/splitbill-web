@@ -1,35 +1,20 @@
-"use client";
+import type { Metadata } from "next";
+import ReviewClientPage from "./ReviewClientPage";
 
-import React from "react";
-import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
-import { ReviewForm } from "@/components/review/ReviewForm";
-import Image from "next/image";
+export const metadata: Metadata = {
+  title: "Review & Testimoni Pengguna - SplitBill Online",
+  description: "Apa kata mereka tentang SplitBill Online? Baca review dari pengguna yang sudah terbantu membagi tagihan dan struk belanja dengan AI Scan kami.",
+  keywords: [
+    "review splitbill online",
+    "testimoni split bill",
+    "ulasan aplikasi bagi tagihan",
+    "split bill app review",
+  ],
+  alternates: {
+    canonical: "https://splitbill.my.id/review",
+  },
+};
 
 export default function ReviewPage() {
-  return (
-    <div className="min-h-screen bg-background flex flex-col items-center">
-      <Header title="Review" showBackButton />
-
-      <main className="flex-1 w-full max-w-[600px] flex flex-col">
-        {/* Banner Section */}
-        <div className="w-full px-4 pt-4">
-          <div className="relative aspect-[360/113] w-full overflow-hidden rounded-lg">
-            <Image
-              src="/img/banner-feedback.jpg"
-              alt="Feedback Banner"
-              fill
-              className="object-cover"
-              priority
-            />
-          </div>
-        </div>
-
-        <div className="px-4 mt-4 flex-1 flex flex-col">
-          {/* Form Section */}
-          <ReviewForm />
-        </div>
-      </main>
-    </div>
-  );
+  return <ReviewClientPage />;
 }

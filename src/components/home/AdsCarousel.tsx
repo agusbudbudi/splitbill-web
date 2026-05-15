@@ -16,25 +16,25 @@ const SAMPLE_ADS: AdItem[] = [
   {
     id: 0,
     image: "/img/ads-teman-saya.png",
-    alt: "Teman Saya",
+    alt: "Kelola Teman & Kontak — Tambah daftar teman untuk bagi tagihan lebih mudah",
     url: "/profile/friends",
   },
   {
     id: 1,
     image: "/img/ads-review.png",
-    alt: "Review Split Bill",
+    alt: "Review Split Bill Online — Berikan ulasan dan bantu kami berkembang",
     url: "/review",
   },
   {
     id: 2,
     image: "/img/ads-collect-money.png",
-    alt: "Collect Money",
+    alt: "Collect Money — Kumpulkan iuran dan uang kas secara online dan transparan",
     url: "/collect-money",
   },
   {
     id: 3,
     image: "/img/ads-donasi.png",
-    alt: "Donasi",
+    alt: "Donasi Developer — Dukung keberlangsungan server SplitBill Online",
     url: "/donate",
   },
 ];

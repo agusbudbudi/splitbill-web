@@ -14,6 +14,7 @@ interface FeatureBannerProps {
   ctaHref: string;
   onCtaClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   illustration?: string;
+  illustrationAlt?: string;
   icon?: LucideIcon;
   variant?: "primary" | "secondary" | "plain";
   className?: string;
@@ -27,6 +28,7 @@ export const FeatureBanner = ({
   ctaHref,
   onCtaClick,
   illustration,
+  illustrationAlt = "Feature Illustration",
   icon: Icon,
   variant = "primary",
   className,
@@ -39,7 +41,7 @@ export const FeatureBanner = ({
         <div className="absolute -top-2 right-4 w-28 h-28 opacity-100 transition-transform hover:scale-105 pointer-events-none z-20">
           <Image
             src={illustration}
-            alt="Decoration"
+            alt={illustrationAlt}
             width={112}
             height={112}
             className="w-full h-full object-contain"

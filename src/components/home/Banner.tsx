@@ -19,48 +19,16 @@ interface BannerItem {
   href: string;
 }
 
-const DEFAULT_BANNERS: BannerItem[] = [
-  {
-    id: 1,
-    image: "/img/banner-shared-goals-1.jpg",
-    alt: "Shared Goals",
-    href: "/shared-goals",
-  },
-  {
-    id: 2,
-    image: "/img/banner-invoice.jpg",
-    alt: "Invoice",
-    href: "/invoice",
-  },
-  {
-    id: 3,
-    image: "/img/banner-collect-money.jpg",
-    alt: "Collect Money",
-    href: "/collect-money",
-  },
-  {
-    id: 4,
-    image: "/img/banner-shared-goals.jpg",
-    alt: "Shared Goals",
-    href: "/shared-goals",
-  },
-  {
-    id: 5,
-    image: "/img/banner-splitbill.jpg",
-    alt: "Split Bill",
-    href: "/split-bill",
-  },
-  {
-    id: 6,
-    image: "/img/banner-scan-ai.png",
-    alt: "Scan AI",
-    href: "/split-bill?step=2",
-  },
-];
-
 export const Banner = () => {
   const [isMounted, setIsMounted] = useState(false);
-  const [banners, setBanners] = useState<BannerItem[]>(DEFAULT_BANNERS);
+  const [banners, setBanners] = useState<BannerItem[]>([
+    {
+      id: "default",
+      image: "/img/feature-splitbill-scan.png",
+      alt: "SplitBill Online — Aplikasi Bagi Tagihan Gratis & Scan Struk AI",
+      href: "/split-bill",
+    },
+  ]);
   const [current, setCurrent] = useState(0);
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
@@ -100,6 +68,23 @@ export const Banner = () => {
     router.push("/split-bill");
   };
 
+  /** Derive descriptive alt text from a banner route for SEO & accessibility */
+  const getAltFromRoute = (route: string): string => {
+    const routeAltMap: Record<string, string> = {
+      "/split-bill": "Split Bill — Bagi Tagihan Restoran Secara Adil dan Otomatis",
+      "/shared-goals": "Shared Goals — Nabung Bareng & Patungan dengan Teman",
+      "/collect-money": "Collect Money — Kumpulkan Uang Iuran dari Teman Secara Online",
+      "/invoice": "Invoice Online — Buat Tagihan Profesional Gratis",
+      "/wallet": "Wallet — Kelola Metode Pembayaran Kamu",
+      "/donate": "Donasi — Dukung Pengembangan SplitBill",
+      "/review": "Review Split Bill — Berikan Penilaianmu",
+    };
+    for (const [key, label] of Object.entries(routeAltMap)) {
+      if (route.startsWith(key)) return label;
+    }
+    return "SplitBill — Aplikasi Bagi Tagihan Online Gratis";
+  };
+
   useEffect(() => {
     setIsMounted(true);
 
@@ -109,7 +94,7 @@ export const Banner = () => {
       const mappedBanners: BannerItem[] = cached.map((b) => ({
         id: b._id,
         image: b.image,
-        alt: "Banner",
+        alt: getAltFromRoute(b.route),
         href: b.route,
       }));
       setBanners(mappedBanners);
@@ -123,14 +108,14 @@ export const Banner = () => {
           const mappedBanners: BannerItem[] = data.map((b) => ({
             id: b._id,
             image: b.image,
-            alt: "Banner", // Backend doesn't provide alt text yet
+            alt: getAltFromRoute(b.route),
             href: b.route,
           }));
           setBanners(mappedBanners);
         }
       } catch (error) {
         console.error("Failed to fetch banners:", error);
-        // Fallback to DEFAULT_BANNERS if no cache and fetch fails
+        // Fallback or error handling if no cache and fetch fails
       }
     };
 
@@ -146,11 +131,8 @@ export const Banner = () => {
     return () => clearInterval(timer);
   }, [banners.length]);
 
-  if (!isMounted) {
-    return (
-      <div className="w-full aspect-[480/280] bg-gray-100 rounded-b-[20px] animate-pulse" />
-    );
-  }
+  // Removed !isMounted gate to allow initial render for SEO and to prevent CLS.
+  // The client-side banner logic will hydrate afterwards.
 
   const handleTouchStart = (e: React.TouchEvent) => {
     setTouchStart(e.targetTouches[0].clientX);

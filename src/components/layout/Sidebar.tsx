@@ -14,7 +14,8 @@ import {
   Heart,
   Star,
   Share2,
-  User
+  User,
+  BookOpen
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -92,10 +93,10 @@ export const Sidebar = () => {
 
   const navItems = [
     { label: "Home", href: "/", icon: Home },
+    { label: "Blog", href: "/blog", icon: BookOpen },
     { label: "Teman Saya", href: "/profile/friends", icon: Users },
     { label: "Donasi", href: "/donate", icon: Heart },
     { label: "History", href: "/history", icon: History },
-    { label: "Profile", href: "/profile", icon: User },
   ];
 
   return (

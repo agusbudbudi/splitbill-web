@@ -1,8 +1,6 @@
-// Server Component — exports metadata for this page.
-// Interactive content (search, filter, accordion) is handled by FAQClientPage.
-
 import type { Metadata } from "next";
 import FAQClientPage from "./FAQClientPage";
+import { faqData } from "@/data/faqData";
 
 export const metadata: Metadata = {
   title: "FAQ & Bantuan Split Bill — Pertanyaan Seputar Bagi Tagihan",
@@ -31,5 +29,51 @@ export const metadata: Metadata = {
 };
 
 export default function FAQPage() {
-  return <FAQClientPage />;
+  // Generate FAQ Schema
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqData.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.answer,
+      },
+    })),
+  };
+
+  // Generate Breadcrumb Schema
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: "https://splitbill.my.id",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "FAQ",
+        item: "https://splitbill.my.id/faq",
+      },
+    ],
+  };
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <FAQClientPage />
+    </>
+  );
 }

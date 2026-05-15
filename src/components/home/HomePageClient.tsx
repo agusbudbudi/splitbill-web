@@ -49,14 +49,8 @@ const AIScanEncourageBanner = dynamic(
     ),
   { ssr: false },
 );
-const AdsCarousel = dynamic(
-  () => import("@/components/home/AdsCarousel").then((mod) => mod.AdsCarousel),
-  { ssr: false },
-);
-const FAQCard = dynamic(
-  () => import("@/components/home/FAQCard").then((mod) => mod.FAQCard),
-  { ssr: false },
-);
+import { AdsCarousel } from "@/components/home/AdsCarousel";
+import { FAQCard } from "@/components/home/FAQCard";
 const TrustHighlightsClient = dynamic(
   () =>
     import("@/components/home/TrustHighlights").then(
@@ -114,7 +108,7 @@ export const HomePageClient = () => {
     <div className="min-h-dvh bg-background flex flex-col items-center relative">
       {/* H1 – screen-reader accessible, visible to crawlers */}
       <h1 className="sr-only">
-        Split Bill Online Gratis — Scan Struk & Bagi Tagihan Instan dengan AI
+        Split Bill Online Gratis — Scan Struk & Bagi Tagihan Instan
       </h1>
 
       {/* Structured data — WebApplication + AggregateRating + HowTo */}
@@ -183,7 +177,6 @@ export const HomePageClient = () => {
       <Header transparent />
 
       <main className="w-full max-w-[600px] relative z-10 -mt-14">
-        {/* Hero Section */}
         <div className="w-full">
           <Banner />
         </div>

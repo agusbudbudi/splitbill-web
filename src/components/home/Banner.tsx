@@ -21,7 +21,14 @@ interface BannerItem {
 
 export const Banner = () => {
   const [isMounted, setIsMounted] = useState(false);
-  const [banners, setBanners] = useState<BannerItem[]>([]);
+  const [banners, setBanners] = useState<BannerItem[]>([
+    {
+      id: "default",
+      image: "/img/feature-splitbill-scan.png",
+      alt: "SplitBill Online — Aplikasi Bagi Tagihan Gratis & Scan Struk AI",
+      href: "/split-bill",
+    },
+  ]);
   const [current, setCurrent] = useState(0);
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
@@ -124,11 +131,8 @@ export const Banner = () => {
     return () => clearInterval(timer);
   }, [banners.length]);
 
-  if (!isMounted) {
-    return (
-      <div className="w-full aspect-[480/280] bg-gray-100 rounded-b-[20px] animate-pulse" />
-    );
-  }
+  // Removed !isMounted gate to allow initial render for SEO and to prevent CLS.
+  // The client-side banner logic will hydrate afterwards.
 
   const handleTouchStart = (e: React.TouchEvent) => {
     setTouchStart(e.targetTouches[0].clientX);

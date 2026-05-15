@@ -17,5 +17,33 @@ export const metadata: Metadata = {
 };
 
 export default function WalletPage() {
-  return <WalletClientPage />;
+  // Generate Breadcrumb Schema
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: "https://splitbill.my.id",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Wallet",
+        item: "https://splitbill.my.id/wallet",
+      },
+    ],
+  };
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <WalletClientPage />
+    </>
+  );
 }

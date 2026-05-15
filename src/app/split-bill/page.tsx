@@ -47,5 +47,33 @@ export const metadata: Metadata = {
 };
 
 export default function SplitBillPage() {
-  return <SplitBillClientPage />;
+  // Generate Breadcrumb Schema
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: "https://splitbill.my.id",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Split Bill",
+        item: "https://splitbill.my.id/split-bill",
+      },
+    ],
+  };
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <SplitBillClientPage />
+    </>
+  );
 }

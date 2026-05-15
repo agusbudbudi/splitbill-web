@@ -177,7 +177,7 @@ export const Header = ({
                     <div className="w-full h-full rounded-full overflow-hidden bg-white/20">
                       <img
                         src={`https://api.dicebear.com/9.x/personas/svg?backgroundColor=b6e3f4&scale=100&seed=${user?.email || "default"}`}
-                        alt="Profile"
+                        alt={`Avatar Profil ${user?.name || "Pengguna"} — SplitBill Online`}
                         className="w-full h-full object-cover"
                       />
                     </div>

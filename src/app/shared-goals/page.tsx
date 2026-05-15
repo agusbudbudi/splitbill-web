@@ -34,5 +34,33 @@ export const metadata: Metadata = {
 };
 
 export default function SharedGoalsPage() {
-  return <SharedGoalsClientPage />;
+  // Generate Breadcrumb Schema
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: "https://splitbill.my.id",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Shared Goals",
+        item: "https://splitbill.my.id/shared-goals",
+      },
+    ],
+  };
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <SharedGoalsClientPage />
+    </>
+  );
 }

@@ -553,10 +553,9 @@ const SplitBillContent = () => {
             </Card>
 
             <Card
-              id="onboarding-payment-methods"
               className="border-primary/10 shadow-soft"
             >
-              <CardContent className="p-5 space-y-4">
+              <CardContent id="onboarding-payment-methods" className="p-5 space-y-4">
                 <div className="flex items-center justify-between px-1">
                   <label className="text-sm font-bold flex items-center gap-2">
                     Bayar Kemana? 📥

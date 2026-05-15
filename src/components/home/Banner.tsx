@@ -11,6 +11,7 @@ import { useSplitBillStore } from "@/store/useSplitBillStore";
 import { demoData } from "@/lib/demoData";
 import { Sparkles, Play } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { useWalletStore } from "@/store/useWalletStore";
 
 interface BannerItem {
   id: string | number;
@@ -24,7 +25,7 @@ export const Banner = () => {
   const [banners, setBanners] = useState<BannerItem[]>([
     {
       id: "default",
-      image: "/img/feature-splitbill-scan.png",
+      image: "/img/pwa-banner.png",
       alt: "SplitBill Online — Aplikasi Bagi Tagihan Gratis & Scan Struk AI",
       href: "/split-bill",
     },
@@ -40,12 +41,22 @@ export const Banner = () => {
   const { setIsDemoMode, setHasSeenTutorial } = useOnboardingStore();
   const {
     people,
+    expenses,
+    additionalExpenses,
     addPerson,
     addExpense,
     addAdditionalExpense,
     setActivityName,
     clearDraftAfterFinalize,
   } = useSplitBillStore();
+
+  const { savedBills } = useWalletStore();
+
+  const isTrulyNewUser =
+    people.length === 0 &&
+    expenses.length === 0 &&
+    additionalExpenses.length === 0 &&
+    savedBills.length === 0;
 
   const handleStartDemo = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -71,9 +82,11 @@ export const Banner = () => {
   /** Derive descriptive alt text from a banner route for SEO & accessibility */
   const getAltFromRoute = (route: string): string => {
     const routeAltMap: Record<string, string> = {
-      "/split-bill": "Split Bill — Bagi Tagihan Restoran Secara Adil dan Otomatis",
+      "/split-bill":
+        "Split Bill — Bagi Tagihan Restoran Secara Adil dan Otomatis",
       "/shared-goals": "Shared Goals — Nabung Bareng & Patungan dengan Teman",
-      "/collect-money": "Collect Money — Kumpulkan Uang Iuran dari Teman Secara Online",
+      "/collect-money":
+        "Collect Money — Kumpulkan Uang Iuran dari Teman Secara Online",
       "/invoice": "Invoice Online — Buat Tagihan Profesional Gratis",
       "/wallet": "Wallet — Kelola Metode Pembayaran Kamu",
       "/donate": "Donasi — Dukung Pengembangan SplitBill",
@@ -131,6 +144,8 @@ export const Banner = () => {
     return () => clearInterval(timer);
   }, [banners.length]);
 
+  // Removed !isMounted gate to allow initial render for SEO and to prevent CLS.
+  // The client-side banner logic will hydrate afterwards.
   // Removed !isMounted gate to allow initial render for SEO and to prevent CLS.
   // The client-side banner logic will hydrate afterwards.
 
@@ -222,22 +237,24 @@ export const Banner = () => {
       )}
 
       {/* Demo Mode Button Overlay */}
-      <div className="absolute bottom-4 right-4 z-30 pointer-events-auto">
-        <Button
-          onClick={handleStartDemo}
-          className="rounded-full bg-white/90 hover:bg-white text-primary border border-primary/20 shadow-lg backdrop-blur-sm h-10 px-4 font-bold text-xs gap-2 transition-all hover:scale-105 active:scale-95"
-        >
-          <div className="p-1 bg-primary/10 rounded-full">
-            <Play className="w-3 h-3 fill-primary" />
-          </div>
-          Coba Demo
-          <div className="absolute -top-2 -right-1">
-            <div className="bg-primary text-white text-[8px] px-1.5 py-0.5 rounded-full shadow-sm font-black animate-pulse">
-              HOT
+      {isTrulyNewUser && (
+        <div className="absolute bottom-4 right-4 z-30 pointer-events-auto">
+          <Button
+            onClick={handleStartDemo}
+            className="rounded-full bg-white/90 hover:bg-white text-primary border border-primary/20 shadow-lg backdrop-blur-sm h-10 px-4 font-bold text-xs gap-2 transition-all hover:scale-105 active:scale-95"
+          >
+            <div className="p-1 bg-primary/10 rounded-full">
+              <Play className="w-3 h-3 fill-primary" />
             </div>
-          </div>
-        </Button>
-      </div>
+            Coba Demo
+            <div className="absolute -top-2 -right-1">
+              <div className="bg-primary text-white text-[8px] px-1.5 py-0.5 rounded-full shadow-sm font-black animate-pulse">
+                HOT
+              </div>
+            </div>
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

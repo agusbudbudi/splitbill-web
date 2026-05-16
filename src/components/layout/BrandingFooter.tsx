@@ -41,8 +41,18 @@ export const BrandingFooter = ({ className }: BrandingFooterProps) => {
           v2.0.0
         </span>
         <div className="flex items-center gap-3 pt-1">
-          <Link href="/privacy" className="text-[9px] font-bold uppercase tracking-wider hover:text-primary transition-colors">Privacy Policy</Link>
-          <Link href="/terms" className="text-[9px] font-bold uppercase tracking-wider hover:text-primary transition-colors">Terms of Use</Link>
+          <Link
+            href="/privacy"
+            className="text-[9px] font-bold uppercase tracking-wider hover:text-primary transition-colors"
+          >
+            Kebijakan Privasi
+          </Link>
+          <Link
+            href="/terms"
+            className="text-[9px] font-bold uppercase tracking-wider hover:text-primary transition-colors"
+          >
+            Syarat & Ketentuan
+          </Link>
         </div>
       </div>
     </div>

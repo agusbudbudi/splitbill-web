@@ -193,7 +193,7 @@ export default function LoginPage() {
             <CardHeader className="sr-only">
               <h2 className="text-xl font-bold">Masuk</h2>
             </CardHeader>
-            <CardContent className="p-6 md:p-8 space-y-6">
+            <CardContent className="p-6 space-y-6">
               <Suspense
                 fallback={
                   <div className="flex items-center justify-center py-12">

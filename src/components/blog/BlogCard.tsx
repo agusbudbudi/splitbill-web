@@ -21,11 +21,10 @@ export const BlogCard = ({ blog, priority = false }: BlogCardProps) => {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5 }}
-      whileHover={{ y: -8 }}
       className="h-full"
     >
       <Link href={`/blog/${blog.slug}`} className="block h-full group">
-        <Card className="h-full flex flex-col overflow-hidden border-none shadow-soft hover:shadow-lg transition-all duration-500 bg-white group-hover:bg-accent/5">
+        <Card className="h-full flex flex-col overflow-hidden border-none shadow-soft hover:shadow-md transition-all duration-500 bg-white group-hover:bg-accent/5">
           {/* Thumbnail Image */}
           <div className="relative aspect-[16/9] overflow-hidden">
             <img
@@ -53,7 +52,7 @@ export const BlogCard = ({ blog, priority = false }: BlogCardProps) => {
               </div>
             </div>
 
-            <h3 className="text-xl font-bold text-foreground mb-3 line-clamp-2 group-hover:text-primary transition-colors leading-tight">
+            <h3 className="text-md font-bold text-foreground mb-3 line-clamp-2 group-hover:text-primary transition-colors leading-tight">
               {blog.title}
             </h3>
 

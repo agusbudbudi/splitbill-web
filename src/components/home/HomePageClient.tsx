@@ -38,6 +38,7 @@ import { VisualFlowPreview } from "@/components/home/VisualFlowPreview";
 import { ShareEncouragement } from "@/components/home/ShareEncouragement";
 import { FAQSection } from "@/components/home/FAQSection";
 import { TrustHighlights } from "@/components/home/TrustHighlights";
+import { BlogLatestSlider } from "@/components/home/BlogLatestSlider";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 
 // ── CLIENT-ONLY (keep ssr:false) ───────────────────────────────────────────
@@ -237,9 +238,11 @@ export const HomePageClient = () => {
             </div>
           )}
 
+          <AdsCarousel />
+
           <ShareEncouragement />
 
-          <AdsCarousel />
+          <BlogLatestSlider />
 
           {/* FAQ: always SSR'd for Googlebot; swap to FAQCard for auth users */}
           {isMounted && isAuthenticated ? <FAQCard /> : <FAQSection />}

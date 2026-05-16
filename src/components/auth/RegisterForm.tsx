@@ -5,6 +5,7 @@ import { User, Mail, Lock, Eye, EyeOff, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { motion } from "framer-motion";
+import Link from "next/link";
 import {
   validateEmail,
   validateName,
@@ -267,6 +268,18 @@ export function RegisterForm({
           </p>
         )}
       </div>
+
+      <p className="text-[10px] text-muted-foreground text-center px-4 leading-relaxed pt-2 pb-1">
+        Dengan mendaftar, kamu menyetujui{" "}
+        <Link href="/terms" className="text-primary font-bold hover:underline">
+          Syarat & Ketentuan
+        </Link>{" "}
+        dan{" "}
+        <Link href="/privacy" className="text-primary font-bold hover:underline">
+          Kebijakan Privasi
+        </Link>{" "}
+        kami.
+      </p>
 
       <Button
         type="submit"

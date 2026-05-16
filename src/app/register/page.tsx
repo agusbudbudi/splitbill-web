@@ -58,7 +58,7 @@ function RegisterContent() {
       <CardHeader className="sr-only">
         <h2 className="text-xl font-bold">Daftar</h2>
       </CardHeader>
-      <CardContent className="p-6 md:p-8 space-y-4">
+      <CardContent className="p-6 space-y-4">
         <RegisterForm
           onSubmit={handleRegister}
           isLoading={isLoading}

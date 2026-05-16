@@ -9,6 +9,8 @@ import { Skeleton } from "@/components/ui/Skeleton";
 import { Search } from "lucide-react";
 import { motion } from "framer-motion";
 
+import { BlogCardSkeleton } from "@/components/blog/BlogCardSkeleton";
+
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { Footer } from "@/components/layout/Footer";
 import { BlogCTA } from "@/components/blog/BlogCTA";
@@ -40,7 +42,7 @@ export default function BlogListClient() {
   );
 
   return (
-    <div className="min-h-screen bg-background pb-0 flex flex-col items-center">
+    <div className="w-full min-h-screen bg-background pb-0 flex flex-col items-center">
       <Header title="Blog & Tips" showBackButton sticky />
 
       {/* Hero Banner Section */}
@@ -76,47 +78,15 @@ export default function BlogListClient() {
       </section>
 
       {/* Main Content */}
-      <main className="max-w-[600px] mx-auto px-4 mt-8 relative z-20 flex-1">
+      <main className="w-full max-w-[600px] mx-auto px-4 mt-8 relative z-20 flex-1">
         {isLoading ? (
-          <div className="grid grid-cols-1 gap-8">
+          <div className="w-full grid grid-cols-1 gap-8">
             {[1, 2, 3].map((i) => (
-              <div
-                key={i}
-                className="w-full rounded-[1.2rem] border border-border/40 bg-muted/10 overflow-hidden"
-                style={{ animationDelay: `${i * 150}ms` }}
-              >
-                {/* Thumbnail Skeleton */}
-                <Skeleton className="aspect-[16/9] w-full rounded-none" />
-
-                <div className="p-5 space-y-4">
-                  {/* Metadata Skeleton */}
-                  <div className="flex items-center gap-3">
-                    <Skeleton className="h-3 w-24 rounded-full" />
-                    <Skeleton className="h-1 w-1 rounded-full" />
-                    <Skeleton className="h-3 w-20 rounded-full" />
-                  </div>
-
-                  {/* Title Skeleton */}
-                  <div className="space-y-2">
-                    <Skeleton className="h-6 w-full rounded-lg" />
-                    <Skeleton className="h-6 w-2/3 rounded-lg" />
-                  </div>
-
-                  {/* Excerpt Skeleton */}
-                  <div className="space-y-2">
-                    <Skeleton className="h-3.5 w-full rounded-md" />
-                    <Skeleton className="h-3.5 w-full rounded-md" />
-                    <Skeleton className="h-3.5 w-4/5 rounded-md" />
-                  </div>
-
-                  {/* Button Skeleton */}
-                  <Skeleton className="h-4 w-32 rounded-full mt-4" />
-                </div>
-              </div>
+              <BlogCardSkeleton key={i} />
             ))}
           </div>
         ) : filteredBlogs.length > 0 ? (
-          <div className="grid grid-cols-1 gap-8">
+          <div className="w-full grid grid-cols-1 gap-8">
             {filteredBlogs.map((blog, index) => (
               <BlogCard key={blog._id} blog={blog} priority={index === 0} />
             ))}

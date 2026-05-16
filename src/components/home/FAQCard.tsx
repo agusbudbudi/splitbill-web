@@ -9,7 +9,7 @@ export const FAQCard = () => {
   return (
     <section className="animate-in fade-in slide-in-from-bottom-4 duration-500">
       <Link href="/faq">
-        <Card className="group relative overflow-hidden bg-white/50 backdrop-blur-sm border-1 border-white shadow-soft hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 cursor-pointer">
+        <Card className="group relative overflow-hidden bg-white backdrop-blur-sm border-1 border-white shadow-soft hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 cursor-pointer">
           <CardContent className="relative p-4">
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-3">

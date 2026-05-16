@@ -43,7 +43,8 @@ export const SiteFooter = ({ className }: SiteFooterProps) => {
         </div>
 
         {/* Links Grid */}
-        <div className="grid grid-cols-2 gap-8">
+        <div className="grid grid-cols-2 gap-y-10 gap-x-8">
+          {/* Section 1: Fitur */}
           <div className="space-y-4">
             <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/50">
               Layanan
@@ -54,7 +55,7 @@ export const SiteFooter = ({ className }: SiteFooterProps) => {
                   href="/split-bill"
                   className="text-sm font-medium hover:text-white/70 transition-colors"
                 >
-                  Coba Split Bill Scan
+                  Split Bill Scan
                 </Link>
               </li>
               <li>
@@ -62,7 +63,7 @@ export const SiteFooter = ({ className }: SiteFooterProps) => {
                   href="/invoice"
                   className="text-sm font-medium hover:text-white/70 transition-colors"
                 >
-                  Buat Invoice Digital
+                  Invoice Digital
                 </Link>
               </li>
               <li>
@@ -70,15 +71,7 @@ export const SiteFooter = ({ className }: SiteFooterProps) => {
                   href="/shared-goals"
                   className="text-sm font-medium hover:text-white/70 transition-colors"
                 >
-                  Kelola Shared Goals
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/collect-money"
-                  className="text-sm font-medium hover:text-white/70 transition-colors"
-                >
-                  Fitur Collect Money
+                  Shared Goals
                 </Link>
               </li>
               <li>
@@ -86,22 +79,32 @@ export const SiteFooter = ({ className }: SiteFooterProps) => {
                   href="/wallet"
                   className="text-sm font-medium hover:text-white/70 transition-colors"
                 >
-                  Buka Wallet Saya
+                  Dompet Saya
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/collect-money"
+                  className="text-sm font-medium hover:text-white/70 transition-colors"
+                >
+                  Patungan Uang
                 </Link>
               </li>
             </ul>
           </div>
+
+          {/* Section 2: Resources */}
           <div className="space-y-4">
             <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/50">
-              Lainnya
+              Resources
             </h4>
             <ul className="space-y-2.5">
               <li>
                 <Link
-                  href="/donate"
+                  href="/blog"
                   className="text-sm font-medium hover:text-white/70 transition-colors"
                 >
-                  Donasi Geng Kamu
+                  Blog & Tips
                 </Link>
               </li>
               <li>
@@ -109,9 +112,26 @@ export const SiteFooter = ({ className }: SiteFooterProps) => {
                   href="/faq"
                   className="text-sm font-medium hover:text-white/70 transition-colors"
                 >
-                  Pusat Bantuan & FAQ
+                  Pusat Bantuan
                 </Link>
               </li>
+              <li>
+                <Link
+                  href="/donate"
+                  className="text-sm font-medium hover:text-white/70 transition-colors"
+                >
+                  Donasi Tim
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Section 3: Legal */}
+          <div className="space-y-4">
+            <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/50">
+              Informasi
+            </h4>
+            <ul className="space-y-2.5">
               <li>
                 <Link
                   href="/terms"
@@ -128,6 +148,15 @@ export const SiteFooter = ({ className }: SiteFooterProps) => {
                   Kebijakan Privasi
                 </Link>
               </li>
+            </ul>
+          </div>
+
+          {/* Section 4: Social */}
+          <div className="space-y-4">
+            <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/50">
+              Sosial Media
+            </h4>
+            <ul className="space-y-2.5">
               <li>
                 <Link
                   href="https://www.instagram.com/splitbill.app/"
@@ -144,7 +173,7 @@ export const SiteFooter = ({ className }: SiteFooterProps) => {
         <div className="h-[1px] w-full bg-white/10" />
 
         {/* Bottom Section */}
-        <div className="flex flex-col items-center gap-4 pt-2 pb-8">
+        <div className="flex flex-col items-center gap-4">
           <div className="flex items-center gap-1.5 text-[10px] font-medium text-white/50">
             Made with{" "}
             <Heart className="w-3 h-3 text-white fill-white animate-pulse" /> by

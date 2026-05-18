@@ -1,8 +1,43 @@
 // Validation utilities
 
 export function validateEmail(email: string): boolean {
-  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return re.test(email);
+  if (!email) return false;
+
+  // 1. Strict regex for general shape
+  const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  if (!re.test(email)) return false;
+
+  const parts = email.split('@');
+  if (parts.length !== 2) return false;
+
+  const localPart = parts[0].toLowerCase();
+  const domainPart = parts[1].toLowerCase();
+
+  const domainSegments = domainPart.split('.');
+  const domainName = domainSegments[0];
+
+  // 2. Block if local part is identical to domain name (e.g. mario@mario.io, admin@admin.com)
+  if (localPart === domainName) {
+    return false;
+  }
+
+  // 3. Block keyboard smash or repeating characters for domain name (e.g. mmm.jj, aaa.com)
+  if (/^(.)\1+$/.test(domainName)) {
+    return false;
+  }
+
+  // 4. Block domains without any vowels if length > 2 (catches mmm.jj)
+  if (!/[aeiouy]/i.test(domainName) && domainName.length > 2) {
+    return false;
+  }
+
+  // 5. Explicitly block specific testing domains
+  const blockedDomains = ['example.com', 'test.com', 'mmm.jj'];
+  if (blockedDomains.includes(domainPart)) {
+    return false;
+  }
+
+  return true;
 }
 
 export interface PasswordValidation {

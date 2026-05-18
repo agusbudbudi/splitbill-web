@@ -60,7 +60,7 @@ export function RegisterForm({
     }
 
     if (!validateEmail(email)) {
-      setEmailError("Format email tidak valid");
+      setEmailError("Gunakan alamat email yang valid dan aktif");
       hasError = true;
     }
 
@@ -157,7 +157,7 @@ export function RegisterForm({
             onChange={(e) => setEmail(e.target.value)}
             onBlur={() => {
               if (email && !validateEmail(email)) {
-                setEmailError("Format email tidak valid");
+                setEmailError("Gunakan alamat email yang valid dan aktif");
               } else {
                 setEmailError("");
               }

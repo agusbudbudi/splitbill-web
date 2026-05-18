@@ -64,7 +64,7 @@ export default function BlogDetailClient({
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
 
-        <div className="absolute bottom-0 left-0 w-full p-6 md:p-12 text-white">
+        <div className="absolute bottom-0 left-0 w-full p-6 md:p-8 text-white">
           <div className="max-w-[600px] mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -78,9 +78,9 @@ export default function BlogDetailClient({
                 {blog.title}
               </h1>
 
-              <div className="flex flex-wrap items-center gap-6 text-sm text-white/80 font-medium">
+              <div className="flex flex-wrap items-center gap-6 text-xs text-white/80 font-medium">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
+                  <div className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center">
                     <User className="w-4 h-4" />
                   </div>
                   <span>{blog.author}</span>

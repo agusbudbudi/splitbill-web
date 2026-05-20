@@ -28,11 +28,16 @@ interface SplitBillState {
   lastPaidBy: string;
   lastWho: string[];
 
+  // Split Later integration — links this session to a Split Later receipt
+  sourceBucketId?: string;
+  sourceReceiptId?: string;
+
   // Actions
   setActivityName: (name: string) => void;
   setSelectedPaymentMethodIds: (ids: string[]) => void;
   togglePaymentMethodSelection: (id: string) => void;
   addPerson: (name: string) => void;
+  setPeople: (names: string[]) => void;
   removePerson: (name: string) => void;
 
   addExpense: (expense: Omit<Expense, "id">) => void;
@@ -51,6 +56,8 @@ interface SplitBillState {
   setAllAdditionalExpensesWho: (names: string[]) => void;
 
   setLastAssignment: (paidBy: string, who: string[]) => void;
+  setSource: (bucketId: string, receiptId: string) => void;
+  clearSource: () => void;
   clearDraftAfterFinalize: () => void;
 }
 
@@ -64,6 +71,8 @@ export const useSplitBillStore = create<SplitBillState>()(
       selectedPaymentMethodIds: [],
       lastPaidBy: "",
       lastWho: [],
+      sourceBucketId: undefined,
+      sourceReceiptId: undefined,
 
       setActivityName: (activityName) => set({ activityName }),
       setSelectedPaymentMethodIds: (ids) =>
@@ -80,6 +89,9 @@ export const useSplitBillStore = create<SplitBillState>()(
           if (state.people.includes(name)) return state;
           return { people: [...state.people, name] };
         }),
+
+      setPeople: (names) =>
+        set({ people: names }),
 
       removePerson: (name) =>
         set((state) => ({
@@ -179,11 +191,25 @@ export const useSplitBillStore = create<SplitBillState>()(
           lastWho: who,
         }),
 
+      setSource: (bucketId, receiptId) =>
+        set({
+          sourceBucketId: bucketId,
+          sourceReceiptId: receiptId,
+        }),
+
+      clearSource: () =>
+        set({
+          sourceBucketId: undefined,
+          sourceReceiptId: undefined,
+        }),
+
       clearDraftAfterFinalize: () =>
         set({
           activityName: "",
           expenses: [],
           additionalExpenses: [],
+          sourceBucketId: undefined,
+          sourceReceiptId: undefined,
         }),
     }),
     {

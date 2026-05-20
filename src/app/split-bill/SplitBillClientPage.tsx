@@ -14,6 +14,7 @@ import { Card, CardContent } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { useSplitBillStore } from "@/store/useSplitBillStore";
+import { useSplitLaterStore } from "@/store/useSplitLaterStore";
 import { useWalletStore, type PaymentMethod } from "@/store/useWalletStore";
 import { useBillCalculations } from "@/hooks/useBillCalculations";
 import { WalletSelectionCard } from "@/components/wallet/WalletSelectionCard";
@@ -66,7 +67,33 @@ const SplitBillContent = () => {
     setSelectedPaymentMethodIds,
     togglePaymentMethodSelection,
     clearDraftAfterFinalize,
+    setPeople,
+    setSource,
+    sourceBucketId,
+    sourceReceiptId,
   } = useSplitBillStore();
+
+  useEffect(() => {
+    const source = searchParams.get("source");
+    const bucketId = searchParams.get("bucketId");
+    const receiptId = searchParams.get("receiptId");
+    const participantsJson = searchParams.get("participants");
+
+    if (source === "split-later" && bucketId && receiptId) {
+      setSource(bucketId, receiptId);
+
+      if (participantsJson) {
+        try {
+          const parsed = JSON.parse(decodeURIComponent(participantsJson));
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setPeople(parsed);
+          }
+        } catch (e) {
+          console.error("Failed to parse participants from searchParams", e);
+        }
+      }
+    }
+  }, [searchParams]);
 
   const unassignedCount = expenses.filter(
     (e) => e.who.length === 0 || !e.paidBy,
@@ -241,6 +268,17 @@ const SplitBillContent = () => {
         )) || "";
       setLastSavedId(id);
       setIsSaved(true);
+
+      const bucketIdToRedirect = sourceBucketId;
+      if (bucketIdToRedirect && sourceReceiptId) {
+        useSplitLaterStore.getState().markReceiptCompleted(
+          sourceReceiptId,
+          id,
+          activityName || "Struk Belanja",
+          totalSpent
+        );
+      }
+
       clearDraftAfterFinalize();
       trackSplitBill.save({
         total_amount: totalSpent,
@@ -253,9 +291,13 @@ const SplitBillContent = () => {
       // 1. Update current URL to include saved=true so back navigation shows the success card
       router.replace(`/split-bill?step=4&saved=true&id=${id}`);
 
-      // 2. Navigate to detail page with new=true
+      // 2. Navigate to detail page with new=true or back to bucket
       setTimeout(() => {
-        router.push(`/history/split-bill/${id}?new=true`);
+        if (bucketIdToRedirect) {
+          router.push(`/split-later/${bucketIdToRedirect}`);
+        } else {
+          router.push(`/history/split-bill/${id}?new=true`);
+        }
       }, 100);
 
       // Celeberation Effect
@@ -327,7 +369,11 @@ const SplitBillContent = () => {
     if (step > 1) {
       router.push(`/split-bill?step=${step - 1}`);
     } else {
-      router.push("/");
+      if (sourceBucketId) {
+        router.push(`/split-later/${sourceBucketId}`);
+      } else {
+        router.push("/");
+      }
     }
   };
 

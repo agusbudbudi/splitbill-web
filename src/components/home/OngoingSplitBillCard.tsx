@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { Card, CardContent } from "@/components/ui/Card";
 import { useSplitBillStore } from "@/store/useSplitBillStore";
 import { ChevronRight, ReceiptText, Users } from "lucide-react";
 import Link from "next/link";
@@ -47,10 +46,13 @@ export const OngoingSplitBillCard = () => {
   return (
     <section className="animate-in fade-in slide-in-from-bottom-4 duration-500">
       <Link href="/split-bill?step=2">
-        <Card className="group relative overflow-hidden bg-gradient-to-br from-primary/[0.08] to-white/50 backdrop-blur-sm border-1 !border-primary/40 shadow-soft hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 cursor-pointer">
-          <CardContent className="relative p-4 space-y-3">
+        <div className="relative px-[1.5px] pt-[1.5px] pb-[4px] rounded-2xl bg-gradient-to-r from-violet-400 via-pink-400 to-primary/70 shadow-lg shadow-pink-500/5 group hover:scale-[1.01] active:scale-[0.99] transition-all duration-300 overflow-hidden cursor-pointer">
+          <div className="relative overflow-hidden bg-white rounded-[calc(1rem-1.5px)] z-10 p-4 space-y-3">
+            {/* Subtle background glow */}
+            <div className="absolute top-0 right-0 w-24 h-24 bg-pink-500/5 rounded-full blur-2xl -mr-6 -mt-6 pointer-events-none" />
+
             {/* Header */}
-            <div className="flex items-center justify-between gap-4">
+            <div className="relative z-10 flex items-center justify-between gap-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 overflow-hidden">
                   <Image
@@ -80,8 +82,8 @@ export const OngoingSplitBillCard = () => {
 
             {/* Friends List */}
             {people.length > 0 && (
-              <div className="flex items-center gap-2 pl-1">
-                <Users className="w-3.5 h-3.5 text-primary/60" />
+              <div className="relative z-10 flex items-center gap-2 pl-1">
+
                 <p className="text-xs text-muted-foreground">
                   <span className="font-semibold text-foreground">
                     {getFriendsList()}
@@ -92,7 +94,7 @@ export const OngoingSplitBillCard = () => {
             )}
 
             {/* Progress Bar */}
-            <div className="space-y-1.5">
+            <div className="relative z-10 space-y-1.5">
               <div className="flex items-center justify-between">
                 <span className="text-[9px] font-bold text-primary/60 uppercase tracking-wider">
                   Progress
@@ -108,8 +110,8 @@ export const OngoingSplitBillCard = () => {
                 />
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </Link>
     </section>
   );

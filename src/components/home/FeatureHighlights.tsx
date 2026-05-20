@@ -1,173 +1,136 @@
 "use client";
 
 import React from "react";
-import { Card, CardContent } from "@/components/ui/Card";
 import { useWalletStore } from "@/store/useWalletStore";
 import {
   Sparkles,
-  Wallet,
-  History,
-  ChevronRight,
-  TrendingUp,
   ReceiptText,
-  Star,
+  TrendingUp,
+  Users,
+  ChevronRight,
 } from "lucide-react";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
-
+import { formatToIDR } from "@/lib/utils";
 import { useAuthStore } from "@/lib/stores/authStore";
 
 export const FeatureHighlights = () => {
-  const { paymentMethods, savedBills } = useWalletStore();
-  const { isAuthenticated } = useAuthStore();
+  const { savedBills, fetchBills } = useWalletStore();
+  const { isAuthenticated, user } = useAuthStore();
 
-  const highlights = [
-    {
-      title: "Dompet Saya",
-      value: isAuthenticated ? paymentMethods.length.toString() : "3",
-      label: isAuthenticated ? "Metode Terdaftar" : "Bank & E-wallet",
-      icon: Wallet,
-      color: "text-blue-600",
-      bgColor: "bg-blue-50",
-      href: "/wallet",
-    },
-    {
-      title: "Riwayat",
-      value: isAuthenticated ? savedBills.length.toString() : "12",
-      label: isAuthenticated ? "Split Bill Beres" : "Riwayat Transaksi",
-      icon: History,
-      color: "text-primary",
-      bgColor: "bg-primary/10",
-      href: "/history",
-    },
-  ];
+  React.useEffect(() => {
+    if (isAuthenticated) {
+      fetchBills();
+    }
+  }, [isAuthenticated, fetchBills]);
 
-  const shortcuts = [
+  // Compute storytelling statistics
+  const totalBills = Array.isArray(savedBills) ? savedBills.length : 0;
+  const totalAmount = Array.isArray(savedBills)
+    ? savedBills.reduce((sum, b) => sum + (b?.totalAmount || 0), 0)
+    : 0;
+  const avgAmount = totalBills > 0 ? Math.round(totalAmount / totalBills) : 0;
+  const totalFriends = Array.isArray(savedBills)
+    ? new Set(savedBills.flatMap((b) => b?.people || [])).size
+    : 0;
+  const firstName = user?.name ? user.name.split(" ")[0] : "Teman";
+
+  const metrics = [
     {
-      title: "Split Bill",
-      desc: "Patungan kilat bareng teman-teman.",
+      label: "Split Bill",
+      value: totalBills.toString(),
+      sublabel: "Dibuat",
       icon: ReceiptText,
-      href: "/split-bill",
-      badge: "Favorite",
-      gradient: "bg-gradient-brand",
+      href: "/history?tab=split-bill",
+    },
+    {
+      label: "Total",
+      value:
+        totalAmount >= 1_000_000
+          ? `${(totalAmount / 1_000_000).toFixed(1)}Jt`
+          : totalAmount >= 1_000
+            ? `${Math.round(totalAmount / 1_000)}Rb`
+            : formatToIDR(totalAmount),
+      sublabel: "Di-split",
+      icon: TrendingUp,
+      href: "/history?tab=split-bill",
+    },
+    {
+      label: "Teman",
+      value: totalFriends.toString(),
+      sublabel: "Dibantu",
+      icon: Users,
+      href: "/history?tab=split-bill",
     },
   ];
 
   return (
-    <div className="space-y-6">
-      {/* Quick Stats Grid */}
-      <div className="grid grid-cols-2 gap-3">
-        {highlights.map((item) => (
-          <Link key={item.title} href={item.href}>
-            <Card className="rounded-[1.2rem] bg-white/80 backdrop-blur-xs text-card-foreground border-none shadow-soft hover:shadow-lg hover:shadow-primary/5 transition-all cursor-pointer group overflow-hidden active:scale-95">
-              <CardContent className="p-4 relative">
-                <div className="flex flex-col gap-1">
-                  <div className="flex items-center justify-between">
-                    <div className={cn("p-1.5 rounded-lg", item.bgColor)}>
-                      <item.icon className={cn("w-4 h-4", item.color)} />
-                    </div>
-                    <span className="text-2xl font-black tracking-tighter text-foreground">
-                      {item.value}
-                    </span>
-                  </div>
-                  <div>
-                    <p className="text-xs font-bold text-muted-foreground">
-                      {item.title}
-                    </p>
-                    <p className="text-xs text-muted-foreground/60 leading-none">
-                      {item.label}
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </Link>
-        ))}
-      </div>
+    <Link href="/history?tab=split-bill" className="block">
+      <div className="relative px-[1.5px] pt-[1.5px] pb-[4px] rounded-2xl bg-gradient-to-r from-violet-400 via-pink-400 to-primary/70 shadow-lg shadow-pink-500/5 group hover:scale-[1.01] active:scale-[0.99] transition-all duration-300 overflow-hidden cursor-pointer">
+        <div className="relative overflow-hidden bg-white rounded-[calc(1rem-1.5px)] z-10 p-5 space-y-4">
+          {/* Subtle background glow */}
+          <div className="absolute top-0 right-0 w-24 h-24 bg-pink-500/5 rounded-full blur-2xl -mr-6 -mt-6 pointer-events-none" />
 
-      {/* Feature Shortcut Cards */}
-      {/* <div className="grid grid-cols-1 gap-3">
-        {shortcuts.map((card) => (
-          <Link key={card.title} href={card.href}>
-            <div
-              className={cn(
-                "relative overflow-hidden rounded-2xl p-5 text-white active:scale-[0.98] transition-all group cursor-pointer",
-                card.gradient,
-              )}
-            >
-              <div className="absolute top-0 right-0 p-4 opacity-10 transition-transform group-hover:scale-110 group-hover:rotate-12">
-                <card.icon className="w-24 h-24" />
-              </div>
-
-              <div className="relative z-10 flex flex-col gap-1">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="bg-white/20 backdrop-blur-md px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest leading-none">
-                      {card.badge}
-                    </span>
-                  </div>
-                  <ChevronRight className="w-5 h-5 opacity-60 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
-                </div>
-
-                <h3 className="text-xl font-black mt-1">{card.title}</h3>
-                <p className="text-xs text-white/80 font-medium max-w-[300px]">
-                  {card.desc}
-                </p>
-              </div>
+          {/* Header */}
+          <div className="relative z-10 flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <p className="text-sm font-bold text-primary">
+                Hi,{" "}
+                <span className="font-black">{firstName}</span> 👋
+              </p>
             </div>
-          </Link>
-        ))}
-      </div> */}
-
-      {/* Mini Promotion / Info */}
-      {/* Split Bill Statistics */}
-      {!isAuthenticated && (
-        <div className="space-y-4">
-          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary via-primary/90 to-violet-600 text-white shadow-lg shadow-primary/20">
-            {/* Decorative Elements */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-[80px] -mr-16 -mt-16 pointer-events-none" />
-            <div className="absolute bottom-0 left-0 w-40 h-40 bg-indigo-500/30 rounded-full blur-[60px] -ml-10 -mb-10 pointer-events-none" />
-
-            <div className="relative z-10 px-6 py-8 flex flex-col items-center gap-6">
-              <h3 className="text-lg font-bold text-white tracking-tight text-center leading-tight">
-                Aplikasi Split Bill #1 Paling Praktis
-              </h3>
-
-              <div className="w-full flex items-center justify-between divide-x divide-white/20">
-                <div className="flex-1 flex flex-col items-center gap-1.5 px-2">
-                  <span className="text-2xl font-bold text-white tracking-tighter leading-none">
-                    12k+
-                  </span>
-                  <span className="text-[8px] font-bold text-white/70 uppercase tracking-widest leading-none text-center">
-                    Active Users
-                  </span>
-                </div>
-
-                <div className="flex-1 flex flex-col items-center gap-1.5 px-2">
-                  <span className="text-2xl font-bold text-white tracking-tighter leading-none">
-                    150rb+
-                  </span>
-                  <span className="text-[8px] font-bold text-white/70 uppercase tracking-widest leading-none text-center">
-                    Split Bills
-                  </span>
-                </div>
-
-                <div className="flex-1 flex flex-col items-center gap-1.5 px-2">
-                  <div className="flex items-center gap-1">
-                    <span className="text-2xl font-bold text-white tracking-tighter leading-none">
-                      4.8
-                    </span>
-                    <span className="text-amber-300 text-sm mb-0.5">★</span>
-                  </div>
-                  <span className="text-[8px] font-bold text-white/70 uppercase tracking-widest leading-none text-center">
-                    User Rating
-                  </span>
-                </div>
-              </div>
+            <div className="w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-300 shrink-0">
+              <ChevronRight className="w-4 h-4" />
             </div>
           </div>
+
+          {/* Storytelling text */}
+          <div className="relative z-10">
+            {totalBills > 0 ? (
+              <p className="text-sm font-medium text-slate-600 leading-relaxed">
+                Keren, kamu sudah membuat{" "}
+                <span className="font-black text-slate-800">
+                  {totalBills} split bill
+                </span>{" "}
+                dan membantu{" "}
+                <span className="font-black text-slate-800">
+                  {totalFriends} teman
+                </span>{" "}
+                biar tagihan gak drama. Keep it up! 💸
+              </p>
+            ) : (
+              <p className="text-sm font-medium text-slate-600 leading-relaxed">
+                🚀 Mulai perjalanan split bill pertamamu sekarang, biar
+                patungan jadi bebas drama!
+              </p>
+            )}
+          </div>
+
+          {/* Metric pills */}
+          {totalBills > 0 && (
+            <div className="relative z-10 grid grid-cols-3 gap-2 pt-1">
+              {metrics.map((m) => (
+                <div
+                  key={m.label}
+                  className="flex flex-col items-center gap-0.5 bg-slate-50 border border-slate-100 rounded-md py-3 px-1 transition-all duration-300"
+                >
+                  <m.icon className="w-3.5 h-3.5 text-primary/75 mb-0.5" />
+                  <span className="text-base font-black text-slate-800 tracking-tight leading-none">
+                    {m.value}
+                  </span>
+                  <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wide">
+                    {m.sublabel}
+                  </span>
+                  <span className="text-[9px] font-medium text-slate-400">
+                    {m.label}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+
+
         </div>
-      )}
-    </div>
+      </div>
+    </Link>
   );
 };

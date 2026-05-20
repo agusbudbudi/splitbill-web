@@ -46,7 +46,7 @@ export const VisualFlowPreview = () => {
 
       {/* Horizontal Scroll Container with Bleed Effect */}
       <div className="relative -mx-4 overflow-hidden pt-2 mb-0">
-        <div className="flex gap-3 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide px-4 scroll-pl-4">
+        <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory scrollbar-hide px-4 scroll-pl-4">
           {steps.map((step, idx) => (
             <div
               key={step.number}

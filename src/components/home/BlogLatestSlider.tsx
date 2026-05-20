@@ -59,23 +59,23 @@ export const BlogLatestSlider = () => {
 
       {/* Horizontal Scroll Container */}
       <div className="-mx-4 overflow-hidden pt-2">
-        <div className="flex gap-4 overflow-x-auto overflow-y-hidden snap-x snap-mandatory scrollbar-hide px-4 scroll-pl-4 pb-4">
+        <div className="flex gap-4 overflow-x-auto overflow-y-hidden snap-x snap-mandatory scrollbar-hide px-4 scroll-pl-4">
           {isLoading
             ? // Loading Skeletons
-              [1, 2, 3].map((i) => (
-                <div key={i} className="flex-shrink-0 w-[280px] snap-start">
-                  <BlogCardSkeleton />
-                </div>
-              ))
+            [1, 2, 3].map((i) => (
+              <div key={i} className="flex-shrink-0 w-[280px] snap-start">
+                <BlogCardSkeleton />
+              </div>
+            ))
             : // Blog Cards
-              blogs.map((blog) => (
-                <div
-                  key={blog._id}
-                  className="flex-shrink-0 w-[280px] snap-start"
-                >
-                  <BlogCard blog={blog} />
-                </div>
-              ))}
+            blogs.map((blog) => (
+              <div
+                key={blog._id}
+                className="flex-shrink-0 w-[280px] snap-start"
+              >
+                <BlogCard blog={blog} />
+              </div>
+            ))}
 
           {/* View All Card at the end */}
           {!isLoading && blogs.length >= 3 && (

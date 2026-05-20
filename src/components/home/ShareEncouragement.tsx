@@ -1,68 +1,46 @@
 "use client";
 
 import React from "react";
-import { Share2, Copy, CheckCircle2 } from "lucide-react";
-import { Button } from "@/components/ui/Button";
-import { Card, CardContent } from "@/components/ui/Card";
-import { useState } from "react";
+import { ArrowRight } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 
 export const ShareEncouragement = () => {
-  const [copied, setCopied] = useState(false);
-
-  const shareData = {
-    title: "SplitBill Online - Bagi Tagihan Jadi Gampang! ✨",
-    text: "Guys, cobain deh SplitBill Online. Bisa scan struk otomatis pakai AI, hitung fair share, dan langsung dapet ringkasan pembayarannya. Praktis banget buat patungan! 🍱✈️",
-    url: "https://splitbill.my.id",
-  };
-
-  const handleShare = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share(shareData);
-      } catch (err) {
-        if ((err as Error).name !== "AbortError") {
-          console.log("Error sharing:", err);
-        }
-      }
-    } else {
-      // Fallback to clipboard
-      try {
-        await navigator.clipboard.writeText(
-          `${shareData.text} \n\nCek di sini: ${shareData.url}`,
-        );
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-      } catch (err) {
-        console.error("Failed to copy:", err);
-      }
-    }
-  };
-
   return (
-    <Card
-      onClick={handleShare}
-      className="border-1 border-primary/20 shadow-soft bg-gradient-to-br from-primary/20 via-primary/10 to-primary/5 cursor-pointer active:scale-[0.98] transition-all duration-300 group relative overflow-hidden"
+    <Link
+      href="/split-later"
+      className="relative block w-full rounded-lg bg-[#2E6FF3] overflow-hidden shadow-sm cursor-pointer group active:scale-[0.98] transition-all duration-300"
     >
-      <CardContent className="p-5 flex items-center gap-4 relative z-10">
-        <div className="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center text-primary shrink-0 transition-transform duration-500 group-hover:rotate-12 group-hover:scale-110">
-          <Share2 className="w-6 h-6" />
+      {/* Background styling for the right side to simulate the image if the asset is missing, 
+          or you can uncomment and use the actual image if you have it in public folder */}
+      <div className="absolute right-0 top-0 bottom-0 w-[55%] pointer-events-none">
+        <div className="absolute inset-0 bg-linear-to-l from-transparent from-80% to-[#2E6FF3] z-10"></div>
+        <div className="absolute right-0 top-0 w-full h-full transition-opacity">
+          <Image
+            src="/img/illustration-share.png"
+            alt="SplitBill Share Encouragement"
+            fill
+            className="object-cover"
+          />
         </div>
+      </div>
 
-        <div className="flex-1 space-y-0.5 text-left">
-          <h3 className="text-md font-bold text-foreground tracking-tight">
-            Bagikan SplitBill ke Teman 🙌
-          </h3>
-          <p className="text-[11px] text-muted-foreground font-medium leading-relaxed">
-            {copied ? (
-              <span className="text-primary font-bold flex items-center gap-1">
-                <CheckCircle2 className="w-3 h-3" /> Link Berhasil Di-copy!
-              </span>
-            ) : (
-              "Bantu temanmu biar gak pusing lagi bagi tagihan"
-            )}
+      <div className="relative z-10 p-5 sm:p-6 flex flex-col justify-center min-h-[170px]">
+        <div className="w-[70%] sm:w-[60%] text-left">
+          <h2 className="text-white font-bold text-[15px] sm:text-[18px] md:text-xl leading-[1.25] mb-2 tracking-tight">
+            Fokus liburan dulu,<br />
+            hitung patungan belakangan!
+          </h2>
+          <p className="text-white/90 text-[11px] sm:text-xs md:text-sm leading-[1.4] mb-4 font-medium">
+            Simpan dulu semua pengeluaran tripmu,<br className="hidden sm:block" />
+            baginya gampang nanti pas sudah santai.
           </p>
+          
+          <span className="inline-flex bg-white text-[#2E6FF3] font-bold text-[12px] sm:text-sm px-4 sm:px-5 py-2 sm:py-2.5 rounded-[12px] items-center justify-center gap-2 hover:bg-blue-50 transition-all shadow-sm">
+            Coba Sekarang <ArrowRight className="w-4 h-4" />
+          </span>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </Link>
   );
 };

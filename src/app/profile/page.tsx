@@ -30,6 +30,7 @@ import { Card } from "@/components/ui/Card";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { useAuthStore } from "@/lib/stores/authStore";
 import { useThemeStore } from "@/lib/stores/themeStore";
+import { AdsCarousel } from "@/components/home/AdsCarousel";
 
 // --- Reusable Components ---
 
@@ -347,6 +348,10 @@ export default function ProfilePage() {
                 </div>
               </MenuItem>
             </MenuGroup>
+
+            <div className="pt-2 pb-2">
+              <AdsCarousel />
+            </div>
 
             <div className="pt-2">
               <Button

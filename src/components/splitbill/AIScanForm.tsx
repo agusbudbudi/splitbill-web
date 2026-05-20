@@ -13,8 +13,8 @@ import {
 import { useSplitBillStore } from "@/store/useSplitBillStore";
 import { scanReceipt, ReceiptScanResult, ReceiptItem } from "@/lib/AIService";
 import { LoadingModal } from "@/components/ui/LoadingModal";
-import { useAuthStore } from "@/lib/stores/authStore"; // Import auth store
-import { useRouter } from "next/navigation"; // Import useRouter
+import { useAuthStore } from "@/lib/stores/authStore";
+import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { toast } from "sonner";
 // Removed unused FeatureBanner import
@@ -59,13 +59,19 @@ export const AIScanForm = () => {
   const { addExpense, setActivityName, addAdditionalExpense } =
     useSplitBillStore();
   const { isAuthenticated, user, getCurrentUser, isInitialized } =
-    useAuthStore(); // Get user and getCurrentUser
+    useAuthStore();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [isMounted, setIsMounted] = React.useState(false);
 
   React.useEffect(() => {
     setIsMounted(true);
-  }, []);
+    const preloadedImage = searchParams.get("image");
+    if (preloadedImage) {
+      setImage(decodeURIComponent(preloadedImage));
+      setImageSource("gallery");
+    }
+  }, [searchParams]);
 
   // Refresh user data on mount to ensure quota is up to date
   React.useEffect(() => {
@@ -274,8 +280,9 @@ export const AIScanForm = () => {
                     "ai_scan_login_barrier",
                   );
                   trackSubscription.initiateCheckout("login_barrier");
+                  const currentQuery = typeof window !== 'undefined' ? window.location.search : '';
                   router.push(
-                    `/login?redirect=${encodeURIComponent("/split-bill?step=2")}`,
+                    `/login?redirect=${encodeURIComponent(`/split-bill${currentQuery}`)}`,
                   );
                 }}
                 className="w-full max-w-[200px] h-10 bg-primary hover:bg-primary/90 text-white font-bold rounded-md shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] active:scale-[0.98] mt-1 text-sm"

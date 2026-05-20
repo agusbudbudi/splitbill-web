@@ -13,6 +13,7 @@ const routeConfigs: RouteConfig[] = [
   { path: "/split-bill", priority: 0.9, changeFrequency: "weekly" },
   { path: "/collect-money", priority: 0.8, changeFrequency: "weekly" },
   { path: "/shared-goals", priority: 0.8, changeFrequency: "weekly" },
+  { path: "/split-later", priority: 0.8, changeFrequency: "weekly" },
   { path: "/wallet", priority: 0.7, changeFrequency: "monthly" },
   { path: "/history", priority: 0.6, changeFrequency: "weekly" },
   { path: "/invoice", priority: 0.8, changeFrequency: "weekly" },

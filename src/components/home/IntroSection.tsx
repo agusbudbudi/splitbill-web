@@ -19,7 +19,7 @@ export const IntroSection = () => {
             priority
           />
         </div>
-        
+
         <div className="space-y-2">
           <h2 className="text-xl font-bold text-foreground tracking-tight leading-tight">
             Split Bill Jadi Lebih <span className="text-primary italic">Sat Set</span> & <span className="text-primary italic">Anti Ribet</span> ✨

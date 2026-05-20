@@ -38,7 +38,7 @@ export const BrandingFooter = ({ className }: BrandingFooterProps) => {
       <div className="flex flex-col items-center gap-1.5 opacity-40">
         <div className="h-[1px] w-8 bg-muted-foreground" />
         <span className="text-[9px] font-bold uppercase tracking-widest">
-          v2.0.0
+          v3.0.0
         </span>
         <div className="flex items-center gap-3 pt-1">
           <Link

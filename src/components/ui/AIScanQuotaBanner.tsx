@@ -27,7 +27,7 @@ export const AIScanQuotaBanner = ({
   const content = (
     <div
       className={cn(
-        "relative p-[1.5px] rounded-2xl bg-gradient-to-r from-violet-400 via-pink-400 to-primary/70 shadow-lg shadow-pink-500/5 transition-all duration-300 overflow-hidden",
+        "relative px-[1.5px] pt-[1.5px] pb-[4px] rounded-2xl bg-gradient-to-r from-violet-400 via-pink-400 to-primary/70 shadow-lg shadow-pink-500/5 transition-all duration-300 overflow-hidden",
         showRedirect && "group hover:scale-[1.01] active:scale-[0.99]",
         className,
       )}

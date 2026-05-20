@@ -85,105 +85,165 @@ export const mapFrontendToBackend = (
   summary: any, // From useBillCalculations
   paymentMethods: any[] = [] // Full payment methods from store
 ): CreateSplitBillPayload => {
-  const selectedPaymentMethodIds = bill.selectedPaymentMethodIds || [];
-  const selectedMethods = paymentMethods.filter(m => selectedPaymentMethodIds.includes(m.id));
+  const selectedPaymentMethodIds = bill?.selectedPaymentMethodIds || [];
+  const selectedMethods = Array.isArray(paymentMethods)
+    ? paymentMethods.filter(m => selectedPaymentMethodIds.includes(m?.id))
+    : [];
 
   const paymentMethodSnapshots = selectedMethods.map(m => ({
-    id: m.id,
-    category: m.type === "bank" ? "bank_transfer" : "ewallet",
-    provider: m.providerName,
-    ownerName: m.accountName,
-    accountNumber: m.accountNumber,
-    phoneNumber: m.phoneNumber,
+    id: m?.id || "",
+    category: m?.type === "bank" ? "bank_transfer" : "ewallet",
+    provider: m?.providerName || "",
+    ownerName: m?.accountName || "",
+    accountNumber: m?.accountNumber || "",
+    phoneNumber: m?.phoneNumber || "",
   }));
 
   return {
-    activityName: bill.activityName,
-    occurredAt: bill.date || new Date().toISOString(),
-    participants: (bill.people || []).map((name: string) => ({
-      id: name,
-      name: name,
-    })),
-    expenses: (bill.expenses || []).map((exp: Expense) => ({
-      id: exp.id,
-      description: exp.item,
-      amount: exp.amount,
-      paidBy: exp.paidBy,
-      participants: exp.who,
-      createdAt: Date.now(), // Fallback if not present
-    })),
-    additionalExpenses: (bill.additionalExpenses || []).map((adx: AdditionalExpense) => ({
-      id: adx.id,
-      description: adx.name,
-      amount: adx.amount,
-      paidBy: adx.paidBy,
-      participants: adx.who,
-      splitType: adx.splitType || "equally",
-      createdAt: Date.now(), // Fallback
-    })),
+    activityName: bill?.activityName || "Unnamed Activity",
+    occurredAt: bill?.date || new Date().toISOString(),
+    participants: Array.isArray(bill?.people)
+      ? bill.people.map((name: string) => ({
+          id: name || "",
+          name: name || "",
+        }))
+      : [],
+    expenses: Array.isArray(bill?.expenses)
+      ? bill.expenses.map((exp: Expense) => ({
+          id: exp?.id || "",
+          description: exp?.item || "",
+          amount: exp?.amount || 0,
+          paidBy: exp?.paidBy || "",
+          participants: Array.isArray(exp?.who) ? exp.who : [],
+          createdAt: Date.now(), // Fallback if not present
+        }))
+      : [],
+    additionalExpenses: Array.isArray(bill?.additionalExpenses)
+      ? bill.additionalExpenses.map((adx: AdditionalExpense) => ({
+          id: adx?.id || "",
+          description: adx?.name || "",
+          amount: adx?.amount || 0,
+          paidBy: adx?.paidBy || "",
+          participants: Array.isArray(adx?.who) ? adx.who : [],
+          splitType: adx?.splitType || "equally",
+          createdAt: Date.now(), // Fallback
+        }))
+      : [],
     paymentMethodIds: selectedPaymentMethodIds,
     paymentMethodSnapshots,
     summary: {
-      total: summary.totalSpent,
-      perParticipant: Object.entries(summary.balances || {}).map(([name, b]: [string, any]) => ({
+      total: summary?.totalSpent || 0,
+      perParticipant: Object.entries(summary?.balances || {}).map(([name, b]: [string, any]) => ({
         participantId: name,
-        paid: b.paid,
-        owed: b.spent,
-        balance: b.paid - b.spent,
-        owedItems: (b.items || []).map((item: any, idx: number) => ({
-          id: `${item.name}-${idx}`,
-          description: item.name,
-          amount: item.share,
-          type: item.isAdditional ? "additional" : "base",
-        })),
+        paid: b?.paid || 0,
+        owed: b?.spent || 0,
+        balance: (b?.paid || 0) - (b?.spent || 0),
+        owedItems: Array.isArray(b?.items)
+          ? b.items.map((item: any, idx: number) => ({
+              id: `${item?.name || "item"}-${idx}`,
+              description: item?.name || "item",
+              amount: item?.share || 0,
+              type: item?.isAdditional ? "additional" : "base",
+            }))
+          : [],
       })),
-      settlements: (summary.settlementInstructions || []).map((s: SettlementInstruction) => ({
-        from: s.from,
-        to: s.to,
-        amount: s.amount,
-      })),
+      settlements: Array.isArray(summary?.settlementInstructions)
+        ? summary.settlementInstructions.map((s: SettlementInstruction) => ({
+            from: s?.from || "",
+            to: s?.to || "",
+            amount: s?.amount || 0,
+          }))
+        : [],
     },
   };
 };
 
 export const mapBackendToFrontend = (record: BackendSplitBillRecord) => {
+  if (!record) {
+    return {
+      id: "",
+      date: new Date().toISOString(),
+      activityName: "Unnamed Activity",
+      totalAmount: 0,
+      people: [],
+      expenses: [],
+      additionalExpenses: [],
+      selectedPaymentMethodIds: [],
+      paymentMethodSnapshots: [],
+    };
+  }
   return {
-    id: record.id,
-    date: record.occurredAt,
-    activityName: record.activityName,
-    totalAmount: record.summary.total,
-    people: record.participants.map(p => p.name),
-    expenses: record.expenses.map(exp => ({
-      id: exp.id,
-      item: exp.description,
-      amount: exp.amount,
-      who: exp.participants,
-      paidBy: exp.paidBy,
-    })),
-    additionalExpenses: record.additionalExpenses.map(adx => ({
-      id: adx.id,
-      name: adx.description,
-      amount: adx.amount,
-      who: adx.participants,
-      paidBy: adx.paidBy,
-      splitType: adx.splitType || "equally",
-    })),
-    selectedPaymentMethodIds: record.paymentMethodIds,
-    paymentMethodSnapshots: record.paymentMethodSnapshots?.map(s => ({
-      id: s.id,
-      type: s.category === "bank_transfer" ? "bank" : "ewallet",
-      providerName: s.provider,
-      accountName: s.ownerName,
-      accountNumber: s.accountNumber,
-      phoneNumber: s.phoneNumber,
-    })) || [],
+    id: record.id || "",
+    date: record.occurredAt || new Date().toISOString(),
+    activityName: record.activityName || "Unnamed Activity",
+    totalAmount: record.summary?.total || 0,
+    people: Array.isArray(record.participants)
+      ? record.participants.map(p => p?.name || "").filter(Boolean)
+      : [],
+    expenses: Array.isArray(record.expenses)
+      ? record.expenses.map(exp => ({
+          id: exp?.id || "",
+          item: exp?.description || "",
+          amount: exp?.amount || 0,
+          who: Array.isArray(exp?.participants) ? exp.participants : [],
+          paidBy: exp?.paidBy || "",
+        }))
+      : [],
+    additionalExpenses: Array.isArray(record.additionalExpenses)
+      ? record.additionalExpenses.map(adx => ({
+          id: adx?.id || "",
+          name: adx?.description || "",
+          amount: adx?.amount || 0,
+          who: Array.isArray(adx?.participants) ? adx.participants : [],
+          paidBy: adx?.paidBy || "",
+          splitType: adx?.splitType || "equally",
+        }))
+      : [],
+    selectedPaymentMethodIds: Array.isArray(record.paymentMethodIds)
+      ? record.paymentMethodIds
+      : [],
+    paymentMethodSnapshots: Array.isArray(record.paymentMethodSnapshots)
+      ? record.paymentMethodSnapshots.map(s => ({
+          id: s?.id || "",
+          type: s?.category === "bank_transfer" ? "bank" : "ewallet",
+          providerName: s?.provider || "",
+          accountName: s?.ownerName || "",
+          accountNumber: s?.accountNumber || "",
+          phoneNumber: s?.phoneNumber || "",
+        }))
+      : [],
   };
 };
 
+export interface GetAllSplitBillsResponse {
+  success: boolean;
+  data: {
+    records: BackendSplitBillRecord[];
+    pagination: {
+      totalItems: number;
+      totalPages: number;
+      currentPage: number;
+      limit: number;
+    };
+  };
+}
+
+export interface GetSplitBillByIdResponse {
+  success: boolean;
+  data?: { record: BackendSplitBillRecord };
+  record?: BackendSplitBillRecord; // fallback
+}
+
+export interface CreateSplitBillResponse {
+  success: boolean;
+  data?: { record: BackendSplitBillRecord };
+  record?: BackendSplitBillRecord; // fallback
+}
+
 export const splitBillApi = {
-  getAll: () => apiClient.request<{ success: boolean; records: BackendSplitBillRecord[] }>("/api/split-bills"),
-  getById: (id: string) => apiClient.request<{ success: boolean; record: BackendSplitBillRecord }>(`/api/split-bills/${id}`),
-  create: (payload: CreateSplitBillPayload) => apiClient.request<{ success: boolean; record: BackendSplitBillRecord }>("/api/split-bills", {
+  getAll: () => apiClient.request<GetAllSplitBillsResponse>("/api/split-bills"),
+  getById: (id: string) => apiClient.request<GetSplitBillByIdResponse>(`/api/split-bills/${id}`),
+  create: (payload: CreateSplitBillPayload) => apiClient.request<CreateSplitBillResponse>("/api/split-bills", {
     method: "POST",
     body: JSON.stringify(payload),
   }),

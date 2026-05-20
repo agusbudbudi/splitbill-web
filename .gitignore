@@ -51,3 +51,11 @@ public/swe-worker-*.js
 
 CLAUDE.md
 doc/
+
+# Local Uploads
+/public/uploads/
+
+# Tool Configs
+.antigravitycli/
+.antigravity/
+

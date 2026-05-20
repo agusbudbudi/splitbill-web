@@ -17,9 +17,30 @@ export interface ReceiptScanResult {
 }
 
 export const scanReceipt = async (
-  base64DataUrl: string,
+  base64OrUrl: string,
 ): Promise<ReceiptScanResult> => {
   try {
+    let base64DataUrl = base64OrUrl;
+
+    // If it's a URL (starts with http or /uploads), convert to base64 data URL
+    if (!base64OrUrl.startsWith("data:")) {
+      try {
+        const response = await fetch(base64OrUrl);
+        const blob = await response.blob();
+        base64DataUrl = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+        });
+      } catch (err) {
+        console.error("Failed to convert image URL to base64:", err);
+        throw new Error(
+          "Gagal memproses file struk dari link penyimpanan. Silakan coba unggah atau ambil foto ulang."
+        );
+      }
+    }
+
     // 1. Extract mime type and base64 data
     const matches = base64DataUrl.match(/^data:(.+);base64,(.+)$/);
     if (!matches || matches.length !== 3) {

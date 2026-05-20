@@ -49,8 +49,10 @@ function SplitBillDetailContent() {
         setIsLoading(true);
         const { splitBillApi, mapBackendToFrontend } = await import("@/lib/api/split-bills");
         const response = await splitBillApi.getById(id);
-        if (response.success && response.record) {
-          const mappedBill = mapBackendToFrontend(response.record);
+        // API may wrap record under response.data.record or response.record
+        const record = response.data?.record || response.record;
+        if (response.success && record) {
+          const mappedBill = mapBackendToFrontend(record);
           setBill(mappedBill);
         } else {
           setError("Split bill tidak ditemukan");

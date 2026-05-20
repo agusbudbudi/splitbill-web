@@ -28,6 +28,9 @@ import { cn } from "@/lib/utils";
 import { MerchandisingBanner } from "@/components/ui/MerchandisingBanner";
 import { useAuthStore } from "@/lib/stores/authStore";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
+import { Sparkles, Camera, Check } from "lucide-react";
+import { HeroBanner } from "@/components/ui/HeroBanner";
 
 // ── SSR-ENABLED (no ssr:false) ─────────────────────────────────────────────
 // These render in the initial HTML response → Googlebot indexes them.
@@ -95,15 +98,66 @@ const BackgroundDecoration = () => (
   </div>
 );
 
+const HeroFloatingCard = () => (
+  <div className="bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] p-3.5 border border-slate-100/60 min-w-[150px]">
+    <p className="text-[10px] text-slate-500 font-medium mb-0.5">
+      Total Tagihan
+    </p>
+    <p className="text-[15px] font-black text-slate-900 mb-3 tracking-tight">
+      Rp 842.500
+    </p>
+
+    <div className="w-full h-px bg-slate-100 mb-3" />
+
+    <p className="text-[10px] text-slate-500 font-medium mb-0.5">
+      Dibagi ke 4 orang
+    </p>
+    <p className="text-[13px] font-black text-slate-900 mb-3 tracking-tight">
+      Rp 210.625{" "}
+      <span className="text-[10px] text-slate-400 font-medium ml-0.5">
+        / orang
+      </span>
+    </p>
+
+    <div className="flex items-center justify-between mt-1">
+      <div className="flex -space-x-1.5">
+        {["Budi", "Siti", "Andi"].map((name, i) => (
+          <div
+            key={i}
+            className="w-[22px] h-[22px] rounded-full border-[1.5px] border-white overflow-hidden bg-slate-100 shadow-sm"
+          >
+            <img
+              src={`https://api.dicebear.com/9.x/personas/png?backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf&seed=${name}`}
+              alt={name}
+              className="w-full h-full object-cover"
+            />
+          </div>
+        ))}
+      </div>
+      <div className="w-5 h-5 rounded-full bg-[#10B981] text-white flex items-center justify-center shadow-sm">
+        <Check className="w-3 h-3" strokeWidth={3.5} />
+      </div>
+    </div>
+  </div>
+);
+
 export const HomePageClient = () => {
+  const router = useRouter();
   const { isAuthenticated } = useAuthStore();
   const expenses = useSplitBillStore((state) => state.expenses);
   const people = useSplitBillStore((state) => state.people);
+  const { savedBills, fetchBills } = useWalletStore();
   const [isMounted, setIsMounted] = useState(false);
 
   React.useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  React.useEffect(() => {
+    if (isMounted && isAuthenticated) {
+      fetchBills();
+    }
+  }, [isMounted, isAuthenticated, fetchBills]);
 
   return (
     <div className="min-h-dvh bg-background flex flex-col items-center relative">
@@ -178,9 +232,34 @@ export const HomePageClient = () => {
       <Header transparent />
 
       <main className="w-full max-w-[600px] relative z-10 -mt-14">
-        <div className="w-full">
+        <div className={cn("w-full", isMounted && isAuthenticated ? "hidden" : "")}>
           <Banner />
         </div>
+
+        {isMounted && isAuthenticated && (
+          <div className="w-full">
+            <HeroBanner
+              variant="primary-gradient"
+              className="pt-[72px] pb-6 sm:pt-20 sm:pb-8 rounded-none border-x-0 border-t-0 sm:rounded-b-[24px] sm:rounded-t-none sm:border-x w-full"
+              badgeText="Scan Struk AI Otomatis"
+              badgeIcon={<Sparkles className="w-3 h-3 text-amber-300 fill-amber-300" />}
+              title={
+                <>
+                  Split Bill <br />
+                  <span className="text-amber-300 font-extrabold">Scan Struk AI</span>
+                  <br />
+                  Bagi Instan!
+                </>
+              }
+              description="Cukup foto struk, AI otomatis hitung patungan & bagi tagihan secara adil."
+              primaryButtonText="Scan Struk"
+              primaryButtonIcon={<Camera className="w-5 h-5" />}
+              onPrimaryClick={() => router.push("/split-bill?step=1")}
+              imageSrc="/img/hero-splitbill.png"
+              floatingCard={<HeroFloatingCard />}
+            />
+          </div>
+        )}
 
         <div className="px-4 pt-4 space-y-4 pb-6">
           <div>
@@ -200,6 +279,10 @@ export const HomePageClient = () => {
               <LoginEncouragementCard />
             </div>
           )}
+
+          <div className={cn(isMounted && savedBills.length >= 1 ? "hidden" : "")}>
+            <VisualFlowPreview />
+          </div>
 
           {/* ── SEO CONTENT — server-rendered ─────────────────────────── */}
           <div>
@@ -230,7 +313,8 @@ export const HomePageClient = () => {
             </section>
           )}
 
-          <VisualFlowPreview />
+          {/* <VisualFlowPreview /> */}
+          {/* New homepage hidden */}
 
           {isMounted && !isAuthenticated && (
             <div className="pt-2">
@@ -238,7 +322,8 @@ export const HomePageClient = () => {
             </div>
           )}
 
-          <AdsCarousel />
+          {/* <AdsCarousel />
+          new homepage hidden */}
 
           <ShareEncouragement />
 

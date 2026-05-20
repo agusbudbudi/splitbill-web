@@ -50,14 +50,14 @@ export const HistoryTab = () => {
 
   // Filter for Split Bill
   const splitBillFilter = useTransactionFilter({
-    data: savedBills,
-    getDate: (bill) => bill.date,
+    data: savedBills || [],
+    getDate: (bill) => bill?.date || "",
   });
 
   // Filter for Invoice
   const invoiceFilter = useTransactionFilter({
-    data: invoiceHistory,
-    getDate: (invoice) => invoice.createdAt,
+    data: invoiceHistory || [],
+    getDate: (invoice) => invoice?.createdAt || "",
   });
 
   // Get current filter based on active tab
@@ -135,12 +135,12 @@ export const HistoryTab = () => {
                     {bill.activityName || "Aktivitas Split Bill"}
                   </p>
                   <p className="text-[10px] text-muted-foreground font-medium">
-                    {bill.people.length} Orang • {bill.expenses.length} Item
+                    {(bill?.people || []).length} Orang • {(bill?.expenses || []).length} Item
                   </p>
                   <div className="flex items-center gap-1 mt-0.5 opacity-60">
                     <Clock className="w-2.5 h-2.5" />
                     <p className="text-[9px] font-medium">
-                      {new Date(bill.date).toLocaleDateString("id-ID", {
+                      {new Date(bill?.date || "").toLocaleDateString("id-ID", {
                         day: "numeric",
                         month: "short",
                         year: "numeric",
@@ -151,7 +151,7 @@ export const HistoryTab = () => {
               </div>
               <div className="text-right flex flex-col items-end justify-between py-0.5">
                 <p className="text-xs font-black text-foreground">
-                  {formatToIDR(bill.totalAmount)}
+                  {formatToIDR(bill?.totalAmount || 0)}
                 </p>
                 <div className="flex items-center gap-1">
                   <span className="text-[10px] text-primary">Lihat Detail</span>
@@ -184,13 +184,13 @@ export const HistoryTab = () => {
                     {invoice.invoiceNo}
                   </p>
                   <p className="text-[10px] text-muted-foreground font-medium">
-                    Ke: {invoice.billedTo?.name || "N/A"}
+                    Ke: {invoice?.billedTo?.name || "N/A"}
                   </p>
                   <div className="flex flex-col gap-1 mt-1">
                     <div className="flex items-center gap-1 opacity-60">
                       <Clock className="w-2.5 h-2.5" />
                       <p className="text-[9px] font-medium">
-                        {new Date(invoice.createdAt).toLocaleDateString(
+                        {new Date(invoice?.createdAt || "").toLocaleDateString(
                           "id-ID",
                           {
                             day: "numeric",
@@ -204,7 +204,7 @@ export const HistoryTab = () => {
                       <div
                         className={cn(
                           "w-1 h-1 rounded-full",
-                          invoice.status === "paid"
+                          invoice?.status === "paid"
                             ? "bg-green-500"
                             : "bg-orange-500",
                         )}
@@ -212,12 +212,12 @@ export const HistoryTab = () => {
                       <span
                         className={cn(
                           "text-[9px] font-bold uppercase",
-                          invoice.status === "paid"
+                          invoice?.status === "paid"
                             ? "text-green-500"
                             : "text-orange-500",
                         )}
                       >
-                        {invoice.status}
+                        {invoice?.status || ""}
                       </span>
                     </div>
                   </div>
@@ -225,7 +225,7 @@ export const HistoryTab = () => {
               </div>
               <div className="text-right flex flex-col items-end justify-between py-0.5">
                 <p className="text-xs font-black text-foreground">
-                  {formatToIDR(invoice.total)}
+                  {formatToIDR(invoice?.total || 0)}
                 </p>
                 <div className="flex items-center gap-1">
                   <span className="text-[10px] text-primary">Lihat Detail</span>

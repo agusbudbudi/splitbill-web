@@ -75,8 +75,17 @@ export const useWalletStore = create<WalletState>()(
         try {
           const response = await splitBillApi.getAll();
           if (response.success) {
-            const mappedBills = response.records.map(mapBackendToFrontend);
-            set({ savedBills: mappedBills });
+            // API wraps data under response.data.records
+            const records = Array.isArray(response.data?.records)
+              ? response.data.records
+              : [];
+            const mappedBills = records.map(mapBackendToFrontend);
+            set((state) => {
+              const localTempBills = (state.savedBills || []).filter(
+                (b) => !/^[0-9a-fA-F]{24}$/.test(b.id)
+              );
+              return { savedBills: [...localTempBills, ...mappedBills] };
+            });
           }
         } catch (err: any) {
           console.error("Failed to fetch bills from backend:", err);
@@ -108,15 +117,19 @@ export const useWalletStore = create<WalletState>()(
             const response = await splitBillApi.create(payload);
 
             if (response.success) {
-              const backendBill = mapBackendToFrontend(response.record);
+              // API may wrap record under response.data.record or response.record
+              const backendRecord = response.data?.record || response.record;
+              if (backendRecord) {
+                const backendBill = mapBackendToFrontend(backendRecord);
 
-              // Replace temp local bill with actual backend bill
-              set((state) => ({
-                savedBills: state.savedBills.map((b) =>
-                  b.id === tempId ? backendBill : b,
-                ),
-              }));
-              return backendBill.id;
+                // Replace temp local bill with actual backend bill
+                set((state) => ({
+                  savedBills: state.savedBills.map((b) =>
+                    b.id === tempId ? backendBill : b,
+                  ),
+                }));
+                return backendBill.id;
+              }
             }
           }
         } catch (err) {

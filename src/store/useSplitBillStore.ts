@@ -32,6 +32,9 @@ interface SplitBillState {
   sourceBucketId?: string;
   sourceReceiptId?: string;
 
+  // Pending captured image from footer camera shortcut
+  pendingCapturedImage?: string;
+
   // Actions
   setActivityName: (name: string) => void;
   setSelectedPaymentMethodIds: (ids: string[]) => void;
@@ -59,6 +62,8 @@ interface SplitBillState {
   setSource: (bucketId: string, receiptId: string) => void;
   clearSource: () => void;
   clearDraftAfterFinalize: () => void;
+  setPendingCapturedImage: (image: string) => void;
+  clearPendingCapturedImage: () => void;
 }
 
 export const useSplitBillStore = create<SplitBillState>()(
@@ -73,6 +78,7 @@ export const useSplitBillStore = create<SplitBillState>()(
       lastWho: [],
       sourceBucketId: undefined,
       sourceReceiptId: undefined,
+      pendingCapturedImage: undefined,
 
       setActivityName: (activityName) => set({ activityName }),
       setSelectedPaymentMethodIds: (ids) =>
@@ -210,7 +216,14 @@ export const useSplitBillStore = create<SplitBillState>()(
           additionalExpenses: [],
           sourceBucketId: undefined,
           sourceReceiptId: undefined,
+          pendingCapturedImage: undefined,
         }),
+
+      setPendingCapturedImage: (image) =>
+        set({ pendingCapturedImage: image }),
+
+      clearPendingCapturedImage: () =>
+        set({ pendingCapturedImage: undefined }),
     }),
     {
       name: "split-bill-storage",

@@ -37,7 +37,7 @@ export const BlogLatestSlider = () => {
         <div className="space-y-0.5">
           <div className="flex items-center gap-2">
             <h2 className="text-md font-bold text-foreground">
-              Update & Tips Terbaru ✨
+              Tips Nongkrong & Split Bill 🍜
             </h2>
           </div>
           <p className="text-xs text-muted-foreground font-medium">
@@ -59,7 +59,7 @@ export const BlogLatestSlider = () => {
 
       {/* Horizontal Scroll Container */}
       <div className="-mx-4 overflow-hidden pt-2">
-        <div className="flex gap-4 overflow-x-auto overflow-y-hidden snap-x snap-mandatory scrollbar-hide px-4 scroll-pl-4">
+        <div className="flex gap-4 overflow-x-auto overflow-y-hidden snap-x snap-mandatory scrollbar-hide px-4 pb-2 scroll-pl-4">
           {isLoading
             ? // Loading Skeletons
             [1, 2, 3].map((i) => (

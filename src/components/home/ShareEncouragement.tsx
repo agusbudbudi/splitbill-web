@@ -26,14 +26,14 @@ export const ShareEncouragement = () => {
       </div>
 
       <div className="relative z-10 p-5 sm:p-6 flex flex-col justify-center min-h-[170px]">
-        <div className="w-[70%] sm:w-[60%] text-left">
+        <div className="w-[55%] sm:w-[50%] text-left">
           <h2 className="text-white font-bold text-[15px] sm:text-[18px] md:text-xl leading-[1.25] mb-2 tracking-tight">
-            Fokus liburan dulu,<br />
-            hitung patungan belakangan!
+            Fokus healing dulu bestie,<br />
+            split bill-nya belakangan!
           </h2>
           <p className="text-white/90 text-[11px] sm:text-xs md:text-sm leading-[1.4] mb-4 font-medium">
-            Simpan dulu semua pengeluaran tripmu,<br className="hidden sm:block" />
-            baginya gampang nanti pas sudah santai.
+            Tinggal catat pengeluaran,<br className="hidden sm:block" />
+            bagi rata pas udah santai. Anti ribet!
           </p>
           
           <span className="inline-flex bg-white text-[#2E6FF3] font-bold text-[12px] sm:text-sm px-4 sm:px-5 py-2 sm:py-2.5 rounded-[12px] items-center justify-center gap-2 hover:bg-blue-50 transition-all shadow-sm">

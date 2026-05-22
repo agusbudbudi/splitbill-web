@@ -17,8 +17,8 @@ import { ActionCard } from "@/components/ui/ActionCard";
 export const GettingStarted = () => {
   const guideItems = [
     {
-      title: "Kelola Teman",
-      desc: "Tambah anggota geng kamu dulu, biar patungan gampang.",
+      title: "Simpan Geng kamu",
+      desc: "Simpan geng nongkrong kamu biar gak input ulang",
       icon: UserPlus,
       color: "text-blue-600",
       bgColor: "bg-blue-50",
@@ -26,7 +26,7 @@ export const GettingStarted = () => {
     },
     {
       title: "Catat Pengeluaran",
-      desc: "Input manual expense yang mau dibagi.",
+      desc: "Catat pengeluaran cuma 5 detik",
       icon: ClipboardList,
       color: "text-amber-600",
       bgColor: "bg-amber-50",
@@ -34,7 +34,7 @@ export const GettingStarted = () => {
     },
     {
       title: "Payment Method",
-      desc: "Simpan detail pembayaran favorite kamu.",
+      desc: "Tinggal copy rekening & langsung transfer",
       icon: CreditCard,
       color: "text-emerald-600",
       bgColor: "bg-emerald-50",
@@ -42,7 +42,7 @@ export const GettingStarted = () => {
     },
     {
       title: "Lihat Ringkasan",
-      desc: "Cek siapa bayar berapa & siapa harus transfer.",
+      desc: "Siapa bayar siapa langsung jelas",
       icon: BarChart3,
       color: "text-purple-600",
       bgColor: "bg-purple-50",

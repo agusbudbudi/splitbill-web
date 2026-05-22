@@ -72,10 +72,13 @@ export const FeatureHighlights = () => {
 
           {/* Header */}
           <div className="relative z-10 flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2">
+            <div className="flex flex-col items-start">
               <p className="text-sm font-bold text-primary">
-                Hi,{" "}
+                Welcome back,{" "}
                 <span className="font-black">{firstName}</span> 👋
+              </p>
+              <p className="text-xs text-slate-500 font-medium mt-0.5">
+                Yuk selesain patungan tanpa drama hari ini
               </p>
             </div>
             <div className="w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-300 shrink-0">
@@ -87,15 +90,15 @@ export const FeatureHighlights = () => {
           <div className="relative z-10">
             {totalBills > 0 ? (
               <p className="text-sm font-medium text-slate-600 leading-relaxed">
-                Keren, kamu sudah membuat{" "}
+                Mantap!,{" "}
                 <span className="font-black text-slate-800">
-                  {totalBills} split bill
-                </span>{" "}
-                dan membantu{" "}
+                  {totalBills} split bill 🔥
+                </span>{" "} selesai tanpa ribet
+                dan kamu udah bantu {" "}
                 <span className="font-black text-slate-800">
                   {totalFriends} teman
                 </span>{" "}
-                biar tagihan gak drama. Keep it up! 💸
+                biar tagihan gak drama. Keep it up! biar gak ada lagi “eh gue transfer ke siapa?” 😌
               </p>
             ) : (
               <p className="text-sm font-medium text-slate-600 leading-relaxed">

@@ -6,13 +6,10 @@ import {
   ChevronLeft,
   ChevronRight,
   Home,
-  Target,
   History,
   CheckCircle2,
   Sparkles,
   Users,
-  Heart,
-  Star,
   Share2,
   User,
   BookOpen,
@@ -31,16 +28,21 @@ const menuItems = [
     href: "/split-bill",
   },
   {
+    id: "kantong",
+    label: "Split Later",
+    badge: "New",
+    image: "/img/menu-split-later.png",
+    href: "/split-later",
+  },
+  {
     id: "invoice",
     label: "Invoice",
     image: "/img/menu-invoice.png",
-    badge: "Populer",
     href: "/invoice",
   },
   {
     id: "nabung",
     label: "SharedGoal",
-    badge: "New",
     image: "/img/menu-shared-goal.png",
     href: "/shared-goals",
   },
@@ -49,12 +51,6 @@ const menuItems = [
     label: "Patungan",
     image: "/img/menu-collect-money.png",
     href: "/collect-money",
-  },
-  {
-    id: "wallet",
-    label: "Wallet",
-    image: "/img/menu-wallet.png",
-    href: "/wallet",
   },
 ];
 
@@ -95,8 +91,8 @@ export const Sidebar = () => {
     { label: "Home", href: "/", icon: Home },
     { label: "Blog", href: "/blog", icon: BookOpen },
     { label: "Teman Saya", href: "/profile/friends", icon: Users },
-    { label: "Donasi", href: "/donate", icon: Heart },
-    { label: "History", href: "/history", icon: History },
+    { label: "Aktivitas", href: "/history", icon: History },
+    { label: "Profile", href: "/profile", icon: User },
   ];
 
   return (

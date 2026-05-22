@@ -16,6 +16,7 @@ export interface HeroBannerProps {
   floatingCard?: ReactNode;
   className?: string;
   variant?: "light" | "primary-gradient";
+  trustText?: ReactNode;
 }
 
 export const HeroBanner = ({
@@ -30,13 +31,14 @@ export const HeroBanner = ({
   floatingCard,
   className,
   variant = "light",
+  trustText,
 }: HeroBannerProps) => {
   const isPrimaryGrad = variant === "primary-gradient";
 
   return (
     <div
       className={cn(
-        "relative w-full rounded-[24px] overflow-hidden px-6 py-6 sm:px-6 sm:py-6 flex flex-row items-center justify-between gap-2 sm:gap-6",
+        "relative w-full rounded-[24px] overflow-hidden px-6 py-4 sm:px-8 sm:py-6 flex flex-row items-center justify-between gap-2 sm:gap-6",
         isPrimaryGrad
           ? "bg-gradient-to-br from-primary via-blue-600 to-indigo-700 border-none"
           : "bg-primary/[0.03] border border-primary/10",
@@ -75,7 +77,7 @@ export const HeroBanner = ({
 
           <h2
             className={cn(
-              "text-[26px] sm:text-[28px] md:text-[30px] leading-[1.2] sm:leading-[1.15] font-bold mb-2 sm:mb-4",
+              "text-[30px] sm:text-[35px] md:text-[40px] leading-[1.2] sm:leading-[1.15] font-bold mb-2 sm:mb-4",
               isPrimaryGrad ? "text-white" : "text-[#111827]"
             )}
           >
@@ -108,6 +110,16 @@ export const HeroBanner = ({
           )}
           {primaryButtonText}
         </button>
+        {trustText && (
+          <p
+            className={cn(
+              "text-[9px] sm:text-[11px] font-bold mt-2.5 sm:mt-3 w-[55%] sm:w-full tracking-tight pointer-events-auto leading-relaxed",
+              isPrimaryGrad ? "text-white/80" : "text-slate-500"
+            )}
+          >
+            {trustText}
+          </p>
+        )}
       </div>
 
       {/* Right Content / Illustration */}

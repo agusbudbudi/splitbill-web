@@ -71,6 +71,11 @@ export const metadata: Metadata = {
     statusBarStyle: "black-translucent",
   },
   icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/img/footer-icon.png", type: "image/png" }
+    ],
+    shortcut: "/favicon.ico",
     apple: "/img/footer-icon.png",
   },
   alternates: {

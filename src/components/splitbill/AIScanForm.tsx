@@ -56,7 +56,7 @@ export const AIScanForm = () => {
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const scanStartTimeRef = useRef<number | null>(null);
 
-  const { addExpense, setActivityName, addAdditionalExpense } =
+  const { addExpense, setActivityName, addAdditionalExpense, pendingCapturedImage, clearPendingCapturedImage } =
     useSplitBillStore();
   const { isAuthenticated, user, getCurrentUser, isInitialized } =
     useAuthStore();
@@ -66,12 +66,46 @@ export const AIScanForm = () => {
 
   React.useEffect(() => {
     setIsMounted(true);
+
+    // Pre-fill from footer camera capture (store takes priority over URL param).
+    // IMPORTANT: only clear from the store if already authenticated, so the image
+    // survives a login/register redirect and can be re-read on the return mount.
+    const storedImage = useSplitBillStore.getState().pendingCapturedImage;
+    if (storedImage) {
+      setImage(storedImage);
+      setImageSource("camera");
+      if (isAuthenticated) {
+        // Safe to clear — user is logged in and will see the scan UI immediately.
+        clearPendingCapturedImage();
+      }
+      // If NOT authenticated we intentionally keep the value in the store so it
+      // survives the login redirect and is picked up by the effect below.
+      return;
+    }
+
+    // Fallback: pre-fill from URL search param
     const preloadedImage = searchParams.get("image");
     if (preloadedImage) {
       setImage(decodeURIComponent(preloadedImage));
       setImageSource("gallery");
     }
   }, [searchParams]);
+
+  // When the user becomes authenticated (either on initial load or after returning
+  // from a login/register redirect), check whether there is still a pending
+  // captured image waiting in the store and pre-fill it now that we can show the
+  // scan UI.  This also handles the case where auth resolves after the mount
+  // effect above has already run.
+  React.useEffect(() => {
+    if (isAuthenticated) {
+      const storedImage = useSplitBillStore.getState().pendingCapturedImage;
+      if (storedImage) {
+        setImage(storedImage);
+        setImageSource("camera");
+        clearPendingCapturedImage();
+      }
+    }
+  }, [isAuthenticated]);
 
   // Refresh user data on mount to ensure quota is up to date
   React.useEffect(() => {
@@ -504,39 +538,39 @@ export const AIScanForm = () => {
                 {(scanResult.tax ||
                   scanResult.service_charge ||
                   scanResult.discount) && (
-                  <div className="pt-2 border-t border-primary/10 space-y-1.5">
-                    {scanResult.tax && (
-                      <div className="flex justify-between items-center text-[11px]">
-                        <span className="text-muted-foreground font-bold">
-                          Tax (PPN)
-                        </span>
-                        <span className="font-bold text-foreground">
-                          {formatCurrency(scanResult.tax)}
-                        </span>
-                      </div>
-                    )}
-                    {scanResult.service_charge && (
-                      <div className="flex justify-between items-center text-[11px]">
-                        <span className="text-muted-foreground font-bold">
-                          Service Charge
-                        </span>
-                        <span className="font-bold text-foreground">
-                          {formatCurrency(scanResult.service_charge)}
-                        </span>
-                      </div>
-                    )}
-                    {scanResult.discount && (
-                      <div className="flex justify-between items-center text-[11px]">
-                        <span className="text-destructive font-bold">
-                          Discount
-                        </span>
-                        <span className="font-bold text-destructive">
-                          -{formatCurrency(scanResult.discount)}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                )}
+                    <div className="pt-2 border-t border-primary/10 space-y-1.5">
+                      {scanResult.tax && (
+                        <div className="flex justify-between items-center text-[11px]">
+                          <span className="text-muted-foreground font-bold">
+                            Tax (PPN)
+                          </span>
+                          <span className="font-bold text-foreground">
+                            {formatCurrency(scanResult.tax)}
+                          </span>
+                        </div>
+                      )}
+                      {scanResult.service_charge && (
+                        <div className="flex justify-between items-center text-[11px]">
+                          <span className="text-muted-foreground font-bold">
+                            Service Charge
+                          </span>
+                          <span className="font-bold text-foreground">
+                            {formatCurrency(scanResult.service_charge)}
+                          </span>
+                        </div>
+                      )}
+                      {scanResult.discount && (
+                        <div className="flex justify-between items-center text-[11px]">
+                          <span className="text-destructive font-bold">
+                            Discount
+                          </span>
+                          <span className="font-bold text-destructive">
+                            -{formatCurrency(scanResult.discount)}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  )}
               </div>
 
               {/* Info Banner: Editable After Import - V2 Design Style */}

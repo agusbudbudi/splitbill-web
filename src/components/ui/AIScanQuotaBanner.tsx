@@ -52,7 +52,7 @@ export const AIScanQuotaBanner = ({
                 <div className="flex items-center gap-1.5 mb-0.5">
                   <p className="text-[9px] font-bold text-primary/80 uppercase leading-none">
                     {isSubscribed
-                      ? "Status Premium Aktif"
+                      ? "Premium Active"
                       : freeScanCount === maxScanCount
                         ? "Gift spesial buat kamu "
                         : isExhausted
@@ -85,24 +85,24 @@ export const AIScanQuotaBanner = ({
                 </div>
                 <p className="text-sm font-bold text-slate-800">
                   {isSubscribed ? (
-                    <span className="text-slate-800 font-bold text-xs">
-                      Bebas scan sepuasnya tanpa limit, gas terooos! 👑
+                    <span className="text-slate-800 font-bold text-sm">
+                      Scan struk tanpa batas, kapan aja ⚡
                     </span>
                   ) : freeScanCount === maxScanCount ? (
                     <>
-                      <span className="text-slate-800 font-bold text-xs">
+                      <span className="text-slate-800 font-bold text-sm">
                         Ada {maxScanCount}x scan gratis nih, sikat gais! 🔥
                       </span>
                     </>
                   ) : isExhausted ? (
                     <>
-                      <span className="text-slate-800 font-bold text-xs">
+                      <span className="text-slate-800 font-bold text-sm">
                         Yah scan abis, gas input manual dulu yuk! ✍️
                       </span>
                     </>
                   ) : (
                     <>
-                      <span className="text-slate-800 font-bold text-xs">
+                      <span className="text-slate-800 font-bold text-sm">
                         Sisa {freeScanCount}x scan gratis nih, gas! ✨
                       </span>
                     </>
@@ -128,10 +128,10 @@ export const AIScanQuotaBanner = ({
           </div>
 
           {showRedirect && (
-            <div className="pt-4">
-              <Link href="/split-bill?step=1" className="block">
+            <div className="pt-4 flex flex-col items-center gap-2">
+              <Link href="/split-bill?step=1" className="w-full block">
                 <Button className="w-full text-sm font-bold gap-2 rounded-md shadow-lg shadow-primary/20 group/btn transition-all duration-300">
-                  Mulai Split Bill Sekarang
+                  Bagi Tagihan Sekarang
                   <ChevronRight className="w-4 h-4 group-hover/btn:translate-x-0.5 transition-transform" />
                 </Button>
               </Link>

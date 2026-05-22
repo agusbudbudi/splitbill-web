@@ -240,23 +240,22 @@ export const HomePageClient = () => {
           <div className="w-full">
             <HeroBanner
               variant="primary-gradient"
-              className="pt-[72px] pb-6 sm:pt-20 sm:pb-8 rounded-none border-x-0 border-t-0 sm:rounded-b-[24px] sm:rounded-t-none sm:border-x w-full"
-              badgeText="Scan Struk AI Otomatis"
+              className="pt-[64px] pb-4 sm:pt-16 sm:pb-5 rounded-none border-x-0 border-t-0 sm:rounded-b-[24px] sm:rounded-t-none sm:border-x w-full"
+              badgeText="Scan Struk Otomatis"
               badgeIcon={<Sparkles className="w-3 h-3 text-amber-300 fill-amber-300" />}
               title={
                 <>
                   Split Bill <br />
-                  <span className="text-amber-300 font-extrabold">Scan Struk AI</span>
-                  <br />
-                  Bagi Instan!
+                  <span className="text-amber-300 font-extrabold">Tanpa Ribet</span>
                 </>
               }
-              description="Cukup foto struk, AI otomatis hitung patungan & bagi tagihan secara adil."
-              primaryButtonText="Scan Struk"
+              description="Tinggal foto struk, biar AI yang urus hitungannya. Langsung Beres!"
+              primaryButtonText="Mulai Scan"
               primaryButtonIcon={<Camera className="w-5 h-5" />}
               onPrimaryClick={() => router.push("/split-bill?step=1")}
               imageSrc="/img/hero-splitbill.png"
               floatingCard={<HeroFloatingCard />}
+              trustText="🔥 Dipakai ribuan grup nongkrong & trip tiap hari"
             />
           </div>
         )}

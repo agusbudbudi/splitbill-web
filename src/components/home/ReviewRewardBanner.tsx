@@ -56,10 +56,10 @@ export const ReviewRewardBanner = () => {
 
           <div className="flex-1 space-y-0.5 pr-4">
             <h3 className="text-[13px] font-bold text-slate-900 tracking-tight">
-              Ada bonus +5 Scan AI nih!
+              Hadiah buat kamu 🎁
             </h3>
             <p className="text-[11px] text-slate-500 font-medium leading-tight">
-              Kasih review singkat & ambil reward kamu. Cuma 10 detik gais! ✨
+              Kasih review singkat & claim hadiahnya. Cuma 10 detik gais! ✨
             </p>
           </div>
 

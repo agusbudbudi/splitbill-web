@@ -6,7 +6,7 @@ import { FeatureBanner } from "@/components/ui/FeatureBanner";
 export const AIScanBanner = () => {
   return (
     <FeatureBanner
-      title="Split Bill dari Foto Struk"
+      title="Foto Struk, Semua Langsung Kebagi ✨"
       description={
         <>
           Cukup upload foto struk, <br />
@@ -15,7 +15,7 @@ export const AIScanBanner = () => {
           </span>
         </>
       }
-      ctaText="Mulai Scan Bill"
+      ctaText="Coba AI Scan"
       ctaHref="/split-bill?step=2"
       illustration="/img/feature-splitbill-scan.png"
       illustrationAlt="Ilustrasi Scan Struk AI — Foto struk belanja untuk bagi tagihan otomatis"

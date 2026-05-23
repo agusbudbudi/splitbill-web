@@ -157,7 +157,7 @@ export function RegisterForm({
           <Input
             id="email"
             type="email"
-            placeholder="split.bill.apps@gmail.com"
+            placeholder="Masukkan email kamu"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             onBlur={() => {

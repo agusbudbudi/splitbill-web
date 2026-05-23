@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { User, Mail, Lock, Eye, EyeOff, Loader2 } from "lucide-react";
+import { User, Mail, Lock, Eye, EyeOff, Loader2, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { motion } from "framer-motion";
@@ -83,15 +83,15 @@ export function RegisterForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-3">
+    <form onSubmit={handleSubmit} className="space-y-4">
       {error && (
         <motion.div
           initial={{ opacity: 0, x: -10 }}
           animate={{ opacity: 1, x: 0 }}
-          className="bg-destructive/10 border border-destructive/20 rounded-lg p-4 flex items-center gap-3"
+          className="bg-destructive/10 border border-destructive/20 rounded-2xl p-4 flex items-center gap-3"
         >
           <div className="w-5 h-5 rounded-full bg-destructive/20 flex items-center justify-center shrink-0">
-            <span className="text-destructive font-bold">!</span>
+            <span className="text-destructive font-bold text-xs">!</span>
           </div>
           <div className="text-destructive text-sm font-semibold">{error}</div>
         </motion.div>
@@ -101,21 +101,25 @@ export function RegisterForm({
         <motion.div
           initial={{ opacity: 0, x: 10 }}
           animate={{ opacity: 1, x: 0 }}
-          className="bg-success/10 border border-success/20 rounded-2xl p-4 flex items-center gap-3"
+          className="bg-green-500/10 border border-green-500/20 rounded-2xl p-4 flex items-center gap-3"
         >
-          <div className="text-success text-sm font-semibold">{success}</div>
+          <div className="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center shrink-0">
+            <span className="text-green-500 font-bold text-xs">✓</span>
+          </div>
+          <div className="text-green-500 text-sm font-semibold">{success}</div>
         </motion.div>
       )}
 
-      <div className="space-y-1 group">
+      {/* Nama Lengkap Input */}
+      <div className="space-y-2 group">
         <label
           htmlFor="name"
-          className="text-sm font-bold text-foreground/80 group-focus-within:text-primary transition-colors ml-1"
+          className="text-xs font-bold text-foreground/80 transition-colors group-focus-within:text-primary ml-1"
         >
           Nama Lengkap
         </label>
         <div className="relative group/input">
-          <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground/40 group-focus-within/input:text-primary transition-colors" />
+          <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground/30 group-focus-within/input:text-primary transition-colors" />
           <Input
             id="name"
             type="text"
@@ -131,7 +135,7 @@ export function RegisterForm({
                 setNameError("");
               }
             }}
-            className="pl-12 h-14 bg-white border-border/60 hover:border-primary/40 focus-visible:border-primary/60 focus-visible:ring-primary/5 transition-all rounded-md font-medium"
+            className="pl-12 h-14 bg-white border border-slate-100 hover:border-primary/30 focus-visible:border-primary/60 focus-visible:ring-primary/5 transition-all rounded-2xl font-medium text-base text-foreground placeholder:text-muted-foreground/30"
             disabled={isLoading}
           />
         </div>
@@ -140,19 +144,20 @@ export function RegisterForm({
         )}
       </div>
 
-      <div className="space-y-1 group">
+      {/* Email Input */}
+      <div className="space-y-2 group">
         <label
           htmlFor="email"
-          className="text-sm font-bold text-foreground/80 group-focus-within:text-primary transition-colors ml-1"
+          className="text-xs font-bold text-foreground/80 transition-colors group-focus-within:text-primary ml-1"
         >
           Email
         </label>
         <div className="relative group/input">
-          <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground/40 group-focus-within/input:text-primary transition-colors" />
+          <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground/30 group-focus-within/input:text-primary transition-colors" />
           <Input
             id="email"
             type="email"
-            placeholder="Masukkan email"
+            placeholder="Masukkan email kamu"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             onBlur={() => {
@@ -162,7 +167,7 @@ export function RegisterForm({
                 setEmailError("");
               }
             }}
-            className="pl-12 h-14 bg-white border-border/60 hover:border-primary/40 focus-visible:border-primary/60 focus-visible:ring-primary/5 transition-all rounded-md font-medium"
+            className="pl-12 h-14 bg-white border border-slate-100 hover:border-primary/30 focus-visible:border-primary/60 focus-visible:ring-primary/5 transition-all rounded-2xl font-medium text-base text-foreground placeholder:text-muted-foreground/30"
             disabled={isLoading}
           />
         </div>
@@ -172,34 +177,35 @@ export function RegisterForm({
           </p>
         )}
         {!emailError && (
-          <p className="text-[10px] text-muted-foreground font-medium ml-1">
+          <p className="text-[10px] text-muted-foreground font-semibold ml-1">
             Pastikan email aktif ya, buat verifikasi sat set!
           </p>
         )}
       </div>
 
-      <div className="space-y-1 group">
+      {/* Password Input */}
+      <div className="space-y-2 group">
         <label
           htmlFor="password"
-          className="text-sm font-bold text-foreground/80 group-focus-within:text-primary transition-colors ml-1"
+          className="text-xs font-bold text-foreground/80 transition-colors group-focus-within:text-primary ml-1"
         >
           Password
         </label>
         <div className="relative group/input">
-          <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground/40 group-focus-within/input:text-primary transition-colors" />
+          <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground/30 group-focus-within/input:text-primary transition-colors" />
           <Input
             id="password"
             type={showPassword ? "text" : "password"}
             placeholder="Minimal 8 karakter"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="pl-12 pr-12 h-14 bg-white border-border/60 hover:border-primary/40 focus-visible:border-primary/60 focus-visible:ring-primary/5 transition-all rounded-md font-medium"
+            className="pl-12 pr-12 h-14 bg-white border border-slate-100 hover:border-primary/30 focus-visible:border-primary/60 focus-visible:ring-primary/5 transition-all rounded-2xl font-medium text-base text-foreground placeholder:text-muted-foreground/30"
             disabled={isLoading}
           />
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground/40 hover:text-primary transition-colors cursor-pointer"
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground/30 hover:text-primary transition-colors cursor-pointer"
             tabIndex={-1}
           >
             {showPassword ? (
@@ -211,28 +217,29 @@ export function RegisterForm({
         </div>
         {passwordStrength && (
           <p
-            className="text-xs font-bold ml-1"
+            className="text-[11px] font-bold ml-1 mt-1"
             style={{ color: getPasswordStrengthColor(passwordStrength) }}
           >
             Kekuatan password: {getPasswordStrengthLabel(passwordStrength)}
           </p>
         )}
         {passwordError && (
-          <p className="text-xs text-destructive font-bold ml-1">
+          <p className="text-xs text-destructive font-bold ml-1 mt-1">
             {passwordError}
           </p>
         )}
       </div>
 
-      <div className="space-y-1 group">
+      {/* Konfirmasi Password Input */}
+      <div className="space-y-2 group">
         <label
           htmlFor="confirmPassword"
-          className="text-sm font-bold text-foreground/80 group-focus-within:text-primary transition-colors ml-1"
+          className="text-xs font-bold text-foreground/80 transition-colors group-focus-within:text-primary ml-1"
         >
           Konfirmasi Password
         </label>
         <div className="relative group/input">
-          <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground/40 group-focus-within/input:text-primary transition-colors" />
+          <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground/30 group-focus-within/input:text-primary transition-colors" />
           <Input
             id="confirmPassword"
             type={showConfirmPassword ? "text" : "password"}
@@ -246,13 +253,13 @@ export function RegisterForm({
                 setConfirmPasswordError("");
               }
             }}
-            className="pl-12 pr-12 h-14 bg-white border-border/60 hover:border-primary/40 focus-visible:border-primary/60 focus-visible:ring-primary/5 transition-all rounded-md font-medium"
+            className="pl-12 pr-12 h-14 bg-white border border-slate-100 hover:border-primary/30 focus-visible:border-primary/60 focus-visible:ring-primary/5 transition-all rounded-2xl font-medium text-base text-foreground placeholder:text-muted-foreground/30"
             disabled={isLoading}
           />
           <button
             type="button"
             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground/40 hover:text-primary transition-colors cursor-pointer"
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground/30 hover:text-primary transition-colors cursor-pointer"
             tabIndex={-1}
           >
             {showConfirmPassword ? (
@@ -263,38 +270,44 @@ export function RegisterForm({
           </button>
         </div>
         {confirmPasswordError && (
-          <p className="text-xs text-destructive font-bold ml-1">
+          <p className="text-xs text-destructive font-bold ml-1 mt-1">
             {confirmPasswordError}
           </p>
         )}
       </div>
 
-      <p className="text-[10px] text-muted-foreground text-center px-4 leading-relaxed pt-2 pb-1">
+      <p className="text-[9px] text-muted-foreground text-center px-4 leading-relaxed">
         Dengan mendaftar, kamu menyetujui{" "}
-        <Link href="/terms" className="text-primary font-bold hover:underline">
+        <Link href="/terms" className="text-primary font-black hover:underline">
           Syarat & Ketentuan
         </Link>{" "}
         dan{" "}
-        <Link href="/privacy" className="text-primary font-bold hover:underline">
+        <Link href="/privacy" className="text-primary font-black hover:underline">
           Kebijakan Privasi
         </Link>{" "}
         kami.
       </p>
 
-      <Button
-        type="submit"
-        className="w-full h-14 text-lg font-bold shadow-lg shadow-primary/10 hover:shadow-primary/20 hover:scale-[1.01] active:scale-95 transition-all rounded-md bg-primary border-none"
-        disabled={isLoading}
-      >
-        {isLoading ? (
-          <div className="flex items-center gap-2">
-            <Loader2 className="w-5 h-5 animate-spin" />
-            <span>Memproses...</span>
-          </div>
-        ) : (
-          "Daftar"
-        )}
-      </Button>
+      {/* Submit Button */}
+      <div className="pt-2">
+        <Button
+          type="submit"
+          className="w-full h-14 text-base font-bold shadow-md shadow-primary/10 hover:shadow-primary/25 transition-all rounded-2xl bg-primary hover:bg-primary/90 text-white border-none flex items-center justify-center gap-2 cursor-pointer group"
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <div className="flex items-center gap-2">
+              <Loader2 className="w-5 h-5 animate-spin" />
+              <span>Memproses...</span>
+            </div>
+          ) : (
+            <>
+              <span>Daftar Sekarang</span>
+              <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+            </>
+          )}
+        </Button>
+      </div>
     </form>
   );
 }

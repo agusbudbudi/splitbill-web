@@ -61,7 +61,7 @@ export default function OrdersPage() {
           onBack={() => router.push("/profile")}
         />
 
-        <main className="flex-1 p-4 pb-20">
+        <main className="flex-1 p-4">
           {isLoading ? (
             <div className="space-y-4">
               {[1, 2, 3].map((i) => (

@@ -24,7 +24,7 @@ export default function HistoryPage() {
         />
 
         {/* Content */}
-        <div className="flex-1 p-4 pb-20">
+        <div className="flex-1 p-4">
           <React.Suspense
             fallback={
               <div className="h-40 flex items-center justify-center">

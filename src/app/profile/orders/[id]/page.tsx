@@ -120,7 +120,7 @@ export default function OrderDetailPage() {
           onBack={() => router.push("/profile/orders")}
         />
 
-        <main className="flex-1 p-4 pb-20 space-y-6">
+        <main className="flex-1 p-4 space-y-6">
           {/* Status Section */}
           {order.status !== "paid" && (
             <Card
@@ -213,7 +213,7 @@ export default function OrderDetailPage() {
               <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-widest px-1">
                 Rincian Paket
               </h3>
-            <Card className="border-border/50 shadow-sm rounded-2xl overflow-hidden">
+              <Card className="border-border/50 shadow-sm rounded-2xl overflow-hidden">
                 <CardContent className="p-5 space-y-4">
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">

@@ -302,6 +302,7 @@ export default function BucketDetailClientPage({
               <BucketSettlement
                 receipts={receipts}
                 participants={bucket.participants}
+                bucket={bucket}
               />
             )}
           </div>

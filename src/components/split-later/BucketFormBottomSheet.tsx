@@ -192,7 +192,7 @@ export const BucketFormBottomSheet = ({
 
       <div
         className={cn(
-          "absolute bottom-0 w-full max-w-[600px] bg-white rounded-t-3xl shadow-2xl overflow-hidden flex flex-col max-h-[95vh]",
+          "absolute bottom-0 w-full max-w-[600px] bg-white rounded-t-3xl shadow-2xl overflow-hidden flex flex-col max-h-[80dvh]",
           "animate-in slide-in-from-bottom-full duration-300 ease-out",
         )}
       >

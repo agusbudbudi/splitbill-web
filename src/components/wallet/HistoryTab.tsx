@@ -240,7 +240,7 @@ export const HistoryTab = () => {
   );
 
   return (
-    <div className="space-y-6 pb-20">
+    <div className="space-y-6">
       {/* Tabs and Filter Button */}
       <div className="flex items-center gap-3">
         <div className="flex-1">

@@ -255,7 +255,7 @@ export const HomePageClient = () => {
               onPrimaryClick={() => router.push("/split-bill?step=1")}
               imageSrc="/img/hero-splitbill.png"
               floatingCard={<HeroFloatingCard />}
-              trustText="🔥 Dipakai ribuan grup nongkrong & trip tiap hari"
+              trustText="Andalan ribuan grup & trip! 🔥"
             />
           </div>
         )}

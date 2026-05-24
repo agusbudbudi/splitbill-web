@@ -60,10 +60,10 @@ export const BillSummary = ({
   const router = useRouter();
   const dataForCalc = billData
     ? {
-        people: billData.people,
-        expenses: billData.expenses,
-        additionalExpenses: billData.additionalExpenses,
-      }
+      people: billData.people,
+      expenses: billData.expenses,
+      additionalExpenses: billData.additionalExpenses,
+    }
     : undefined;
 
   const { balances, totalSpent, settlementInstructions, badges } =
@@ -256,7 +256,7 @@ export const BillSummary = ({
                   </p>
                   {typeof window !== "undefined" &&
                     new URLSearchParams(window.location.search).get("new") ===
-                      "true" && (
+                    "true" && (
                       <span className="text-[8px] font-black bg-primary text-white px-1.5 py-0.5 rounded-full shadow-sm shadow-primary/20">
                         BARU
                       </span>
@@ -559,7 +559,7 @@ export const BillSummary = ({
         {!showDownload && !isPublic && (
           <div className="absolute inset-x-0 bottom-0 h-24 z-20 flex flex-col items-center justify-end pb-2 mb-0 bg-gradient-to-t from-background via-background/95 to-transparent pointer-events-none">
             <div className="bg-white border border-primary/10 px-3 py-1.5 rounded-full shadow-lg shadow-primary/5 flex items-center gap-1.5 animate-bounce-subtle">
-              <span className="text-xs font-bold text-primary">
+              <span className="text-[10px] font-bold text-primary">
                 Simpan dulu yuk! Biar bisa di share bill Aesthetic kamu 📸
               </span>
             </div>

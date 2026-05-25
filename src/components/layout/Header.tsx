@@ -74,12 +74,12 @@ export const Header = ({
       className={cn(
         "z-50 w-full flex flex-col items-center pointer-events-none transition-all duration-500",
         sticky && "sticky",
-        sticky && (isPWABannerVisible ? "top-[52px]" : "top-0"),
+        sticky && (isPWABannerVisible ? "top-[calc(52px+env(safe-area-inset-top))]" : "top-0"),
       )}
     >
       <div
         className={cn(
-          "w-full max-w-[600px] text-white pointer-events-auto transition-colors duration-300",
+          "w-full max-w-[600px] text-white pointer-events-auto transition-colors duration-300 pt-safe",
           transparent
             ? scrolled
               ? "bg-primary"

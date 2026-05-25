@@ -24,13 +24,12 @@ export function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - img (public images)
+     * Hanya jalankan middleware pada route yang membutuhkan pengecekan autentikasi
+     * untuk mengurangi penggunaan Edge Requests di Vercel.
      */
-    "/((?!api|_next/static|_next/image|favicon.ico|img|sitemap.xml|robots.txt).*)",
+    "/profile/:path*",
+    "/wallet/:path*",
+    "/history/:path*",
+    "/split-bill/:path*",
   ],
 };

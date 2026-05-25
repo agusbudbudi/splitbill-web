@@ -832,7 +832,7 @@ const SplitBillContent = () => {
       <div className="sticky bottom-0 w-full z-50 pointer-events-none flex justify-center mt-auto">
         <div className="w-full max-w-[600px] relative pointer-events-auto flex flex-col">
           {/* Solid background area for the actions */}
-          <div className="bg-background px-4 pb-4 flex flex-col gap-3">
+          <div className="bg-background px-4 pb-4 pb-safe flex flex-col gap-3">
             {step === 1 && (
               <Button
                 onClick={nextStep}

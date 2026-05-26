@@ -110,21 +110,6 @@ export const AIScanQuotaBanner = ({
                 </p>
               </div>
             </div>
-
-            <div className="flex items-center gap-3">
-              {!isSubscribed && freeScanCount > 0 && (
-                <div className="flex flex-col items-end gap-1.5">
-                  <div className="h-1.5 w-16 bg-slate-100 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-gradient-to-r from-violet-400 to-pink-400 transition-all duration-700 ease-out shadow-[0_0_8px_rgba(244,114,182,0.2)]"
-                      style={{
-                        width: `${(freeScanCount / maxScanCount) * 100}%`,
-                      }}
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
           </div>
 
           {showRedirect && (

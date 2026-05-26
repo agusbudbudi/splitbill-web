@@ -3,17 +3,19 @@
 import React from "react";
 import { useWalletStore } from "@/store/useWalletStore";
 import {
-  Sparkles,
-  ReceiptText,
-  TrendingUp,
-  Users,
   ChevronRight,
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { formatToIDR } from "@/lib/utils";
 import { useAuthStore } from "@/lib/stores/authStore";
 
-export const FeatureHighlights = () => {
+interface FeatureHighlightsProps {
+  /** When true, renders as a full hero at the very top of the page */
+  heroMode?: boolean;
+}
+
+export const FeatureHighlights = ({ heroMode = false }: FeatureHighlightsProps) => {
   const { savedBills, fetchBills } = useWalletStore();
   const { isAuthenticated, user } = useAuthStore();
 
@@ -28,7 +30,6 @@ export const FeatureHighlights = () => {
   const totalAmount = Array.isArray(savedBills)
     ? savedBills.reduce((sum, b) => sum + (b?.totalAmount || 0), 0)
     : 0;
-  const avgAmount = totalBills > 0 ? Math.round(totalAmount / totalBills) : 0;
   const totalFriends = Array.isArray(savedBills)
     ? new Set(savedBills.flatMap((b) => b?.people || [])).size
     : 0;
@@ -38,9 +39,7 @@ export const FeatureHighlights = () => {
     {
       label: "Split Bill",
       value: totalBills.toString(),
-      sublabel: "Dibuat",
-      icon: ReceiptText,
-      href: "/history?tab=split-bill",
+      iconSrc: "/img/icon-splitbill.png",
     },
     {
       label: "Total",
@@ -50,19 +49,78 @@ export const FeatureHighlights = () => {
           : totalAmount >= 1_000
             ? `${Math.round(totalAmount / 1_000)}Rb`
             : formatToIDR(totalAmount),
-      sublabel: "Di-split",
-      icon: TrendingUp,
-      href: "/history?tab=split-bill",
+      iconSrc: "/img/icon-total.png",
     },
     {
       label: "Teman",
       value: totalFriends.toString(),
-      sublabel: "Dibantu",
-      icon: Users,
-      href: "/history?tab=split-bill",
+      iconSrc: "/img/icon-teman.png",
     },
   ];
 
+  // ── HERO MODE ────────────────────────────────────────────────────────────
+  if (heroMode) {
+    return (
+      <div className="relative w-full overflow-hidden bg-gradient-to-br from-primary via-blue-600 to-indigo-700 pt-[64px] pb-6 sm:pt-16 sm:pb-8 rounded-none sm:rounded-b-[24px] sm:rounded-t-none">
+        {/* Decorative blobs — same as HeroBanner */}
+          <div className="absolute top-0 right-0 w-[80%] h-full bg-gradient-to-l from-white/10 to-transparent pointer-events-none" />
+          <div className="absolute top-0 left-[-10%] w-[40%] h-[60%] bg-blue-400/20 rounded-full blur-[60px] pointer-events-none" />
+          <div className="absolute bottom-[-10%] right-[-5%] w-[50%] h-[50%] bg-indigo-400/15 rounded-full blur-[80px] pointer-events-none" />
+
+          <div className="relative z-10 px-5 sm:px-6 space-y-4">
+            {/* Greeting row */}
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <h2 className="text-white font-bold text-[32px] sm:text-[40px] leading-[1.2]">
+                  Halo,{" "}
+                  <span className="font-extrabold text-amber-300">
+                    {firstName}!
+                  </span>{" "}
+                  👋
+                </h2>
+                <p className="text-blue-100 text-xs sm:text-sm font-medium mt-1 leading-relaxed">
+                  Yuk selesain patungan tanpa drama hari ini
+                </p>
+              </div>
+            </div>
+
+            {/* Storytelling text */}
+            <div className="bg-white/10 mb-2 rounded-sm px-4 py-3">
+              <p className="text-blue-100 text-sm font-medium leading-relaxed">
+                Mantap!,{" "}
+                <span className="font-black text-white">
+                  {totalBills} split bill 🔥
+                </span>{" "}
+                selesai tanpa ribet dan kamu udah bantu{" "}
+                <span className="font-black text-white">
+                  {totalFriends} teman
+                </span>{" "}
+                biar tagihan gak drama. Keep it up! biar gak ada lagi &quot;eh gue transfer ke siapa?&quot; 😌
+              </p>
+            </div>
+
+            {/* Metric pills — compact horizontal row */}
+            <div className="flex items-center justify-between bg-white/10 rounded-sm py-2.5 px-3">
+              {metrics.map((m, idx) => (
+                <div key={m.label} className={`flex-1 flex items-center justify-center gap-2 px-1 ${idx < metrics.length - 1 ? "border-r border-white/20" : ""}`}>
+                  <div className="flex items-center gap-1.5">
+                    <Image src={m.iconSrc} alt={m.label} width={20} height={20} className="object-contain shrink-0" />
+                    <span className="font-black text-white text-xl leading-none">
+                      {m.value}
+                    </span>
+                  </div>
+                  <span className="text-[9px] text-blue-100 font-semibold uppercase tracking-tight">
+                    {m.label}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+    );
+  }
+
+  // ── CARD MODE (default) ──────────────────────────────────────────────────
   return (
     <Link href="/history?tab=split-bill" className="block">
       <div className="relative px-[1.5px] pt-[1.5px] pb-[4px] rounded-2xl bg-gradient-to-r from-violet-400 via-pink-400 to-primary/70 shadow-lg shadow-pink-500/5 group hover:scale-[1.01] active:scale-[0.99] transition-all duration-300 overflow-hidden cursor-pointer">
@@ -87,7 +145,7 @@ export const FeatureHighlights = () => {
           </div>
 
           {/* Storytelling text */}
-          <div className="relative z-10">
+          <div className="relative z-10 mb-2">
             {totalBills > 0 ? (
               <p className="text-sm font-medium text-slate-600 leading-relaxed">
                 Mantap!,{" "}
@@ -98,7 +156,7 @@ export const FeatureHighlights = () => {
                 <span className="font-black text-slate-800">
                   {totalFriends} teman
                 </span>{" "}
-                biar tagihan gak drama. Keep it up! biar gak ada lagi “eh gue transfer ke siapa?” 😌
+                biar tagihan gak drama. Keep it up! biar gak ada lagi &quot;eh gue transfer ke siapa?&quot; 😌
               </p>
             ) : (
               <p className="text-sm font-medium text-slate-600 leading-relaxed">
@@ -110,28 +168,22 @@ export const FeatureHighlights = () => {
 
           {/* Metric pills */}
           {totalBills > 0 && (
-            <div className="relative z-10 grid grid-cols-3 gap-2 pt-1">
+            <div className="relative z-10 flex items-center justify-between bg-slate-50/60 rounded-xs py-2 px-3 text-xs font-bold text-slate-700 divide-x divide-slate-200/60">
               {metrics.map((m) => (
-                <div
-                  key={m.label}
-                  className="flex flex-col items-center gap-0.5 bg-slate-50 border border-slate-100 rounded-md py-3 px-1 transition-all duration-300"
-                >
-                  <m.icon className="w-3.5 h-3.5 text-primary/75 mb-0.5" />
-                  <span className="text-base font-black text-slate-800 tracking-tight leading-none">
-                    {m.value}
-                  </span>
-                  <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wide">
-                    {m.sublabel}
-                  </span>
-                  <span className="text-[9px] font-medium text-slate-400">
+                <div key={m.label} className="flex-1 flex items-center justify-center gap-2 px-1 first:pl-0 last:pr-0">
+                  <div className="flex items-center gap-1.5">
+                    <img src={m.iconSrc} alt={m.label} className="w-5 h-5 object-contain shrink-0" />
+                    <span className="font-black text-primary text-xl leading-none">
+                      {m.value}
+                    </span>
+                  </div>
+                  <span className="text-[9px] text-slate-400 font-medium uppercase tracking-tight">
                     {m.label}
                   </span>
                 </div>
               ))}
             </div>
           )}
-
-
         </div>
       </div>
     </Link>

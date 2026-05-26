@@ -4,15 +4,14 @@ import React from "react";
 import { Card, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import {
-  Sparkles,
   Image as ImageIcon,
-  Share2,
   History,
   CheckCircle2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-
 import Image from "next/image";
+import { useSplitBillStore } from "@/store/useSplitBillStore";
+import { toast } from "sonner";
 
 interface SaveBillNudgeProps {
   onSave: () => void;
@@ -26,6 +25,35 @@ const WhatsAppIcon = ({ className }: { className?: string }) => (
 );
 
 export const SaveBillNudge = ({ onSave, className }: SaveBillNudgeProps) => {
+  const { expenses, additionalExpenses } = useSplitBillStore();
+
+  const handleSave = () => {
+    if (expenses.length === 0) {
+      toast.error("Belum ada item nih! 📝", {
+        description:
+          "Yuk isi dulu item belanjaan atau pengeluarannya sebelum disimpan.",
+        duration: 4000,
+      });
+      return;
+    }
+
+    const hasUnassigned = expenses.some((e) => e.who.length === 0 || !e.paidBy);
+    const hasUnassignedAdx = additionalExpenses.some(
+      (e) => e.who.length === 0 || !e.paidBy
+    );
+
+    if (hasUnassigned || hasUnassignedAdx) {
+      toast.error("Ada item yang belum dilengkapi! ⚠️", {
+        description:
+          "Pastikan semua item sudah di-assign 'Split dengan' dan 'Dibayar oleh' ya.",
+        duration: 4000,
+      });
+      return;
+    }
+
+    onSave();
+  };
+
   return (
     <Card
       className={cn(
@@ -78,7 +106,7 @@ export const SaveBillNudge = ({ onSave, className }: SaveBillNudgeProps) => {
         </div>
 
         <Button
-          onClick={onSave}
+          onClick={handleSave}
           variant="outline"
           className="w-full h-11 border-primary/20 text-primary hover:bg-primary/5"
         >

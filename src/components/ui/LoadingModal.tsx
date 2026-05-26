@@ -1,8 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Sparkles } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { createPortal } from "react-dom";
 
 const LOADING_MESSAGES = [
@@ -16,8 +14,6 @@ const LOADING_MESSAGES = [
   "Bebas pusing! AI lagi urus semuanya, stay cool... 😎",
 ];
 
-const EMOJIS = ["🤖", "📝", "🔍", "⚡", "💸", "🍽️", "✨", "📱"];
-
 interface LoadingModalProps {
   isOpen: boolean;
 }
@@ -25,19 +21,15 @@ interface LoadingModalProps {
 export function LoadingModal({ isOpen }: LoadingModalProps) {
   const [mounted, setMounted] = useState(false);
   const [messageIndex, setMessageIndex] = useState(0);
-  const [emojiIndex, setEmojiIndex] = useState(0);
 
   useEffect(() => {
     setMounted(true);
-    // Randomize initial states
     setMessageIndex(Math.floor(Math.random() * LOADING_MESSAGES.length));
-    setEmojiIndex(Math.floor(Math.random() * EMOJIS.length));
 
     if (isOpen) {
       const interval = setInterval(() => {
         setMessageIndex((prev) => (prev + 1) % LOADING_MESSAGES.length);
-        setEmojiIndex((prev) => (prev + 1) % EMOJIS.length);
-      }, 2000);
+      }, 2500);
       return () => clearInterval(interval);
     }
   }, [isOpen]);
@@ -45,33 +37,49 @@ export function LoadingModal({ isOpen }: LoadingModalProps) {
   if (!isOpen || !mounted) return null;
 
   return createPortal(
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-[1000] p-6 animate-in fade-in duration-300">
-      <div className="max-w-xs w-full bg-white rounded-3xl p-8 shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col items-center text-center gap-6">
-        <div className="relative">
-          <div className="w-20 h-20 bg-primary/5 rounded-full flex items-center justify-center animate-bounce shadow-inner border border-primary/10">
-            <span className="text-4xl filter drop-shadow-sm transition-all duration-500 ease-in-out">
-              {EMOJIS[emojiIndex]}
-            </span>
-          </div>
-          <div className="absolute -top-1 -right-1 bg-amber-400 text-white p-1.5 rounded-full shadow-lg">
-            <Sparkles className="w-3 h-3" />
-          </div>
+    <div className="fixed inset-0 bg-white/95 backdrop-blur-xl flex flex-col items-center justify-center z-[1000] p-6 text-slate-800 overflow-hidden animate-in fade-in duration-500">
+      {/* Custom Styles for Shimmer Progress Animation */}
+      <style>{`
+        @keyframes shimmer-progress {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(100%); }
+        }
+        .animate-shimmer-progress {
+          animation: shimmer-progress 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
+      `}</style>
+
+      {/* Premium Soft Background Ambient Glows */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] bg-primary/10 rounded-full filter blur-[100px] pointer-events-none" />
+      <div className="absolute bottom-1/4 left-1/3 -translate-x-1/2 w-[280px] h-[280px] bg-indigo-500/5 rounded-full filter blur-[80px] pointer-events-none" />
+      <div className="absolute top-1/3 right-1/4 w-[250px] h-[250px] bg-cyan-500/5 rounded-full filter blur-[90px] pointer-events-none" />
+
+      {/* Main Content Container */}
+      <div className="relative max-w-md w-full flex flex-col items-center text-center gap-6 z-10">
+
+        {/* Simple Premium Illustration */}
+        <div className="relative w-60 h-60 md:w-64 md:h-64 flex items-center justify-center animate-pulse duration-[3000ms]">
+          <img
+            src="/img/illustration-scan-bill.png"
+            alt="Scan Bill illustration"
+            className="w-full h-full object-contain filter drop-shadow-[0_12px_24px_rgba(0,0,0,0.06)]"
+          />
         </div>
 
-        <div className="space-y-2">
-          <h3 className="text-lg font-black text-foreground tracking-tight uppercase italic">
-            Thinking... 🚀
-          </h3>
-          <p className="text-sm text-muted-foreground font-medium leading-relaxed min-h-[40px] transition-all">
+        {/* Loading Message */}
+        <div className="px-4">
+          <p className="text-base md:text-lg text-slate-700 font-semibold leading-relaxed min-h-[56px] transition-all duration-300 max-w-sm">
             {LOADING_MESSAGES[messageIndex]}
           </p>
         </div>
 
-        <div className="w-full bg-muted/30 h-1.5 rounded-full overflow-hidden border border-black/5">
-          <div className="bg-primary h-full w-full origin-left animate-progress-indefinite shadow-[0_0_8px_rgba(var(--primary),0.4)]" />
+        {/* Infinity Progress Loading Bar */}
+        <div className="w-56 bg-slate-100 h-2 rounded-full overflow-hidden border border-slate-200/50 relative shadow-inner">
+          <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 via-primary to-indigo-500 rounded-full w-full h-full animate-shimmer-progress" />
         </div>
       </div>
     </div>,
     document.body,
   );
 }
+

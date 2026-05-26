@@ -128,51 +128,56 @@ export const Footer = () => {
   };
 
   return (
-    <div className="sticky bottom-0 w-full max-w-[600px] mx-auto bg-background/60 backdrop-blur-xl border-t border-primary/5 py-3 px-6 flex justify-around items-center shadow-[0_-10px_30px_rgba(0,0,0,0.04)] z-40 pb-safe mt-auto lg:hidden">
-      {/* Left items */}
-      {leftMenuItems.map((item) => (
-        <NavItem key={item.path} {...item} />
-      ))}
+    <>
+      {/* Spacer to prevent content from being covered by the fixed bottom nav */}
+      <div className="h-[76px] pb-safe w-full lg:hidden block pointer-events-none" />
 
-      {/* Center: Camera Scan FAB */}
-      <div className="relative flex flex-col items-center justify-center -mt-7">
-        {/* Glow ring */}
-        <div className="absolute inset-0 rounded-full bg-primary/20 blur-md scale-110 animate-pulse pointer-events-none" />
+      <div className="fixed bottom-0 left-0 right-0 w-full max-w-[600px] mx-auto bg-background/80 backdrop-blur-xl border-t border-primary/5 py-3 px-6 flex justify-around items-center shadow-[0_-10px_30px_rgba(0,0,0,0.04)] z-40 pb-safe lg:hidden">
+        {/* Left items */}
+        {leftMenuItems.map((item) => (
+          <NavItem key={item.path} {...item} />
+        ))}
 
-        <button
-          onClick={handleCameraCapture}
-          aria-label="Scan Bill"
-          className={cn(
-            "relative w-14 h-14 rounded-full flex items-center justify-center",
-            "bg-gradient-to-br from-primary via-primary to-violet-600",
-            "shadow-lg shadow-primary/40",
-            "border-[4px] border-background",
-            "transition-all duration-200 active:scale-95 hover:scale-105 hover:shadow-primary/60 cursor-pointer",
-            // "ring-2 ring-primary/30 ring-offset-1 ring-offset-background",
-          )}
-        >
-          <Camera className="w-6 h-6 text-white" strokeWidth={2} />
-        </button>
+        {/* Center: Camera Scan FAB */}
+        <div className="relative flex flex-col items-center justify-center -mt-7">
+          {/* Glow ring */}
+          <div className="absolute inset-0 rounded-full bg-primary/20 blur-md scale-110 animate-pulse pointer-events-none" />
 
-        <span className="mt-1.5 text-[10px] font-medium text-muted-foreground/60 tracking-tight">
-          Scan
-        </span>
+          <button
+            onClick={handleCameraCapture}
+            aria-label="Scan Bill"
+            className={cn(
+              "relative w-14 h-14 rounded-full flex items-center justify-center",
+              "bg-gradient-to-br from-primary via-primary to-violet-600",
+              "shadow-lg shadow-primary/40",
+              "border-[4px] border-background",
+              "transition-all duration-200 active:scale-95 hover:scale-105 hover:shadow-primary/60 cursor-pointer",
+              // "ring-2 ring-primary/30 ring-offset-1 ring-offset-background",
+            )}
+          >
+            <Camera className="w-6 h-6 text-white" strokeWidth={2} />
+          </button>
 
-        {/* Hidden camera input */}
-        <input
-          ref={cameraInputRef}
-          type="file"
-          accept="image/*"
-          capture="environment"
-          className="hidden"
-          onChange={handleFileChange}
-        />
+          <span className="mt-1.5 text-[10px] font-medium text-muted-foreground/60 tracking-tight">
+            Scan
+          </span>
+
+          {/* Hidden camera input */}
+          <input
+            ref={cameraInputRef}
+            type="file"
+            accept="image/*"
+            capture="environment"
+            className="hidden"
+            onChange={handleFileChange}
+          />
+        </div>
+
+        {/* Right items */}
+        {rightMenuItems.map((item) => (
+          <NavItem key={item.path} {...item} />
+        ))}
       </div>
-
-      {/* Right items */}
-      {rightMenuItems.map((item) => (
-        <NavItem key={item.path} {...item} />
-      ))}
-    </div>
+    </>
   );
 };

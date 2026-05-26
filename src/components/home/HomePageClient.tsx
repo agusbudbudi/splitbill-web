@@ -159,6 +159,10 @@ export const HomePageClient = () => {
     }
   }, [isMounted, isAuthenticated, fetchBills]);
 
+  // Conditional layout: hero mode when user has history
+  const hasHistory =
+    isMounted && isAuthenticated && Array.isArray(savedBills) && savedBills.length >= 1;
+
   return (
     <div className="min-h-dvh bg-background flex flex-col items-center relative">
       {/* H1 – screen-reader accessible, visible to crawlers */}
@@ -236,27 +240,34 @@ export const HomePageClient = () => {
           <Banner />
         </div>
 
+        {/* Hero Top Area — only shown when authenticated */}
         {isMounted && isAuthenticated && (
           <div className="w-full">
-            <HeroBanner
-              variant="primary-gradient"
-              className="pt-[64px] pb-4 sm:pt-16 sm:pb-5 rounded-none border-x-0 border-t-0 sm:rounded-b-[24px] sm:rounded-t-none sm:border-x w-full"
-              badgeText="Scan Struk Otomatis"
-              badgeIcon={<Sparkles className="w-3 h-3 text-amber-300 fill-amber-300" />}
-              title={
-                <>
-                  Split Bill <br />
-                  <span className="text-amber-300 font-extrabold">Tanpa Ribet</span>
-                </>
-              }
-              description="Tinggal foto struk, biar AI yang urus hitungannya. Langsung Beres!"
-              primaryButtonText="Mulai Scan"
-              primaryButtonIcon={<Camera className="w-5 h-5" />}
-              onPrimaryClick={() => router.push("/split-bill?step=1")}
-              imageSrc="/img/hero-splitbill.png"
-              floatingCard={<HeroFloatingCard />}
-              trustText="Andalan ribuan grup & trip! 🔥"
-            />
+            {hasHistory ? (
+              /* Has history: FeatureHighlights becomes the hero at the top */
+              <FeatureHighlights heroMode />
+            ) : (
+              /* No history: show the regular Split Bill Tanpa Ribet hero */
+              <HeroBanner
+                variant="primary-gradient"
+                className="pt-[64px] pb-4 sm:pt-16 sm:pb-5 rounded-none border-x-0 border-t-0 sm:rounded-b-[24px] sm:rounded-t-none sm:border-x w-full"
+                badgeText="Scan Struk Otomatis"
+                badgeIcon={<Sparkles className="w-3 h-3 text-amber-300 fill-amber-300" />}
+                title={
+                  <>
+                    Split Bill <br />
+                    <span className="text-amber-300 font-extrabold">Tanpa Ribet</span>
+                  </>
+                }
+                description="Tinggal foto struk, biar AI yang urus hitungannya. Langsung Beres!"
+                primaryButtonText="Mulai Scan"
+                primaryButtonIcon={<Camera className="w-5 h-5" />}
+                onPrimaryClick={() => router.push("/split-bill?step=1")}
+                imageSrc="/img/hero-splitbill.png"
+                floatingCard={<HeroFloatingCard />}
+                trustText="Andalan ribuan grup & trip! 🔥"
+              />
+            )}
           </div>
         )}
 
@@ -288,9 +299,36 @@ export const HomePageClient = () => {
             <GettingStarted />
           </div>
 
-          <div>
-            <AIScanBanner />
-          </div>
+          {!hasHistory && (
+            <div>
+              <AIScanBanner />
+            </div>
+          )}
+
+          {/* Has history: HeroBanner moves below AIScanBanner */}
+          {hasHistory && (
+            <div className="w-full">
+              <HeroBanner
+                variant="light"
+                className="rounded-2xl border-none w-full"
+                badgeText="Scan Struk Otomatis"
+                badgeIcon={<Sparkles className="w-3 h-3 text-primary fill-primary" />}
+                title={
+                  <>
+                    Split Bill <br />
+                    <span className="text-primary font-extrabold">Tanpa Ribet</span>
+                  </>
+                }
+                description="Tinggal foto struk, biar AI yang urus hitungannya. Langsung Beres!"
+                primaryButtonText="Mulai Scan"
+                primaryButtonIcon={<Camera className="w-5 h-5" />}
+                onPrimaryClick={() => router.push("/split-bill?step=1")}
+                imageSrc="/img/hero-splitbill.png"
+                floatingCard={<HeroFloatingCard />}
+                trustText="Andalan ribuan grup & trip! 🔥"
+              />
+            </div>
+          )}
 
           {/* IntroSection: server-rendered for SEO; hidden via CSS after
               hydration when user is authenticated (no layout shift) */}
@@ -300,8 +338,8 @@ export const HomePageClient = () => {
 
           {isMounted && <ReviewRewardBanner />}
 
-          {/* Dashboard Section */}
-          {isMounted && isAuthenticated && (
+          {/* Dashboard Section — only shown when user has NO history */}
+          {isMounted && isAuthenticated && !hasHistory && (
             <section className="space-y-4">
               <div className="flex items-center gap-2 px-1">
                 <h2 className="text-md font-bold text-foreground">

@@ -34,7 +34,7 @@ export const BlogCard = ({ blog, priority = false }: BlogCardProps) => {
               loading={priority ? "eager" : "lazy"}
             />
             {/* Category Badge overlay */}
-            <div className="absolute top-4 left-4 z-10">
+            <div className="absolute top-2 left-2 z-10">
               <Badge className="bg-primary/90 backdrop-blur-md text-white border-none px-3 py-1 text-[10px] font-bold uppercase tracking-wider">
                 {blog.category}
               </Badge>

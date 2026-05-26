@@ -123,7 +123,7 @@ export const OngoingSplitBillCard = () => {
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 p-1 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 overflow-hidden">
                 <Image
-                  src="/img/icon-bill.png"
+                  src="/img/icon-splitbill.png"
                   alt="Bill Icon"
                   width={40}
                   height={40}

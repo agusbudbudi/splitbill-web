@@ -653,7 +653,13 @@ const SplitBillContent = () => {
                     <Card className="flex-1 flex items-center justify-center h-20 rounded-lg bg-muted/5 border border-dashed border-muted-foreground/10 px-4 text-center shadow-none">
                       <p className="text-[11px] text-muted-foreground leading-tight">
                         Belum ada dompet tersimpan. <br />
-                        <span className="font-bold underline cursor-pointer">
+                        <span
+                          onClick={() => {
+                            setIsAddWalletOpen(true);
+                            trackWallet.addMethodInitiate();
+                          }}
+                          className="font-bold underline cursor-pointer"
+                        >
                           Tambah yuk!
                         </span>
                       </p>
@@ -889,9 +895,31 @@ const SplitBillContent = () => {
               </Button>
             )}
 
-            {step === 4 && !isSaved && expenses.length > 0 && (
+            {step === 4 && !isSaved && (
               <Button
                 onClick={() => {
+                  if (expenses.length === 0) {
+                    toast.error("Belum ada item nih! 📝", {
+                      description:
+                        "Yuk isi dulu item belanjaan atau pengeluarannya sebelum disimpan.",
+                      duration: 4000,
+                    });
+                    return;
+                  }
+                  const hasUnassigned = expenses.some(
+                    (e) => e.who.length === 0 || !e.paidBy
+                  );
+                  const hasUnassignedAdx = additionalExpenses.some(
+                    (e) => e.who.length === 0 || !e.paidBy
+                  );
+                  if (hasUnassigned || hasUnassignedAdx) {
+                    toast.error("Ada item yang belum dilengkapi! ⚠️", {
+                      description:
+                        "Pastikan semua item sudah di-assign 'Split dengan' dan 'Dibayar oleh' ya.",
+                      duration: 4000,
+                    });
+                    return;
+                  }
                   trackSplitBill.finalizeModalView();
                   setShowFinalizeModal(true);
                 }}

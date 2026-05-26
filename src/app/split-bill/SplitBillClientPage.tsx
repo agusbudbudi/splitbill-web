@@ -867,12 +867,12 @@ const SplitBillContent = () => {
                       ? "bg-emerald-600 text-white shadow-emerald-200"
                       : "bg-primary text-white shadow-primary/20",
                     expenses.length === 0 &&
-                      "opacity-100 bg-[#ede9fe] text-primary/40 shadow-none",
+                    "opacity-100 bg-[#ede9fe] text-primary/40 shadow-none",
                   )}
                 >
                   {expenses.length > 0 &&
-                  unassignedCount === 0 &&
-                  unassignedAdxCount === 0
+                    unassignedCount === 0 &&
+                    unassignedAdxCount === 0
                     ? "Berhasil, Lanjutkan! ✅"
                     : "Lanjutkan"}
                   <ChevronRight className="ml-2 w-5 h-5" />

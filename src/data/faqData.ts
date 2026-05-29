@@ -17,9 +17,9 @@ export interface FAQItem {
 export const faqData: FAQItem[] = [
   {
     id: "1",
-    question: "Apakah aplikasi ini benar-benar gratis?",
+    question: "Apakah SplitBill gratis digunakan?",
     answer:
-      "Ya! SplitBill 100% gratis digunakan oleh siapa saja, kapan saja. Tidak ada biaya tersembunyi atau fitur yang dikunci di balik pembayaran.",
+      "SplitBill tersedia dalam dua paket. Paket Gratisan (Rp 0/selamanya) sudah termasuk 5x quota scan struk AI, semua fitur split bill dasar, dan share rincian ke WhatsApp — lebih dari cukup untuk patungan sesekali. Upgrade ke Paket Premium (Rp 15K/bulan) untuk scan struk tanpa batas, OCR Pro yang lebih ngebut, invoice premium, statistik keuangan, dan bebas iklan.",
     category: "umum",
     showOnLanding: true,
   },
@@ -27,7 +27,7 @@ export const faqData: FAQItem[] = [
     id: "2",
     question: "Apakah saya perlu buat akun untuk pakai?",
     answer:
-      "Tidak wajib. Kamu bisa langsung pakai fitur Split Bill seketika. Akun hanya diperlukan jika kamu ingin menyimpan riwayat transaksi secara permanen di cloud agar tidak hilang saat hapus cache browser.",
+      "Tidak wajib! Kamu bisa langsung pakai fitur Split Bill tanpa daftar sama sekali. Akun diperlukan hanya jika kamu ingin menyimpan riwayat transaksi secara permanen di cloud, menggunakan fitur Shared Goals, Collect Money, atau berlangganan Premium.",
     category: "akun",
     showOnLanding: true,
   },
@@ -35,7 +35,7 @@ export const faqData: FAQItem[] = [
     id: "3",
     question: "Data saya disimpan di mana?",
     answer:
-      "Secara default, semua data transaksi kamu disimpan secara lokal di browsermu (LocalStorage). Kami menjunjung tinggi privasi, sehingga kami tidak tahu apa yang kamu beli kecuali kamu login dan sengaja menyimpannya.",
+      "Jika kamu tidak login, data transaksi disimpan secara lokal di browsermu (LocalStorage) dan hanya bisa diakses dari perangkat tersebut. Jika kamu login, data tersimpan aman di server kami yang terenkripsi dan bisa diakses dari perangkat mana saja kapan saja.",
     category: "privasi",
     showOnLanding: true,
   },
@@ -43,7 +43,7 @@ export const faqData: FAQItem[] = [
     id: "4",
     question: "Gimana kalau struk saya panjang banget?",
     answer:
-      "Tenang! Fitur AI Scan kami didesain untuk membaca struk yang panjang sekalipun. Pastikan saja pencahayaannya cukup dan tulisan di struk terlihat jelas saat difoto.",
+      "Tenang! AI Scan kami sudah dirancang untuk membaca struk yang panjang sekalipun. Pastikan pencahayaan cukup dan tulisan pada struk terlihat jelas saat difoto. Untuk struk yang sangat panjang, coba potret dalam kondisi terbentang rata dan tidak terlipat.",
     category: "split-bill",
     showOnLanding: true,
   },
@@ -51,31 +51,31 @@ export const faqData: FAQItem[] = [
     id: "5",
     question: "Bisakah saya bagi tagihan dengan jumlah beda-beda?",
     answer:
-      "Pastinya! Kami mendukung pembagian per item (Split per Item) atau pembagian merata. Kamu bahkan bisa menambahkan pajak dan biaya layanan secara proporsional.",
+      "Pastinya! SplitBill mendukung pembagian per item (siapa makan apa), pembagian merata, hingga pembagian custom per orang. Pajak (PPN), service charge, dan diskon pun otomatis dihitung proporsional per item menu.",
     category: "split-bill",
     showOnLanding: true,
   },
   {
     id: "6",
-    question: "Metode pembayaran apa saja yang didukung?",
+    question: "Apa saja yang didapat di Paket Premium?",
     answer:
-      "Kamu bisa menambahkan berbagai metode pembayaran populer di Indonesia seperti GoPay, OVO, Dana, ShopeePay, serta transfer bank (BCA, Mandiri, dll).",
-    category: "split-bill",
-    showOnLanding: false,
+      "Paket Premium (Rp 15K/bulan) memberikan kamu: scan struk AI tanpa batas kuota, OCR Pro yang lebih cepat & akurat, desain link invoice premium yang bisa dikustomisasi, statistik keuangan & analisis pengeluaran bulanan, serta pengalaman bebas iklan. Cocok buat kamu yang sering nongkrong dan hobi kulineran bareng circle.",
+    category: "umum",
+    showOnLanding: true,
   },
   {
     id: "7",
     question: "Bagaimana cara share tagihan ke teman?",
     answer:
-      "Setelah selesai menghitung, kamu akan mendapatkan ringkasan tagihan. Kamu bisa langsung klik tombol 'Share ke WhatsApp' untuk mengirimkan rincian dan nomor rekeningmu ke teman-teman.",
+      "Setelah selesai menghitung, kamu akan mendapatkan ringkasan tagihan lengkap. Klik tombol 'Share ke WhatsApp' untuk kirim rincian sekaligus info rekening/e-wallet ke teman-temanmu. Mereka tinggal buka link, lihat berapa yang harus dibayar, dan langsung transfer.",
     category: "split-bill",
     showOnLanding: false,
   },
   {
     id: "8",
-    question: "Apakah AI Scan selalu akurat?",
+    question: "Seberapa akurat AI Scan struk-nya?",
     answer:
-      "Tingkat akurasi AI kami sangat tinggi (di atas 95%), namun hasil tetap bergantung pada kualitas foto. Kami menyarankan untuk selalu melakukan review cepat sebelum memproses tagihan.",
+      "Akurasi AI Scan kami sangat tinggi (di atas 95%) untuk foto struk dengan kondisi baik. Pada Paket Premium, kamu mendapatkan akses OCR Pro yang lebih canggih dengan akurasi lebih tinggi bahkan untuk struk yang agak buram atau miring. Kami selalu sarankan untuk review cepat hasil scan sebelum proses tagihan.",
     category: "split-bill",
     showOnLanding: false,
   },
@@ -83,7 +83,7 @@ export const faqData: FAQItem[] = [
     id: "9",
     question: "Berapa lama riwayat transaksi disimpan?",
     answer:
-      "Jika kamu tidak login, data disimpan selamanya di browsermu selama kamu tidak menghapus data situs (cache). Jika login, data akan tersimpan aman di cloud selamanya.",
+      "Jika tidak login, data tersimpan di browser selama kamu tidak menghapus data situs (cache). Jika login, semua riwayat transaksi tersimpan permanen di cloud dan tidak akan hilang meskipun kamu ganti perangkat atau hapus cache.",
     category: "privasi",
     showOnLanding: false,
   },
@@ -91,7 +91,7 @@ export const faqData: FAQItem[] = [
     id: "10",
     question: "Bagaimana cara mengganti mata uang?",
     answer:
-      "Saat ini kami fokus pada Rupiah (IDR). Namun, kamu bisa menggunakan angka nominal untuk mata uang apa pun karena sistem kami bersifat fleksibel.",
+      "Saat ini SplitBill fokus pada Rupiah (IDR). Namun angka nominal tetap fleksibel sehingga kamu bisa menggunakannya untuk referensi mata uang lain jika diperlukan.",
     category: "umum",
     showOnLanding: false,
   },
@@ -99,7 +99,7 @@ export const faqData: FAQItem[] = [
     id: "11",
     question: "Apakah bisa digunakan di iPhone dan Android?",
     answer:
-      "Tentu! SplitBill adalah Progressive Web App (PWA) yang bisa kamu akses melalui browser di perangkat apa pun, baik iOS maupun Android.",
+      "Tentu! SplitBill adalah Progressive Web App (PWA) yang bisa diakses lewat browser di perangkat apa pun — iPhone, Android, maupun laptop. Kamu juga bisa 'Add to Home Screen' agar muncul seperti aplikasi native di gadgetmu.",
     category: "umum",
     showOnLanding: false,
   },
@@ -107,7 +107,7 @@ export const faqData: FAQItem[] = [
     id: "12",
     question: "Bisa tambahkan pajak dan service charge?",
     answer:
-      "Bisa banget. Kami punya fitur 'Biaya Tambahan' di mana kamu bisa input Tax dan Service dalam persen atau nominal rupiah.",
+      "Bisa banget. Di fitur 'Biaya Tambahan', kamu bisa input Pajak (PPN), Service Charge, maupun diskon dalam format persen (%) atau nominal rupiah. Semua akan dikalkulasi secara proporsional sesuai harga masing-masing menu.",
     category: "split-bill",
     showOnLanding: false,
   },
@@ -115,7 +115,7 @@ export const faqData: FAQItem[] = [
     id: "13",
     question: "Foto struknya harus satu per satu?",
     answer:
-      "Ya, untuk akurasi terbaik sebaiknya satu struk per foto. Jika struknya sangat panjang, AI Scan kami sudah cukup pintar untuk menangani foto yang memanjang.",
+      "Untuk hasil terbaik, sebaiknya satu struk per foto. Jika struknya sangat panjang, AI Scan kami sudah bisa menangani foto memanjang dengan baik. Pastikan seluruh bagian struk terlihat jelas dalam satu frame.",
     category: "split-bill",
     showOnLanding: false,
   },
@@ -123,7 +123,7 @@ export const faqData: FAQItem[] = [
     id: "14",
     question: "Apakah ada aplikasi di App Store/Play Store?",
     answer:
-      "Saat ini kami tersedia sebagai Web App. Kamu cukup tambahkan ke Home Screen (Add to Home Screen) di gadgetmu agar muncul seperti aplikasi biasa.",
+      "Saat ini SplitBill tersedia sebagai Web App yang dioptimalkan untuk mobile. Kamu cukup buka di browser lalu pilih 'Add to Home Screen' agar muncul dan terasa seperti aplikasi biasa di layar HP-mu.",
     category: "umum",
     showOnLanding: false,
   },
@@ -131,7 +131,7 @@ export const faqData: FAQItem[] = [
     id: "15",
     question: "Bagaimana cara hapus akun?",
     answer:
-      "Kamu bisa menghapus akun melalui menu Pengaturan Profil. Perlu diingat bahwa data yang sudah dihapus tidak dapat dikembalikan.",
+      "Kamu bisa menghapus akun melalui menu Pengaturan Profil. Perlu diingat bahwa semua data yang sudah dihapus tidak dapat dikembalikan, termasuk riwayat transaksi dan data langganan Premium.",
     category: "akun",
     showOnLanding: false,
   },
@@ -139,7 +139,7 @@ export const faqData: FAQItem[] = [
     id: "16",
     question: "Apa itu fitur Invoice di SplitBill?",
     answer:
-      "Fitur Invoice memungkinkan kamu membuat rincian tagihan yang profesional. Kamu bisa menambahkan rincian item, pajak, hingga informasi rekening pembayaran dalam satu dokumen yang rapi.",
+      "Fitur Invoice memungkinkan kamu membuat tagihan profesional yang rapi dan estetik. Kamu bisa menambahkan rincian item, pajak, informasi rekening pembayaran, dan catatan. Pengguna Premium mendapatkan akses desain invoice yang lebih premium dan bisa dikustomisasi sesuai brand.",
     category: "invoice",
     showOnLanding: false,
   },
@@ -147,7 +147,7 @@ export const faqData: FAQItem[] = [
     id: "17",
     question: "Apakah saya bisa kustomisasi tampilan invoice?",
     answer:
-      "Bisa! Kamu bisa mengatur nama bisnis, alamat, catatan kaki (footer), hingga memilih tema warna yang sesuai dengan brand kamu agar terlihat lebih profesional.",
+      "Bisa! Khusus Paket Premium, kamu bisa mengatur nama bisnis, logo, alamat, catatan kaki, hingga tema warna sesuai brand-mu agar invoice terlihat lebih profesional dan terpercaya.",
     category: "invoice",
     showOnLanding: false,
   },
@@ -155,7 +155,7 @@ export const faqData: FAQItem[] = [
     id: "18",
     question: "Format apa saja yang didukung untuk sharing invoice?",
     answer:
-      "Kamu bisa membagikan invoice dalam bentuk link interaktif (web view) atau mengunduhnya sebagai gambar/PDF yang siap dikirim lewat WhatsApp atau email.",
+      "Kamu bisa membagikan invoice sebagai link interaktif (web view) yang bisa dibuka di browser, atau mengunduhnya sebagai gambar/PDF yang siap dikirim via WhatsApp, email, maupun platform lainnya.",
     category: "invoice",
     showOnLanding: false,
   },
@@ -163,7 +163,7 @@ export const faqData: FAQItem[] = [
     id: "19",
     question: "Bisakah saya membuat invoice tanpa harus split bill?",
     answer:
-      "Tentu saja. Kami menyediakan 'Invoice Builder' khusus buat kamu yang ingin membuat tagihan profesional secara mandiri tanpa perlu melewati proses bagi tagihan kelompok.",
+      "Tentu saja. SplitBill menyediakan Invoice Builder mandiri untuk kamu yang ingin membuat tagihan profesional secara langsung tanpa harus melewati proses bagi tagihan kelompok terlebih dahulu.",
     category: "invoice",
     showOnLanding: false,
   },
@@ -171,7 +171,7 @@ export const faqData: FAQItem[] = [
     id: "20",
     question: "Apa itu fitur Shared Goals?",
     answer:
-      "Shared Goals adalah fitur yang membantu kamu dan teman-teman menabung bersama untuk tujuan tertentu, seperti liburan, beli kado, atau makan bersama. Kamu bisa memantau progress tabungan secara real-time.",
+      "Shared Goals adalah fitur nabung bareng untuk tujuan tertentu bersama circle-mu — misalnya liburan, beli kado, atau makan spesial. Kamu bisa pantau progress tabungan semua anggota secara real-time dan transparan.",
     category: "shared-goals",
     showOnLanding: false,
   },
@@ -179,7 +179,7 @@ export const faqData: FAQItem[] = [
     id: "21",
     question: "Gimana cara mulai Shared Goals?",
     answer:
-      "Kamu cukup klik menu 'Shared Goals' di halaman utama, buat tujuan baru (Create Goal), tentukan target nominal, dan ajak teman-temanmu untuk bergabung.",
+      "Klik menu 'Shared Goals', buat tujuan baru (Create Goal), tentukan nama dan target nominal, lalu ajak teman-temanmu bergabung. Setiap anggota bisa mencatat kontribusi mereka masing-masing.",
     category: "shared-goals",
     showOnLanding: false,
   },
@@ -187,7 +187,7 @@ export const faqData: FAQItem[] = [
     id: "22",
     question: "Apakah uang tabungan Shared Goals disimpan di aplikasi?",
     answer:
-      "Tidak. SplitBill hanya berfungsi sebagai pencatat rincian tabungan agar transparan. Uang fisik tetap disimpan oleh bendahara atau di rekening masing-masing anggota sesuai kesepakatan kalian.",
+      "Tidak. SplitBill hanya berfungsi sebagai pencatat dan pemantau progress tabungan agar transparan untuk semua anggota. Uang fisik tetap disimpan oleh bendahara atau di rekening masing-masing sesuai kesepakatan kelompok.",
     category: "shared-goals",
     showOnLanding: false,
   },
@@ -195,7 +195,7 @@ export const faqData: FAQItem[] = [
     id: "23",
     question: "Bisakah saya membagikan progress tabungan ke teman?",
     answer:
-      "Bisa banget! Kamu bisa membagikan ringkasan progress tabungan dalam bentuk link interaktif atau gambar estetik yang sudah kami siapkan untuk dishare ke grup WhatsApp.",
+      "Bisa banget! Kamu bisa membagikan ringkasan progress tabungan dalam bentuk link interaktif atau gambar yang siap dishare ke grup WhatsApp agar semua anggota bisa pantau perkembangannya.",
     category: "shared-goals",
     showOnLanding: false,
   },
@@ -203,7 +203,7 @@ export const faqData: FAQItem[] = [
     id: "24",
     question: "Apa bedanya Shared Goals dengan Split Bill?",
     answer:
-      "Split Bill digunakan untuk membagi tagihan yang sudah dibayarkan (transaksi masa lalu), sedangkan Shared Goals digunakan untuk mengumpulkan uang demi rencana belanja atau kegiatan di masa depan (nabung bareng).",
+      "Split Bill digunakan untuk membagi tagihan yang sudah terjadi (misalnya abis makan). Shared Goals digunakan untuk mengumpulkan dana bersama menuju tujuan di masa depan (misalnya liburan bareng). Dua fitur berbeda untuk dua kebutuhan yang berbeda.",
     category: "shared-goals",
     showOnLanding: false,
   },
@@ -211,7 +211,7 @@ export const faqData: FAQItem[] = [
     id: "25",
     question: "Apa itu fitur Collect Money (Patungan)?",
     answer:
-      "Collect Money adalah fitur patungan praktis untuk keperluan yang tidak punya struk fisik, seperti iuran kas, kado teman, atau donasi. Kamu cukup tentukan nominal target atau buat patungan terbuka.",
+      "Collect Money adalah fitur patungan praktis untuk keperluan tanpa struk fisik — seperti iuran kas, kado ulang tahun teman, atau donasi. Kamu cukup tentukan nominal target atau buat patungan terbuka, lalu bagikan link-nya ke semua peserta.",
     category: "collect-money",
     showOnLanding: false,
   },
@@ -219,7 +219,7 @@ export const faqData: FAQItem[] = [
     id: "26",
     question: "Gimana cara pakai fitur Patungan?",
     answer:
-      "Klik menu 'Collect Money', masukkan judul kegiatan dan target dana (opsional). Setelah itu, bagikan link patungan ke teman-teman agar mereka bisa melihat rincian pembayaran.",
+      "Buka menu 'Collect Money', masukkan judul kegiatan dan target dana (boleh dikosongkan untuk patungan terbuka). Setelah itu, bagikan link patungan ke teman-teman agar mereka bisa melihat rincian dan mencatat pembayaran masing-masing.",
     category: "collect-money",
     showOnLanding: false,
   },
@@ -227,7 +227,7 @@ export const faqData: FAQItem[] = [
     id: "27",
     question: "Apa bedanya Patungan dengan Shared Goals?",
     answer:
-      "Patungan (Collect Money) biasanya untuk iuran sekali jalan yang bersifat segera, sedangkan Shared Goals lebih untuk menabung bersama dalam jangka waktu tertentu untuk mencapai target besar.",
+      "Patungan (Collect Money) biasanya untuk kebutuhan yang bersifat segera dan sekali jalan — seperti iuran atau beli kado. Shared Goals lebih cocok untuk nabung bersama dalam jangka waktu tertentu menuju target besar seperti liburan atau pembelian besar.",
     category: "collect-money",
     showOnLanding: false,
   },
@@ -235,7 +235,7 @@ export const faqData: FAQItem[] = [
     id: "28",
     question: "Apa itu fitur Wallet di SplitBill?",
     answer:
-      "Fitur Wallet adalah tempat kamu menyimpan nomor rekening dan akun e-wallet (seperti BCA, GoPay, OVO). Data ini akan ditampilkan otomatis saat kamu menagih utang ke teman-teman.",
+      "Fitur Wallet adalah tempat kamu menyimpan informasi rekening dan akun e-wallet (BCA, Mandiri, GoPay, OVO, DANA, dll). Data ini otomatis ditampilkan saat kamu menagih ke teman agar transfer jadi lebih mudah dan tidak ada salah tujuan.",
     category: "wallet",
     showOnLanding: false,
   },
@@ -243,7 +243,7 @@ export const faqData: FAQItem[] = [
     id: "29",
     question: "Apakah saldonya asli dan bisa ditarik?",
     answer:
-      "Tidak. Wallet di sini hanya sebagai kartu nama digital untuk informasi pembayaran. Kami tidak menyimpan uang atau saldo hasil patungan kamu.",
+      "Tidak. Wallet di sini adalah kartu nama digital untuk informasi pembayaran saja. SplitBill tidak menyimpan, mengelola, atau memproses uang riil dalam bentuk apapun.",
     category: "wallet",
     showOnLanding: false,
   },
@@ -251,7 +251,7 @@ export const faqData: FAQItem[] = [
     id: "30",
     question: "Berapa banyak akun bank yang bisa saya simpan?",
     answer:
-      "Kamu bisa menyimpan sebanyak mungkin akun bank atau e-wallet yang kamu punya. Kamu bisa memilih akun mana yang ingin ditampilkan pada setiap tagihan.",
+      "Kamu bisa menyimpan sebanyak yang kamu butuhkan. Saat mengirim tagihan, kamu tinggal pilih akun mana yang ingin ditampilkan kepada teman yang akan transfer.",
     category: "wallet",
     showOnLanding: false,
   },

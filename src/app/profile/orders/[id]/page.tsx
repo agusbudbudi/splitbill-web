@@ -117,7 +117,6 @@ export default function OrderDetailPage() {
         <Header
           title="Detail Pesanan"
           showBackButton
-          onBack={() => router.push("/profile/orders")}
         />
 
         <main className="flex-1 p-4 space-y-6">

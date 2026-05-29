@@ -20,7 +20,7 @@ export const BilledToShortcut = () => {
     // 3. Set step to 2 (Billed)
     setCurrentStep(2);
     // 4. Navigate to create invoice page
-    router.push("/invoice/create");
+    router.push("/invoice/create?step=2");
   };
 
   if (!billedToList || billedToList.length === 0) {
@@ -44,7 +44,7 @@ export const BilledToShortcut = () => {
                 onClick={() => {
                   resetInvoice();
                   setCurrentStep(2);
-                  router.push("/invoice/create");
+                  router.push("/invoice/create?step=2");
                 }}
                 className="w-[100px] h-[100px] rounded-2xl border-2 border-dashed border-primary/20 bg-white/50 hover:bg-primary/5 flex flex-col items-center justify-center gap-2 transition-all active:scale-95 group"
               >

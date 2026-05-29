@@ -3,7 +3,6 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import { Toaster } from "sonner";
 import "./globals.css";
-import { PWAInstallBanner } from "@/components/layout/PWAInstallBanner";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { AppEntryTracker } from "@/components/providers/AppEntryTracker";
@@ -123,7 +122,6 @@ export default function RootLayout({
         <AppEntryTracker />
         <ThemeProvider>
           <ResponsiveShell>
-            <PWAInstallBanner />
             {children}
           </ResponsiveShell>
         </ThemeProvider>

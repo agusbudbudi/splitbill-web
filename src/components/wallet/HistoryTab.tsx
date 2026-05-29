@@ -70,7 +70,7 @@ export const HistoryTab = () => {
         <EmptyState
           icon={ScrollText}
           message="Belum Ada Transaksi"
-          subtitle="Riwayat split bill kamu akan muncul di sini setelah kamu menyelesaikan transaksi pertamamu."
+          subtitle="Aktivitas split bill kamu akan muncul di sini setelah kamu menyelesaikan transaksi pertamamu."
           action={
             <Link href="/split-bill">
               <Button className="rounded-lg px-10 shadow-lg shadow-primary/20 font-bold h-12">
@@ -86,7 +86,7 @@ export const HistoryTab = () => {
       <EmptyState
         icon={FileText}
         message="Belum Ada Invoice"
-        subtitle="Riwayat invoice kamu akan muncul di sini setelah kamu memfinalisasi invoice pertamamu."
+        subtitle="Aktivitas invoice kamu akan muncul di sini setelah kamu memfinalisasi invoice pertamamu."
         action={
           <Link href="/invoice/create">
             <Button className="rounded-lg px-10 shadow-lg shadow-primary/20 font-bold h-12">

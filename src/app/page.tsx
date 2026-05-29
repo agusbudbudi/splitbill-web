@@ -1,35 +1,37 @@
-/**
- * Homepage — Server Component
- *
- * Exports page-level metadata so Next.js App Router renders proper
- * <title>, <meta description>, Open Graph, and canonical tags.
- *
- * All UI logic lives in HomePageClient (Client Component) which is still
- * SSR'd on the first request — the key difference is that its sub-components
- * no longer use `ssr: false`, so Googlebot sees the full HTML.
- */
-
 import type { Metadata } from "next";
-import { HomePageClient } from "@/components/home/HomePageClient";
+import { HomepagePageClient } from "@/components/homepage/HomepagePageClient";
 
 export const metadata: Metadata = {
   title: "Split Bill Online - Aplikasi Bagi Tagihan & Patungan Gratis",
   description:
     "Split bill online gratis! Scan struk, hitung pajak otomatis, dan bagi tagihan praktis bareng teman. Aplikasi patungan terbaik yang 100% free, cepat & akurat.",
   keywords: [
+    "split bill",
+    "splitbill",
     "split bill online",
+    "splitbill online",
     "split bill online free",
     "split bill online photo",
     "split bill online scan",
     "splitbill app",
+    "split bill app",
     "split bill free",
     "split bill online with tax",
     "aplikasi bagi tagihan",
+    "aplikasi split bill",
+    "aplikasi patungan",
     "patungan online",
     "scan struk online",
     "cara split bill",
     "bagi tagihan restoran",
     "hitung patungan otomatis",
+    "blu split bill",
+    "split bill online calculator",
+    "split bill whatsapp",
+    "alternatif split bill bonapp",
+    "alternatif chatgpt split bill",
+    "split bill photo",
+    "cara hitung split bill manual",
   ],
   authors: [{ name: "SplitBill Team" }],
   openGraph: {
@@ -61,8 +63,6 @@ export const metadata: Metadata = {
   },
 };
 
-// Structured data schemas — injected via HomePageClient for flexibility,
-// but defined here so they're co-located with the page.
-export default function Home() {
-  return <HomePageClient />;
+export default function HomepagePage() {
+  return <HomepagePageClient />;
 }

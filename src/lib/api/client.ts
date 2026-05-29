@@ -14,6 +14,8 @@ class ApiClient {
   private baseURL: string;
   private tokenRefreshPromise: Promise<boolean> | null = null;
 
+  private isRedirecting = false;
+
   constructor(baseURL: string) {
     this.baseURL = baseURL;
   }
@@ -49,16 +51,26 @@ class ApiClient {
       let response = await fetch(url, config);
 
       // If token expired and we have a refresh token, try to refresh
-      if (response.status === 401 && !skipRefresh && !skipAuth) {
-        const refreshed = await this.refreshTokens();
-        if (refreshed) {
-          // Retry request with new token
-          const newToken = getAccessToken();
-          config.headers = {
-            ...config.headers,
-            Authorization: `Bearer ${newToken}`,
-          };
-          response = await fetch(url, config);
+      if (response.status === 401 && !skipAuth) {
+        if (!skipRefresh) {
+          const refreshed = await this.refreshTokens();
+          if (refreshed) {
+            // Retry request with new token
+            const newToken = getAccessToken();
+            config.headers = {
+              ...config.headers,
+              Authorization: `Bearer ${newToken}`,
+            };
+            response = await fetch(url, config);
+            
+            if (response.status === 401) {
+              await this.handleTokenExpired();
+            }
+          } else {
+            await this.handleTokenExpired();
+          }
+        } else {
+          await this.handleTokenExpired();
         }
       }
 
@@ -76,6 +88,27 @@ class ApiClient {
     } catch (error) {
       console.error("API request failed:", error);
       throw error;
+    }
+  }
+
+  private async handleTokenExpired() {
+    if (typeof window !== "undefined") {
+      if (this.isRedirecting) return;
+      this.isRedirecting = true;
+
+      const { clearTokens } = await import("@/lib/auth/tokens");
+      clearTokens();
+
+      const currentPath = window.location.pathname + window.location.search;
+      const redirectParam =
+        currentPath && currentPath !== "/" && currentPath !== "/login"
+          ? `redirect=${encodeURIComponent(currentPath)}`
+          : "";
+
+      const queryParams = ["expired=true", redirectParam].filter(Boolean).join("&");
+      const loginUrl = `/login?${queryParams}`;
+
+      window.location.href = loginUrl;
     }
   }
 

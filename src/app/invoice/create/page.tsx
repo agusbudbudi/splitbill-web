@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, Suspense } from "react";
 import { Header } from "@/components/layout/Header";
 import { Button } from "@/components/ui/Button";
 import { useInvoiceStore } from "@/lib/stores/invoiceStore";
@@ -21,22 +21,31 @@ import { Step3Items } from "../components/Step3Items";
 import { Step4Payment } from "../components/Step4Payment";
 import { Step5TnC } from "../components/Step5TnC";
 import { Step6Preview } from "../components/Step6Preview";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { InfoBanner } from "@/components/ui/InfoBanner";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 
-export default function InvoicePage() {
+function InvoiceCreateContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const step = parseInt(searchParams.get("step") || "1");
+
   const {
     currentStep,
     currentInvoice,
-    nextStep,
-    prevStep,
     finalizeInvoice,
     resetInvoice,
+    setCurrentStep,
   } = useInvoiceStore();
   const [showFinalizeModal, setShowFinalizeModal] = React.useState(false);
+
+  // Sync step from query parameters to store
+  useEffect(() => {
+    if (step >= 1 && step <= 6 && step !== currentStep) {
+      setCurrentStep(step);
+    }
+  }, [step, currentStep, setCurrentStep]);
 
   // Check if invoice is finalized
   const isFinalized = currentInvoice.status !== "draft";
@@ -54,7 +63,8 @@ export default function InvoicePage() {
       // Show Finalize Modal
       setShowFinalizeModal(true);
     } else {
-      nextStep();
+      const nextStepNum = currentStep + 1;
+      router.replace(`/invoice/create?step=${nextStepNum}`);
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
@@ -68,10 +78,11 @@ export default function InvoicePage() {
 
   const handlePrev = () => {
     if (currentStep > 1) {
-      prevStep();
+      const prevStepNum = currentStep - 1;
+      router.replace(`/invoice/create?step=${prevStepNum}`);
       window.scrollTo({ top: 0, behavior: "smooth" });
     } else {
-      router.push("/invoice");
+      router.back();
     }
   };
 
@@ -266,5 +277,17 @@ export default function InvoicePage() {
         confirmButtonClassName="bg-green-600 hover:bg-green-700 text-white shadow-green-600/20"
       />
     </div>
+  );
+}
+
+export default function InvoicePage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    }>
+      <InvoiceCreateContent />
+    </Suspense>
   );
 }

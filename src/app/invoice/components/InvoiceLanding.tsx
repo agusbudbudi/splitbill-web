@@ -26,7 +26,7 @@ import { TextButton } from "@/components/ui/TextButton";
 import { BilledToShortcut } from "./BilledToShortcut";
 
 export const InvoiceLanding = () => {
-  const { invoiceHistory, currentInvoice } = useInvoiceStore();
+  const { invoiceHistory, currentInvoice, currentStep } = useInvoiceStore();
   const hasItems = (currentInvoice.items?.length || 0) > 0;
 
   const stats = [
@@ -62,7 +62,7 @@ export const InvoiceLanding = () => {
           </>
         }
         ctaText={hasItems ? "Lanjutkan Buat Invoice" : "Buat Invoice Baru"}
-        ctaHref="/invoice/create"
+        ctaHref={hasItems ? `/invoice/create?step=${currentStep}` : "/invoice/create?step=1"}
         illustration="/img/feature-invoice.png"
         illustrationAlt="Ilustrasi Buat Invoice Online — Buat tagihan profesional dengan cepat dan mudah"
         variant="secondary"
@@ -75,11 +75,11 @@ export const InvoiceLanding = () => {
             <div className="flex-1 space-y-1">
               <div className="flex items-center gap-1.5 mb-1">
                 <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-                <p className="text-[10px] font-black text-primary uppercase tracking-widest leading-none">
+                <p className="text-[10px] font-bold text-primary uppercase tracking-widest leading-none">
                   Total Invoice
                 </p>
               </div>
-              <p className="text-xl font-black text-foreground tracking-tight">
+              <p className="text-xl font-bold text-foreground tracking-tight">
                 {invoiceHistory.length}{" "}
                 <span className="text-xs font-bold text-muted-foreground ml-1">
                   Invoice
@@ -91,12 +91,12 @@ export const InvoiceLanding = () => {
 
             <div className="flex-1 space-y-1 text-right">
               <div className="flex items-center justify-end gap-1.5 mb-1">
-                <p className="text-[10px] font-black text-primary uppercase tracking-widest leading-none">
+                <p className="text-[10px] font-bold text-primary uppercase tracking-widest leading-none">
                   Nilai Total
                 </p>
                 <div className="w-1.5 h-1.5 rounded-full bg-primary" />
               </div>
-              <p className="text-xl font-black text-foreground tracking-tight">
+              <p className="text-xl font-bold text-foreground tracking-tight">
                 {formatToIDR(
                   invoiceHistory.reduce(
                     (sum, inv) => sum + (inv.total || 0),
@@ -181,7 +181,7 @@ export const InvoiceLanding = () => {
                       </div>
                     </div>
                     <div className="text-right flex flex-col items-end justify-between py-0.5">
-                      <p className="text-xs font-black text-foreground">
+                      <p className="text-xs font-bold text-foreground">
                         {formatToIDR(inv.total || 0)}
                       </p>
                       <div className="flex items-center gap-1">
@@ -232,7 +232,7 @@ export const InvoiceLanding = () => {
             bgColor="bg-emerald-50"
           />
           <ActionCard
-            title="Riwayat"
+            title="Aktivitas"
             description="Pantau semua tagihan di satu tempat."
             icon={HistoryIcon}
             color="text-purple-600"

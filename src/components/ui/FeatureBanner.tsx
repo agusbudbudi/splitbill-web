@@ -38,12 +38,12 @@ export const FeatureBanner = ({
     <div className={cn("w-full relative py-1", className)}>
       {/* 3D Illustration / Big Icon Background */}
       {illustration && (
-        <div className="absolute -top-2 right-4 w-28 h-28 opacity-100 transition-transform hover:scale-105 pointer-events-none z-20">
+        <div className="absolute -top-4 right-4 w-32 h-32 opacity-100 transition-transform hover:scale-105 pointer-events-none z-20">
           <Image
             src={illustration}
             alt={illustrationAlt}
-            width={112}
-            height={112}
+            width={144}
+            height={144}
             className="w-full h-full object-contain"
           />
         </div>
@@ -57,7 +57,7 @@ export const FeatureBanner = ({
 
       <div
         className={cn(
-          "w-full rounded-xl p-6 sm:p-6 relative overflow-hidden transition-all duration-300",
+          "w-full rounded-xl p-6 relative overflow-hidden transition-all duration-300 h-full",
           variant === "primary" &&
             "bg-primary text-white shadow-xl shadow-primary/20",
           variant === "secondary" && "bg-[#f0f4ff] text-foreground",
@@ -65,11 +65,11 @@ export const FeatureBanner = ({
             "bg-white border border-border shadow-soft text-foreground",
         )}
       >
-        <div className="relative z-10 flex flex-col gap-8 w-full">
-          <div className="space-y-3 max-w-[70%]">
+        <div className="relative z-10 flex flex-col justify-between h-full w-full">
+          <div className="space-y-3 max-w-[60%] flex-grow">
             <h2
               className={cn(
-                "text-lg font-bold leading-tight",
+                "text-xl font-bold leading-tight",
                 variant === "primary" ? "text-white" : "text-[#1e293b]",
               )}
             >
@@ -85,23 +85,25 @@ export const FeatureBanner = ({
             </div>
           </div>
 
-          <Link href={ctaHref} className="w-full">
-            <Button
-              onClick={onCtaClick}
-              className={cn(
-                "w-full h-12 rounded-2xl font-bold text-base shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2 relative overflow-hidden",
-                variant === "primary"
-                  ? "bg-white text-primary hover:bg-white/95"
-                  : "bg-primary text-white hover:opacity-90",
-                pulsing && "animate-pulse shadow-primary/30",
-              )}
-            >
-              {pulsing && (
-                <div className="absolute inset-0 bg-white/20 animate-[ping_2s_infinite] pointer-events-none" />
-              )}
-              {ctaText}
-            </Button>
-          </Link>
+          <div className="w-full mt-8">
+            <Link href={ctaHref} className="w-full">
+              <Button
+                onClick={onCtaClick}
+                className={cn(
+                  "w-full h-12 rounded-2xl font-bold text-base shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2 relative overflow-hidden",
+                  variant === "primary"
+                    ? "bg-white text-primary hover:bg-white/95"
+                    : "bg-primary text-white hover:opacity-90",
+                  pulsing && "animate-pulse shadow-primary/30",
+                )}
+              >
+                {pulsing && (
+                  <div className="absolute inset-0 bg-white/20 animate-[ping_2s_infinite] pointer-events-none" />
+                )}
+                {ctaText}
+              </Button>
+            </Link>
+          </div>
         </div>
 
         {/* Decorative background blurs */}

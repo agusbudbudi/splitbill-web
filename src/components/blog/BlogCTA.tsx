@@ -17,7 +17,7 @@ export const BlogCTA = () => {
       title: "Pilih Teman & Item",
       description:
         "Tandai siapa saja yang ikut patungan dan pilih item yang mereka beli.",
-      color: "bg-orange-50 text-orange-600",
+      color: "bg-[#EEA420]/10 text-[#EEA420]",
     },
     {
       icon: Send,

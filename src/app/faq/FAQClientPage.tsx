@@ -60,7 +60,6 @@ export default function FAQClientPage() {
       <Header
         title="FAQ & Bantuan"
         showBackButton
-        onBack={() => window.history.back()}
       />
 
       <main className="w-full max-w-[600px] px-4 pt-10 pb-10 space-y-8 relative z-10">

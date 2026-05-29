@@ -23,14 +23,14 @@ export const BlogCard = ({ blog, priority = false }: BlogCardProps) => {
       transition={{ duration: 0.5 }}
       className="h-full"
     >
-      <Link href={`/blog/${blog.slug}`} className="block h-full group">
-        <Card className="h-full flex flex-col overflow-hidden border-none shadow-soft hover:shadow-md transition-all duration-500 bg-white group-hover:bg-accent/5">
+      <Link href={`/blog/${blog.slug}`} className="block h-full card-wrapper">
+        <Card className="h-full flex flex-col overflow-hidden border-none shadow-soft hover:shadow-md transition-all duration-500 bg-white hover:bg-accent/5">
           {/* Thumbnail Image */}
           <div className="relative aspect-[16/9] overflow-hidden">
             <img
               src={blog.thumbnail || "/img/pwa-banner.png"}
               alt={blog.thumbnailAlt || blog.title}
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
               loading={priority ? "eager" : "lazy"}
             />
             {/* Category Badge overlay */}
@@ -52,7 +52,7 @@ export const BlogCard = ({ blog, priority = false }: BlogCardProps) => {
               </div>
             </div>
 
-            <h3 className="text-md font-bold text-foreground mb-3 line-clamp-2 group-hover:text-primary transition-colors leading-tight">
+            <h3 className="text-md font-bold text-foreground mb-3 line-clamp-2 hover:text-primary transition-colors leading-tight">
               {blog.title}
             </h3>
 
@@ -60,9 +60,9 @@ export const BlogCard = ({ blog, priority = false }: BlogCardProps) => {
               {blog.excerpt}
             </p>
 
-            <div className="mt-auto flex items-center text-primary font-bold text-sm gap-1 group/btn">
+            <div className="mt-auto flex items-center text-primary font-bold text-sm gap-1">
               <span>Baca Selengkapnya</span>
-              <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover/btn:translate-x-1" />
+              <ArrowRight className="w-4 h-4 transition-transform duration-300 hover:translate-x-1" />
             </div>
           </div>
         </Card>

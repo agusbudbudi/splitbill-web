@@ -78,7 +78,7 @@ export default function MembershipClientPage() {
                   Kamu memiliki akses penuh ke seluruh fitur unggulan SplitBill untuk pengalaman tanpa batas.
                 </p>
               </div>
-              
+
               <div className="border border-primary rounded-2xl bg-white overflow-hidden shadow-sm">
                 <div className="grid grid-cols-[1.2fr_1fr_1fr] gap-0 bg-primary/5 border-b border-primary">
                   <span className="p-3.5 text-[11px] font-black uppercase tracking-widest text-muted-foreground border-r border-primary/20">

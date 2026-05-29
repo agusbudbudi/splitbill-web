@@ -26,40 +26,40 @@ const steps = [
     title: "Share ke WA",
     description: "Kirim hasil split langsung ke grup",
     image: "/img/step-share.jpg",
-    gradient: "from-emerald-500 to-emerald-600",
+    gradient: "from-[#2EC866] to-[#4AD37A]",
   },
 ];
 
 export const VisualFlowPreview = () => {
   return (
-    <section className="space-y-4">
-      <div className="flex items-center gap-3 px-1">
-        <div className="space-y-0.5">
-          <h2 className="text-md font-bold text-foreground">
+    <section className="space-y-6">
+      <div className="flex flex-col items-start px-1">
+        <div className="space-y-1">
+          <h2 className="text-xl font-extrabold text-foreground tracking-tight">
             Cara Pakai Split Bill
           </h2>
-          <p className="text-xs text-muted-foreground font-medium">
+          <p className="text-sm text-muted-foreground font-medium">
             3 langkah mudah, sat-set beres!
           </p>
         </div>
       </div>
 
-      {/* Horizontal Scroll Container with Bleed Effect */}
-      <div className="relative -mx-4 overflow-hidden pt-2 mb-0">
-        <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory scrollbar-hide px-4 scroll-pl-4">
+      {/* Horizontal Scroll Container */}
+      <div className="relative -mx-4 overflow-hidden mb-0 overflow-y-hidden">
+        <div className="flex gap-3 overflow-x-auto overflow-y-hidden snap-x snap-mandatory scrollbar-hide px-4 scroll-pl-4">
           {steps.map((step, idx) => (
             <div
               key={step.number}
-              className="flex-shrink-0 w-[180px] snap-start"
+              className="flex-shrink-0 w-[180px] snap-start pb-2"
             >
-              <div className="relative bg-white border border-white backdrop-blur-sm rounded-md overflow-hidden shadow-soft hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 group h-full flex flex-col">
+              <div className="relative bg-white border border-slate-100 backdrop-blur-sm rounded-2xl overflow-hidden shadow-soft hover:shadow-lg hover:shadow-primary/5 transition-all duration-500 group h-full flex flex-col">
                 {/* Step Image */}
-                <div className="relative w-full aspect-[1/1] overflow-hidden bg-muted">
+                <div className="relative w-full aspect-square overflow-hidden bg-muted">
                   <Image
                     src={step.image}
                     alt={`Panduan Split Bill Langkah ${step.number}: ${step.title} — ${step.description}`}
-                    width={180}
-                    height={180}
+                    width={500}
+                    height={500}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
 
@@ -67,8 +67,7 @@ export const VisualFlowPreview = () => {
                   <div className="absolute top-2 left-2 z-20">
                     <div
                       className={cn(
-                        "w-6 h-6 rounded-full bg-gradient-to-br flex items-center justify-center shadow-lg border border-white/20",
-                        `from-${step.gradient.split(" ")[0].replace("from-", "")} to-${step.gradient.split(" ")[1].replace("to-", "")}`,
+                        "w-6 h-6 rounded-full bg-gradient-to-br flex items-center justify-center shadow-lg border border-white/20 transition-transform duration-300 group-hover:scale-110",
                       )}
                       style={{
                         background: `linear-gradient(to bottom right, var(--tw-gradient-stops))`,
@@ -88,13 +87,13 @@ export const VisualFlowPreview = () => {
                 </div>
 
                 {/* Content Container */}
-                <div className="p-4 flex flex-col items-center text-center gap-1 flex-grow">
+                <div className="p-4 flex flex-col items-center text-center gap-1.5 flex-grow">
                   <div className="flex items-center gap-1.5">
                     <h3 className="text-sm font-bold text-foreground tracking-tight">
                       {step.title}
                     </h3>
                     {step.badge && (
-                      <div className="bg-amber-400 text-amber-950 text-[9px] font-bold px-1.5 py-0.5 rounded-full flex items-center">
+                      <div className="bg-amber-400 text-amber-950 text-[9px] font-bold px-1.5 py-0.5 rounded-full flex items-center gap-1">
                         <Sparkles className="w-2 h-2" />
                         {step.badge}
                       </div>

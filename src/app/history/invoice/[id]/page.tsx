@@ -66,7 +66,6 @@ export default function InvoiceDetailPage() {
         <Header
           title="Detail Invoice"
           showBackButton
-          onBack={() => router.push("/history?tab=invoice")}
         />
 
         <main className="flex-1 p-4 pb-10 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -279,7 +278,7 @@ export default function InvoiceDetailPage() {
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-sm bg-muted/30 flex items-center justify-center p-1.5 overflow-hidden">
                         {method.logo &&
-                        method.logo !== "/img/wallet-icon.png" ? (
+                          method.logo !== "/img/wallet-icon.png" ? (
                           <img
                             src={method.logo}
                             alt={method.bankName || method.name}

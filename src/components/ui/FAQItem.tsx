@@ -33,7 +33,7 @@ export const FAQItem = ({
       >
         <span
           className={cn(
-            "text-sm font-bold transition-colors duration-300 leading-snug",
+            "text-sm lg:text-lg font-bold transition-colors duration-300 leading-snug",
             isOpen ? "text-primary" : "text-foreground/80",
           )}
         >
@@ -59,7 +59,7 @@ export const FAQItem = ({
           isOpen ? "max-h-60 opacity-100 pb-6 px-4" : "max-h-0 opacity-0",
         )}
       >
-        <p className="text-[12px] text-muted-foreground leading-relaxed">
+        <p className="text-[12px] lg:text-base text-muted-foreground leading-relaxed">
           {answer}
         </p>
       </div>

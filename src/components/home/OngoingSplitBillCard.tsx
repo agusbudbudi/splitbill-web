@@ -6,6 +6,7 @@ import { ChevronRight, ReceiptText, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/Button";
 
 export const OngoingSplitBillCard = () => {
   const router = useRouter();
@@ -16,8 +17,13 @@ export const OngoingSplitBillCard = () => {
     (state) => state.selectedPaymentMethodIds
   );
 
-  // Show card if at least 1 person is added
-  if (people.length === 0) return null;
+  // Show card if activity has started (name present, expenses exist, or people added)
+  const isStarted =
+    (activityName && activityName.trim().length > 0) ||
+    expenses.length > 0 ||
+    people.length > 0;
+
+  if (!isStarted) return null;
 
   const totalAmount = expenses.reduce((sum, e) => sum + e.amount, 0);
   const itemCount = expenses.length;
@@ -109,25 +115,27 @@ export const OngoingSplitBillCard = () => {
   };
 
   return (
-    <section className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <section className="animate-in fade-in slide-in-from-bottom-4 duration-500 h-full">
       <div
         onClick={handleCardClick}
-        className="relative px-[1.5px] pt-[1.5px] pb-[4px] rounded-2xl bg-gradient-to-r from-violet-400 via-pink-400 to-primary/70 shadow-lg shadow-pink-500/5 group hover:scale-[1.01] active:scale-[0.99] transition-all duration-300 overflow-hidden cursor-pointer"
+        className={cn(
+          "relative px-[1.5px] pt-[1.5px] pb-[4px] rounded-2xl bg-gradient-to-r from-violet-400 via-pink-400 to-primary/70 shadow-lg shadow-pink-500/5 transition-all duration-300 overflow-hidden cursor-pointer h-full group hover:scale-[1.01] active:scale-[0.99]"
+        )}
       >
-        <div className="relative overflow-hidden bg-white rounded-[calc(1rem-1.5px)] z-10 p-4 space-y-3">
+        <div className="relative overflow-hidden bg-white rounded-[calc(1rem-1.5px)] z-10 p-4 space-y-3 h-full flex flex-col">
           {/* Subtle background glow */}
           <div className="absolute top-0 right-0 w-24 h-24 bg-pink-500/5 rounded-full blur-2xl -mr-6 -mt-6 pointer-events-none" />
 
           {/* Header */}
-          <div className="relative z-10 flex items-center justify-between gap-4">
+          <div className="relative z-10 flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 p-1 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 overflow-hidden">
+              <div className="shrink-0 w-10 h-10 flex items-center justify-center transition-transform duration-300 overflow-hidden">
                 <Image
                   src="/img/icon-splitbill.png"
                   alt="Bill Icon"
                   width={40}
                   height={40}
-                  className="w-full h-full object-contain"
+                  className="w-9 h-9 object-contain"
                   unoptimized
                 />
               </div>
@@ -136,13 +144,13 @@ export const OngoingSplitBillCard = () => {
                 <h3 className="text-foreground font-bold text-sm tracking-tight">
                   {activityName || "Split Bill Berjalan"}
                 </h3>
-                <p className="text-muted-foreground text-xs font-medium">
+                <p className="text-muted-foreground text-[11px] font-medium">
                   {itemCount} item • Rp {totalAmount.toLocaleString("id-ID")}
                 </p>
               </div>
             </div>
 
-            <div className="w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-300 shrink-0">
+            <div className="w-7 h-7 rounded-full bg-primary/5 text-primary flex items-center justify-center transition-transform duration-300 shrink-0 border border-primary/10">
               <ChevronRight className="w-4 h-4" />
             </div>
           </div>
@@ -150,7 +158,7 @@ export const OngoingSplitBillCard = () => {
           {/* Friends List */}
           {people.length > 0 && (
             <div className="relative z-10 flex items-center gap-2 pl-1">
-              <p className="text-xs text-muted-foreground">
+              <p className="text-[11px] text-muted-foreground">
                 <span className="font-semibold text-foreground">
                   {getFriendsList()}
                 </span>{" "}
@@ -160,7 +168,7 @@ export const OngoingSplitBillCard = () => {
           )}
 
           {/* Progress Bar */}
-          <div className="relative z-10 space-y-1.5">
+          <div className="relative z-10 space-y-1.5 mt-auto">
             <div className="flex items-center justify-between">
               <span className="text-[9px] font-bold text-primary/60 uppercase tracking-wider">
                 Progress
@@ -178,19 +186,19 @@ export const OngoingSplitBillCard = () => {
           </div>
 
           {/* Contextual CTA Button */}
-          <div className="relative z-10 pt-0.5">
-            <button
+          <div className="relative z-10 pt-1">
+            <Button
               onClick={handleButtonClick}
-              type="button"
               className={cn(
-                "w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-sm font-bold text-xs transition-all duration-300 hover:brightness-105 active:scale-[0.98] cursor-pointer border-0 outline-none",
+                "w-full text-xs font-bold gap-2 rounded-md shadow-lg shadow-primary/20 transition-all duration-300",
                 isReadyToSave
-                  ? "bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-md shadow-emerald-500/20"
-                  : "bg-gradient-to-r from-primary to-violet-600 text-white shadow-md shadow-primary/20"
+                  ? "bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-emerald-500/20"
+                  : "bg-gradient-to-r from-primary to-violet-600 text-white shadow-primary/20"
               )}
             >
-              <span>{cta.label}</span>
-            </button>
+              {cta.label}
+              <ChevronRight className="w-3 h-3 group-hover/btn:translate-x-0.5 transition-transform" />
+            </Button>
           </div>
         </div>
       </div>

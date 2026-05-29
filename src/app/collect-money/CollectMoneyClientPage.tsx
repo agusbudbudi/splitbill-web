@@ -90,7 +90,6 @@ function CollectMoneyContent() {
             <Header
               title="Collect Money"
               showBackButton
-              onBack={() => router.push("/")}
             />
 
             <div className="flex-1 p-4 pb-10 space-y-6">

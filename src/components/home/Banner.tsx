@@ -22,15 +22,36 @@ interface BannerItem {
 
 export const Banner = () => {
   const [isMounted, setIsMounted] = useState(false);
-  const [banners, setBanners] = useState<BannerItem[]>([
+  const defaultBanners = [
     {
       id: "default",
       image: "/img/pwa-banner.png",
       alt: "SplitBill Online — Aplikasi Bagi Tagihan Gratis & Scan Struk AI",
       href: "/split-bill",
     },
-  ]);
+    {
+      id: "all-feature",
+      image: "/img/banner-all-feature.png",
+      alt: "SplitBill Online — Semua Fitur Kece",
+      href: "/split-bill",
+    },
+    {
+      id: "donate",
+      image: "/img/banner-donate.png",
+      alt: "Dukung SplitBill dengan Donasi",
+      href: "/donate",
+    },
+    {
+      id: "review",
+      image: "/img/ads-review.png",
+      alt: "Beri Review & Masukan",
+      href: "/review",
+    },
+  ];
+
+  const [banners, setBanners] = useState<BannerItem[]>(defaultBanners);
   const [current, setCurrent] = useState(0);
+  const [visibleCards, setVisibleCards] = useState(3);
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -110,7 +131,15 @@ export const Banner = () => {
         alt: getAltFromRoute(b.route),
         href: b.route,
       }));
-      setBanners(mappedBanners);
+      const merged = [...mappedBanners];
+      if (merged.length < 4) {
+        defaultBanners.forEach((db) => {
+          if (!merged.some((b) => b.id === db.id || b.href === db.href)) {
+            merged.push(db);
+          }
+        });
+      }
+      setBanners(merged);
     }
 
     // Fetch banners from backend (will use cache if fresh)
@@ -124,7 +153,15 @@ export const Banner = () => {
             alt: getAltFromRoute(b.route),
             href: b.route,
           }));
-          setBanners(mappedBanners);
+          const merged = [...mappedBanners];
+          if (merged.length < 4) {
+            defaultBanners.forEach((db) => {
+              if (!merged.some((b) => b.id === db.id || b.href === db.href)) {
+                merged.push(db);
+              }
+            });
+          }
+          setBanners(merged);
         }
       } catch (error) {
         console.error("Failed to fetch banners:", error);
@@ -136,16 +173,30 @@ export const Banner = () => {
   }, []);
 
   useEffect(() => {
-    if (banners.length === 0) return;
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        setVisibleCards(2);
+      } else {
+        setVisibleCards(3);
+      }
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    if (banners.length <= visibleCards) return;
 
     const timer = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % banners.length);
+      setCurrent((prev) => {
+        const maxIndex = banners.length - visibleCards;
+        return prev >= maxIndex ? 0 : prev + 1;
+      });
     }, 5000);
     return () => clearInterval(timer);
-  }, [banners.length]);
+  }, [banners.length, visibleCards]);
 
-  // Removed !isMounted gate to allow initial render for SEO and to prevent CLS.
-  // The client-side banner logic will hydrate afterwards.
   // Removed !isMounted gate to allow initial render for SEO and to prevent CLS.
   // The client-side banner logic will hydrate afterwards.
 
@@ -163,12 +214,13 @@ export const Banner = () => {
     const distance = touchStart - touchEnd;
     const isLeftSwipe = distance > 50;
     const isRightSwipe = distance < -50;
+    const maxIndex = Math.max(0, banners.length - visibleCards);
 
     if (isLeftSwipe) {
-      setCurrent((prev) => (prev + 1) % banners.length);
+      setCurrent((prev) => (prev >= maxIndex ? 0 : prev + 1));
     }
     if (isRightSwipe) {
-      setCurrent((prev) => (prev - 1 + banners.length) % banners.length);
+      setCurrent((prev) => (prev <= 0 ? maxIndex : prev - 1));
     }
 
     setTouchStart(0);
@@ -178,37 +230,40 @@ export const Banner = () => {
   return (
     <div
       ref={containerRef}
-      className="relative w-full overflow-hidden bg-gray-100 rounded-b-[20px] isolate z-0"
+      className="relative w-full overflow-hidden bg-transparent rounded-sm md:rounded-lg isolate z-0"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
       <div
-        className="flex transition-transform duration-500 ease-out will-change-transform"
-        style={{ transform: `translateX(-${current * 100}%)` }}
+        className="flex gap-2 md:gap-6 transition-transform duration-500 ease-out will-change-transform"
+        style={{ transform: `translateX(calc(-${current} * (${visibleCards === 2 ? "50% + 4px" : "33.333% + 8px"})))` }}
       >
         {banners.map((banner, index) => (
           <Link
             key={banner.id}
             href={banner.href}
-            className="min-w-full block relative z-20 group rounded-b-[20px] overflow-hidden"
+            className={cn(
+              "w-[calc(50%-4px)] md:w-[calc(33.333%-16px)]",
+              "aspect-[1080/608] shrink-0 block relative z-20 group rounded-sm md:rounded-lg overflow-hidden transition-all duration-300"
+            )}
           >
-            <div className="relative overflow-hidden cursor-pointer leading-[0] rounded-b-[20px]">
+            <div className="relative h-full w-full overflow-hidden cursor-pointer leading-[0] rounded-sm md:rounded-lg">
               {/* Skeleton Loader */}
               {!loadedImages[banner.id] && (
-                <div className="absolute inset-0 z-10 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 bg-[length:200%_100%] animate-[shimmer_1.5s_infinite] aspect-[480/280]" />
+                <div className="absolute inset-0 z-10 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 bg-[length:200%_100%] animate-[shimmer_1.5s_infinite] h-full w-full" />
               )}
 
               <Image
                 src={banner.image}
                 alt={banner.alt}
-                width={480}
-                height={280}
+                width={1080}
+                height={608}
                 className={cn(
-                  "w-full aspect-[480/280] block object-cover transition-all duration-700 group-hover:scale-105",
+                  "w-full h-full block object-cover transition-all duration-700 group-hover:scale-105",
                   !loadedImages[banner.id] ? "opacity-0" : "opacity-100",
                 )}
-                priority={index === 0}
+                priority={index < visibleCards}
                 draggable={false}
                 onLoad={() =>
                   setLoadedImages((prev) => ({ ...prev, [banner.id]: true }))
@@ -220,9 +275,9 @@ export const Banner = () => {
         ))}
       </div>
 
-      {banners.length > 1 && (
-        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
-          {banners.map((_, i) => (
+      {banners.length > visibleCards && (
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+          {Array.from({ length: banners.length - (visibleCards - 1) }).map((_, i) => (
             <button
               key={i}
               onClick={() => setCurrent(i)}
@@ -233,26 +288,6 @@ export const Banner = () => {
               aria-label={`Go to slide ${i + 1}`}
             />
           ))}
-        </div>
-      )}
-
-      {/* Demo Mode Button Overlay */}
-      {isTrulyNewUser && (
-        <div className="absolute bottom-4 right-4 z-30 pointer-events-auto">
-          <Button
-            onClick={handleStartDemo}
-            className="rounded-full bg-white/90 hover:bg-white text-primary border border-primary/20 shadow-lg backdrop-blur-sm h-10 px-4 font-bold text-xs gap-2 transition-all hover:scale-105 active:scale-95"
-          >
-            <div className="p-1 bg-primary/10 rounded-full">
-              <Play className="w-3 h-3 fill-primary" />
-            </div>
-            Coba Demo
-            <div className="absolute -top-2 -right-1">
-              <div className="bg-primary text-white text-[8px] px-1.5 py-0.5 rounded-full shadow-sm font-black animate-pulse">
-                HOT
-              </div>
-            </div>
-          </Button>
         </div>
       )}
     </div>

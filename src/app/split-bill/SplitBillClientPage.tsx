@@ -362,17 +362,17 @@ const SplitBillContent = () => {
     const nextStepNum = step + 1;
     const stepNames = ["", "Teman", "Bil", "Detail", "Hasil"];
     trackSplitBill.stepComplete(nextStepNum, stepNames[nextStepNum] || "");
-    router.push(`/split-bill?step=${nextStepNum}`);
+    router.replace(`/split-bill?step=${nextStepNum}`);
   };
 
   const prevStep = () => {
     if (step > 1) {
-      router.push(`/split-bill?step=${step - 1}`);
+      router.replace(`/split-bill?step=${step - 1}`);
     } else {
       if (sourceBucketId) {
         router.push(`/split-later/${sourceBucketId}`);
       } else {
-        router.push("/");
+        router.back();
       }
     }
   };

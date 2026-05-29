@@ -18,9 +18,8 @@ export default function HistoryPage() {
     <div className="min-h-screen bg-background flex flex-col items-center relative">
       <div className="w-full max-w-[600px] min-h-screen flex flex-col relative bg-background">
         <Header
-          title="History"
+          title="Aktivitas"
           showBackButton
-          onBack={() => router.push("/")}
         />
 
         {/* Content */}

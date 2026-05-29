@@ -21,6 +21,7 @@ interface HeaderProps {
   rightContent?: React.ReactNode;
   alignTitle?: "center" | "left";
   sticky?: boolean;
+  wide?: boolean;
 }
 
 export const Header = ({
@@ -34,6 +35,7 @@ export const Header = ({
   rightContent,
   alignTitle = "center",
   sticky = true,
+  wide = false,
 }: HeaderProps) => {
   const router = useRouter();
   const { user, isAuthenticated, initialize } = useAuthStore();
@@ -43,52 +45,24 @@ export const Header = ({
   useEffect(() => {
     // Initialize auth state on mount (only runs once)
     initialize();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Empty dependency array - only run once on mount
-
-  useEffect(() => {
-    if (!transparent) return;
-
-    const handleScroll = () => {
-      // Check both window scroll and container scroll for broader compatibility
-      const container = document.getElementById("main-scroll-container");
-      const scrollPos = container ? container.scrollTop : window.scrollY;
-      setScrolled(scrollPos > 10);
-    };
-
-    const container = document.getElementById("main-scroll-container");
-    const scrollTarget = container || window;
-
-    scrollTarget.addEventListener("scroll", handleScroll);
-    // Also listen to window just in case
-    if (container) window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      scrollTarget.removeEventListener("scroll", handleScroll);
-      if (container) window.removeEventListener("scroll", handleScroll);
-    };
-  }, [transparent]);
+  }, []);
 
   return (
     <header
       className={cn(
-        "z-50 w-full flex flex-col items-center pointer-events-none transition-all duration-500",
-        sticky && "sticky",
-        sticky && (isPWABannerVisible ? "top-[calc(52px+env(safe-area-inset-top))]" : "top-0"),
+        "z-50 w-full flex flex-col items-center bg-primary pointer-events-auto transition-all duration-500 mx-auto",
+        sticky && "sticky top-0",
+        wide ? "max-w-full" : "max-w-[600px]",
+        className,
       )}
     >
       <div
         className={cn(
-          "w-full max-w-[600px] text-white pointer-events-auto transition-colors duration-300 pt-safe",
-          transparent
-            ? scrolled
-              ? "bg-primary"
-              : "bg-transparent"
-            : "bg-primary",
-          className,
+          "w-full mx-auto text-white transition-colors duration-300 pt-safe",
+          wide ? "max-w-[600px] lg:max-w-7xl" : "max-w-[600px]"
         )}
       >
-        <div className="flex h-14 items-center px-4 gap-4">
+        <div className="flex h-14 lg:h-16 items-center px-4 gap-4">
           {title || showBackButton ? (
             <div className="flex-1 flex items-center justify-between gap-2">
               <div className="w-10 flex items-center">
@@ -126,12 +100,12 @@ export const Header = ({
                 )}
               >
                 {title && (
-                  <span className="font-bold text-lg tracking-tight leading-tight">
+                  <span className="font-bold text-lg lg:text-xl tracking-tight leading-tight">
                     {title}
                   </span>
                 )}
                 {subtitle && (
-                  <span className="text-[10px] font-bold text-white/100 uppercase tracking-[0.2em] -mt-0.5">
+                  <span className="text-[10px] lg:text-[10px] font-bold text-white/100 uppercase tracking-[0.2em] -mt-0.5">
                     {subtitle}
                   </span>
                 )}
@@ -151,14 +125,14 @@ export const Header = ({
                 <Image
                   src="/img/logo.png"
                   alt="SplitBill Logo"
-                  width={120}
-                  height={32}
-                  className="h-8 w-auto"
+                  width={130}
+                  height={36}
+                  className="h-8 lg:h-9 w-auto"
                   priority
                 />
               </Link>
 
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 lg:gap-5">
 
                 {isAuthenticated ? (
                   <Link
@@ -166,12 +140,8 @@ export const Header = ({
                     className={cn(
                       "group relative flex items-center justify-center rounded-full transition-all duration-300",
                       user?.subscriptionStatus === "active"
-                        ? "w-9 h-9 p-[2px] bg-gradient-gold shadow-[0_0_10px_rgba(246,226,122,0.4)] hover:scale-105"
-                        : "w-8 h-8 border-2 border-white/30 hover:border-white bg-white/10 backdrop-blur-sm",
-                      transparent &&
-                        !scrolled &&
-                        user?.subscriptionStatus !== "active" &&
-                        "drop-shadow-[0_2px_4px_rgba(0,0,0,0.2)]",
+                        ? "w-9 h-9 lg:w-10 lg:h-10 p-[2px] bg-gradient-gold shadow-[0_0_10px_rgba(246,226,122,0.4)] hover:scale-105"
+                        : "w-8 h-8 lg:w-9 lg:h-9 border-2 border-white/30 hover:border-white bg-white/10 backdrop-blur-sm",
                     )}
                   >
                     <div className="w-full h-full rounded-full overflow-hidden bg-white/20">
@@ -183,7 +153,7 @@ export const Header = ({
                     </div>
                     {user?.subscriptionStatus === "active" && (
                       <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-gold rounded-full flex items-center justify-center shadow-sm z-10">
-                        <Crown className="w-2 h-2 text-white fill-white" />
+                        <Crown className="w-2 h-2 lg:w-2.5 lg:h-2.5 text-white fill-white" />
                       </div>
                     )}
                   </Link>
@@ -192,10 +162,10 @@ export const Header = ({
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="text-white hover:text-white hover:bg-white/10 h-8 px-3 rounded-sm"
+                      className="text-white hover:text-white hover:bg-white/10 h-8 lg:h-10 px-3 lg:px-5 rounded-sm lg:rounded-lg"
                     >
-                      <LogIn className="w-4 h-4 mr-1.5" />
-                      <span className="text-xs font-bold">Masuk</span>
+                      <LogIn className="w-4 h-4 lg:w-4.5 lg:h-4.5 mr-1.5" />
+                      <span className="text-xs lg:text-sm font-bold">Masuk</span>
                     </Button>
                   </Link>
                 )}

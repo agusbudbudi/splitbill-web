@@ -325,7 +325,7 @@ export const CollectionDashboard = ({
               )}
             </div>
 
-            <h1 className="text-4xl font-black tracking-tighter mb-4">
+            <h1 className="text-4xl font-bold tracking-tight mb-4">
               {formatToIDR(collection.totalAmount)}
             </h1>
 
@@ -389,7 +389,7 @@ export const CollectionDashboard = ({
 
                 <div className="relative z-10 flex flex-col gap-1">
                   <div className="flex items-center gap-2">
-                    <h3 className="text-xl font-black text-primary tracking-tight">
+                    <h3 className="text-xl font-bold text-primary tracking-tight">
                       Koleksi Selesai!
                     </h3>
                   </div>
@@ -409,12 +409,12 @@ export const CollectionDashboard = ({
                   <span className="text-xs text-muted-foreground font-bold uppercase tracking-wider">
                     Terkumpul
                   </span>
-                  <span className="text-2xl font-black text-primary">
+                  <span className="text-2xl font-bold text-primary">
                     {formatToIDR(paidTotal)}
                   </span>
                 </div>
                 <div className="flex flex-col items-end">
-                  <span className="text-2xl font-black text-primary">
+                  <span className="text-2xl font-bold text-primary">
                     {progress}%
                   </span>
                 </div>
@@ -638,7 +638,7 @@ export const CollectionDashboard = ({
                     >
                       <ProviderLogo name={method.providerName} size="md" />
                       <div className="flex-1 min-w-0">
-                        <p className="text-[10px] uppercase font-black text-primary/60 leading-none mb-1 tracking-tight">
+                        <p className="text-[10px] uppercase font-bold text-primary/60 leading-none mb-1 tracking-tight">
                           {method.providerName}
                         </p>
                         <p className="font-bold text-sm text-foreground mb-0.5">

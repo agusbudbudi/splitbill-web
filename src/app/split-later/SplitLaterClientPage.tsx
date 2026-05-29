@@ -623,9 +623,9 @@ export default function SplitLaterClientPage() {
           showBackButton
           onBack={() => {
             if (step > 1) {
-              router.push(`/split-later?step=${step - 1}`);
+              router.replace(`/split-later?step=${step - 1}`);
             } else {
-              router.push("/split-later");
+              router.replace("/split-later");
             }
           }}
           sticky={true}
@@ -692,7 +692,7 @@ export default function SplitLaterClientPage() {
                     if (!title) {
                       setTitle(selectedCategoryLabel);
                     }
-                    router.push("/split-later?step=2");
+                    router.replace("/split-later?step=2");
                   }}
                   className="w-full h-14 text-lg font-bold rounded-2xl shadow-xl transition-all duration-300 active:scale-95 bg-primary text-white shadow-primary/20"
                 >
@@ -704,7 +704,7 @@ export default function SplitLaterClientPage() {
                 <div className="flex gap-3">
                   <button
                     type="button"
-                    onClick={() => router.push("/split-later?step=1")}
+                    onClick={() => router.replace("/split-later?step=1")}
                     className="flex-1 h-14 rounded-2xl bg-white border border-primary/20 text-primary text-base font-bold active:scale-95 transition-all cursor-pointer"
                   >
                     Kembali
@@ -716,7 +716,7 @@ export default function SplitLaterClientPage() {
                         toast.error("Isi nama Split Later/trip dulu ya!");
                         return;
                       }
-                      router.push("/split-later?step=3");
+                      router.replace("/split-later?step=3");
                     }}
                     className="flex-1 h-14 text-base font-bold rounded-2xl shadow-xl shadow-primary/20"
                   >
@@ -729,7 +729,7 @@ export default function SplitLaterClientPage() {
                 <div className="flex gap-3">
                   <button
                     type="button"
-                    onClick={() => router.push("/split-later?step=2")}
+                    onClick={() => router.replace("/split-later?step=2")}
                     className="flex-1 h-14 rounded-2xl bg-white border border-primary/20 text-primary text-base font-bold active:scale-95 transition-all cursor-pointer"
                   >
                     Kembali
@@ -741,7 +741,7 @@ export default function SplitLaterClientPage() {
                         toast.error("Minimal 2 orang peserta ya!");
                         return;
                       }
-                      router.push("/split-later?step=4");
+                      router.replace("/split-later?step=4");
                     }}
                     disabled={participants.length < 2}
                     className={cn(
@@ -802,7 +802,6 @@ export default function SplitLaterClientPage() {
         <Header
           title="Split Later"
           showBackButton
-          onBack={() => router.push("/")}
         />
 
         <div className="flex-1 p-4 pb-10 space-y-6">

@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useSplitBillStore } from "@/store/useSplitBillStore";
+import { useAuthStore } from "@/lib/stores/authStore";
 import { toast } from "sonner";
 
 export const Footer = () => {
@@ -13,16 +14,17 @@ export const Footer = () => {
   const router = useRouter();
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const { setPendingCapturedImage } = useSplitBillStore();
+  const { isAuthenticated } = useAuthStore();
 
   const isActive = (path: string) => {
-    if (path === "/" && pathname === "/") return true;
-    if (path !== "/" && pathname.startsWith(path)) return true;
+    if (path === "/member" && (pathname === "/" || pathname === "/member")) return true;
+    if (path !== "/member" && pathname.startsWith(path)) return true;
     return false;
   };
 
   const leftMenuItems = [
     {
-      path: "/",
+      path: "/member",
       label: "Home",
       icon: Home,
     },
@@ -40,7 +42,8 @@ export const Footer = () => {
       icon: ScrollText,
     },
     {
-      path: "/history",
+      path: isAuthenticated ? "/history" : "/login",
+      activePath: "/history",
       label: "Aktivitas",
       icon: History,
     },
@@ -77,12 +80,14 @@ export const Footer = () => {
     path,
     label,
     icon: Icon,
+    activePath,
   }: {
     path: string;
     label: string;
     icon: React.ElementType;
+    activePath?: string;
   }) => {
-    const active = isActive(path);
+    const active = isActive(activePath || path);
     return (
       <Link
         href={path}

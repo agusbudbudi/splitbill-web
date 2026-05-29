@@ -41,7 +41,7 @@ export const HeroBanner = ({
         "relative w-full rounded-[24px] overflow-hidden px-6 py-4 sm:px-8 sm:py-6 flex flex-row items-center justify-between gap-2 sm:gap-6",
         isPrimaryGrad
           ? "bg-gradient-to-br from-primary via-blue-600 to-indigo-700 border-none"
-          : "bg-primary/[0.03] border border-primary/10",
+          : "bg-primary/[0.03]",
         className,
       )}
     >
@@ -125,7 +125,7 @@ export const HeroBanner = ({
       {/* Right Content / Illustration */}
       <div className="absolute right-0 bottom-0 h-full w-full flex items-end justify-end pointer-events-none">
         {/* Main Image (Phone/Hand) */}
-        <div className="relative w-[260px] sm:w-[380px] h-auto z-10 mr-[-10px] sm:mr-[5px] pointer-events-auto">
+        <div className="relative w-[260px] sm:w-[350px] h-auto z-10 mr-[-35px] sm:mr-[-10px] pointer-events-auto">
           <Image
             src={imageSrc}
             alt="Hero Illustration"
@@ -138,7 +138,7 @@ export const HeroBanner = ({
 
         {/* Floating Card */}
         {floatingCard && (
-          <div className="absolute right-[5%] sm:right-[4%] top-[32%] sm:top-[32%] z-20 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 scale-[0.65] sm:scale-100 origin-right pointer-events-auto">
+          <div className="absolute right-[3%] sm:right-[3%] top-[32%] sm:top-[40%] z-20 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 scale-[0.65] sm:scale-90 origin-right pointer-events-auto">
             {floatingCard}
           </div>
         )}

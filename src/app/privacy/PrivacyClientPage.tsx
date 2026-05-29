@@ -2,7 +2,6 @@
 
 import React from "react";
 import { Header } from "@/components/layout/Header";
-import { SiteFooter } from "@/components/layout/SiteFooter";
 import { Footer } from "@/components/layout/Footer";
 import {
   ShieldCheck,
@@ -732,7 +731,6 @@ export default function PrivacyClientPage() {
         </motion.div>
       </main>
 
-      <SiteFooter />
       <Footer />
     </div>
   );

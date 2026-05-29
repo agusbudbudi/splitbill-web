@@ -100,7 +100,6 @@ export const AllFeatureClientPage = () => {
       <Header
         title="Semua Fitur"
         showBackButton
-        onBack={() => router.push("/")}
       />
 
       <main className="w-full max-w-[600px] flex-1 pb-20 pt-4 px-4 relative z-10 flex flex-col">
@@ -117,7 +116,7 @@ export const AllFeatureClientPage = () => {
 
         <section className="mb-8">
           <div className="flex flex-col mb-4">
-            <h2 className="text-xl font-black text-foreground">Populer 🔥</h2>
+            <h2 className="text-xl font-bold text-foreground">Populer 🔥</h2>
             <p className="text-xs text-muted-foreground font-medium mt-1">
               Fitur favorit yang paling sering dipakai bestie kamu
             </p>
@@ -130,7 +129,7 @@ export const AllFeatureClientPage = () => {
 
         <section>
           <div className="flex flex-col mb-4">
-            <h2 className="text-xl font-black text-foreground">
+            <h2 className="text-xl font-bold text-foreground">
               Semua Fitur 🚀
             </h2>
             <p className="text-xs text-muted-foreground font-medium mt-1">

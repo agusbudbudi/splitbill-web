@@ -58,7 +58,6 @@ export default function OrdersPage() {
         <Header
           title="Pesanan Saya"
           showBackButton
-          onBack={() => router.push("/profile")}
         />
 
         <main className="flex-1 p-4">

@@ -37,37 +37,38 @@ export const ReviewRewardBanner = () => {
       <Link
         href="/review"
         onClick={() => trackGeneral.reviewBannerClick()}
-        className="block group relative overflow-hidden bg-white border border-amber-200 rounded-2xl p-4 hover:shadow-soft hover:border-amber-300/50 transition-all duration-300 cursor-pointer"
+        className="block group relative overflow-hidden bg-white border border-amber-200 rounded-2xl p-4 hover:shadow-md hover:border-amber-300/50 transition-all duration-300 cursor-pointer"
       >
         {/* Subtle background decoration */}
         <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/5 rounded-full blur-2xl -mr-12 -mt-12 pointer-events-none" />
 
-        <div className="relative z-10 flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-500 overflow-hidden">
-            <Image
-              src="/img/icon-rewards.jpg"
-              alt="Bonus Scan Struk AI — Reward untuk review dan feedback pengguna"
-              width={48}
-              height={48}
-              className="w-full h-full object-contain"
-              unoptimized
-            />
+        <div className="relative z-10 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-4 flex-1">
+            <div className="w-12 h-12 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-500 overflow-hidden">
+              <Image
+                src="/img/icon-rewards.png"
+                alt="Bonus Scan Struk AI — Reward untuk review dan feedback pengguna"
+                width={96}
+                height={96}
+                className="w-full h-full object-contain"
+                unoptimized
+              />
+            </div>
+
+            <div className="flex-1 space-y-1">
+              <h3 className="text-[13px] font-bold text-slate-900 tracking-tight flex items-center gap-2">
+                Hadiah buat kamu 🎁
+              </h3>
+              <p className="text-[11px] text-slate-500 font-medium leading-tight">
+                Kasih review singkat & claim hadiahnya. Cuma 10 detik gais! ✨
+              </p>
+            </div>
           </div>
 
-          <div className="flex-1 space-y-0.5 pr-4">
-            <h3 className="text-[13px] font-bold text-slate-900 tracking-tight">
-              Hadiah buat kamu 🎁
-            </h3>
-            <p className="text-[11px] text-slate-500 font-medium leading-tight">
-              Kasih review singkat & claim hadiahnya. Cuma 10 detik gais! ✨
-            </p>
-          </div>
-
-          <div className="text-amber-200 group-hover:translate-x-1 transition-transform">
-            <ChevronRight className="w-5 h-5" />
+          <div className="text-amber-300 group-hover:translate-x-2 transition-transform">
+            <ChevronRight className="w-5 h-5" strokeWidth={3} />
           </div>
         </div>
       </Link>
-    </div>
-  );
+    </div>);
 };

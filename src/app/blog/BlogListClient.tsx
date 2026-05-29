@@ -11,7 +11,6 @@ import { motion } from "framer-motion";
 
 import { BlogCardSkeleton } from "@/components/blog/BlogCardSkeleton";
 
-import { SiteFooter } from "@/components/layout/SiteFooter";
 import { Footer } from "@/components/layout/Footer";
 import { BlogCTA } from "@/components/blog/BlogCTA";
 
@@ -112,9 +111,6 @@ export default function BlogListClient() {
 
       {/* CTA Section */}
       <BlogCTA />
-
-      {/* Site Footer */}
-      <SiteFooter className="mt-0 w-full" />
 
       {/* Mobile Navigation Footer */}
       <Footer />

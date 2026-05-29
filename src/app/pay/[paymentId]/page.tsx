@@ -98,7 +98,6 @@ export default function PaymentDetailPage() {
         <Header 
           title="Payment Request" 
           showBackButton 
-          onBack={() => router.push("/")} 
         />
 
         <main className="flex-1 p-4 pb-12 space-y-6">

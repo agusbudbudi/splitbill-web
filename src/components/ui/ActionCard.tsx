@@ -32,7 +32,7 @@ export const ActionCard = ({
       )}
       onClick={onClick}
     >
-      <CardContent className="p-4 flex flex-col gap-3 h-full">
+      <CardContent className="p-4 flex flex-col gap-3 h-full relative">
         <div
           className={cn(
             "w-10 h-10 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110",
@@ -46,11 +46,6 @@ export const ActionCard = ({
           <p className="text-xs text-muted-foreground/80 leading-snug font-medium">
             {description}
           </p>
-        </div>
-
-        {/* Clickable Indicator Icon */}
-        <div className="absolute p-2 top-3 right-3 opacity-20 group-hover:opacity-100 transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 border border-foreground/30 group-hover:border-primary/30 rounded-full">
-          <ArrowUpRight className="w-3.5 h-3.5 text-foreground group-hover:text-primary transition-colors" />
         </div>
       </CardContent>
     </Card>

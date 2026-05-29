@@ -47,10 +47,21 @@ function LoginContent() {
     }
   }, [searchParams]);
 
+  // Check for expired session token
+  useEffect(() => {
+    if (searchParams.get("expired") === "true") {
+      import("sonner").then(({ toast }) => {
+        toast.info("Sesi telah berakhir. Silakan login kembali.", {
+          id: "token-expired-toast",
+        });
+      });
+    }
+  }, [searchParams]);
+
   // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
-      const redirectPath = searchParams.get("redirect") || "/";
+      const redirectPath = searchParams.get("redirect") || "/member";
       router.push(redirectPath);
     }
   }, [isAuthenticated, router, searchParams]);
@@ -65,7 +76,7 @@ function LoginContent() {
       trackAuth.login();
       setSuccess("Login berhasil! Mengalihkan...");
 
-      const redirectPath = searchParams.get("redirect") || "/";
+      const redirectPath = searchParams.get("redirect") || "/member";
       router.push(redirectPath);
     } catch (err: any) {
       const errorMessage = getErrorMessage(err);

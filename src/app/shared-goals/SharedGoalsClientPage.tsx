@@ -40,7 +40,6 @@ export default function SharedGoalsClientPage() {
             <Header
               title="Shared Goals"
               showBackButton
-              onBack={() => router.push("/")}
             />
 
             {/* Content */}

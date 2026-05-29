@@ -377,7 +377,7 @@ export const GoalDetailView = ({
                   <Pencil className="w-3.5 h-3.5" />
                 </button>
               </div>
-              <h1 className="text-4xl font-black tracking-tighter mb-4">
+              <h1 className="text-4xl font-bold tracking-tight mb-4">
                 {formatCurrency(goal.currentAmount)}
               </h1>
 
@@ -390,23 +390,23 @@ export const GoalDetailView = ({
                     </span>
                   </div>
                   {progress >= 100 ? (
-                    <div className="px-2 py-0.5 bg-emerald-500 text-white text-[9px] font-black uppercase rounded-full shadow-lg shadow-emerald-500/20">
+                    <div className="px-2 py-0.5 bg-emerald-500 text-white text-[9px] font-bold uppercase rounded-full shadow-lg shadow-emerald-500/20">
                       Achieved in {achievedInDays} Days
                     </div>
                   ) : (
                     <>
                       {daysLeft !== null && daysLeft > 0 && (
-                        <div className="px-1.5 py-0.5 bg-white text-primary text-[9px] font-black uppercase rounded-full">
+                        <div className="px-1.5 py-0.5 bg-white text-primary text-[9px] font-bold uppercase rounded-full">
                           {daysLeft} Days Left
                         </div>
                       )}
                       {daysLeft !== null && daysLeft === 0 && (
-                        <div className="px-1.5 py-0.5 bg-orange-500 text-white text-[9px] font-black uppercase rounded-full">
+                        <div className="px-1.5 py-0.5 bg-orange-500 text-white text-[9px] font-bold uppercase rounded-full">
                           Due Today
                         </div>
                       )}
                       {daysLeft !== null && daysLeft < 0 && (
-                        <div className="px-1.5 py-0.5 bg-red-500 text-white text-[9px] font-black uppercase rounded-full">
+                        <div className="px-1.5 py-0.5 bg-red-500 text-white text-[9px] font-bold uppercase rounded-full">
                           Overdue
                         </div>
                       )}
@@ -431,7 +431,7 @@ export const GoalDetailView = ({
 
                   <div className="relative z-10 flex flex-col gap-1">
                     <div className="flex items-center gap-2">
-                      <h3 className="text-xl font-black text-primary tracking-tight">
+                      <h3 className="text-xl font-bold text-primary tracking-tight">
                         Goal Terpenuhi! 🥳
                       </h3>
                     </div>
@@ -454,7 +454,7 @@ export const GoalDetailView = ({
                     <span className="text-xs text-muted-foreground font-bold uppercase tracking-wider">
                       Progress
                     </span>
-                    <span className="text-2xl font-black text-primary">
+                    <span className="text-2xl font-bold text-primary">
                       {progress}%
                     </span>
                   </div>
@@ -682,13 +682,13 @@ export const GoalDetailView = ({
                               />
                             </div>
                             <div className="text-center">
-                              <p className="text-[9px] font-black text-yellow-600 uppercase tracking-tighter">
+                              <p className="text-[9px] font-bold text-yellow-600 uppercase tracking-tighter">
                                 Biggest Contributor
                               </p>
                               <p className="text-xs font-bold text-foreground truncate max-w-[80px] mx-auto">
                                 {topContributor?.id}
                               </p>
-                              <p className="text-[10px] font-black text-primary">
+                              <p className="text-[10px] font-bold text-primary">
                                 {formatCurrency(topContributor?.amount || 0)}
                               </p>
                             </div>
@@ -709,13 +709,13 @@ export const GoalDetailView = ({
                               />
                             </div>
                             <div className="text-center">
-                              <p className="text-[9px] font-black text-orange-600 uppercase tracking-tighter">
+                              <p className="text-[9px] font-bold text-orange-600 uppercase tracking-tighter">
                                 Most Frequent Saver
                               </p>
                               <p className="text-xs font-bold text-foreground truncate max-w-[80px] mx-auto">
                                 {mostFrequentSaver?.id}
                               </p>
-                              <p className="text-[10px] font-black text-primary">
+                              <p className="text-[10px] font-bold text-primary">
                                 {mostFrequentSaver?.count || 0} Tabungan
                               </p>
                             </div>
@@ -758,7 +758,7 @@ export const GoalDetailView = ({
                             {member.id}
                           </span>
                         </div>
-                        <span className="text-xs font-black text-primary">
+                        <span className="text-xs font-bold text-primary">
                           {formatCurrency(member.amount)}
                         </span>
                       </div>
@@ -824,7 +824,7 @@ export const GoalDetailView = ({
                           </div>
                         </div>
                         <div className="flex flex-col items-end gap-1.5">
-                          <span className="font-black text-xs text-green-600">
+                          <span className="font-bold text-xs text-green-600">
                             +{formatCurrency(contribution.amount)}
                           </span>
                           <button

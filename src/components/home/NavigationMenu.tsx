@@ -24,17 +24,23 @@ const menuItems = [
     href: "/split-bill",
   },
   {
-    id: "kantong",
+    id: "later",
     label: "Split Later",
     badge: "New",
     image: "/img/menu-split-later.png",
     href: "/split-later",
   },
   {
-    id: "nabung",
-    label: "SharedGoal",
+    id: "goals",
+    label: "Shared Goals",
     image: "/img/menu-shared-goal.png",
     href: "/shared-goals",
+  },
+  {
+    id: "invoice",
+    label: "Invoice",
+    image: "/img/menu-invoice.png",
+    href: "/invoice",
   },
   {
     id: "others",
@@ -44,28 +50,48 @@ const menuItems = [
   },
 ];
 
-export const NavigationMenu = () => {
+export const NavigationMenu = ({ variant = "flex" }: { variant?: "flex" | "grid" }) => {
   return (
-    <div className="grid grid-cols-4 sm:flex sm:flex-wrap items-start justify-items-center justify-center gap-2 sm:gap-12 py-4 px-2 mb-0 lg:hidden">
-      {menuItems.map((item) => (
+    <div className={cn(
+      "w-full",
+      variant === "flex"
+        ? "py-6 px-4 flex flex-wrap items-center justify-center gap-6 sm:gap-8 lg:gap-12"
+        : "grid grid-cols-4 lg:grid-cols-5 gap-y-8 gap-x-2"
+    )}>
+      {menuItems.map((item, index) => (
         <Link
           key={item.id}
           href={item.href}
-          className="group flex flex-col items-center gap-2 w-[76px] cursor-pointer"
+          className={cn(
+            "group flex flex-col items-center gap-2 cursor-pointer transition-all duration-300",
+            variant === "flex"
+              ? "w-[76px]"
+              : cn(
+                  "w-[76px]",
+                  index === 0
+                    ? "justify-self-start"
+                    : index === menuItems.length - 1
+                      ? "justify-self-end"
+                      : "justify-self-center",
+                  item.id === "invoice" ? "hidden sm:flex" : "flex"
+                )
+          )}
         >
           <div className="relative">
-            {item.badge && <FloatingBadge>{item.badge}</FloatingBadge>}
-            <div className="w-[72px] h-[72px] rounded-[30%] bg-white flex items-center justify-center transition-all group-hover:scale-105 shadow-soft border border-primary/5">
+            {item.badge && <FloatingBadge className="-top-2">{item.badge}</FloatingBadge>}
+            <div className={cn(
+              "rounded-[30%] bg-white flex items-center justify-center transition-all group-hover:scale-105 shadow-soft border border-primary/5 w-[72px] h-[72px]"
+            )}>
               <Image
                 src={item.image}
                 alt={item.label}
-                width={56}
-                height={56}
-                className="w-14 h-14 object-contain"
+                width={80}
+                height={80}
+                className="w-14 h-14 object-contain transition-transform duration-300"
               />
             </div>
           </div>
-          <span className="text-[12px] text-muted-foreground group-hover:text-primary transition-colors text-center leading-tight font-medium">
+          <span className="text-[11px] sm:text-[12px] text-muted-foreground group-hover:text-primary transition-colors text-center font-bold tracking-tight">
             {item.label}
           </span>
         </Link>

@@ -59,6 +59,14 @@ export const AdditionalExpenses = () => {
   // Calculate subtotal from main expenses
   const subtotal = expenses.reduce((acc, curr) => acc + curr.amount, 0);
 
+  const isInputNegative = () => {
+    if (isPercentage) {
+      return (parseFloat(percentageStr) || 0) < 0;
+    } else {
+      return amountStr.includes("-");
+    }
+  };
+
   const handleToggleWho = (name: string) => {
     setSelectedWho((prev) =>
       prev.includes(name) ? prev.filter((n) => n !== name) : [...prev, name],
@@ -84,13 +92,17 @@ export const AdditionalExpenses = () => {
     }
 
     if (finalAmount === 0) return;
-    if (selectedWho.length === 0 || !paidBy) return;
+
+    const isNegative = finalAmount < 0;
+    const finalPaidBy = isNegative ? "merchant" : paidBy;
+
+    if (selectedWho.length === 0 || (!finalPaidBy && !isNegative)) return;
 
     addAdditionalExpense({
       name: finalName,
       amount: finalAmount,
       who: selectedWho,
-      paidBy: paidBy,
+      paidBy: finalPaidBy,
       splitType: splitType,
     });
 
@@ -151,6 +163,14 @@ export const AdditionalExpenses = () => {
           </label>
         </div>
 
+        {/* Highlighted Banner */}
+        <div className="bg-emerald-500/5 border border-emerald-500/10 rounded-md p-3 flex items-start gap-2.5 animate-in fade-in duration-300">
+          <span className="text-base leading-none">💡</span>
+          <p className="text-[11px] text-emerald-800 font-medium leading-relaxed">
+            <span className="font-bold text-emerald-950">Diskon / Cashback?</span> Input aja nominalnya pake tanda <span className="font-black underline decoration-emerald-500/30 decoration-2 text-emerald-950">minus (–)</span> (contoh: <span className="font-mono font-bold bg-emerald-500/10 px-1 py-0.5 rounded text-[10px] text-emerald-900">-Rp5.000</span> atau <span className="font-mono font-bold bg-emerald-500/10 px-1 py-0.5 rounded text-[10px] text-emerald-900">-10%</span>), otomatis ngurangin tagihan semua yang terlibat. Ez! 🎉
+          </p>
+        </div>
+
         {/* List of Additional Expenses */}
         <div className="space-y-2">
           {additionalExpenses.map((adx) => (
@@ -170,7 +190,10 @@ export const AdditionalExpenses = () => {
                       </span>
                       <SplitBadge type={adx.splitType} />
                     </div>
-                    <span className="text-sm font-bold text-primary block leading-tight">
+                    <span className={cn(
+                      "text-sm font-bold block leading-tight",
+                      adx.amount < 0 ? "text-emerald-600" : "text-primary"
+                    )}>
                       {formatToIDR(adx.amount)}
                     </span>
                   </div>
@@ -221,7 +244,13 @@ export const AdditionalExpenses = () => {
                   <span className="text-[10px] text-muted-foreground/60 uppercase font-bold tracking-tight">
                     Dibayar oleh
                   </span>
-                  {adx.paidBy ? (
+                  {adx.paidBy === "merchant" ? (
+                    <div className="flex items-center gap-1.5 bg-emerald-500/10 rounded-full px-2.5 py-1 border border-emerald-500/20 text-emerald-600">
+                      <span className="text-[10px] font-bold">
+                        🏷️ Merchant (Potongan Toko)
+                      </span>
+                    </div>
+                  ) : adx.paidBy ? (
                     <div className="flex items-center gap-1.5 bg-primary/5 rounded-full pl-1 pr-2.5 py-1 border border-primary/20">
                       <img
                         src={`${AVATAR_SM_URL}${encodeURIComponent(adx.paidBy)}`}
@@ -317,7 +346,7 @@ export const AdditionalExpenses = () => {
                       onChange={(e) => {
                         const input = e.target.value;
                         // Allow hyphen at start
-                        const isNegative = input.startsWith("-");
+                        const isNegative = input.includes("-");
                         const val = input.replace(/[^-0-9]/g, "");
                         const numericVal = parseInt(val.replace(/-/g, ""));
 
@@ -436,27 +465,38 @@ export const AdditionalExpenses = () => {
             </div>
 
             {/* Paid By Section */}
-            <div className="space-y-3 border-t border-primary/10 pt-4">
-              <label className="text-sm font-bold px-1">Dibayar oleh</label>
-              <div className="flex flex-wrap gap-4">
-                {people.map((name) => (
-                  <PersonSelector
-                    key={name}
-                    name={name}
-                    isSelected={paidBy === name}
-                    onClick={setPaidBy}
-                    size="md"
-                  />
-                ))}
+            {isInputNegative() ? (
+              <div className="space-y-3 border-t border-primary/10 pt-4 px-1">
+                <label className="text-sm font-bold text-foreground">Dibayar oleh</label>
+                <div className="p-3 bg-emerald-500/5 rounded-md border border-emerald-500/10 text-emerald-600 flex items-center gap-2">
+                  <span className="text-[11px] font-semibold leading-relaxed">
+                    🏷️ Diskon dari <strong>Merchant</strong> - otomatis ngurangin tagihan tiap orang yang terlibat. No worries! 🙌
+                  </span>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="space-y-3 border-t border-primary/10 pt-4">
+                <label className="text-sm font-bold px-1">Dibayar oleh</label>
+                <div className="flex flex-wrap gap-4">
+                  {people.map((name) => (
+                    <PersonSelector
+                      key={name}
+                      name={name}
+                      isSelected={paidBy === name}
+                      onClick={setPaidBy}
+                      size="md"
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
 
             <Button
               onClick={handleAdd}
               className="w-full h-9 text-xs"
               size="sm"
               variant="default"
-              disabled={!paidBy || selectedWho.length === 0}
+              disabled={(!paidBy && !isInputNegative()) || selectedWho.length === 0}
             >
               Tambah {selectedType.label}
             </Button>

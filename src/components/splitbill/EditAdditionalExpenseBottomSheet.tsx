@@ -47,6 +47,14 @@ export const EditAdditionalExpenseBottomSheet = ({
   // Calculate subtotal from main expenses for percentage calculation
   const subtotal = expenses.reduce((acc, curr) => acc + curr.amount, 0);
 
+  const isInputNegative = () => {
+    if (isPercentage) {
+      return (parseFloat(percentageStr) || 0) < 0;
+    } else {
+      return amountStr.includes("-");
+    }
+  };
+
   useEffect(() => {
     if (isOpen && expenseId) {
       const found = additionalExpenses.find((e) => e.id === expenseId);
@@ -84,7 +92,16 @@ export const EditAdditionalExpenseBottomSheet = ({
       finalAmount = parseFloat(cleaned) || 0;
     }
 
-    if (!name || finalAmount === 0 || selectedWho.length === 0 || !paidBy) {
+    if (finalAmount === 0) return;
+
+    const isNegative = finalAmount < 0;
+
+    // If positive but paidBy is still "merchant" (leftover from previous negative value),
+    // treat it as empty — user must pick a real person
+    const effectivePaidBy = !isNegative && paidBy === "merchant" ? "" : paidBy;
+    const finalPaidBy = isNegative ? "merchant" : effectivePaidBy;
+
+    if (!name || selectedWho.length === 0 || (!finalPaidBy && !isNegative)) {
       toast.error("Mohon lengkapi semua data pengeluaran");
       return;
     }
@@ -102,7 +119,7 @@ export const EditAdditionalExpenseBottomSheet = ({
       name: finalName,
       amount: finalAmount,
       who: selectedWho,
-      paidBy,
+      paidBy: finalPaidBy,
       splitType,
     });
 
@@ -125,201 +142,217 @@ export const EditAdditionalExpenseBottomSheet = ({
 
   return typeof document !== "undefined"
     ? require("react-dom").createPortal(
-        <div className="fixed inset-0 z-[100] flex justify-center pointer-events-auto">
-          {/* Backdrop */}
+      <div className="fixed inset-0 z-[100] flex justify-center pointer-events-auto">
+        {/* Backdrop */}
+        <div
+          className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity animate-in fade-in"
+          onClick={onClose}
+        />
+
+        {/* Sheet Content */}
+        <div
+          className={cn(
+            "absolute bottom-0 w-full max-w-[600px] bg-white rounded-t-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]",
+            "animate-in slide-in-from-bottom-full duration-300 ease-out",
+          )}
+        >
+          {/* Drag handle for mobile feel */}
           <div
-            className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity animate-in fade-in"
+            className="w-full flex justify-center pt-2 pb-1 cursor-pointer"
             onClick={onClose}
-          />
-
-          {/* Sheet Content */}
-          <div
-            className={cn(
-              "absolute bottom-0 w-full max-w-[600px] bg-white rounded-t-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]",
-              "animate-in slide-in-from-bottom-full duration-300 ease-out",
-            )}
           >
-            {/* Drag handle for mobile feel */}
-            <div
-              className="w-full flex justify-center pt-2 pb-1 cursor-pointer"
-              onClick={onClose}
-            >
-              <div className="w-12 h-1.5 rounded-full bg-muted/40" />
-            </div>
+            <div className="w-12 h-1.5 rounded-full bg-muted/40" />
+          </div>
 
-            {/* Header */}
-            <div className="flex items-center justify-between px-6 py-2 border-b border-primary/5">
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={onClose}
-                  className="p-2 -ml-2 text-muted-foreground hover:text-foreground rounded-full hover:bg-muted/10 cursor-pointer"
-                >
-                  <ArrowLeft className="w-5 h-5" />
-                </button>
-                <h2 className="text-lg font-bold">Edit Biaya Tambahan</h2>
-              </div>
+          {/* Header */}
+          <div className="flex items-center justify-between px-6 py-2 border-b border-primary/5">
+            <div className="flex items-center gap-2">
               <button
-                onClick={handleDelete}
-                className="text-destructive hover:bg-destructive/10 p-2 rounded-full transition-colors cursor-pointer"
+                onClick={onClose}
+                className="p-2 -ml-2 text-muted-foreground hover:text-foreground rounded-full hover:bg-muted/10 cursor-pointer"
               >
-                <Trash2 className="w-5 h-5" />
+                <ArrowLeft className="w-5 h-5" />
               </button>
+              <h2 className="text-lg font-bold">Edit Biaya Tambahan</h2>
             </div>
+            <button
+              onClick={handleDelete}
+              className="text-destructive hover:bg-destructive/10 p-2 rounded-full transition-colors cursor-pointer"
+            >
+              <Trash2 className="w-5 h-5" />
+            </button>
+          </div>
 
-            {/* Scrollable Form */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-6">
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-semibold">Nama Biaya</label>
-                  <Input
-                    placeholder="Contoh: Tax, Service, Diskon"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                  />
-                </div>
+          {/* Scrollable Form */}
+          <div className="flex-1 overflow-y-auto p-6 space-y-6">
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-sm font-semibold">Nama Biaya</label>
+                <Input
+                  placeholder="Contoh: Tax, Service, Diskon"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+              </div>
 
-                <div className="space-y-2">
-                  <label className="text-sm font-semibold">
-                    Jumlah / Persentase
-                  </label>
-                  <div className="flex gap-2">
-                    <div className="relative flex-1">
-                      {isPercentage ? (
-                        <div className="relative">
-                          <Input
-                            type="number"
-                            placeholder="10"
-                            value={percentageStr}
-                            onChange={(e) => {
-                              const val = parseFloat(e.target.value);
-                              if (val > 100) {
-                                setPercentageStr("100");
-                              } else {
-                                setPercentageStr(e.target.value);
-                              }
-                            }}
-                            className="pr-8"
-                          />
-                          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-bold text-muted-foreground">
-                            %
-                          </span>
-                        </div>
-                      ) : (
+              <div className="space-y-2">
+                <label className="text-sm font-semibold">
+                  Jumlah / Persentase
+                </label>
+                <div className="flex gap-2">
+                  <div className="relative flex-1">
+                    {isPercentage ? (
+                      <div className="relative">
                         <Input
-                          placeholder="Rp 0"
-                          value={amountStr}
+                          type="number"
+                          placeholder="10"
+                          value={percentageStr}
                           onChange={(e) => {
-                            const input = e.target.value;
-                            const isNegative = input.startsWith("-");
-                            const val = input.replace(/[^-0-9]/g, "");
-                            const numericVal = parseInt(val.replace(/-/g, ""));
-
-                            if (isNaN(numericVal)) {
-                              setAmountStr(isNegative ? "-" : "");
+                            const val = parseFloat(e.target.value);
+                            if (val > 100) {
+                              setPercentageStr("100");
                             } else {
-                              setAmountStr(
-                                (isNegative ? "-" : "") +
-                                  formatToIDR(numericVal),
-                              );
+                              setPercentageStr(e.target.value);
                             }
                           }}
+                          className="pr-8"
                         />
-                      )}
-                    </div>
-                    <button
-                      onClick={() => setIsPercentage(!isPercentage)}
-                      className={cn(
-                        "px-4.5 rounded-full border border-primary/10 text-sm font-bold transition-all cursor-pointer",
-                        isPercentage
-                          ? "bg-primary text-white border-primary"
-                          : "bg-white text-muted-foreground hover:text-primary hover:border-primary/50",
-                      )}
-                    >
-                      %
-                    </button>
-                  </div>
-                  {isPercentage && (
-                    <div className="space-y-2">
-                      <div className="flex gap-2">
-                        {(name.toLowerCase().includes("diskon") ||
-                        name.toLowerCase().includes("discount")
-                          ? [-5, -10, -20]
-                          : [5, 10, 11]
-                        ).map((p) => (
-                          <button
-                            key={p}
-                            onClick={() => setPercentageStr(p.toString())}
-                            className={cn(
-                              "flex-1 py-1 rounded-md text-[10px] font-black border transition-all cursor-pointer",
-                              percentageStr === p.toString()
-                                ? "bg-primary/10 border-primary text-primary"
-                                : "bg-white border-primary/10 text-muted-foreground hover:border-primary/30",
-                            )}
-                          >
-                            {p}%
-                          </button>
-                        ))}
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-bold text-muted-foreground">
+                          %
+                        </span>
                       </div>
-                <p className="text-[10px] text-muted-foreground px-1">
-                  {percentageStr || "0"}% dari subtotal {formatToIDR(subtotal)}{" "}
-                  ={" "}
-                  <span className="font-bold text-primary">
-                    {formatToIDR(
-                      (subtotal * (parseFloat(percentageStr) || 0)) / 100,
-                    )}
-                  </span>
-                </p>
-              </div>
-            )}
-                </div>
+                    ) : (
+                      <Input
+                        placeholder="Rp 0"
+                        value={amountStr}
+                        onChange={(e) => {
+                          const input = e.target.value;
+                          const isNegativeInput = input.includes("-");
+                          const val = input.replace(/[^-0-9]/g, "");
+                          const numericVal = parseInt(val.replace(/-/g, ""));
 
-                {/* Split Type Selector */}
-                <div className="space-y-2">
-                  <label className="text-[10px] font-bold uppercase text-muted-foreground">
-                    Metode Bagi (Split)
-                  </label>
-                  <div className="flex p-1 bg-white/50 rounded-lg border border-primary/10">
-                    <button
-                      onClick={() => setSplitType("proportionally")}
-                      className={cn(
-                        "flex-1 py-1.5 rounded-md text-[10px] font-bold transition-all cursor-pointer",
-                        splitType === "proportionally"
-                          ? "bg-primary text-white shadow-sm"
-                          : "text-muted-foreground hover:bg-white/80",
-                      )}
-                    >
-                      PROPORSIONAL (%)
-                    </button>
-                    <button
-                      onClick={() => setSplitType("equally")}
-                      className={cn(
-                        "flex-1 py-1.5 rounded-md text-[10px] font-bold transition-all cursor-pointer",
-                        splitType === "equally"
-                          ? "bg-primary text-white shadow-sm"
-                          : "text-muted-foreground hover:bg-white/80",
-                      )}
-                    >
-                      BAGI RATA (=)
-                    </button>
-                  </div>
-                </div>
+                          if (isNaN(numericVal)) {
+                            setAmountStr(isNegativeInput ? "-" : "");
+                          } else {
+                            setAmountStr(
+                              (isNegativeInput ? "-" : "") +
+                              formatToIDR(numericVal),
+                            );
+                          }
 
-                <div className="space-y-3">
-                  <label className="text-sm font-bold text-foreground">
-                    Split dengan Siapa
-                  </label>
-                  <div className="flex flex-wrap gap-3">
-                    {people.map((name) => (
-                      <PersonSelector
-                        key={name}
-                        name={name}
-                        isSelected={selectedWho.includes(name)}
-                        onClick={handleToggleWho}
+                          // If switching from negative to positive, clear the merchant paidBy
+                          // so user is forced to select a real person
+                          if (!isNegativeInput && paidBy === "merchant") {
+                            setPaidBy("");
+                          }
+                        }}
                       />
-                    ))}
+                    )}
+                  </div>
+                  <button
+                    onClick={() => setIsPercentage(!isPercentage)}
+                    className={cn(
+                      "px-4.5 rounded-full border border-primary/10 text-sm font-bold transition-all cursor-pointer",
+                      isPercentage
+                        ? "bg-primary text-white border-primary"
+                        : "bg-white text-muted-foreground hover:text-primary hover:border-primary/50",
+                    )}
+                  >
+                    %
+                  </button>
+                </div>
+                {isPercentage && (
+                  <div className="space-y-2">
+                    <div className="flex gap-2">
+                      {(name.toLowerCase().includes("diskon") ||
+                        name.toLowerCase().includes("discount")
+                        ? [-5, -10, -20]
+                        : [5, 10, 11]
+                      ).map((p) => (
+                        <button
+                          key={p}
+                          onClick={() => setPercentageStr(p.toString())}
+                          className={cn(
+                            "flex-1 py-1 rounded-md text-[10px] font-black border transition-all cursor-pointer",
+                            percentageStr === p.toString()
+                              ? "bg-primary/10 border-primary text-primary"
+                              : "bg-white border-primary/10 text-muted-foreground hover:border-primary/30",
+                          )}
+                        >
+                          {p}%
+                        </button>
+                      ))}
+                    </div>
+                    <p className="text-[10px] text-muted-foreground px-1">
+                      {percentageStr || "0"}% dari subtotal {formatToIDR(subtotal)}{" "}
+                      ={" "}
+                      <span className="font-bold text-primary">
+                        {formatToIDR(
+                          (subtotal * (parseFloat(percentageStr) || 0)) / 100,
+                        )}
+                      </span>
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* Split Type Selector */}
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold uppercase text-muted-foreground">
+                  Metode Bagi (Split)
+                </label>
+                <div className="flex p-1 bg-white/50 rounded-lg border border-primary/10">
+                  <button
+                    onClick={() => setSplitType("proportionally")}
+                    className={cn(
+                      "flex-1 py-1.5 rounded-md text-[10px] font-bold transition-all cursor-pointer",
+                      splitType === "proportionally"
+                        ? "bg-primary text-white shadow-sm"
+                        : "text-muted-foreground hover:bg-white/80",
+                    )}
+                  >
+                    PROPORSIONAL (%)
+                  </button>
+                  <button
+                    onClick={() => setSplitType("equally")}
+                    className={cn(
+                      "flex-1 py-1.5 rounded-md text-[10px] font-bold transition-all cursor-pointer",
+                      splitType === "equally"
+                        ? "bg-primary text-white shadow-sm"
+                        : "text-muted-foreground hover:bg-white/80",
+                    )}
+                  >
+                    BAGI RATA (=)
+                  </button>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <label className="text-sm font-bold text-foreground">
+                  Split dengan Siapa
+                </label>
+                <div className="flex flex-wrap gap-3">
+                  {people.map((name) => (
+                    <PersonSelector
+                      key={name}
+                      name={name}
+                      isSelected={selectedWho.includes(name)}
+                      onClick={handleToggleWho}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              {isInputNegative() ? (
+                <div className="space-y-3 pt-2">
+                  <label className="text-sm font-bold text-foreground">Dibayar oleh</label>
+                  <div className="p-3 bg-emerald-500/5 rounded-md border border-emerald-500/10 text-emerald-600 flex items-center gap-2">
+                    <span className="text-[11px] font-semibold leading-relaxed">
+                      🏷️ Diskon dari <strong>Merchant</strong> - otomatis ngurangin tagihan tiap orang yang terlibat. No worries! 🙌
+                    </span>
                   </div>
                 </div>
-
+              ) : (
                 <div className="space-y-3">
                   <label className="text-sm font-bold text-foreground">
                     Dibayar oleh
@@ -335,32 +368,33 @@ export const EditAdditionalExpenseBottomSheet = ({
                     ))}
                   </div>
                 </div>
-              </div>
-            </div>
-
-            {/* Footer Actions */}
-            <div className="p-4 border-t border-primary/5 bg-background">
-              <Button
-                onClick={handleSave}
-                className="w-full h-12 text-base font-bold shadow-lg shadow-primary/20"
-              >
-                <Save className="w-5 h-5 mr-2" /> Simpan Perubahan
-              </Button>
+              )}
             </div>
           </div>
 
-          <ConfirmationModal
-            isOpen={isConfirmOpen}
-            onClose={() => setIsConfirmOpen(false)}
-            onConfirm={confirmDelete}
-            title="Hapus Biaya Tambahan?"
-            description="Biaya tambahan ini akan dihapus permanen. Kamu yakin?"
-            icon={Trash2}
-            confirmText="Ya, Hapus"
-            confirmButtonClassName="bg-destructive text-white shadow-destructive/20"
-          />
-        </div>,
-        document.body,
-      )
+          {/* Footer Actions */}
+          <div className="p-4 border-t border-primary/5 bg-background">
+            <Button
+              onClick={handleSave}
+              className="w-full h-12 text-base font-bold shadow-lg shadow-primary/20"
+            >
+              <Save className="w-5 h-5 mr-2" /> Simpan Perubahan
+            </Button>
+          </div>
+        </div>
+
+        <ConfirmationModal
+          isOpen={isConfirmOpen}
+          onClose={() => setIsConfirmOpen(false)}
+          onConfirm={confirmDelete}
+          title="Hapus Biaya Tambahan?"
+          description="Biaya tambahan ini akan dihapus permanen. Kamu yakin?"
+          icon={Trash2}
+          confirmText="Ya, Hapus"
+          confirmButtonClassName="bg-destructive text-white shadow-destructive/20"
+        />
+      </div>,
+      document.body,
+    )
     : null;
 };

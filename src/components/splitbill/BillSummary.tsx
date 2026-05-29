@@ -70,6 +70,9 @@ export const BillSummary = ({
     useBillCalculations(dataForCalc);
 
   const people = billData ? billData.people : store.people;
+  const additionalExpenses = billData
+    ? billData.additionalExpenses
+    : store.additionalExpenses;
   const activityName = billData ? billData.activityName : store.activityName;
   const selectedPaymentMethodIds = billData
     ? billData.selectedPaymentMethodIds || []
@@ -541,6 +544,55 @@ export const BillSummary = ({
                           a.n. {method.accountName}
                         </p>
                       </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Additional Expenses Info Section */}
+          {additionalExpenses && additionalExpenses.length > 0 && (
+            <div className="space-y-3">
+              <h3 className="font-bold text-xs text-foreground/70 uppercase px-1">
+                Biaya & Potongan Tambahan 🏷️
+              </h3>
+              <div className="grid gap-2">
+                {additionalExpenses.map((adx) => {
+                  const isNegative = adx.amount < 0;
+                  return (
+                    <div
+                      key={adx.id}
+                      className={cn(
+                        "p-3 rounded-md border flex items-center justify-between transition-all",
+                        isNegative
+                          ? "bg-emerald-500/5 border-emerald-500/10"
+                          : "bg-primary/5 border-primary/10"
+                      )}
+                    >
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-1.5">
+                          <span className="font-bold text-xs text-foreground">
+                            {adx.name}
+                          </span>
+                          <SplitBadge type={adx.splitType} className="scale-90 origin-left" />
+                        </div>
+                        <p className="text-[9px] text-muted-foreground font-medium">
+                          {isNegative ? (
+                            <span>🏷️ Potongan Merchant</span>
+                          ) : (
+                            <span>Dibayar oleh <strong className="text-primary">{adx.paidBy}</strong></span>
+                          )}
+                          {" • "}
+                          <span>{adx.who.length} Orang terlibat</span>
+                        </p>
+                      </div>
+                      <span className={cn(
+                        "text-xs font-black",
+                        isNegative ? "text-emerald-600" : "text-primary"
+                      )}>
+                        {formatToIDR(adx.amount)}
+                      </span>
                     </div>
                   );
                 })}

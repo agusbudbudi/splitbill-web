@@ -1,22 +1,46 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import { HomepageNavbar } from "./HomepageNavbar";
 import { HeroSection } from "./HeroSection";
 import { SocialProofBar } from "./SocialProofBar";
 import { FeaturesSection } from "./FeaturesSection";
 import { HowItWorksSection } from "./HowItWorksSection";
-import { TestimonialsSection } from "./TestimonialsSection";
-import { ComparisonSection } from "./ComparisonSection";
 import { ShareEncouragement } from "../home/ShareEncouragement";
 import { Banner } from "../home/Banner";
-import { PricingSection } from "./PricingSection";
-import { FAQSectionHomepage } from "./FAQSectionHomepage";
-import { BlogSectionHomepage } from "./BlogSectionHomepage";
-import { CTABannerSection } from "./CTABannerSection";
 import { HomepageFooter } from "./HomepageFooter";
-import { HomepagePromoSlider } from "./HomepagePromoSlider";
 import { useAuthStore } from "@/lib/stores/authStore";
+
+// Dynamically import below-the-fold and heavy components
+const TestimonialsSection = dynamic(
+  () => import("./TestimonialsSection").then((mod) => mod.TestimonialsSection),
+  { ssr: true }
+);
+const ComparisonSection = dynamic(
+  () => import("./ComparisonSection").then((mod) => mod.ComparisonSection),
+  { ssr: true }
+);
+const PricingSection = dynamic(
+  () => import("./PricingSection").then((mod) => mod.PricingSection),
+  { ssr: true }
+);
+const FAQSectionHomepage = dynamic(
+  () => import("./FAQSectionHomepage").then((mod) => mod.FAQSectionHomepage),
+  { ssr: true }
+);
+const BlogSectionHomepage = dynamic(
+  () => import("./BlogSectionHomepage").then((mod) => mod.BlogSectionHomepage),
+  { ssr: true }
+);
+const CTABannerSection = dynamic(
+  () => import("./CTABannerSection").then((mod) => mod.CTABannerSection),
+  { ssr: true }
+);
+const HomepagePromoSlider = dynamic(
+  () => import("./HomepagePromoSlider").then((mod) => mod.HomepagePromoSlider),
+  { ssr: true }
+);
 
 export const HomepagePageClient = () => {
   const { isAuthenticated } = useAuthStore();

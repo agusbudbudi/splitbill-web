@@ -69,6 +69,7 @@ export const CTABannerSection = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.5 }}
+            style={{ willChange: "transform, opacity" }}
             className="flex flex-col items-center lg:items-start text-center lg:text-left lg:col-span-7"
           >
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight mb-6">
@@ -115,6 +116,7 @@ export const CTABannerSection = () => {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.6, delay: 0.1 }}
+            style={{ willChange: "transform, opacity" }}
             className="flex flex-col gap-4 lg:col-span-5 w-full"
           >
             {cards.map((card, idx) => {
@@ -126,6 +128,7 @@ export const CTABannerSection = () => {
                   viewport={{ once: true }}
                   transition={{ duration: 0.4, delay: 0.1 * idx }}
                   whileHover={{ x: 6, scale: 1.02 }}
+                  style={{ willChange: "transform, opacity" }}
                   className={`flex gap-4 p-5 sm:p-6 rounded-2xl bg-white/70 backdrop-blur-md border ${card.bg} shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_12px_40px_rgba(71,159,234,0.06)] transition-all duration-300`}
                 >
                   <div className={`flex-shrink-0 w-12 h-12 rounded-lg ${card.bgLight} ${card.bgHover} flex items-center justify-center p-1 transition-all duration-300 group-hover:scale-105`}>

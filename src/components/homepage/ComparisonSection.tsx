@@ -62,6 +62,7 @@ export const ComparisonSection = () => {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: "-50px" }}
             transition={{ duration: 0.6 }}
+            style={{ willChange: "transform, opacity" }}
             className="bg-rose-50/50 border border-rose-100/80 rounded-3xl p-6 sm:p-8 hover:shadow-[0_12px_30px_-6px_rgba(244,63,94,0.15)] hover:border-rose-400/70 hover:-translate-y-1.5 transition-all duration-300 cursor-pointer"
           >
             <div className="flex items-center gap-2 mb-6">
@@ -89,6 +90,7 @@ export const ComparisonSection = () => {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: "-50px" }}
             transition={{ duration: 0.6 }}
+            style={{ willChange: "transform, opacity" }}
             className="bg-emerald-50/50 border border-emerald-300 rounded-3xl p-6 sm:p-8 hover:shadow-[0_12px_30px_-6px_rgba(16,185,129,0.15)] hover:border-emerald-400 hover:-translate-y-1.5 transition-all duration-300 relative overflow-hidden cursor-pointer"
           >
             {/* Glow badge */}

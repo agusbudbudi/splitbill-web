@@ -133,44 +133,49 @@ export const FeaturesSection = () => {
         >
           {features.map((feat) => {
             return (
-              <Link key={feat.title} href={feat.href} className="block h-full">
-                <motion.div
-                  variants={cardVariants}
-                  whileHover={{ y: -6, transition: { duration: 0.2 } }}
-                  className="group relative bg-white rounded-3xl p-4 sm:p-6 lg:p-8 border border-slate-100/80 shadow-[0_4px_20px_-4px_rgba(71,159,234,0.08)] hover:shadow-[0_12px_30px_-6px_rgba(71,159,234,0.15)] hover:border-primary/20 transition-all duration-300 flex flex-col justify-between overflow-hidden cursor-pointer h-full"
-                >
-                  <div className="flex flex-col h-full justify-between">
-                    <div>
-                      {/* Card Icon Container */}
-                      <div className="flex items-center justify-between mb-4 sm:mb-6">
-                        <div className={`w-12 h-12 sm:w-16 sm:h-16 ${feat.bgLight} ${feat.bgHover} rounded-xl sm:rounded-2xl flex items-center justify-center p-2 sm:p-2.5 transition-all duration-300 group-hover:scale-105`}>
-                          <img
-                            src={feat.imageSrc}
-                            alt={feat.title}
-                            className="w-full h-full object-contain"
-                          />
+              <motion.div
+                key={feat.title}
+                variants={cardVariants}
+                style={{ willChange: "transform, opacity" }}
+                className="h-full"
+              >
+                <Link href={feat.href} className="block h-full">
+                  <div
+                    className="group relative bg-white rounded-3xl p-4 sm:p-6 lg:p-8 border border-slate-100/80 shadow-[0_4px_20px_-4px_rgba(71,159,234,0.08)] hover:shadow-[0_12px_30px_-6px_rgba(71,159,234,0.15)] hover:border-primary/20 hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between overflow-hidden cursor-pointer h-full"
+                  >
+                    <div className="flex flex-col h-full justify-between">
+                      <div>
+                        {/* Card Icon Container */}
+                        <div className="flex items-center justify-between mb-4 sm:mb-6">
+                          <div className={`w-12 h-12 sm:w-16 sm:h-16 ${feat.bgLight} ${feat.bgHover} rounded-xl sm:rounded-2xl flex items-center justify-center p-2 sm:p-2.5 transition-all duration-300 group-hover:scale-105`}>
+                            <img
+                              src={feat.imageSrc}
+                              alt={feat.title}
+                              className="w-full h-full object-contain"
+                            />
+                          </div>
+                          {feat.badge && (
+                            <span className={`text-[8px] sm:text-[10px] font-black px-2 py-0.5 sm:py-1 rounded-full uppercase tracking-wider ${feat.badge.toLowerCase().includes("new")
+                                ? "bg-emerald-100 text-emerald-800"
+                                : "bg-amber-100 text-amber-800"
+                              }`}>
+                              {feat.badge}
+                            </span>
+                          )}
                         </div>
-                        {feat.badge && (
-                          <span className={`text-[8px] sm:text-[10px] font-black px-2 py-0.5 sm:py-1 rounded-full uppercase tracking-wider ${feat.badge.toLowerCase().includes("new")
-                              ? "bg-emerald-100 text-emerald-800"
-                              : "bg-amber-100 text-amber-800"
-                            }`}>
-                            {feat.badge}
-                          </span>
-                        )}
-                      </div>
 
-                      {/* Card Info */}
-                      <h3 className="text-sm sm:text-base lg:text-xl font-extrabold text-slate-800 mb-1.5 sm:mb-2.5 group-hover:text-primary transition-colors duration-200">
-                        {feat.title}
-                      </h3>
-                      <p className="text-[11px] sm:text-xs lg:text-sm font-semibold text-slate-500 leading-normal sm:leading-relaxed">
-                        {feat.description}
-                      </p>
+                        {/* Card Info */}
+                        <h3 className="text-sm sm:text-base lg:text-xl font-extrabold text-slate-800 mb-1.5 sm:mb-2.5 group-hover:text-primary transition-colors duration-200">
+                          {feat.title}
+                        </h3>
+                        <p className="text-[11px] sm:text-xs lg:text-sm font-semibold text-slate-500 leading-normal sm:leading-relaxed">
+                          {feat.description}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </motion.div>
-              </Link>
+                </Link>
+              </motion.div>
             );
           })}
         </motion.div>

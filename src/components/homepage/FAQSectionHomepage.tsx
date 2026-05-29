@@ -57,6 +57,7 @@ export const FAQSectionHomepage = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.4, delay: index * 0.08 }}
+                style={{ willChange: "transform, opacity" }}
                 className="bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-[0_4px_20px_-6px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_24px_-6px_rgba(0,0,0,0.05)] hover:border-slate-200/80 transition-all duration-300"
               >
                 <button

@@ -3,7 +3,7 @@
 import React, { useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowLeft, LogIn, MessageCircle, Crown } from "lucide-react";
+import { ArrowLeft, LogIn, MessageCircle, Crown, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/lib/stores/authStore";
@@ -56,6 +56,12 @@ export const Header = ({
         className,
       )}
     >
+      {!wide && (
+        <div className="hidden lg:flex w-full items-center justify-center gap-2 bg-amber-50 px-4 py-2 text-amber-800 text-xs font-medium">
+          <Smartphone className="w-3.5 h-3.5 shrink-0" />
+          <span>Biar lebih sat-set, mending buka web ini di HP aja guys! 📱✨</span>
+        </div>
+      )}
       <div
         className={cn(
           "w-full mx-auto text-white transition-colors duration-300 pt-safe",

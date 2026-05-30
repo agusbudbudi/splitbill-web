@@ -110,7 +110,6 @@ export const HowItWorksSection = () => {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, margin: "-30px" }}
                     transition={{ duration: 0.5, delay: index * 0.1, ease: "easeOut" }}
-                    style={{ willChange: "transform, opacity" }}
                     className="flex-shrink-0 w-[82vw] snap-center flex flex-col items-center text-center"
                   >
                     {/* Image */}
@@ -171,7 +170,6 @@ export const HowItWorksSection = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.6, delay: index * 0.15 }}
-                style={{ willChange: "transform, opacity" }}
                 className="flex flex-col items-center text-center group"
               >
                 {/* Image Showcase */}

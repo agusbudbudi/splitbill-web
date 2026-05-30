@@ -125,7 +125,6 @@ export const BlogSectionHomepage = () => {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, margin: "-30px" }}
                     transition={{ duration: 0.5, delay: idx * 0.05, ease: "easeOut" }}
-                    style={{ willChange: "transform, opacity" }}
                     className="flex-shrink-0 w-[290px] sm:w-[350px] snap-start"
                   >
                     <BlogCard blog={blog} />

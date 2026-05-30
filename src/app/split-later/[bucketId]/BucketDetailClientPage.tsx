@@ -166,7 +166,7 @@ export default function BucketDetailClientPage({
           <Header
             title={`${bucket.emoji} ${bucket.title}`}
             showBackButton
-            onBack={() => router.push("/split-later")}
+            onBack={() => router.back()}
             transparent
             rightContent={
               <div className="flex items-center gap-1">

@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Header } from "@/components/layout/Header";
 import { BlogCard } from "@/components/blog/BlogCard";
 import { fetchBlogs } from "@/lib/api/blog";
 import { Blog } from "@/lib/types/blog";
@@ -13,6 +12,8 @@ import { BlogCardSkeleton } from "@/components/blog/BlogCardSkeleton";
 
 import { Footer } from "@/components/layout/Footer";
 import { BlogCTA } from "@/components/blog/BlogCTA";
+import { HomepageFooter } from "@/components/homepage/HomepageFooter";
+import { HomepageNavbar } from "@/components/homepage/HomepageNavbar";
 
 export default function BlogListClient() {
   const [blogs, setBlogs] = useState<Blog[]>([]);
@@ -41,12 +42,12 @@ export default function BlogListClient() {
   );
 
   return (
-    <div className="w-full min-h-screen bg-background pb-0 flex flex-col items-center">
-      <Header title="Blog & Tips" showBackButton sticky />
+    <div className="w-full min-h-screen bg-background pb-0 flex flex-col items-center pt-16 lg:pt-18">
+      <HomepageNavbar />
 
       {/* Hero Banner Section */}
-      <section className="w-full max-w-[600px] relative pt-12 pb-8 px-6">
-        <div className="relative z-10 max-w-[600px] mx-auto text-center">
+      <section className="w-full max-w-[600px] lg:max-w-7xl relative pt-12 pb-8 px-6">
+        <div className="relative z-10 w-full mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -77,15 +78,15 @@ export default function BlogListClient() {
       </section>
 
       {/* Main Content */}
-      <main className="w-full max-w-[600px] mx-auto px-4 mt-8 relative z-20 flex-1">
+      <main className="w-full max-w-[600px] lg:max-w-7xl mx-auto px-4 mt-8 relative z-20 flex-1">
         {isLoading ? (
-          <div className="w-full grid grid-cols-1 gap-8">
-            {[1, 2, 3].map((i) => (
+          <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
               <BlogCardSkeleton key={i} />
             ))}
           </div>
         ) : filteredBlogs.length > 0 ? (
-          <div className="w-full grid grid-cols-1 gap-8">
+          <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredBlogs.map((blog, index) => (
               <BlogCard key={blog._id} blog={blog} priority={index === 0} />
             ))}
@@ -111,6 +112,9 @@ export default function BlogListClient() {
 
       {/* CTA Section */}
       <BlogCTA />
+
+      {/* Reusable Footer */}
+      <HomepageFooter />
 
       {/* Mobile Navigation Footer */}
       <Footer />

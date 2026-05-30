@@ -136,7 +136,6 @@ export const FeaturesSection = () => {
               <motion.div
                 key={feat.title}
                 variants={cardVariants}
-                style={{ willChange: "transform, opacity" }}
                 className="h-full"
               >
                 <Link href={feat.href} className="block h-full">

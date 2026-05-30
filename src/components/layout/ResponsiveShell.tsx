@@ -16,9 +16,11 @@ export const ResponsiveShell = ({ children }: ResponsiveShellProps) => {
     setIsMounted(true);
   }, []);
 
+  const isBlogDetail = pathname.startsWith("/blog/") && pathname.split("/").length > 2;
+
   return (
     <div className="w-full min-h-screen bg-background">
-      {pathname !== "/" && <MemberSidebar />}
+      {pathname !== "/" && !isBlogDetail && <MemberSidebar />}
       {children}
     </div>
   );

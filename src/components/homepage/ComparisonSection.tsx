@@ -62,8 +62,8 @@ export const ComparisonSection = () => {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: "-50px" }}
             transition={{ duration: 0.6 }}
-            style={{ willChange: "transform, opacity" }}
-            className="bg-rose-50/50 border border-rose-100/80 rounded-3xl p-6 sm:p-8 hover:shadow-[0_12px_30px_-6px_rgba(244,63,94,0.15)] hover:border-rose-400/70 hover:-translate-y-1.5 transition-all duration-300 cursor-pointer"
+            whileHover={{ y: -6 }}
+            className="bg-rose-50/50 border border-rose-100/80 rounded-3xl p-6 sm:p-8 hover:shadow-[0_12px_30px_-6px_rgba(244,63,94,0.15)] hover:border-rose-400/70 transition-[box-shadow,border-color,background-color] duration-300 cursor-pointer"
           >
             <div className="flex items-center gap-2 mb-6">
               <span className="text-2xl">😩</span>
@@ -71,7 +71,7 @@ export const ComparisonSection = () => {
                 Sebelum pake SplitBill
               </h3>
             </div>
-
+ 
             <ul className="space-y-4">
               {withoutSplitBill.map((item, idx) => (
                 <li key={idx} className="flex items-start gap-3">
@@ -83,15 +83,15 @@ export const ComparisonSection = () => {
               ))}
             </ul>
           </motion.div>
-
+ 
           {/* With SplitBill Card */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: "-50px" }}
             transition={{ duration: 0.6 }}
-            style={{ willChange: "transform, opacity" }}
-            className="bg-emerald-50/50 border border-emerald-300 rounded-3xl p-6 sm:p-8 hover:shadow-[0_12px_30px_-6px_rgba(16,185,129,0.15)] hover:border-emerald-400 hover:-translate-y-1.5 transition-all duration-300 relative overflow-hidden cursor-pointer"
+            whileHover={{ y: -6 }}
+            className="bg-emerald-50/50 border border-emerald-300 rounded-3xl p-6 sm:p-8 hover:shadow-[0_12px_30px_-6px_rgba(16,185,129,0.15)] hover:border-emerald-400 transition-[box-shadow,border-color,background-color] duration-300 relative overflow-hidden cursor-pointer"
           >
             {/* Glow badge */}
             <div className="absolute top-0 right-0 bg-emerald-500 text-white text-[10px] font-black px-4 py-1.5 rounded-bl-2xl uppercase tracking-wider">

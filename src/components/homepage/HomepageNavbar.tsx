@@ -10,6 +10,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useAuthStore } from "@/lib/stores/authStore";
 import { usePWA } from "@/hooks/usePWA";
 import { toast } from "sonner";
+import { usePathname, useRouter } from "next/navigation";
 
 const navLinks = [
   { label: "Fitur", href: "#fitur" },
@@ -19,6 +20,8 @@ const navLinks = [
 ];
 
 export const HomepageNavbar = () => {
+  const pathname = usePathname();
+  const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [headerHeight, setHeaderHeight] = useState(64);
@@ -91,9 +94,13 @@ export const HomepageNavbar = () => {
   ) => {
     if (href.startsWith("#")) {
       e.preventDefault();
-      const el = document.getElementById(href.slice(1));
-      if (el) {
-        el.scrollIntoView({ behavior: "smooth", block: "start" });
+      if (pathname === "/") {
+        const el = document.getElementById(href.slice(1));
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      } else {
+        router.push(`/${href}`);
       }
       setMenuOpen(false);
     }
@@ -165,7 +172,7 @@ export const HomepageNavbar = () => {
               {navLinks.map((link) => (
                 <a
                   key={link.href}
-                  href={link.href}
+                  href={pathname === "/" ? link.href : `/${link.href}`}
                   onClick={(e) => handleNavClick(e, link.href)}
                   className="px-4 py-2 rounded-sm text-sm font-semibold text-slate-700 hover:text-primary hover:bg-slate-100 transition-all duration-200 cursor-pointer"
                 >
@@ -269,7 +276,7 @@ export const HomepageNavbar = () => {
               {navLinks.map((link) => (
                 <a
                   key={link.href}
-                  href={link.href}
+                  href={pathname === "/" ? link.href : `/${link.href}`}
                   onClick={(e) => handleNavClick(e, link.href)}
                   className="px-4 py-3 rounded-xl text-base font-semibold text-slate-700 hover:text-primary hover:bg-primary/5 transition-all duration-200 cursor-pointer"
                 >

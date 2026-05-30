@@ -29,28 +29,44 @@ export const BlogCTA = () => {
   ];
 
   return (
-    <section className="w-full max-w-[600px] mx-auto bg-muted/20 py-12 px-8 rounded-t-lg">
-      <div className=" mx-auto text-left">
-        <h2 className="text-2xl font-black text-primary leading-tight mb-2">
-          3 Langkah Mudah Bagi Tagihan <br />
-          <span className="text-foreground">#PakeSplitBill</span>
-        </h2>
-        <p className="text-muted-foreground text-sm mb-10">
-          Urus patungan jadi lebih cepat, adil, dan transparan.
-        </p>
+    <section className="w-full max-w-[600px] lg:max-w-7xl mx-auto py-12 lg:py-16 px-6">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12 items-center">
+        {/* Kolom 1: Title, Desc, and CTA (Lebih lebar dengan col-span-2) */}
+        <div className="col-span-1 lg:col-span-2 flex flex-col text-left lg:h-full lg:justify-between gap-6 lg:pr-8">
+          <div className="space-y-3">
+            <h2 className="text-2xl lg:text-3xl font-black text-primary leading-tight">
+              3 Langkah Mudah Bagi Tagihan <br />
+              <span className="text-foreground">#PakeSplitBill</span>
+            </h2>
+            <p className="text-muted-foreground text-sm">
+              Urus patungan jadi lebih cepat, adil, dan transparan.
+            </p>
+          </div>
+          <Link href="/split-bill" className="w-full cursor-pointer">
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="w-full lg:max-w-xs bg-primary text-white font-bold py-3.5 px-6 rounded-2xl shadow-glow flex items-center justify-center gap-2 group transition-all cursor-pointer text-sm"
+            >
+              Coba Split Bill
+              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+            </motion.button>
+          </Link>
+        </div>
 
-        <div className="space-y-8 mb-12">
+        {/* Kolom 2, 3, 4: Langkah-langkah (col-span-3) */}
+        <div className="col-span-1 lg:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
           {steps.map((step, index) => {
             const Icon = step.icon;
             return (
-              <div key={index} className="flex gap-4">
+              <div key={index} className="flex lg:flex-col gap-4 lg:justify-start">
                 <div
                   className={`flex-shrink-0 w-12 h-12 rounded-2xl ${step.color} flex items-center justify-center`}
                 >
                   <Icon className="w-6 h-6" />
                 </div>
-                <div className="space-y-1">
-                  <h3 className="font-bold text-foreground text-base leading-none">
+                <div className="space-y-1 text-left lg:mt-1">
+                  <h3 className="font-bold text-foreground text-base leading-tight">
                     {step.title}
                   </h3>
                   <p className="text-xs text-muted-foreground leading-relaxed">
@@ -61,17 +77,6 @@ export const BlogCTA = () => {
             );
           })}
         </div>
-
-        <Link href="/split-bill">
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className="w-full bg-primary text-white font-bold py-4 rounded-2xl shadow-glow flex items-center justify-center gap-2 group transition-all"
-          >
-            Coba Split Bill Sekarang
-            <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-          </motion.button>
-        </Link>
       </div>
     </section>
   );

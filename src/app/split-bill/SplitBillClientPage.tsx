@@ -69,6 +69,7 @@ const SplitBillContent = () => {
     clearDraftAfterFinalize,
     setPeople,
     setSource,
+    clearSource,
     sourceBucketId,
     sourceReceiptId,
   } = useSplitBillStore();
@@ -92,6 +93,10 @@ const SplitBillContent = () => {
           console.error("Failed to parse participants from searchParams", e);
         }
       }
+    } else {
+      // Clear any stale sourceBucketId from a previous split-later session
+      // stored in localStorage, so back navigation goes to "/" instead of the old bucket
+      clearSource();
     }
   }, [searchParams]);
 

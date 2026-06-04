@@ -3,6 +3,7 @@ import { User } from "@/lib/api/auth";
 import * as authApi from "@/lib/api/auth";
 import { hasTokens, clearTokens } from "@/lib/auth/tokens";
 import { identifyUser, clearUser } from "@/lib/gtag";
+import { useSplitBillStore } from "@/store/useSplitBillStore";
 
 export interface LoginCredentials {
   email: string;
@@ -35,7 +36,11 @@ export const useAuthStore = create<AuthState>((set) => ({
   login: async (credentials: LoginCredentials) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await authApi.login(credentials);
+      // Attach any pending guest draft so the backend can auto-associate it
+      const { draftId } = useSplitBillStore.getState();
+      const payload = draftId ? { ...credentials, draftId } : credentials;
+
+      const response = await authApi.login(payload);
       set({
         user: response.user,
         isAuthenticated: true,
@@ -66,7 +71,9 @@ export const useAuthStore = create<AuthState>((set) => ({
   register: async (name: string, email: string, password: string) => {
     set({ isLoading: true, error: null });
     try {
-      await authApi.register({ name, email, password });
+      // Attach any pending guest draft so the backend can auto-associate it
+      const { draftId } = useSplitBillStore.getState();
+      await authApi.register({ name, email, password, ...(draftId ? { draftId } : {}) });
       set({
         isLoading: false,
       });

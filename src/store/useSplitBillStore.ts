@@ -28,6 +28,9 @@ interface SplitBillState {
   lastPaidBy: string;
   lastWho: string[];
 
+  // Draft persistence — MongoDB _id of the current in-progress draft
+  draftId: string | null;
+
   // Split Later integration — links this session to a Split Later receipt
   sourceBucketId?: string;
   sourceReceiptId?: string;
@@ -61,6 +64,8 @@ interface SplitBillState {
   setLastAssignment: (paidBy: string, who: string[]) => void;
   setSource: (bucketId: string, receiptId: string) => void;
   clearSource: () => void;
+  setDraftId: (id: string) => void;
+  clearDraftId: () => void;
   clearDraftAfterFinalize: () => void;
   setPendingCapturedImage: (image: string) => void;
   clearPendingCapturedImage: () => void;
@@ -76,6 +81,7 @@ export const useSplitBillStore = create<SplitBillState>()(
       selectedPaymentMethodIds: [],
       lastPaidBy: "",
       lastWho: [],
+      draftId: null,
       sourceBucketId: undefined,
       sourceReceiptId: undefined,
       pendingCapturedImage: undefined,
@@ -209,11 +215,16 @@ export const useSplitBillStore = create<SplitBillState>()(
           sourceReceiptId: undefined,
         }),
 
+      setDraftId: (id) => set({ draftId: id }),
+
+      clearDraftId: () => set({ draftId: null }),
+
       clearDraftAfterFinalize: () =>
         set({
           activityName: "",
           expenses: [],
           additionalExpenses: [],
+          draftId: null,
           sourceBucketId: undefined,
           sourceReceiptId: undefined,
           pendingCapturedImage: undefined,

@@ -55,6 +55,7 @@ export interface BackendSummary {
 
 export interface BackendSplitBillRecord {
   id: string;
+  ownerId?: string;
   activityName: string;
   occurredAt: string;
   participants: BackendParticipant[];
@@ -64,6 +65,25 @@ export interface BackendSplitBillRecord {
   paymentMethodSnapshots: any[];
   summary: BackendSummary;
   status: "locked" | "editable";
+  last_step?: "STEP_1" | "STEP_2" | "STEP_3" | "FINALIZED" | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/** Draft record shape — all bill-data fields are nullable until fully populated */
+export interface BackendDraft {
+  id: string;
+  userId: string | null;
+  status: "editable" | "locked";
+  last_step: "STEP_1" | "STEP_2" | "STEP_3" | "FINALIZED" | null;
+  activityName: string | null;
+  occurredAt: string | null;
+  participants: BackendParticipant[];
+  expenses: BackendExpense[];
+  additionalExpenses: BackendAdditionalExpense[];
+  paymentMethodIds: string[];
+  paymentMethodSnapshots: any[];
+  summary: BackendSummary | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -241,7 +261,10 @@ export interface CreateSplitBillResponse {
 }
 
 export const splitBillApi = {
-  getAll: () => apiClient.request<GetAllSplitBillsResponse>("/api/split-bills"),
+  getAll: (params?: { status?: string }) => {
+    const qs = params?.status ? `?status=${params.status}` : "";
+    return apiClient.request<GetAllSplitBillsResponse>(`/api/split-bills${qs}`);
+  },
   getById: (id: string) => apiClient.request<GetSplitBillByIdResponse>(`/api/split-bills/${id}`),
   create: (payload: CreateSplitBillPayload) => apiClient.request<CreateSplitBillResponse>("/api/split-bills", {
     method: "POST",
@@ -250,4 +273,61 @@ export const splitBillApi = {
   delete: (id: string) => apiClient.request<{ success: boolean; message: string }>(`/api/split-bills/${id}`, {
     method: "DELETE",
   }),
+};
+
+// ─── Draft API ────────────────────────────────────────────────────────────────
+
+export interface CreateDraftPayload {
+  participants?: BackendParticipant[];
+  activityName?: string;
+  occurredAt?: string;
+}
+
+export interface UpdateDraftPayload {
+  last_step: "STEP_1" | "STEP_2" | "STEP_3";
+  activityName?: string;
+  occurredAt?: string;
+  participants?: BackendParticipant[];
+  expenses?: BackendExpense[];
+  additionalExpenses?: BackendAdditionalExpense[];
+  paymentMethodIds?: string[];
+  paymentMethodSnapshots?: any[];
+  summary?: BackendSummary;
+}
+
+export interface DraftResponse {
+  success: boolean;
+  draft: BackendDraft;
+}
+
+export interface FinalizeDraftResponse {
+  success: boolean;
+  record: BackendSplitBillRecord;
+}
+
+export const draftApi = {
+  /** Create a new draft (Step 1). Auth is optional — sends token if available. */
+  create: (payload: CreateDraftPayload) =>
+    apiClient.request<DraftResponse>("/api/split-bills/drafts", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
+
+  /** Fetch a draft by ID. */
+  getById: (draftId: string) =>
+    apiClient.request<DraftResponse>(`/api/split-bills/drafts/${draftId}`),
+
+  /** Update draft step data. last_step must be provided. */
+  update: (draftId: string, payload: UpdateDraftPayload) =>
+    apiClient.request<DraftResponse>(`/api/split-bills/drafts/${draftId}`, {
+      method: "PUT",
+      body: JSON.stringify(payload),
+    }),
+
+  /** Finalize the draft (auth required). Returns finalized SplitBillRecord. */
+  finalize: (draftId: string) =>
+    apiClient.request<FinalizeDraftResponse>(
+      `/api/split-bills/drafts/${draftId}/finalize`,
+      { method: "POST" }
+    ),
 };

@@ -19,6 +19,7 @@ import { useWalletStore, type PaymentMethod } from "@/store/useWalletStore";
 import { useBillCalculations } from "@/hooks/useBillCalculations";
 import { WalletSelectionCard } from "@/components/wallet/WalletSelectionCard";
 import { AddPaymentMethodBottomSheet } from "@/components/wallet/AddPaymentMethodBottomSheet";
+import { draftApi, splitBillApi, mapFrontendToBackend } from "@/lib/api/split-bills";
 import {
   Users,
   ReceiptText,
@@ -117,6 +118,7 @@ const SplitBillContent = () => {
   const [validationError, setValidationError] = useState<string | null>(null);
   const [isFinalizing, setIsFinalizing] = useState(false);
   const isFinalizingRef = useRef(false);
+  const isCreatingDraftRef = useRef(false);
 
   const hasSeenTutorial = useOnboardingStore((state) => state.hasSeenTutorial);
   const setHasSeenTutorial = useOnboardingStore(
@@ -259,8 +261,16 @@ const SplitBillContent = () => {
       isFinalizingRef.current = true;
       setIsFinalizing(true);
 
-      const id =
-        (await saveBill(
+      const { draftId } = useSplitBillStore.getState();
+      let recordId = "";
+
+      if (draftId) {
+        // If there's a draft, finalize it via backend draft finalize endpoint
+        const response = await draftApi.finalize(draftId);
+        recordId = response.record.id;
+      } else {
+        // Fallback to direct creation if draft ID is missing
+        const payload = mapFrontendToBackend(
           {
             activityName: activityName || "Aktivitas Split Bill",
             totalAmount: totalSpent,
@@ -270,15 +280,20 @@ const SplitBillContent = () => {
             selectedPaymentMethodIds,
           },
           calculationResult,
-        )) || "";
-      setLastSavedId(id);
+          paymentMethods
+        );
+        const response = await splitBillApi.create(payload);
+        recordId = response.record?.id || response.data?.record?.id || "";
+      }
+
+      setLastSavedId(recordId);
       setIsSaved(true);
 
       const bucketIdToRedirect = sourceBucketId;
       if (bucketIdToRedirect && sourceReceiptId) {
         useSplitLaterStore.getState().markReceiptCompleted(
           sourceReceiptId,
-          id,
+          recordId,
           activityName || "Struk Belanja",
           totalSpent
         );
@@ -294,23 +309,23 @@ const SplitBillContent = () => {
       setShowFinalizeModal(false);
 
       // 1. Update current URL to include saved=true so back navigation shows the success card
-      router.replace(`/split-bill?step=4&saved=true&id=${id}`);
+      router.replace(`/split-bill?step=4&saved=true&id=${recordId}`);
 
       // 2. Navigate to detail page with new=true or back to bucket
       setTimeout(() => {
         if (bucketIdToRedirect) {
           router.push(`/split-later/${bucketIdToRedirect}`);
         } else {
-          router.push(`/history/split-bill/${id}?new=true`);
+          router.push(`/history/split-bill/${recordId}?new=true`);
         }
       }, 100);
 
       // Celeberation Effect
       triggerConfetti();
+    } catch (e: any) {
+      console.error("Failed to finalize split bill:", e);
+      toast.error("Gagal menyimpan split bill: " + (e.message || "Terjadi kesalahan"));
     } finally {
-      // We don't necessarily need to reset isFinalizingRef.current to false here
-      // because once isSaved is true, it shouldn't be called again anyway.
-      // But for robustness:
       setIsFinalizing(false);
     }
   };
@@ -363,6 +378,132 @@ const SplitBillContent = () => {
         trackSplitBill.autofillView(activityName);
       }
     }
+
+    // Save/update draft asynchronously in the background so user doesn't wait
+    const saveDraftInBackground = async () => {
+      try {
+        const { draftId, setDraftId } = useSplitBillStore.getState();
+        const backendParticipants = people.map(p => ({ id: p, name: p }));
+
+        if (step === 1) {
+          // Create draft if not exists, or update if exists
+          if (!draftId) {
+            if (isCreatingDraftRef.current) return;
+            isCreatingDraftRef.current = true;
+            try {
+              const response = await draftApi.create({
+                participants: backendParticipants,
+              });
+              if (response.success && response.draft?.id) {
+                setDraftId(response.draft.id);
+              }
+            } finally {
+              isCreatingDraftRef.current = false;
+            }
+          } else {
+            await draftApi.update(draftId, {
+              last_step: "STEP_1",
+              participants: backendParticipants,
+            });
+          }
+        } else if (step === 2) {
+          let activeDraftId = draftId;
+          if (!activeDraftId) {
+            if (isCreatingDraftRef.current) return;
+            isCreatingDraftRef.current = true;
+            try {
+              const response = await draftApi.create({
+                participants: backendParticipants,
+              });
+              if (response.success && response.draft?.id) {
+                activeDraftId = response.draft.id;
+                setDraftId(activeDraftId);
+              }
+            } finally {
+              isCreatingDraftRef.current = false;
+            }
+          }
+
+          if (activeDraftId) {
+            // Prepare backend format for expenses
+            const backendExpenses = expenses.map(exp => ({
+              id: exp.id,
+              description: exp.item,
+              amount: exp.amount,
+              paidBy: exp.paidBy,
+              participants: exp.who,
+              createdAt: Date.now(),
+            }));
+            const backendAdditionalExpenses = additionalExpenses.map(adx => ({
+              id: adx.id,
+              description: adx.name,
+              amount: adx.amount,
+              paidBy: adx.paidBy,
+              participants: adx.who,
+              splitType: adx.splitType,
+              createdAt: Date.now(),
+            }));
+            await draftApi.update(activeDraftId, {
+              last_step: "STEP_2",
+              expenses: backendExpenses,
+              additionalExpenses: backendAdditionalExpenses,
+              participants: backendParticipants,
+            });
+          }
+        } else if (step === 3) {
+          let activeDraftId = draftId;
+          if (!activeDraftId) {
+            if (isCreatingDraftRef.current) return;
+            isCreatingDraftRef.current = true;
+            try {
+              const response = await draftApi.create({
+                participants: backendParticipants,
+              });
+              if (response.success && response.draft?.id) {
+                activeDraftId = response.draft.id;
+                setDraftId(activeDraftId);
+              }
+            } finally {
+              isCreatingDraftRef.current = false;
+            }
+          }
+
+          if (activeDraftId) {
+            // Fully serialize draft using mapFrontendToBackend mapping logic
+            const payload = mapFrontendToBackend(
+              {
+                activityName: activityName || "Aktivitas Split Bill",
+                totalAmount: totalSpent,
+                people,
+                expenses,
+                additionalExpenses,
+                selectedPaymentMethodIds,
+              },
+              calculationResult,
+              paymentMethods
+            );
+
+            await draftApi.update(activeDraftId, {
+              last_step: "STEP_3",
+              activityName: payload.activityName,
+              occurredAt: payload.occurredAt,
+              participants: payload.participants,
+              expenses: payload.expenses,
+              additionalExpenses: payload.additionalExpenses,
+              paymentMethodIds: payload.paymentMethodIds,
+              paymentMethodSnapshots: payload.paymentMethodSnapshots,
+              summary: payload.summary,
+            });
+          }
+        }
+      } catch (err) {
+        console.error("Failed to save draft in background:", err);
+      }
+    };
+
+    // Run the background task without awaiting it
+    saveDraftInBackground();
+
     setValidationError(null);
     const nextStepNum = step + 1;
     const stepNames = ["", "Teman", "Bil", "Detail", "Hasil"];

@@ -204,13 +204,37 @@ export const HeroSection = () => {
                 Coba Sekarang - Gratis!
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
-              <a
+               <a
                 href="#cara-pakai"
                 onClick={(e) => {
                   e.preventDefault();
-                  document
-                    .getElementById("cara-pakai")
-                    ?.scrollIntoView({ behavior: "smooth" });
+                  // Find the target element
+                  const target = document.getElementById("cara-pakai");
+                  if (target) {
+                    // 1. Calculate and scroll immediately (this will trigger scrolled=true and start rendering the banner)
+                    const header = document.querySelector("header");
+                    let headerHeight = header ? header.offsetHeight : 64;
+                    let elementPosition = target.getBoundingClientRect().top;
+                    let offsetPosition = elementPosition + window.scrollY - headerHeight - 2;
+
+                    window.scrollTo({
+                      top: offsetPosition,
+                      behavior: "smooth",
+                    });
+
+                    // 2. Perform a secondary adjustment after 260ms once the banner height animation finishes
+                    setTimeout(() => {
+                      const updatedHeader = document.querySelector("header");
+                      const updatedHeaderHeight = updatedHeader ? updatedHeader.offsetHeight : 64;
+                      const updatedElementPosition = target.getBoundingClientRect().top;
+                      const updatedOffset = updatedElementPosition + window.scrollY - updatedHeaderHeight - 2;
+                      
+                      window.scrollTo({
+                        top: updatedOffset,
+                        behavior: "smooth",
+                      });
+                    }, 260);
+                  }
                 }}
                 className="flex items-center justify-center gap-2 px-7 py-4 rounded-lg bg-white border border-primary/30 text-primary font-bold text-base hover:bg-primary/5 hover:border-primary/60 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer shadow-sm"
               >
@@ -280,10 +304,10 @@ export const HeroSection = () => {
                 <motion.div
                   animate={{ y: [0, -4, 0] }}
                   transition={{ repeat: Infinity, duration: 2.8, ease: "easeInOut", delay: 0.4 }}
-                  className="absolute -top-12 sm:-top-14 left-1/2 -translate-x-1/2 bg-[#2EC866] text-white rounded-xl shadow-xl px-2.5 py-1.5 sm:px-3 sm:py-2 flex items-center gap-1.5 sm:gap-2 z-20 whitespace-nowrap"
+                  className="absolute -top-12 sm:-top-14 left-1/2 -translate-x-1/2 bg-emerald-500 text-white rounded-xl shadow-xl px-3 py-2 sm:px-3 sm:py-2 flex items-center gap-1.5 sm:gap-2 z-20 whitespace-nowrap"
                 >
-                  <Camera className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                  <span className="text-[9px] sm:text-[10px] font-black">Foto struk → beres!</span>
+                  <Camera className="w-3.5 h-3.5 sm:w-3.5 sm:h-3.5" />
+                  <span className="text-xs sm:text-[10px] font-black">Foto struk → beres!</span>
                 </motion.div>
               </div>
 

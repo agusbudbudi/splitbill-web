@@ -1,75 +1,62 @@
 "use client";
 
 import React from "react";
-import Image from "next/image";
-import { motion } from "framer-motion";
+import { Sparkles, UserCheck, Zap } from "lucide-react";
 
-const paymentLogos = [
-  { src: "/img/logo-gopay.png", alt: "GoPay" },
-  { src: "/img/logo-ovo.png", alt: "OVO" },
-  { src: "/img/logo-dana.png", alt: "Dana" },
-  { src: "/img/logo-bca.png", alt: "BCA" },
-  { src: "/img/logo-mandiri.png", alt: "Mandiri" },
-  { src: "/img/logo-bni.png", alt: "BNI" },
-  { src: "/img/logo-bri.png", alt: "BRI" },
-  { src: "/img/logo-shopeepay.png", alt: "ShopeePay" },
-  { src: "/img/logo-linkaja.png", alt: "LinkAja" },
-  { src: "/img/logo-jenius.png", alt: "Jenius" },
+const highlights = [
+  {
+    icon: Zap,
+    title: "Cuma 3 Step",
+    desc: "Bikin list, scan struk, langsung bagi.",
+    color: "text-amber-500",
+    bgColor: "bg-amber-50",
+  },
+  {
+    icon: UserCheck,
+    title: "Gak Perlu Login",
+    desc: "Langsung pakai instan tanpa drama OTP.",
+    color: "text-blue-500",
+    bgColor: "bg-blue-50",
+  },
+  {
+    icon: Sparkles,
+    title: "Scan Struk AI",
+    desc: "Deteksi otomatis item dan hitung presisi.",
+    color: "text-emerald-500",
+    bgColor: "bg-emerald-50",
+  },
 ];
-
-// Duplicate for seamless loop
-const allLogos = [...paymentLogos, ...paymentLogos];
 
 export const SocialProofBar = () => {
   return (
-    <section className="bg-white border-y border-slate-100 py-5 overflow-hidden">
+    <section className="bg-white border-y border-slate-100 py-4 md:py-6 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-8">
-          {/* Left label */}
-          <div className="shrink-0 text-center sm:text-left">
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest whitespace-nowrap">
-              Bisa bayar via
-            </p>
-          </div>
-
-          {/* Divider */}
-          <div className="hidden sm:block w-px h-8 bg-slate-200 shrink-0" />
-
-          {/* Scrolling logos */}
-          <div className="relative w-full overflow-hidden">
-            {/* Left fade */}
-            <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
-            {/* Right fade */}
-            <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
-
-            <motion.div
-              animate={{ x: ["0%", "-50%"] }}
-              transition={{
-                x: {
-                  repeat: Infinity,
-                  repeatType: "loop",
-                  duration: 18,
-                  ease: "linear",
-                },
-              }}
-              className="flex items-center gap-6 w-max"
-            >
-              {allLogos.map((logo, i) => (
+        <div className="flex flex-row flex-wrap items-center justify-center gap-x-5 gap-y-2 md:grid md:grid-cols-3 md:gap-8 md:divide-x divide-slate-100">
+          {highlights.map((hl, idx) => {
+            const Icon = hl.icon;
+            return (
+              <div
+                key={hl.title}
+                className={`flex items-center gap-1.5 md:gap-4 justify-center md:justify-start ${
+                  idx === 0 ? "" : "md:pl-8"
+                }`}
+              >
                 <div
-                  key={`${logo.alt}-${i}`}
-                  className="flex items-center justify-center h-7 px-2 shrink-0"
+                  className={`w-6 h-6 md:w-10 md:h-10 rounded-md md:rounded-xl flex items-center justify-center shrink-0 ${hl.bgColor}`}
                 >
-                  <Image
-                    src={logo.src}
-                    alt={logo.alt}
-                    width={56}
-                    height={28}
-                    className="h-6 w-auto object-contain grayscale hover:grayscale-0 transition-all duration-300 opacity-50 hover:opacity-100"
-                  />
+                  <Icon className={`w-3 h-3 md:w-5 md:h-5 ${hl.color}`} />
                 </div>
-              ))}
-            </motion.div>
-          </div>
+                <div className="min-w-0">
+                  <h4 className="text-xs sm:text-sm md:text-base font-extrabold text-slate-800 tracking-tight leading-none">
+                    {hl.title}
+                  </h4>
+                  <p className="hidden md:block text-xs text-slate-500 font-medium mt-0.5 leading-normal">
+                    {hl.desc}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>

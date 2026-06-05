@@ -3,6 +3,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 
 
 const features = [
@@ -146,10 +147,12 @@ export const FeaturesSection = () => {
                       <div>
                         {/* Card Icon Container */}
                         <div className="flex items-center justify-between mb-4 sm:mb-6">
-                          <div className={`w-12 h-12 sm:w-16 sm:h-16 ${feat.bgLight} ${feat.bgHover} rounded-xl sm:rounded-2xl flex items-center justify-center p-2 sm:p-2.5 transition-all duration-300 group-hover:scale-105`}>
-                            <img
+                          <div className={`w-12 h-12 sm:w-16 sm:h-16 ${feat.bgLight} ${feat.bgHover} rounded-xl sm:rounded-2xl flex items-center justify-center p-2 sm:p-2.5 transition-all duration-300 group-hover:scale-105 relative`}>
+                            <Image
                               src={feat.imageSrc}
                               alt={feat.title}
+                              width={64}
+                              height={64}
                               className="w-full h-full object-contain"
                             />
                           </div>

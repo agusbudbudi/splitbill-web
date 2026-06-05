@@ -172,7 +172,7 @@ export const FeatureHighlights = ({ heroMode = false }: FeatureHighlightsProps) 
               {metrics.map((m) => (
                 <div key={m.label} className="flex-1 flex items-center justify-center gap-2 px-1 first:pl-0 last:pr-0">
                   <div className="flex items-center gap-1.5">
-                    <img src={m.iconSrc} alt={m.label} className="w-5 h-5 object-contain shrink-0" />
+                    <Image src={m.iconSrc} alt={m.label} width={20} height={20} className="object-contain shrink-0" />
                     <span className="font-black text-primary text-xl leading-none">
                       {m.value}
                     </span>

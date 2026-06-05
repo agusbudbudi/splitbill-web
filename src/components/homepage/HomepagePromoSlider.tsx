@@ -3,6 +3,7 @@
 import React, { useRef } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import Image from "next/image";
 import { useAuthStore } from "@/lib/stores/authStore";
 import { ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
 
@@ -79,10 +80,12 @@ export const HomepagePromoSlider = () => {
                     <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full blur-2xl -mr-6 -mt-6 pointer-events-none" />
 
                     <div className="flex items-center gap-4">
-                      <div className="shrink-0 w-16 h-16 rounded-full flex items-center justify-center transition-transform group-hover/card:scale-110 overflow-hidden">
-                        <img
+                      <div className="shrink-0 w-16 h-16 rounded-full flex items-center justify-center transition-transform group-hover/card:scale-110 overflow-hidden relative">
+                        <Image
                           src="/img/menu-split-later.png"
                           alt="Split Later"
+                          width={64}
+                          height={64}
                           className="w-full h-full object-contain"
                         />
                       </div>
@@ -119,10 +122,12 @@ export const HomepagePromoSlider = () => {
                     <div className="absolute top-0 right-0 w-24 h-24 bg-orange-500/5 rounded-full blur-2xl -mr-6 -mt-6 pointer-events-none" />
 
                     <div className="flex items-center gap-4">
-                      <div className="shrink-0 w-16 h-16 rounded-full flex items-center justify-center transition-transform group-hover/card:scale-110 overflow-hidden">
-                        <img
+                      <div className="shrink-0 w-16 h-16 rounded-full flex items-center justify-center transition-transform group-hover/card:scale-110 overflow-hidden relative">
+                        <Image
                           src="/img/icon-rewards.jpg"
                           alt="Review Reward"
+                          width={64}
+                          height={64}
                           className="w-full h-full object-contain"
                         />
                       </div>

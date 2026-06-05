@@ -23,6 +23,30 @@ const fadeUp = {
   }),
 };
 
+// CSS-only avatar — zero external requests, instant render
+const AVATAR_COLORS = [
+  ["#dbeafe", "#1d4ed8"], // blue
+  ["#dcfce7", "#15803d"], // green
+  ["#fce7f3", "#be185d"], // pink
+  ["#fef9c3", "#a16207"], // yellow
+  ["#ede9fe", "#6d28d9"], // purple
+  ["#ffedd5", "#c2410c"], // orange
+];
+
+const CSSAvatar = ({ name }: { name: string }) => {
+  const idx = name.charCodeAt(0) % AVATAR_COLORS.length;
+  const [bg, text] = AVATAR_COLORS[idx];
+  return (
+    <span
+      style={{ background: bg, color: text }}
+      className="w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-black shrink-0"
+      aria-label={name}
+    >
+      {name.charAt(0).toUpperCase()}
+    </span>
+  );
+};
+
 const MockBillCard = () => (
   <div className="relative bg-white rounded-2xl shadow-2xl shadow-primary/15 p-5 border border-slate-100 min-w-[260px] max-w-[300px]">
     {/* Header */}
@@ -58,11 +82,7 @@ const MockBillCard = () => (
       ].map((person) => (
         <div key={person.name} className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <img
-              src={`https://api.dicebear.com/9.x/personas/svg?backgroundColor=b6e3f4,c0aede&seed=${person.name}`}
-              alt={person.name}
-              className="w-6 h-6 rounded-full bg-slate-100"
-            />
+            <CSSAvatar name={person.name} />
             <span className="text-xs font-semibold text-slate-700">
               {person.name}
             </span>
@@ -245,8 +265,10 @@ export const HeroSection = () => {
                   alt="Phone Mockup"
                   width={560}
                   height={1120}
+                  sizes="(max-width: 640px) 280px, 560px"
                   className="object-contain w-full h-auto"
                   priority
+                  fetchPriority="high"
                 />
               </div>
 

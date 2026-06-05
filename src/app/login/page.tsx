@@ -19,15 +19,9 @@ import {
 import { Button } from "@/components/ui/Button";
 import { motion } from "framer-motion";
 
-const features = [
-  { label: "Split otomatis", icon: Zap },
-  { label: "Tanpa kalkulator", icon: Calculator },
-  { label: "Real-time tracking", icon: Clock },
-];
-
 const avatarSeeds = ["Aria", "Bobi", "Cika"];
 
-function LoginContent() {
+function LoginPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { login, isLoading, isAuthenticated } = useAuthStore();
@@ -61,7 +55,11 @@ function LoginContent() {
   // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
-      const redirectPath = searchParams.get("redirect") || "/member";
+      const savedRedirect = typeof window !== "undefined" ? sessionStorage.getItem("auth_redirect") : null;
+      const redirectPath = searchParams.get("redirect") || savedRedirect || "/member";
+      if (savedRedirect && typeof window !== "undefined") {
+        sessionStorage.removeItem("auth_redirect");
+      }
       router.push(redirectPath);
     }
   }, [isAuthenticated, router, searchParams]);
@@ -76,7 +74,11 @@ function LoginContent() {
       trackAuth.login();
       setSuccess("Login berhasil! Mengalihkan...");
 
-      const redirectPath = searchParams.get("redirect") || "/member";
+      const savedRedirect = typeof window !== "undefined" ? sessionStorage.getItem("auth_redirect") : null;
+      const redirectPath = searchParams.get("redirect") || savedRedirect || "/member";
+      if (savedRedirect && typeof window !== "undefined") {
+        sessionStorage.removeItem("auth_redirect");
+      }
       router.push(redirectPath);
     } catch (err: any) {
       const errorMessage = getErrorMessage(err);
@@ -111,49 +113,7 @@ function LoginContent() {
   };
 
   return (
-    <div className="space-y-4">
-      <LoginForm
-        onSubmit={handleLogin}
-        isLoading={isLoading}
-        error={error}
-        success={success}
-      />
-
-      {showResend && (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="mt-4 p-4 bg-primary/5 rounded-2xl border border-primary/10 text-center space-y-2"
-        >
-          <p className="text-sm text-foreground">
-            Email kamu belum diverifikasi. Cek folder Inbox atau Spam kamu.
-          </p>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleResendVerification}
-            disabled={resending}
-            className="w-full rounded-xl"
-          >
-            {resending ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Mengirim...
-              </>
-            ) : (
-              "Kirim Ulang Email Verifikasi"
-            )}
-          </Button>
-        </motion.div>
-      )}
-    </div>
-  );
-}
-
-export default function LoginPage() {
-  return (
     <div className="relative min-h-screen bg-[#f8f9fd] flex flex-col items-center justify-start py-8 px-4 sm:py-10 overflow-hidden select-none">
-
       {/* Soft Background Orbs */}
       <div className="absolute top-0 left-[-20%] w-[60%] h-[40%] bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
       <div className="absolute bottom-[-10%] right-[-20%] w-[60%] h-[50%] bg-indigo-500/5 rounded-full blur-[120px] pointer-events-none" />
@@ -161,11 +121,9 @@ export default function LoginPage() {
 
       {/* Unified Portrait Container */}
       <div className="relative z-10 w-full max-w-[460px] flex flex-col gap-4">
-
-        {/* Top Section: Logo + Heading + Hero (relative wrapper for hero positioning) */}
+        {/* Top Section: Logo + Heading + Hero */}
         <div className="relative">
-
-          {/* Hero Image — absolutely positioned right side, spanning from top to overlap card */}
+          {/* Hero Image */}
           <div className="absolute -right-2 -top-8 w-[230px] sm:w-[240px] select-none pointer-events-none z-0">
             <Image
               src="/img/hero-login.png"
@@ -191,7 +149,7 @@ export default function LoginPage() {
             </Link>
           </div>
 
-          {/* Heading — left-aligned text, hero peeks from right */}
+          {/* Heading */}
           <div className="mt-6 relative z-10 px-4">
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-[#2d2d3e] leading-[1.2] max-w-[55%]">
               Split tagihan <br />
@@ -218,11 +176,11 @@ export default function LoginPage() {
             </p>
           </div>
 
-          {/* Spacer: controls how much of the hero shows above the card */}
+          {/* Spacer */}
           <div className="mt-[120px] sm:mt-[140px]" />
         </div>
 
-        {/* Main Card — z-10 so hero overlaps behind it from the right */}
+        {/* Main Card */}
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
@@ -241,15 +199,43 @@ export default function LoginPage() {
                 Yuk, lanjut split bareng temanmu!
               </p>
             </div>
-            <Suspense
-              fallback={
-                <div className="flex items-center justify-center py-12">
-                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                </div>
-              }
-            >
-              <LoginContent />
-            </Suspense>
+            
+            <div className="space-y-4">
+              <LoginForm
+                onSubmit={handleLogin}
+                isLoading={isLoading}
+                error={error}
+                success={success}
+              />
+
+              {showResend && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="mt-4 p-4 bg-primary/5 rounded-2xl border border-primary/10 text-center space-y-2"
+                >
+                  <p className="text-sm text-foreground">
+                    Email kamu belum diverifikasi. Cek folder Inbox atau Spam kamu.
+                  </p>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleResendVerification}
+                    disabled={resending}
+                    className="w-full rounded-xl"
+                  >
+                    {resending ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Mengirim...
+                      </>
+                    ) : (
+                      "Kirim Ulang Email Verifikasi"
+                    )}
+                  </Button>
+                </motion.div>
+              )}
+            </div>
           </Card>
         </motion.div>
 
@@ -293,15 +279,28 @@ export default function LoginPage() {
         >
           <span className="text-muted-foreground/80 font-semibold">Belum punya akun? </span>
           <Link
-            href="/register"
+            href={`/register${searchParams.get("redirect") ? `?redirect=${encodeURIComponent(searchParams.get("redirect") || "")}` : ""}`}
             className="text-primary font-black hover:opacity-90 inline-flex items-center gap-0.5 group transition-all"
           >
             <span>Daftar sekarang</span>
             <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
           </Link>
         </motion.div>
-
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-[#f8f9fd]">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      }
+    >
+      <LoginPageContent />
+    </Suspense>
   );
 }

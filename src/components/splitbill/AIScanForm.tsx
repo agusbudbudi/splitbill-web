@@ -316,7 +316,7 @@ export const AIScanForm = () => {
                   trackSubscription.initiateCheckout("login_barrier");
                   const currentQuery = typeof window !== 'undefined' ? window.location.search : '';
                   router.push(
-                    `/login?redirect=${encodeURIComponent(`/split-bill${currentQuery}`)}`,
+                    `/register?redirect=${encodeURIComponent(`/split-bill${currentQuery}`)}`,
                   );
                 }}
                 className="w-full max-w-[200px] h-10 bg-primary hover:bg-primary/90 text-white font-bold rounded-md shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] active:scale-[0.98] mt-1 text-sm"

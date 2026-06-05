@@ -6,6 +6,7 @@ import { Header } from "@/components/layout/Header";
 import { PeopleList } from "@/components/splitbill/PeopleList";
 import { ManualInputForm } from "@/components/splitbill/ManualInputForm";
 import { AIScanForm } from "@/components/splitbill/AIScanForm";
+import { AIScanPromoBanner } from "@/components/splitbill/AIScanPromoBanner";
 import { ExpenseList } from "@/components/splitbill/ExpenseList";
 import { AdditionalExpenses } from "@/components/splitbill/AdditionalExpenses";
 import { BillSummary } from "@/components/splitbill/BillSummary";
@@ -112,7 +113,8 @@ const SplitBillContent = () => {
   const calculationResult = useBillCalculations();
   const { totalSpent } = calculationResult;
 
-  const [activeTab, setActiveTab] = useState<"ai" | "manual">("ai");
+  const [activeTab, setActiveTab] = useState<"ai" | "manual">("manual");
+  const [isAIBannerDismissed, setIsAIBannerDismissed] = useState(false);
   const [isAddWalletOpen, setIsAddWalletOpen] = useState(false);
   const [showFinalizeModal, setShowFinalizeModal] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
@@ -213,6 +215,10 @@ const SplitBillContent = () => {
 
   const { isAuthenticated } = useAuthStore();
   const { isPWABannerVisible } = useUIStore();
+
+  useEffect(() => {
+    setActiveTab(isAuthenticated ? "ai" : "manual");
+  }, [isAuthenticated]);
 
   const triggerConfetti = () => {
     const duration = 3 * 1000;
@@ -588,10 +594,21 @@ const SplitBillContent = () => {
                   onChange={(id) => {
                     const method = id as "ai" | "manual";
                     setActiveTab(method);
+                    if (method === "ai") {
+                      setIsAIBannerDismissed(true);
+                    }
                     trackSplitBill.inputMethod(method);
                   }}
-                  className="mb-4"
+                  className="mb-3"
                 />
+
+                {activeTab === "manual" && !isAuthenticated && !isAIBannerDismissed && (
+                  <div className="px-4 pb-4">
+                    <AIScanPromoBanner
+                      onDismiss={() => setIsAIBannerDismissed(true)}
+                    />
+                  </div>
+                )}
 
                 <div className="px-4 pb-4">
                   {activeTab === "manual" ? (

@@ -14,7 +14,7 @@ import { motion } from "framer-motion";
 
 const avatarSeeds = ["Aria", "Bobi", "Cika"];
 
-function RegisterContent() {
+function RegisterPageContent() {
   const router = useRouter();
   const { register, isLoading, isAuthenticated } = useAuthStore();
   const searchParams = useSearchParams();
@@ -41,6 +41,9 @@ function RegisterContent() {
       trackAuth.signUp();
       // Redirect to login page with success message and preserve redirect param
       const redirectParam = searchParams.get("redirect");
+      if (redirectParam) {
+        sessionStorage.setItem("auth_redirect", redirectParam);
+      }
       const loginUrl = `/login?registered=true${redirectParam ? `&redirect=${encodeURIComponent(redirectParam)}` : ""}`;
       router.push(loginUrl);
     } catch (err) {
@@ -49,35 +52,17 @@ function RegisterContent() {
   };
 
   return (
-    <div className="space-y-4">
-      <RegisterForm
-        onSubmit={handleRegister}
-        isLoading={isLoading}
-        error={error}
-        success={success}
-      />
-    </div>
-  );
-}
-
-export default function RegisterPage() {
-  return (
     <div className="relative min-h-screen bg-[#f8f9fd] flex flex-col items-center justify-start py-8 px-4 sm:py-10 overflow-hidden select-none">
-
       {/* Soft Background Orbs */}
       <div className="absolute top-0 left-[-20%] w-[60%] h-[40%] bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
       <div className="absolute bottom-[-10%] right-[-20%] w-[60%] h-[50%] bg-indigo-500/5 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute top-[35%] right-[-10%] w-[30%] h-[30%] bg-sky-300/5 rounded-full blur-[90px] pointer-events-none" />
 
-
-
       {/* Unified Portrait Container */}
       <div className="relative z-10 w-full max-w-[460px] flex flex-col gap-4">
-
-        {/* Top Section: Logo + Heading + Hero (relative wrapper for hero positioning) */}
+        {/* Top Section: Logo + Heading + Hero */}
         <div className="relative">
-
-          {/* Hero Image — absolutely positioned right side, spanning from top to overlap card */}
+          {/* Hero Image */}
           <div className="absolute -right-2 -top-8 w-[230px] sm:w-[240px] select-none pointer-events-none z-0">
             <Image
               src="/img/hero-login.png"
@@ -103,7 +88,7 @@ export default function RegisterPage() {
             </Link>
           </div>
 
-          {/* Heading — left-aligned text, hero peeks from right */}
+          {/* Heading */}
           <div className="mt-6 relative z-10 px-4">
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-[#2d2d3e] leading-[1.2] max-w-[55%]">
               Daftar yuk <br />
@@ -129,11 +114,11 @@ export default function RegisterPage() {
             </p>
           </div>
 
-          {/* Spacer: controls how much of the hero shows above the card */}
+          {/* Spacer */}
           <div className="mt-[120px] sm:mt-[140px]" />
         </div>
 
-        {/* Main Card — z-10 so hero overlaps behind it from the right */}
+        {/* Main Card */}
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
@@ -152,15 +137,15 @@ export default function RegisterPage() {
                 Yuk, patungan seru bareng circle-mu!
               </p>
             </div>
-            <Suspense
-              fallback={
-                <div className="flex items-center justify-center py-12">
-                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                </div>
-              }
-            >
-              <RegisterContent />
-            </Suspense>
+            
+            <div className="space-y-4">
+              <RegisterForm
+                onSubmit={handleRegister}
+                isLoading={isLoading}
+                error={error}
+                success={success}
+              />
+            </div>
           </Card>
         </motion.div>
 
@@ -204,15 +189,28 @@ export default function RegisterPage() {
         >
           <span className="text-muted-foreground/80 font-semibold">Sudah punya akun? </span>
           <Link
-            href="/login"
+            href={`/login${searchParams.get("redirect") ? `?redirect=${encodeURIComponent(searchParams.get("redirect") || "")}` : ""}`}
             className="text-primary font-black hover:opacity-90 inline-flex items-center gap-0.5 group transition-all"
           >
             <span>Masuk sekarang</span>
             <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
           </Link>
         </motion.div>
-
       </div>
     </div>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-[#f8f9fd]">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      }
+    >
+      <RegisterPageContent />
+    </Suspense>
   );
 }

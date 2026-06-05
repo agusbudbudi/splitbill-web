@@ -95,9 +95,32 @@ export const HomepageNavbar = () => {
     if (href.startsWith("#")) {
       e.preventDefault();
       if (pathname === "/") {
-        const el = document.getElementById(href.slice(1));
+        const targetId = href.slice(1);
+        const el = document.getElementById(targetId);
         if (el) {
-          el.scrollIntoView({ behavior: "smooth", block: "start" });
+          // 1. Calculate and scroll immediately (this will trigger scrolled=true and start rendering the banner)
+          const header = headerRef.current;
+          let headerHeight = header ? header.offsetHeight : 64;
+          let elementPosition = el.getBoundingClientRect().top;
+          let offsetPosition = elementPosition + window.scrollY - headerHeight - 2;
+
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: "smooth",
+          });
+
+          // 2. Perform a secondary micro-adjustment after 200ms once the Framer Motion height animation of the banner completes
+          setTimeout(() => {
+            const updatedHeader = headerRef.current;
+            const updatedHeaderHeight = updatedHeader ? updatedHeader.offsetHeight : 64;
+            const updatedElementPosition = el.getBoundingClientRect().top;
+            const updatedOffset = updatedElementPosition + window.scrollY - updatedHeaderHeight - 2;
+            
+            window.scrollTo({
+              top: updatedOffset,
+              behavior: "smooth",
+            });
+          }, 260); // 260ms matches Framer Motion's default height transition delay perfectly
         }
       } else {
         router.push(`/${href}`);

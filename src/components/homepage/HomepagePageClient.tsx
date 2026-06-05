@@ -57,30 +57,7 @@ export const HomepagePageClient = () => {
         Split Bill Online Gratis — Scan Struk & Bagi Tagihan Instan
       </h1>
 
-      {/* Structured data — WebApplication + AggregateRating + HowTo */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "WebApplication",
-            name: "SplitBill Online",
-            url: "https://splitbill.my.id",
-            description:
-              "Split bill online gratis sat set! Scan struk otomatis, hitung pajak, dan bagi tagihan no drama bareng teman. 100% free, praktis & akurat.",
-            applicationCategory: "FinanceApplication",
-            operatingSystem: "Web",
-            offers: { "@type": "Offer", price: "0", priceCurrency: "IDR" },
-            aggregateRating: {
-              "@type": "AggregateRating",
-              ratingValue: "4.9",
-              reviewCount: "200",
-              bestRating: "5",
-            },
-            author: { "@type": "Organization", name: "SplitBill Team" },
-          }),
-        }}
-      />
+      {/* Structured data — HowTo */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

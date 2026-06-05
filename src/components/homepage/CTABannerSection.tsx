@@ -96,7 +96,7 @@ export const CTABannerSection = () => {
               </Link>
 
               <Link
-                href="/login"
+                href="/register"
                 className="flex items-center justify-center gap-2 px-8 py-4 rounded-lg bg-white border border-primary/30 text-primary font-bold text-base hover:bg-primary/5 hover:border-primary/60 hover:scale-105 active:scale-95 transition-all duration-200 shadow-sm"
               >
                 Buat Akun Baru

@@ -15,7 +15,26 @@ export const FAQSectionHomepage = () => {
   };
 
   return (
-    <section id="faq" className="py-20 bg-white relative overflow-hidden">
+    <>
+      {/* FAQPage JSON-LD — enables Google FAQ rich snippets in search results */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: landingFaqs.map((faq) => ({
+              "@type": "Question",
+              name: faq.question,
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: faq.answer,
+              },
+            })),
+          }),
+        }}
+      />
+      <section id="faq" className="py-20 bg-white relative overflow-hidden">
       {/* Background radial gradient */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-slate-50 rounded-full blur-[100px] pointer-events-none" />
 
@@ -115,5 +134,6 @@ export const FAQSectionHomepage = () => {
         </motion.div>
       </div>
     </section>
+    </>
   );
 };

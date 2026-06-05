@@ -1,6 +1,9 @@
 import { MetadataRoute } from "next";
 import { fetchBlogs } from "@/lib/api/blog";
 
+// Revalidate sitemap every 24 hours — avoids dynamic server usage warning
+export const revalidate = 86400;
+
 interface RouteConfig {
   path: string;
   priority: number;

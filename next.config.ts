@@ -14,7 +14,16 @@ const withPWA = require("@ducanh2912/next-pwa").default({
 
 const nextConfig: NextConfig = {
   turbopack: {},
+  // Enable Gzip/Brotli compression for CSS and JS — reduces 26KB CSS to ~6-8KB
+  compress: true,
   images: {
+    // Serve modern formats — AVIF/WebP significantly smaller than PNG/JPG
+    formats: ["image/avif", "image/webp"],
+    // Cache optimized images for 30 days (default is 60s)
+    minimumCacheTTL: 60 * 60 * 24 * 30,
+    // Device sizes tuned for mobile-first
+    deviceSizes: [390, 430, 640, 750, 828, 1080, 1200, 1920],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256],
     remotePatterns: [
       {
         protocol: "https",

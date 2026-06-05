@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     description:
       "Split bill online gratis! Scan struk, hitung pajak otomatis, dan bagi tagihan praktis bareng teman. 100% free!",
     url: "https://splitbill.my.id",
-    siteName: "Split Bill App",
+    siteName: "Split Bill Online",
     images: [
       {
         url: "/img/pwa-banner.png",

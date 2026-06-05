@@ -23,6 +23,30 @@ const fadeUp = {
   }),
 };
 
+// CSS-only avatar — zero external requests, instant render
+const AVATAR_COLORS = [
+  ["#dbeafe", "#1d4ed8"], // blue
+  ["#dcfce7", "#15803d"], // green
+  ["#fce7f3", "#be185d"], // pink
+  ["#fef9c3", "#a16207"], // yellow
+  ["#ede9fe", "#6d28d9"], // purple
+  ["#ffedd5", "#c2410c"], // orange
+];
+
+const CSSAvatar = ({ name }: { name: string }) => {
+  const idx = name.charCodeAt(0) % AVATAR_COLORS.length;
+  const [bg, text] = AVATAR_COLORS[idx];
+  return (
+    <span
+      style={{ background: bg, color: text }}
+      className="w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-black shrink-0"
+      aria-label={name}
+    >
+      {name.charAt(0).toUpperCase()}
+    </span>
+  );
+};
+
 const MockBillCard = () => (
   <div className="relative bg-white rounded-2xl shadow-2xl shadow-primary/15 p-5 border border-slate-100 min-w-[260px] max-w-[300px]">
     {/* Header */}
@@ -58,11 +82,7 @@ const MockBillCard = () => (
       ].map((person) => (
         <div key={person.name} className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <img
-              src={`https://api.dicebear.com/9.x/personas/svg?backgroundColor=b6e3f4,c0aede&seed=${person.name}`}
-              alt={person.name}
-              className="w-6 h-6 rounded-full bg-slate-100"
-            />
+            <CSSAvatar name={person.name} />
             <span className="text-xs font-semibold text-slate-700">
               {person.name}
             </span>
@@ -184,13 +204,37 @@ export const HeroSection = () => {
                 Coba Sekarang - Gratis!
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
-              <a
+               <a
                 href="#cara-pakai"
                 onClick={(e) => {
                   e.preventDefault();
-                  document
-                    .getElementById("cara-pakai")
-                    ?.scrollIntoView({ behavior: "smooth" });
+                  // Find the target element
+                  const target = document.getElementById("cara-pakai");
+                  if (target) {
+                    // 1. Calculate and scroll immediately (this will trigger scrolled=true and start rendering the banner)
+                    const header = document.querySelector("header");
+                    let headerHeight = header ? header.offsetHeight : 64;
+                    let elementPosition = target.getBoundingClientRect().top;
+                    let offsetPosition = elementPosition + window.scrollY - headerHeight - 2;
+
+                    window.scrollTo({
+                      top: offsetPosition,
+                      behavior: "smooth",
+                    });
+
+                    // 2. Perform a secondary adjustment after 260ms once the banner height animation finishes
+                    setTimeout(() => {
+                      const updatedHeader = document.querySelector("header");
+                      const updatedHeaderHeight = updatedHeader ? updatedHeader.offsetHeight : 64;
+                      const updatedElementPosition = target.getBoundingClientRect().top;
+                      const updatedOffset = updatedElementPosition + window.scrollY - updatedHeaderHeight - 2;
+                      
+                      window.scrollTo({
+                        top: updatedOffset,
+                        behavior: "smooth",
+                      });
+                    }, 260);
+                  }
                 }}
                 className="flex items-center justify-center gap-2 px-7 py-4 rounded-lg bg-white border border-primary/30 text-primary font-bold text-base hover:bg-primary/5 hover:border-primary/60 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer shadow-sm"
               >
@@ -245,8 +289,10 @@ export const HeroSection = () => {
                   alt="Phone Mockup"
                   width={560}
                   height={1120}
+                  sizes="(max-width: 640px) 280px, 560px"
                   className="object-contain w-full h-auto"
                   priority
+                  fetchPriority="high"
                 />
               </div>
 
@@ -258,10 +304,10 @@ export const HeroSection = () => {
                 <motion.div
                   animate={{ y: [0, -4, 0] }}
                   transition={{ repeat: Infinity, duration: 2.8, ease: "easeInOut", delay: 0.4 }}
-                  className="absolute -top-12 sm:-top-14 left-1/2 -translate-x-1/2 bg-[#2EC866] text-white rounded-xl shadow-xl px-2.5 py-1.5 sm:px-3 sm:py-2 flex items-center gap-1.5 sm:gap-2 z-20 whitespace-nowrap"
+                  className="absolute -top-12 sm:-top-14 left-1/2 -translate-x-1/2 bg-emerald-500 text-white rounded-xl shadow-xl px-3 py-2 sm:px-3 sm:py-2 flex items-center gap-1.5 sm:gap-2 z-20 whitespace-nowrap"
                 >
-                  <Camera className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                  <span className="text-[9px] sm:text-[10px] font-black">Foto struk → beres!</span>
+                  <Camera className="w-3.5 h-3.5 sm:w-3.5 sm:h-3.5" />
+                  <span className="text-xs sm:text-[10px] font-black">Foto struk → beres!</span>
                 </motion.div>
               </div>
 

@@ -14,6 +14,7 @@ interface ConfirmationModalProps {
   confirmText?: string;
   cancelText?: string;
   confirmButtonClassName?: string;
+  isLoading?: boolean;
 }
 
 export function ConfirmationModal({
@@ -26,6 +27,7 @@ export function ConfirmationModal({
   confirmText = "Ya, Simpan",
   cancelText = "Batal",
   confirmButtonClassName,
+  isLoading = false,
 }: ConfirmationModalProps) {
   const [mounted, setMounted] = useState(false);
 
@@ -54,12 +56,14 @@ export function ConfirmationModal({
             <Button
               variant="outline"
               onClick={onClose}
+              disabled={isLoading}
               className="flex-1 h-12 rounded-lg font-bold cursor-pointer"
             >
               {cancelText}
             </Button>
             <Button
               onClick={onConfirm}
+              loading={isLoading}
               className={cn(
                 "flex-1 h-12 rounded-lg font-bold shadow-lg cursor-pointer",
                 confirmButtonClassName ||

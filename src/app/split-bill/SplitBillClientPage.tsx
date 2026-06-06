@@ -122,6 +122,7 @@ const SplitBillContent = () => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [isFinalizing, setIsFinalizing] = useState(false);
+  const [isCalculating, setIsCalculating] = useState(false);
   const isFinalizingRef = useRef(false);
   const isCreatingDraftRef = useRef(false);
 
@@ -268,15 +269,33 @@ const SplitBillContent = () => {
       isFinalizingRef.current = true;
       setIsFinalizing(true);
 
-      const { draftId } = useSplitBillStore.getState();
+      const { draftId, clearDraftId } = useSplitBillStore.getState();
       let recordId = "";
 
       if (draftId) {
-        // If there's a draft, finalize it via backend draft finalize endpoint
-        const response = await draftApi.finalize(draftId);
-        recordId = response.record.id;
-      } else {
-        // Fallback to direct creation if draft ID is missing
+        try {
+          // If there's a draft, finalize it via backend draft finalize endpoint
+          const response = await draftApi.finalize(draftId);
+          recordId = response.record.id;
+        } catch (finalizeErr: unknown) {
+          const status =
+            (finalizeErr as { status?: number })?.status ??
+            (finalizeErr as { response?: { status?: number } })?.response?.status;
+          const message = (finalizeErr as { message?: string })?.message ?? "";
+          if (status === 403 || /tidak memiliki akses/i.test(message)) {
+            // Stale draftId from a different user/session (e.g. a guest draft
+            // created before login) — discard it and create a fresh record
+            // directly so the user's work is not lost.
+            console.warn("Finalize ownership conflict: stale draftId, falling back to direct create.");
+            clearDraftId();
+          } else {
+            throw finalizeErr;
+          }
+        }
+      }
+
+      if (!recordId) {
+        // Fallback: direct creation (no draft, or draft ownership conflict above)
         const payload = mapFrontendToBackend(
           {
             activityName: activityName || "Aktivitas Split Bill",
@@ -351,7 +370,7 @@ const SplitBillContent = () => {
     }
   }, [isAuthenticated, searchParams, step, isSaved]);
 
-  const nextStep = () => {
+  const nextStep = async () => {
     if (step === 1 && people.length < 2) {
       const errorMsg =
         "Waduh, minimal harus ada 2 orang buat Split Bill nih! 👥";
@@ -371,25 +390,11 @@ const SplitBillContent = () => {
         return;
       }
     }
-    if (step === 3) {
-      toast.success("Split Bill Berhasil Dihitung! 💸✨", {
-        description: "Yuk cek rincian pembayarannya.",
-        duration: 3000,
-      });
-      triggerConfetti();
-      trackSplitBill.calculate({
-        total_amount: totalSpent,
-        num_participants: people.length,
-      });
-      if (activityName) {
-        trackSplitBill.autofillView(activityName);
-      }
-    }
 
-    // Save/update draft asynchronously in the background so user doesn't wait
-    const saveDraftInBackground = async () => {
+    // Save/update draft function (with 403 ownership-conflict retry)
+    const saveDraft = async (isRetry = false) => {
       try {
-        const { draftId, setDraftId } = useSplitBillStore.getState();
+        const { draftId, setDraftId, clearDraftId } = useSplitBillStore.getState();
         const backendParticipants = people.map(p => ({ id: p, name: p }));
 
         if (step === 1) {
@@ -503,13 +508,52 @@ const SplitBillContent = () => {
             });
           }
         }
-      } catch (err) {
-        console.error("Failed to save draft in background:", err);
+      } catch (err: unknown) {
+        // Ownership conflict: a guest draft created before login can't be
+        // updated once authenticated. Match on 403 OR the backend message
+        // (status code may vary), clear the stale draftId, and retry once –
+        // a fresh draft is then created under the current user.
+        const status = (err as { status?: number })?.status ?? (err as { response?: { status?: number } })?.response?.status;
+        const message = (err as { message?: string })?.message ?? "";
+        const isOwnershipConflict =
+          status === 403 || /tidak memiliki akses/i.test(message);
+        if (isOwnershipConflict && !isRetry) {
+          console.warn("Draft ownership conflict – clearing stale draftId and retrying.");
+          useSplitBillStore.getState().clearDraftId();
+          return saveDraft(true);
+        }
+        console.error("Failed to save draft:", err);
+        throw err;
       }
     };
 
-    // Run the background task without awaiting it
-    saveDraftInBackground();
+    if (step === 3) {
+      setIsCalculating(true);
+      try {
+        await saveDraft();
+        toast.success("Split Bill Berhasil Dihitung! 💸✨", {
+          description: "Yuk cek rincian pembayarannya.",
+          duration: 3000,
+        });
+        triggerConfetti();
+        trackSplitBill.calculate({
+          total_amount: totalSpent,
+          num_participants: people.length,
+        });
+        if (activityName) {
+          trackSplitBill.autofillView(activityName);
+        }
+      } catch (err) {
+        toast.error("Gagal menyimpan detail split bill. Silakan coba lagi.");
+        setIsCalculating(false);
+        return; // Stop execution, do not proceed to step 4
+      } finally {
+        setIsCalculating(false);
+      }
+    } else {
+      // Run the background task without awaiting it for other steps
+      saveDraft();
+    }
 
     setValidationError(null);
     const nextStepNum = step + 1;
@@ -946,14 +990,23 @@ const SplitBillContent = () => {
         onBack={prevStep}
         sticky={true}
         className="rounded-b-none shadow-none"
+        rightContent={
+          <button
+            onClick={() => router.push(isAuthenticated ? "/member" : "/")}
+            className="w-10 h-10 rounded-full flex items-center justify-center text-white hover:bg-white/10 transition-colors cursor-pointer"
+            title={isAuthenticated ? "Ke Beranda Member" : "Ke Landing Page"}
+          >
+            <Home className="w-5 h-5 text-white" />
+          </button>
+        }
       />
 
       {/* Sticky Stepper Row */}
       {!isSaved && (
         <div className="w-full flex flex-col items-center -mt-px relative z-20">
           <div className="w-full max-w-[600px] bg-primary flex justify-between items-center px-8 pt-2 pb-8 rounded-b-2xl shadow-lg shadow-primary/20 relative">
-            <div className="absolute top-[32%] left-12 right-12 h-0.5 bg-white/20 z-0" />
-            <div className="absolute top-[32%] left-12 right-12 h-0.5 z-0 overflow-hidden">
+            <div className="absolute top-[32%] left-12 right-16 h-0.5 bg-white/20 z-0" />
+            <div className="absolute top-[32%] left-12 right-16 h-0.5 z-0 overflow-hidden">
               <div
                 className="h-full bg-white transition-all duration-500 ease-in-out"
                 style={{ width: `${((step - 1) / (steps.length - 1)) * 100}%` }}
@@ -1053,9 +1106,19 @@ const SplitBillContent = () => {
             {step === 3 && (
               <Button
                 onClick={nextStep}
+                disabled={isCalculating}
                 className="w-full h-14 text-lg font-bold rounded-2xl bg-primary text-white shadow-xl shadow-primary/30 active:scale-95 transition-all"
               >
-                <Rocket className="mr-2 w-5 h-5" /> Hitung Split Bill
+                {isCalculating ? (
+                  <>
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                    Menghitung...
+                  </>
+                ) : (
+                  <>
+                    <Rocket className="mr-2 w-5 h-5" /> Hitung Split Bill
+                  </>
+                )}
               </Button>
             )}
 
@@ -1110,6 +1173,7 @@ const SplitBillContent = () => {
       <ConfirmationModal
         isOpen={showFinalizeModal}
         onClose={() => {
+          if (isFinalizing) return;
           trackSplitBill.finalizeCancel();
           setShowFinalizeModal(false);
         }}
@@ -1120,8 +1184,9 @@ const SplitBillContent = () => {
         title="Simpan ke Riwayat"
         description="Kamu yakin ingin menyelesaikan split bill ini? Data yang disimpan akan muncul di riwayat transaksi kamu."
         icon={CheckCircle2}
-        confirmText="Ya, Simpan"
+        confirmText={isFinalizing ? "Menyimpan..." : "Ya, Simpan"}
         cancelText="Batal"
+        isLoading={isFinalizing}
       />
 
       {/* Auth Modal */}

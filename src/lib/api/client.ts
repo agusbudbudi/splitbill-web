@@ -86,7 +86,10 @@ class ApiClient {
 
       return data as T;
     } catch (error) {
-      console.error("API request failed:", error);
+      // Use warn (not error) so expected, caller-handled HTTP failures
+      // (e.g. 403 ownership conflicts that trigger a retry) don't pop the
+      // Next.js dev error overlay. Callers surface real failures via toasts.
+      console.warn("API request failed:", error);
       throw error;
     }
   }

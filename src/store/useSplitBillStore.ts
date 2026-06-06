@@ -143,7 +143,10 @@ export const useSplitBillStore = create<SplitBillState>()(
 
       setAllExpensesPaidBy: (name) =>
         set((state) => ({
-          expenses: state.expenses.map((e) => ({ ...e, paidBy: name })),
+          expenses: state.expenses.map((e) => ({
+            ...e,
+            paidBy: e.amount < 0 ? e.paidBy : name, // Exclude negative amounts (discounts)
+          })),
           lastPaidBy: name,
         })),
 
@@ -183,7 +186,7 @@ export const useSplitBillStore = create<SplitBillState>()(
         set((state) => ({
           additionalExpenses: state.additionalExpenses.map((e) => ({
             ...e,
-            paidBy: name,
+            paidBy: e.amount < 0 ? e.paidBy : name, // Exclude negative amounts (merchant credits)
           })),
           lastPaidBy: name,
         })),

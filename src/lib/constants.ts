@@ -10,6 +10,7 @@ export const API_ENDPOINTS = {
     ME: "/api/auth/me",
     VERIFY: "/api/auth/verify",
     RESEND_VERIFICATION: "/api/auth/resend-verification",
+    GOOGLE_LOGIN: "/api/auth/google",
   },
   REVIEWS: "/api/reviews",
   PUBLIC_REVIEWS: "/api/reviews/public",

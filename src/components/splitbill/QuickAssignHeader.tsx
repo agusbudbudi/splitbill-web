@@ -13,6 +13,7 @@ export const QuickAssignHeader = () => {
   const {
     people,
     expenses,
+    additionalExpenses,
     setAllExpensesPaidBy,
     setAllExpensesWho,
     setAllAdditionalExpensesPaidBy,
@@ -27,10 +28,22 @@ export const QuickAssignHeader = () => {
 
   if (expenses.length === 0) return null;
 
+  const negativeItemsCount = [
+    ...expenses.filter((e) => e.amount < 0),
+    ...additionalExpenses.filter((e) => e.amount < 0),
+  ].length;
+
   const handleSetAllPaidBy = (name: string) => {
     setAllExpensesPaidBy(name);
     setAllAdditionalExpensesPaidBy(name);
-    toast.success(`Berhasil! Semua item sekarang dibayar oleh ${name} 💸`);
+    
+    if (negativeItemsCount > 0) {
+      toast.success(
+        `Berhasil! Item dibayar oleh ${name}. ${negativeItemsCount} item diskon/kredit diabaikan 💸`
+      );
+    } else {
+      toast.success(`Berhasil! Semua item sekarang dibayar oleh ${name} 💸`);
+    }
   };
 
   const handleSplitWithEveryone = () => {

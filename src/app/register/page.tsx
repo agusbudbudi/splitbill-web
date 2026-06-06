@@ -16,15 +16,20 @@ const avatarSeeds = ["Aria", "Bobi", "Cika"];
 
 function RegisterPageContent() {
   const router = useRouter();
-  const { register, isLoading, isAuthenticated } = useAuthStore();
+  const { register, isLoading, isAuthenticated, initialize } = useAuthStore();
   const searchParams = useSearchParams();
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
+  // Initialize auth state on mount (handles Google OAuth callback redirects)
+  useEffect(() => {
+    initialize();
+  }, [initialize]);
+
   // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
-      const redirectPath = searchParams.get("redirect") || "/";
+      const redirectPath = searchParams.get("redirect") || "/member";
       router.push(redirectPath);
     }
   }, [isAuthenticated, router, searchParams]);

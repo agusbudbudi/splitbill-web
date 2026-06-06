@@ -1,7 +1,7 @@
 "use client";
 
 import React, { Suspense, useState, useEffect, useRef } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { Header } from "@/components/layout/Header";
 import { PeopleList } from "@/components/splitbill/PeopleList";
 import { ManualInputForm } from "@/components/splitbill/ManualInputForm";
@@ -51,12 +51,14 @@ import {
   TutorialStep,
 } from "@/components/onboarding/TutorialOverlay";
 import { useAuthStore } from "@/lib/stores/authStore";
-import { trackSplitBill, trackSocial, trackWallet } from "@/lib/gtag";
+import { trackSplitBill, trackSocial, trackWallet, trackAuth } from "@/lib/gtag";
+import { AuthModal } from "@/components/auth/AuthModal";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { useUIStore } from "@/lib/stores/uiStore";
 
 const SplitBillContent = () => {
   const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
   const step = parseInt(searchParams.get("step") || "1");
   const {
@@ -117,6 +119,7 @@ const SplitBillContent = () => {
   const [isAIBannerDismissed, setIsAIBannerDismissed] = useState(false);
   const [isAddWalletOpen, setIsAddWalletOpen] = useState(false);
   const [showFinalizeModal, setShowFinalizeModal] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [isFinalizing, setIsFinalizing] = useState(false);
   const isFinalizingRef = useRef(false);
@@ -256,10 +259,8 @@ const SplitBillContent = () => {
     if (isFinalizingRef.current) return;
 
     if (!isAuthenticated) {
-      const currentUrl = encodeURIComponent(
-        `${window.location.pathname}${window.location.search}${window.location.search ? "&" : "?"}finalize=true`,
-      );
-      router.push(`/login?redirect=${currentUrl}`);
+      setShowFinalizeModal(false);
+      setShowAuthModal(true);
       return;
     }
 
@@ -1121,6 +1122,17 @@ const SplitBillContent = () => {
         icon={CheckCircle2}
         confirmText="Ya, Simpan"
         cancelText="Batal"
+      />
+
+      {/* Auth Modal */}
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        onSuccess={() => {
+          trackAuth.splitbillFinalizeAfterGoogleLogin();
+          handleFinalize();
+        }}
+        redirectPath={`${pathname}${searchParams.toString() ? `?${searchParams.toString()}&` : "?"}finalize=true`}
       />
 
       <TutorialOverlay

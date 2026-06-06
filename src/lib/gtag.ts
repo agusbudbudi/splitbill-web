@@ -74,6 +74,12 @@ declare global {
 export const trackAuth = {
   login: () => trackEvent("login"),
   signUp: () => trackEvent("sign_up"),
+  googleLoginClicked: () => trackEvent("google_login_clicked"),
+  googleLoginSuccess: () => trackEvent("google_login_success"),
+  googleLoginFailed: (reason?: string) => trackEvent("google_login_failed", { reason }),
+  googleRegistrationSuccess: () => trackEvent("google_registration_success"),
+  splitbillFinalizeAfterGoogleLogin: () => trackEvent("splitbill_finalize_after_google_login"),
+  logoutSuccess: () => trackEvent("logout_success"),
 };
 
 export const trackSubscription = {

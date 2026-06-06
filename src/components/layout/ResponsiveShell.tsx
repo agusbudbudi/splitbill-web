@@ -21,7 +21,7 @@ export const ResponsiveShell = ({ children }: ResponsiveShellProps) => {
 
   return (
     <div className="w-full min-h-screen bg-background">
-      {pathname !== "/" && !isBlogDetail && !isAuthPage && <MemberSidebar />}
+      {isMounted && pathname !== "/" && !isBlogDetail && !isAuthPage && <MemberSidebar />}
       {children}
     </div>
   );

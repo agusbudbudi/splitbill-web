@@ -17,6 +17,13 @@ export interface User {
   };
   createdAt?: string;
   hasClaimedReviewReward?: boolean;
+  image?: string;
+  provider?: string;
+}
+
+export interface GoogleLoginData {
+  idToken: string;
+  draftId?: string;
 }
 
 export interface LoginCredentials {
@@ -124,3 +131,24 @@ export async function resendVerification(
     },
   );
 }
+
+export async function googleLogin(
+  idToken: string,
+  draftId?: string,
+): Promise<AuthResponse> {
+  const response = await apiClient.request<AuthResponse>(
+    API_ENDPOINTS.AUTH.GOOGLE_LOGIN,
+    {
+      method: "POST",
+      body: JSON.stringify({ idToken, draftId }),
+      skipAuth: true,
+    },
+  );
+
+  if (response.accessToken) {
+    setTokens(response.accessToken, response.refreshToken);
+  }
+
+  return response;
+}
+

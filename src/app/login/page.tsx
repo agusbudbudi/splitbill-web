@@ -24,13 +24,18 @@ const avatarSeeds = ["Aria", "Bobi", "Cika"];
 function LoginPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { login, isLoading, isAuthenticated } = useAuthStore();
+  const { login, isLoading, isAuthenticated, initialize } = useAuthStore();
 
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [resending, setResending] = useState(false);
   const [showResend, setShowResend] = useState(false);
   const [emailForResend, setEmailForResend] = useState("");
+
+  // Initialize auth state on mount (handles Google OAuth callback redirects)
+  useEffect(() => {
+    initialize();
+  }, [initialize]);
 
   // Check for registration success message
   useEffect(() => {

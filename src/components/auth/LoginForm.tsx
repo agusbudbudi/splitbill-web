@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/Input";
 import { validateEmail } from "@/lib/auth/utils";
 import { LoginCredentials } from "@/lib/stores/authStore";
 import { motion } from "framer-motion";
+import { GoogleLoginButton } from "./GoogleLoginButton";
 
 interface LoginFormProps {
   onSubmit: (credentials: LoginCredentials) => Promise<void>;
@@ -173,6 +174,17 @@ export function LoginForm({
           )}
         </Button>
       </div>
+
+      <div className="relative my-5 flex items-center justify-center">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-slate-100"></div>
+        </div>
+        <span className="relative px-3 bg-white text-[10px] sm:text-xs font-bold text-muted-foreground/40 uppercase tracking-wider">
+          Atau masuk dengan
+        </span>
+      </div>
+
+      <GoogleLoginButton />
     </form>
   );
 }

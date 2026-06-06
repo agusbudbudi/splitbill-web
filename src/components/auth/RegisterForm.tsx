@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import { GoogleLoginButton } from "./GoogleLoginButton";
 import {
   validateEmail,
   validateName,
@@ -228,12 +229,33 @@ export function RegisterForm({
                 <Button
                   type="button"
                   onClick={handleNextStep}
+                  disabled={isLoading}
                   className="w-full h-14 text-base font-bold shadow-md shadow-primary/10 hover:shadow-primary/25 transition-all rounded-2xl bg-primary hover:bg-primary/90 text-white border-none flex items-center justify-center gap-2 cursor-pointer group"
                 >
-                  <span>Lanjutkan</span>
-                  <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                  {isLoading ? (
+                    <div className="flex items-center gap-2">
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      <span>Memproses...</span>
+                    </div>
+                  ) : (
+                    <>
+                      <span>Lanjutkan</span>
+                      <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                    </>
+                  )}
                 </Button>
               </div>
+
+              <div className="relative my-4 flex items-center justify-center">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-slate-100"></div>
+                </div>
+                <span className="relative px-3 bg-white text-[10px] sm:text-xs font-bold text-muted-foreground/40 uppercase tracking-wider">
+                  Atau daftar dengan
+                </span>
+              </div>
+
+              <GoogleLoginButton />
             </motion.div>
           ) : (
             <motion.div

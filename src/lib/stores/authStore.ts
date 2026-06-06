@@ -147,6 +147,8 @@ export const useAuthStore = create<AuthState>((set) => ({
         localStorage.removeItem("currentUser");
       }
       clearUser();
+      // Clear draft ID on logout to avoid account switching conflicts
+      useSplitBillStore.getState().clearDraftId();
       set({
         user: null,
         isAuthenticated: false,
@@ -168,20 +170,25 @@ export const useAuthStore = create<AuthState>((set) => ({
     // Set loading state synchronously to block duplicate concurrent checks
     set({ isLoading: true });
 
-    // Check if we have tokens first
-    if (!hasTokens()) {
-      // Check if there's a Google session from NextAuth
+    const checkGoogleSession = async () => {
       try {
         const { getSession } = await import("next-auth/react");
         const session = await getSession();
         const idToken = (session as any)?.idToken;
         if (idToken) {
           await state.loginWithGoogle(idToken);
-          return;
+          return true;
         }
       } catch (err) {
         console.warn("Failed to check NextAuth session on initialize:", err);
       }
+      return false;
+    };
+
+    // Check if we have tokens first
+    if (!hasTokens()) {
+      const loggedInWithGoogle = await checkGoogleSession();
+      if (loggedInWithGoogle) return;
 
       set({
         isAuthenticated: false,
@@ -221,6 +228,9 @@ export const useAuthStore = create<AuthState>((set) => ({
         if (typeof window !== "undefined") {
           localStorage.removeItem("currentUser");
         }
+        // Check for Google session fallback in case local token expired but Google session is active
+        const loggedInWithGoogle = await checkGoogleSession();
+        if (loggedInWithGoogle) return;
       }
       set({
         user: null,

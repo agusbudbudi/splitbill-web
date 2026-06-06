@@ -100,6 +100,7 @@ export const metadata: Metadata = {
 };
 
 import { ResponsiveShell } from "@/components/layout/ResponsiveShell";
+import { SessionProvider } from "next-auth/react";
 
 export default function RootLayout({
   children,
@@ -143,9 +144,11 @@ export default function RootLayout({
         {GA_ID && <GoogleAnalytics gaId={GA_ID} />}
         <AppEntryTracker />
         <ThemeProvider>
-          <ResponsiveShell>
-            {children}
-          </ResponsiveShell>
+          <SessionProvider>
+            <ResponsiveShell>
+              {children}
+            </ResponsiveShell>
+          </SessionProvider>
         </ThemeProvider>
         <Toaster
           richColors

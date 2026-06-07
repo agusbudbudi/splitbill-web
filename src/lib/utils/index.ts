@@ -56,3 +56,11 @@ export function formatDate(
 
   return date.toLocaleDateString("id-ID", options);
 }
+
+export function getAvatarUrl(user?: { email?: string | null; image?: string | null } | null) {
+  if (user?.image) {
+    return user.image;
+  }
+  const seed = user?.email || "default";
+  return `https://api.dicebear.com/9.x/personas/svg?backgroundColor=b6e3f4&scale=100&seed=${encodeURIComponent(seed)}`;
+}

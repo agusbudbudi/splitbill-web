@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Menu, X, ArrowRight, Zap } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, getAvatarUrl } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
 import { useAuthStore } from "@/lib/stores/authStore";
@@ -142,7 +142,7 @@ export const HomepageNavbar = () => {
         >
           <div className="w-full h-full rounded-full overflow-hidden bg-slate-100">
             <img
-              src={`https://api.dicebear.com/9.x/personas/svg?backgroundColor=b6e3f4&scale=100&seed=${user?.email || "default"}`}
+              src={getAvatarUrl(user)}
               alt="Avatar Profil"
               className="w-full h-full object-cover"
             />
@@ -315,7 +315,7 @@ export const HomepageNavbar = () => {
                 >
                   <div className="w-6 h-6 rounded-full overflow-hidden bg-slate-100 border border-slate-200">
                     <img
-                      src={`https://api.dicebear.com/9.x/personas/svg?backgroundColor=b6e3f4&scale=100&seed=${user?.email || "default"}`}
+                      src={getAvatarUrl(user)}
                       alt="Avatar Profil"
                       className="w-full h-full object-cover"
                     />

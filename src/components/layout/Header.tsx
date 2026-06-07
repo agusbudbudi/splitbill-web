@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft, LogIn, MessageCircle, Crown, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { cn } from "@/lib/utils";
+import { cn, getAvatarUrl } from "@/lib/utils";
 import { useAuthStore } from "@/lib/stores/authStore";
 import { useRouter } from "next/navigation";
 import { useUIStore } from "@/lib/stores/uiStore";
@@ -152,7 +152,7 @@ export const Header = ({
                   >
                     <div className="w-full h-full rounded-full overflow-hidden bg-white/20">
                       <img
-                        src={`https://api.dicebear.com/9.x/personas/svg?backgroundColor=b6e3f4&scale=100&seed=${user?.email || "default"}`}
+                        src={getAvatarUrl(user)}
                         alt={`Avatar Profil ${user?.name || "Pengguna"} — SplitBill Online`}
                         className="w-full h-full object-cover"
                       />

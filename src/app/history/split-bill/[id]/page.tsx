@@ -148,14 +148,7 @@ function SplitBillDetailView({
   };
 
   const handleCopyLink = () => {
-    if (typeof window === "undefined") return;
-    const url = window.location.href.split("?")[0];
-    navigator.clipboard.writeText(url);
-    import("sonner").then(({ toast }) =>
-      toast.success("Link berhasil disalin! 🔗", {
-        description: "Bagikan link ini ke teman-temanmu.",
-      })
-    );
+    billSummaryRef.current?.triggerShareText();
   };
 
   return (

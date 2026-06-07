@@ -39,6 +39,7 @@ import { useAuthStore } from "@/lib/stores/authStore";
 
 export interface BillSummaryHandle {
   triggerShare: () => void;
+  triggerShareText: () => void;
   isSharing: boolean;
 }
 
@@ -135,7 +136,14 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
       const fileName = `SplitBill-${activityName?.replace(/\s+/g, "-") || "Summary"}-${new Date().getTime()}.png`;
       const currentUrl =
         typeof window !== "undefined" ? window.location.href.split("?")[0] : "";
-      const caption = `💸 Habis seru-seruan bareng di "${activityName || "Makan-makan"}"!\n\nTotal tagihannya ${formatToIDR(totalSpent)}. Biar pertemanan makin asik, yuk lunasin tagihannya ya! 😉✨\n\nCek rinciannya di sini:\n🔗 ${currentUrl}\n\nPowered by splitbill.my.id`;
+      const origin = typeof window !== "undefined" ? window.location.origin : "https://splitbill.my.id";
+      const shareUrl = billData?.id ? `${origin}/history/split-bill/${billData.id}` : currentUrl;
+
+      const instructionsText = settlementInstructions.length > 0
+        ? "\n\nRincian Transfer:\n" + settlementInstructions.map(inst => `• ${inst.from} ➡️ ${inst.to}: ${formatToIDR(inst.amount)}`).join("\n")
+        : "";
+
+      const caption = `💸 Habis seru-seruan bareng di "${activityName || "Makan-makan"}"!\n\nTotal tagihannya ${formatToIDR(totalSpent)}. Biar pertemanan makin asik, yuk lunasin tagihannya ya! 😉✨${instructionsText}\n\nCek rincian lengkapnya di sini:\n🔗 ${shareUrl}\n\nPowered by splitbill.my.id`;
 
       // Try native share if available
       if (
@@ -185,12 +193,59 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
     }
   };
 
+  const handleShareText = async () => {
+    const currentUrl =
+      typeof window !== "undefined" ? window.location.href.split("?")[0] : "";
+    const origin = typeof window !== "undefined" ? window.location.origin : "https://splitbill.my.id";
+    const shareUrl = billData?.id ? `${origin}/history/split-bill/${billData.id}` : currentUrl;
+
+    const instructionsText = settlementInstructions.length > 0
+      ? "\n\nRincian Transfer:\n" + settlementInstructions.map(inst => `• ${inst.from} ➡️ ${inst.to}: ${formatToIDR(inst.amount)}`).join("\n")
+      : "";
+
+    const caption = `💸 Habis seru-seruan bareng di "${activityName || "Makan-makan"}"!\n\nTotal tagihannya ${formatToIDR(totalSpent)}. Biar pertemanan makin asik, yuk lunasin tagihannya ya! 😉✨${instructionsText}\n\nCek rincian lengkapnya di sini:\n🔗 ${shareUrl}\n\nPowered by splitbill.my.id`;
+
+    if (
+      typeof navigator !== "undefined" &&
+      navigator.share
+    ) {
+      try {
+        await navigator.share({
+          title: activityName || "Split Bill Summary",
+          text: caption,
+        });
+        trackSplitBill.share("share_api", billData?.id || "");
+        toast.success("Berhasil dibagikan! 🚀✨");
+        return;
+      } catch (shareErr) {
+        console.warn(
+          "Native share failed, falling back to copy:",
+          shareErr,
+        );
+      }
+    }
+
+    try {
+      await navigator.clipboard.writeText(caption);
+      trackSplitBill.share("copy_link", billData?.id || "");
+      toast.success("Rincian & Link berhasil disalin! 📋✨", {
+        description: "Tinggal paste ke teman-temanmu.",
+      });
+    } catch (err) {
+      console.error("Clipboard copy failed:", err);
+      toast.error("Gagal menyalin rincian.");
+    }
+  };
+
   // Keep ref in sync so useImperativeHandle can reference it
   handleShareSocialRef.current = handleShareSocial;
+  const handleShareTextRef = React.useRef<(() => Promise<void>) | null>(null);
+  handleShareTextRef.current = handleShareText;
 
   // Expose share trigger to parent via ref
   useImperativeHandle(ref, () => ({
     triggerShare: () => handleShareSocialRef.current?.(),
+    triggerShareText: () => handleShareTextRef.current?.(),
     isSharing,
   }), [isSharing]);
 
@@ -206,13 +261,7 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
   };
 
   const handleCopyLink = () => {
-    if (typeof window === "undefined") return;
-    const url = window.location.href.split("?")[0]; // Clean URL
-    navigator.clipboard.writeText(url);
-    trackSplitBill.share("copy_link", billData?.id || "");
-    toast.success("Link berhasil disalin! 🔗", {
-      description: "Bagikan link ini ke teman-temanmu.",
-    });
+    handleShareText();
   };
 
   if (

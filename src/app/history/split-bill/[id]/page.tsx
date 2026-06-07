@@ -1,15 +1,17 @@
 "use client";
 
-import React, { useState, useEffect, Suspense } from "react";
+import React, { useState, useEffect, Suspense, useRef } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { useWalletStore } from "@/store/useWalletStore";
 import { Button } from "@/components/ui/Button";
-import { BillSummary } from "@/components/splitbill/BillSummary";
-import { ReceiptText, ChevronRight, Loader2 } from "lucide-react";
+import { BillSummary, BillSummaryHandle } from "@/components/splitbill/BillSummary";
+import { ChevronRight, Loader2 } from "lucide-react";
 import { ReviewBanner } from "@/components/splitbill/ReviewBanner";
 import { AnimatePresence } from "framer-motion";
+import { SocialReceiptPreviewBanner } from "@/components/splitbill/SocialReceiptPreviewBanner";
+import { useBillCalculations } from "@/hooks/useBillCalculations";
 
 import { useAuthStore } from "@/lib/stores/authStore";
 import { trackPublic, trackSplitBill } from "@/lib/gtag";
@@ -100,6 +102,62 @@ function SplitBillDetailContent() {
   // A bill is "public" if the user is not logged in
   const isPublic = !isAuthenticated;
 
+  return <SplitBillDetailView bill={bill} isPublic={isPublic} showBanner={showBanner} setShowBanner={setShowBanner} isAuthenticated={isAuthenticated} router={router} />;
+}
+
+// Separated so hooks (useBillCalculations) always run unconditionally
+function SplitBillDetailView({
+  bill,
+  isPublic,
+  showBanner,
+  setShowBanner,
+  isAuthenticated,
+  router,
+}: {
+  bill: any;
+  isPublic: boolean;
+  showBanner: boolean;
+  setShowBanner: (v: boolean) => void;
+  isAuthenticated: boolean;
+  router: any;
+}) {
+  const billSummaryRef = useRef<BillSummaryHandle>(null);
+  const { paymentMethods: storePaymentMethods } = useWalletStore();
+
+  const { balances, totalSpent, settlementInstructions, badges } = useBillCalculations({
+    people: bill.people,
+    expenses: bill.expenses,
+    additionalExpenses: bill.additionalExpenses,
+  });
+
+  const effectivePaymentMethods = bill.paymentMethodSnapshots?.length
+    ? bill.paymentMethodSnapshots
+    : storePaymentMethods;
+
+  const selectedMethods = effectivePaymentMethods.filter((m: any) =>
+    (bill.selectedPaymentMethodIds || []).includes(m.id)
+  );
+
+  const [isSharingFromPreview, setIsSharingFromPreview] = useState(false);
+
+  const handlePreviewShare = () => {
+    setIsSharingFromPreview(true);
+    billSummaryRef.current?.triggerShare();
+    // Reset after a short window
+    setTimeout(() => setIsSharingFromPreview(false), 4000);
+  };
+
+  const handleCopyLink = () => {
+    if (typeof window === "undefined") return;
+    const url = window.location.href.split("?")[0];
+    navigator.clipboard.writeText(url);
+    import("sonner").then(({ toast }) =>
+      toast.success("Link berhasil disalin! 🔗", {
+        description: "Bagikan link ini ke teman-temanmu.",
+      })
+    );
+  };
+
   return (
     <div className="w-full max-w-[600px] min-h-screen flex flex-col relative bg-background">
       <Header
@@ -108,7 +166,29 @@ function SplitBillDetailContent() {
         onBack={() => router.push(isAuthenticated ? "/history?tab=split-bill" : "/")}
       />
 
-      <main className="flex-1 p-4 pb-10 space-y-6">
+      {/* Primary hero zone — flows seamlessly from the header */}
+      <div className="bg-primary p-4 relative">
+        <SocialReceiptPreviewBanner
+          activityName={bill.activityName}
+          people={bill.people}
+          totalSpent={totalSpent}
+          settlementInstructions={settlementInstructions}
+          balances={balances}
+          badges={badges}
+          selectedMethods={selectedMethods}
+          expenses={bill.expenses}
+          additionalExpenses={bill.additionalExpenses}
+          onShareClick={handlePreviewShare}
+          onCopyLink={handleCopyLink}
+          isSharing={isSharingFromPreview}
+        />
+      </div>
+
+      {/* Content section — default background */}
+      <main className="flex-1 px-4 pt-4 pb-10 space-y-6">
+        <BillSummary ref={billSummaryRef} billData={bill} isPublic={isPublic} hideShareActions />
+
+        {/* "Split Bill Lagi?" CTA banner — after Monitor Status Bayar */}
         <div
           onClick={() => {
             trackSplitBill.reEntry();
@@ -134,7 +214,6 @@ function SplitBillDetailContent() {
             </p>
           </div>
         </div>
-        <BillSummary billData={bill} isPublic={isPublic} />
       </main>
 
       <AnimatePresence>

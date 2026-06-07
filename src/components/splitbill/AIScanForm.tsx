@@ -43,7 +43,7 @@ const AIScanBenefits = () => (
   </div>
 );
 
-export const AIScanForm = () => {
+export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
   const [image, setImage] = useState<string | null>(null);
   const [isScanning, setIsScanning] = useState(false);
   const [scanResult, setScanResult] = useState<ReceiptScanResult | null>(null);
@@ -314,10 +314,14 @@ export const AIScanForm = () => {
                     "ai_scan_login_barrier",
                   );
                   trackSubscription.initiateCheckout("login_barrier");
-                  const currentQuery = typeof window !== 'undefined' ? window.location.search : '';
-                  router.push(
-                    `/register?redirect=${encodeURIComponent(`/split-bill${currentQuery}`)}`,
-                  );
+                  if (onLoginClick) {
+                    onLoginClick();
+                  } else {
+                    const currentQuery = typeof window !== 'undefined' ? window.location.search : '';
+                    router.push(
+                      `/register?redirect=${encodeURIComponent(`/split-bill${currentQuery}`)}`,
+                    );
+                  }
                 }}
                 className="w-full max-w-[200px] h-10 bg-primary hover:bg-primary/90 text-white font-bold rounded-md shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] active:scale-[0.98] mt-1 text-sm"
               >

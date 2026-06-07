@@ -4,6 +4,7 @@ import { setTokens, clearTokens, getRefreshToken } from "@/lib/auth/tokens";
 
 export interface User {
   id: string;
+  _id?: string;
   name: string;
   email: string;
   freeScanCount?: number;

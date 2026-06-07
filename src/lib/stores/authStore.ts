@@ -50,7 +50,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       });
 
       // Track User-ID and Properties
-      identifyUser(response.user.id, {
+      identifyUser(response.user._id || response.user.id, {
         email: response.user.email,
         name: response.user.name,
         user_type: "registered",
@@ -84,7 +84,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       });
 
       // Track User-ID and Properties
-      identifyUser(response.user.id, {
+      identifyUser(response.user._id || response.user.id, {
         email: response.user.email,
         name: response.user.name,
         user_type: "registered",
@@ -210,7 +210,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       });
 
       // Track User-ID and Properties on Init
-      identifyUser(user.id, {
+      identifyUser(user._id || user.id, {
         email: user.email,
         name: user.name,
         user_type: "registered",

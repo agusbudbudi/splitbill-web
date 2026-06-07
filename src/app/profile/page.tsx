@@ -24,7 +24,7 @@ import {
   Crown,
   ShoppingBag,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, getAvatarUrl } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
@@ -123,9 +123,7 @@ export default function ProfilePage() {
     email: "guest@splitbill.app",
   };
 
-  const avatarUrl = `https://api.dicebear.com/9.x/personas/svg?backgroundColor=b6e3f4&scale=100&seed=${encodeURIComponent(
-    user.email,
-  )}`;
+  const avatarUrl = getAvatarUrl(user);
 
   const handleLogout = async () => {
     if (confirm("Apakah Anda yakin ingin logout?")) {
@@ -175,21 +173,6 @@ export default function ProfilePage() {
         <Header title="Profil & Pengaturan" showBackButton />
 
         <main className="w-full max-w-[600px]">
-          {/* Banner Section */}
-          <div className="w-full px-4 pt-4">
-            <div className="relative aspect-[360/113] w-full overflow-hidden rounded-lg">
-              <img
-                src="/img/banner-profile.png"
-                alt="Profile Banner"
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src =
-                    "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?q=80&w=2070&auto=format&fit=crop";
-                }}
-              />
-            </div>
-          </div>
-
           <div className="px-4 mt-6 space-y-6">
             {/* User Profile Section */}
             <Card className="p-4 border border-border/50 shadow-sm rounded-lg bg-card">

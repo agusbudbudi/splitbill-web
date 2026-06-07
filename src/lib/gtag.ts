@@ -26,8 +26,13 @@ export const identifyUser = (userId: string, properties?: Record<string, any>) =
     if (process.env.NODE_ENV === "development") {
       console.log(`[GA Identify]: ${userId}`, properties);
     }
+    window.gtag("set", {
+      user_id: userId,
+      uid: userId,
+    });
     window.gtag("config", GA_MEASUREMENT_ID!, {
       user_id: userId,
+      uid: userId,
     });
     if (properties) {
       setUserProperties(properties);
@@ -43,6 +48,10 @@ export const clearUser = () => {
     if (process.env.NODE_ENV === "development") {
       console.log("[GA Clear User]");
     }
+    window.gtag("set", {
+      user_id: null,
+      uid: null,
+    });
     window.gtag("config", GA_MEASUREMENT_ID!, {
       user_id: null,
     });

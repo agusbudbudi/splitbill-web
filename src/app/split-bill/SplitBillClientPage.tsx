@@ -120,6 +120,7 @@ const SplitBillContent = () => {
   const [isAddWalletOpen, setIsAddWalletOpen] = useState(false);
   const [showFinalizeModal, setShowFinalizeModal] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showAIScanAuthModal, setShowAIScanAuthModal] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [isFinalizing, setIsFinalizing] = useState(false);
   const [isCalculating, setIsCalculating] = useState(false);
@@ -221,8 +222,13 @@ const SplitBillContent = () => {
   const { isPWABannerVisible } = useUIStore();
 
   useEffect(() => {
-    setActiveTab(isAuthenticated ? "ai" : "manual");
-  }, [isAuthenticated]);
+    const tabParam = searchParams.get("tab");
+    if (tabParam === "ai" || tabParam === "manual") {
+      setActiveTab(tabParam);
+    } else {
+      setActiveTab(isAuthenticated ? "ai" : "manual");
+    }
+  }, [isAuthenticated, searchParams]);
 
   const triggerConfetti = () => {
     const duration = 3 * 1000;
@@ -651,6 +657,7 @@ const SplitBillContent = () => {
                   <div className="px-4 pb-4">
                     <AIScanPromoBanner
                       onDismiss={() => setIsAIBannerDismissed(true)}
+                      onLoginClick={() => setShowAIScanAuthModal(true)}
                     />
                   </div>
                 )}
@@ -659,7 +666,7 @@ const SplitBillContent = () => {
                   {activeTab === "manual" ? (
                     <ManualInputForm />
                   ) : (
-                    <AIScanForm />
+                    <AIScanForm onLoginClick={() => setShowAIScanAuthModal(true)} />
                   )}
                 </div>
               </CardContent>
@@ -1197,7 +1204,24 @@ const SplitBillContent = () => {
           trackAuth.splitbillFinalizeAfterGoogleLogin();
           handleFinalize();
         }}
+        iconSrc="/img/feature-splitbill-scan.png"
         redirectPath={`${pathname}${searchParams.toString() ? `?${searchParams.toString()}&` : "?"}finalize=true`}
+      />
+
+      {/* Auth Modal for AI Scan Entry Points */}
+      <AuthModal
+        isOpen={showAIScanAuthModal}
+        onClose={() => setShowAIScanAuthModal(false)}
+        title="Masuk untuk Scan AI"
+        description="Yuk masuk sekarang untuk menikmati fitur Scan Struk Otomatis pakai AI secara gratis! ✨"
+        showRegisterLink={false}
+        iconSrc="/img/feature-splitbill-scan.png"
+        redirectPath={(() => {
+          const currentParams = new URLSearchParams(searchParams.toString());
+          currentParams.set("step", "2");
+          currentParams.set("tab", "ai");
+          return `${pathname}?${currentParams.toString()}`;
+        })()}
       />
 
       <TutorialOverlay

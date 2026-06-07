@@ -6,15 +6,29 @@ import { GoogleLoginButton } from "./GoogleLoginButton";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { ShieldCheck, Mail } from "lucide-react";
+import Image from "next/image";
 
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess?: () => void;
   redirectPath?: string;
+  title?: string;
+  description?: string;
+  showRegisterLink?: boolean;
+  iconSrc?: string;
 }
 
-export function AuthModal({ isOpen, onClose, onSuccess, redirectPath = "/member" }: AuthModalProps) {
+export function AuthModal({
+  isOpen,
+  onClose,
+  onSuccess,
+  redirectPath = "/member",
+  title = "Simpan Split Bill Kamu",
+  description = "Yuk masuk, supaya split bill tersimpan dan siap di-share kapan aja.",
+  showRegisterLink = false,
+  iconSrc
+}: AuthModalProps) {
   const searchParams = useSearchParams();
   const currentRedirect = searchParams.get("redirect") || redirectPath;
 
@@ -34,17 +48,27 @@ export function AuthModal({ isOpen, onClose, onSuccess, redirectPath = "/member"
     >
       <div className="flex flex-col items-center text-center p-2 space-y-6">
         {/* Safe Icon */}
-        <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0 animate-pulse">
-          <ShieldCheck className="w-9 h-9" />
+        <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0 overflow-hidden relative">
+          {iconSrc ? (
+            <Image
+              src={iconSrc}
+              alt="Icon"
+              width={64}
+              height={64}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <ShieldCheck className="w-9 h-9 animate-pulse" />
+          )}
         </div>
 
         {/* Text Details */}
         <div className="space-y-2 max-w-sm">
           <h3 className="text-xl font-black text-foreground">
-            Simpan Split Bill Kamu
+            {title}
           </h3>
           <p className="text-sm text-muted-foreground font-semibold leading-relaxed">
-            Yuk masuk, supaya split bill tersimpan dan siap di-share kapan aja.
+            {description}
           </p>
         </div>
 
@@ -80,16 +104,18 @@ export function AuthModal({ isOpen, onClose, onSuccess, redirectPath = "/member"
         </div>
 
         {/* Footer/Register link */}
-        <div className="text-xs font-semibold text-muted-foreground pt-2">
-          Belum punya akun?{" "}
-          <Link
-            href={registerUrl}
-            onClick={onClose}
-            className="text-primary font-black hover:underline"
-          >
-            Daftar sekarang
-          </Link>
-        </div>
+        {showRegisterLink && (
+          <div className="text-xs font-semibold text-muted-foreground pt-2">
+            Belum punya akun?{" "}
+            <Link
+              href={registerUrl}
+              onClick={onClose}
+              className="text-primary font-black hover:underline"
+            >
+              Daftar sekarang
+            </Link>
+          </div>
+        )}
       </div>
     </BottomSheet>
   );

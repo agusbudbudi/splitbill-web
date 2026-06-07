@@ -8,17 +8,23 @@ import { useRouter } from "next/navigation";
 interface AIScanPromoBannerProps {
   onDismiss: () => void;
   className?: string;
+  onLoginClick?: () => void;
 }
 
 export const AIScanPromoBanner = ({
   onDismiss,
   className,
+  onLoginClick,
 }: AIScanPromoBannerProps) => {
   const router = useRouter();
 
   const handleCTA = () => {
-    const redirectUrl = encodeURIComponent("/split-bill?step=2");
-    router.push(`/register?redirect=${redirectUrl}`);
+    if (onLoginClick) {
+      onLoginClick();
+    } else {
+      const redirectUrl = encodeURIComponent("/split-bill?step=2");
+      router.push(`/register?redirect=${redirectUrl}`);
+    }
   };
 
   return (

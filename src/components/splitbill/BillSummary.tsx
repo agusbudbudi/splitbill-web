@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useImperativeHandle } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSplitBillStore } from "@/store/useSplitBillStore";
 import { Card, CardContent } from "@/components/ui/Card";
@@ -35,6 +35,12 @@ import { Sparkles, Share2 } from "lucide-react";
 import * as htmlToImage from "html-to-image";
 import { SocialSplitBillReceipt } from "./SocialSplitBillReceipt";
 import { trackSplitBill, trackWallet } from "@/lib/gtag";
+import { useAuthStore } from "@/lib/stores/authStore";
+
+export interface BillSummaryHandle {
+  triggerShare: () => void;
+  isSharing: boolean;
+}
 
 interface BillSummaryProps {
   billData?: SplitBillData & {
@@ -46,15 +52,20 @@ interface BillSummaryProps {
   };
   showDownload?: boolean;
   isPublic?: boolean;
+  /** Hide the Bagikan + Salin Link buttons (used when they're shown in a parent card instead) */
+  hideShareActions?: boolean;
 }
 
-export const BillSummary = ({
-  billData,
-  showDownload = true,
-  isPublic = false,
-}: BillSummaryProps) => {
+export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>(
+  function BillSummaryInner({
+    billData,
+    showDownload = true,
+    isPublic = false,
+    hideShareActions = false,
+  }: BillSummaryProps, ref) {
   const store = useSplitBillStore();
   const { paymentMethods: storePaymentMethods } = useWalletStore();
+  const { isAuthenticated } = useAuthStore();
 
   // Use props if provided, otherwise fall back to store
   const router = useRouter();
@@ -103,6 +114,8 @@ export const BillSummary = ({
 
   const [isSharing, setIsSharing] = React.useState(false);
   const socialReceiptRef = React.useRef<HTMLDivElement>(null);
+  // Will be wired up after handleShareSocial is defined
+  const handleShareSocialRef = React.useRef<(() => Promise<void>) | null>(null);
 
   const handleShareSocial = async () => {
     if (!socialReceiptRef.current) return;
@@ -171,6 +184,15 @@ export const BillSummary = ({
       setIsSharing(false);
     }
   };
+
+  // Keep ref in sync so useImperativeHandle can reference it
+  handleShareSocialRef.current = handleShareSocial;
+
+  // Expose share trigger to parent via ref
+  useImperativeHandle(ref, () => ({
+    triggerShare: () => handleShareSocialRef.current?.(),
+    isSharing,
+  }), [isSharing]);
 
   const handleCopy = (text: string, label: string, provider?: string) => {
     navigator.clipboard.writeText(text);
@@ -346,6 +368,14 @@ export const BillSummary = ({
           )}
 
           {/* Person Breakdown */}
+          {!isAuthenticated && !isPublic && (
+            <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-sm flex items-start gap-2.5 text-amber-800 text-[11px] font-bold leading-relaxed animate-in fade-in slide-in-from-top-2 duration-500">
+              <span className="text-sm shrink-0">⚠️</span>
+              <p className="flex-1 m-0">
+                <strong>Rincian ini cuma numpang lewat sementara, lho!</strong> Biar gak hilang, yuk <em>secure</em> & simpan ke akun kamu!
+              </p>
+            </div>
+          )}
           <div className="space-y-4">
             <h3 className="font-bold text-xs text-foreground/70 uppercase px-1">
               Rincian Per Orang
@@ -618,44 +648,46 @@ export const BillSummary = ({
           </div>
         )}
 
-        <div
-          className={cn(
-            "grid grid-cols-2 gap-2 transition-all duration-500",
-            !showDownload && "pointer-events-none",
-          )}
-        >
-          <button
-            onClick={() => {
-              trackSplitBill.share("share_button", billData?.id || "");
-              handleShareSocial();
-            }}
-            disabled={isSharing || !showDownload}
+        {!hideShareActions && (
+          <div
             className={cn(
-              "h-12 rounded-lg font-bold gap-2 text-sm transition-all active:scale-[0.98] bg-primary text-white shadow-lg shadow-primary/20 flex items-center justify-center group cursor-pointer",
-              (isSharing || !showDownload) && "opacity-70 cursor-not-allowed",
+              "grid grid-cols-2 gap-2 transition-all duration-500",
+              !showDownload && "pointer-events-none",
             )}
           >
-            <Share2
+            <button
+              onClick={() => {
+                trackSplitBill.share("share_button", billData?.id || "");
+                handleShareSocial();
+              }}
+              disabled={isSharing || !showDownload}
               className={cn(
-                "w-4 h-4 group-hover:rotate-12 transition-transform",
-                isSharing && "animate-pulse",
+                "h-12 rounded-lg font-bold gap-2 text-sm transition-all active:scale-[0.98] bg-primary text-white shadow-lg shadow-primary/20 flex items-center justify-center group cursor-pointer",
+                (isSharing || !showDownload) && "opacity-70 cursor-not-allowed",
               )}
-            />
-            {isSharing ? "..." : "Bagikan"}
-          </button>
+            >
+              <Share2
+                className={cn(
+                  "w-4 h-4 group-hover:rotate-12 transition-transform",
+                  isSharing && "animate-pulse",
+                )}
+              />
+              {isSharing ? "..." : "Bagikan"}
+            </button>
 
-          <button
-            onClick={handleCopyLink}
-            disabled={!showDownload}
-            className={cn(
-              "h-12 rounded-lg font-bold gap-2 text-sm transition-all active:scale-[0.98] bg-white border border-primary/20 text-primary hover:bg-primary/5 flex items-center justify-center group cursor-pointer",
-              !showDownload && "opacity-70 cursor-not-allowed",
-            )}
-          >
-            <Copy className="w-4 h-4 group-hover:scale-110 transition-transform" />
-            Salin Link
-          </button>
-        </div>
+            <button
+              onClick={handleCopyLink}
+              disabled={!showDownload}
+              className={cn(
+                "h-12 rounded-lg font-bold gap-2 text-sm transition-all active:scale-[0.98] bg-white border border-primary/20 text-primary hover:bg-primary/5 flex items-center justify-center group cursor-pointer",
+                !showDownload && "opacity-70 cursor-not-allowed",
+              )}
+            >
+              <Copy className="w-4 h-4 group-hover:scale-110 transition-transform" />
+              Salin Link
+            </button>
+          </div>
+        )}
 
         {!isPublic && (
           <button
@@ -733,4 +765,7 @@ export const BillSummary = ({
       </div>
     </div>
   );
-};
+  }
+);
+
+BillSummary.displayName = "BillSummary";

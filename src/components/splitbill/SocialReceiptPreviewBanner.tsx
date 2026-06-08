@@ -39,7 +39,7 @@ export const SocialReceiptPreviewBanner = ({
   isSharing = false,
 }: SocialReceiptPreviewBannerProps) => {
   const RECEIPT_WIDTH = 1080;
-  const PREVIEW_HEIGHT = 260;
+  const PREVIEW_HEIGHT = 280;
 
   const containerRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(0); // 0 = not measured yet

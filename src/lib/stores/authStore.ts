@@ -42,6 +42,18 @@ export const useAuthStore = create<AuthState>((set) => ({
       const payload = draftId ? { ...credentials, draftId } : credentials;
 
       const response = await authApi.login(payload);
+      
+      // Proactively clear draftId if association failed
+      console.log("Login/Google response draftAssociated:", response.draftAssociated, "draftId:", draftId);
+      if (draftId && !response.draftAssociated) {
+        console.warn("Draft association failed or unknown at backend. NOT clearing draftId to debug.");
+        // Temporarily disabled: useSplitBillStore.getState().clearDraftId();
+      } else if (draftId && response.draftAssociated) {
+        console.log("Draft successfully associated with user. Keeping draftId:", draftId);
+        // Ensure state is set to the claimed draftId
+        useSplitBillStore.getState().setDraftId(draftId);
+      }
+
       set({
         user: response.user,
         isAuthenticated: true,
@@ -75,6 +87,17 @@ export const useAuthStore = create<AuthState>((set) => ({
       // Attach any pending guest draft so the backend can auto-associate it
       const { draftId } = useSplitBillStore.getState();
       const response = await authApi.googleLogin(idToken, draftId || undefined);
+      
+      // Proactively clear draftId if association failed
+      console.log("Login/Google response draftAssociated:", response.draftAssociated, "draftId:", draftId);
+      if (draftId && !response.draftAssociated) {
+        console.warn("Draft association failed or unknown at backend. NOT clearing draftId to debug.");
+        // Temporarily disabled: useSplitBillStore.getState().clearDraftId();
+      } else if (draftId && response.draftAssociated) {
+        console.log("Draft successfully associated with user. Keeping draftId:", draftId);
+        // Ensure state is set to the claimed draftId
+        useSplitBillStore.getState().setDraftId(draftId);
+      }
       
       set({
         user: response.user,
@@ -115,7 +138,14 @@ export const useAuthStore = create<AuthState>((set) => ({
     try {
       // Attach any pending guest draft so the backend can auto-associate it
       const { draftId } = useSplitBillStore.getState();
-      await authApi.register({ name, email, password, ...(draftId ? { draftId } : {}) });
+      const response = await authApi.register({ name, email, password, ...(draftId ? { draftId } : {}) });
+      
+      // Proactively clear draftId if association failed
+      if (draftId && !response.draftAssociated) {
+        console.warn("Draft association failed at backend. Clearing stale draftId.");
+        useSplitBillStore.getState().clearDraftId();
+      }
+
       set({
         isLoading: false,
       });

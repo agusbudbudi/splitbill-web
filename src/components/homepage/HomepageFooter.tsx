@@ -158,14 +158,9 @@ export const HomepageFooter = () => {
 
         {/* Bottom Section */}
         <div className="flex flex-col items-center gap-4 text-center">
-          <div className="flex items-center gap-1.5 text-[11px] font-medium text-white/60">
-            Made with{" "}
-            <Heart className="w-3 h-3 text-white fill-white animate-pulse" /> by
-            SplitBill Team
-          </div>
           <div className="flex flex-col items-center gap-2">
             <span className="text-xs font-bold text-white/40 uppercase">
-              © 2026 SplitBill Online • Smart Way to Split Expenses
+              © 2026 Split Bill Online • Smart Way to Split Expenses
             </span>
           </div>
         </div>

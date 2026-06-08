@@ -36,7 +36,7 @@ export function SuccessSection({
         className,
       )}
     >
-      <div className="space-y-6 w-full flex flex-col items-center">
+      <div className="space-y-6 w-full flex flex-col items-center p-4">
         <div className="space-y-6 w-full">
           <AnimatedCheckmark className="mb-6" />
 
@@ -61,7 +61,7 @@ export function SuccessSection({
                 variant={action.variant || "default"}
                 onClick={action.onClick}
                 className={cn(
-                  "flex-1 h-20 sm:h-12 rounded-md font-bold transition-all active:scale-95 text-lg sm:text-base whitespace-nowrap",
+                  "flex-1 rounded-sm font-bold transition-all active:scale-95 whitespace-nowrap",
                   action.variant === "default" && "shadow-lg shadow-primary/20",
                   action.className,
                 )}

@@ -145,6 +145,13 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
 
       const caption = `💸 Habis seru-seruan bareng di "${activityName || "Makan-makan"}"!\n\nTotal tagihannya ${formatToIDR(totalSpent)}. Biar pertemanan makin asik, yuk lunasin tagihannya ya! 😉✨${instructionsText}\n\nCek rincian lengkapnya di sini:\n🔗 ${shareUrl}\n\nPowered by splitbill.my.id`;
 
+      // Pre-copy text to clipboard as many apps ignore 'text' when 'files' are shared
+      try {
+        await navigator.clipboard.writeText(caption);
+      } catch (clipErr) {
+        console.warn("Auto-copy to clipboard failed:", clipErr);
+      }
+
       // Try native share if available
       if (
         typeof navigator !== "undefined" &&
@@ -163,7 +170,10 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
               text: caption,
             });
             trackSplitBill.share("share_api", billData?.id || "");
-            toast.success("Berhasil dibagikan! 📸✨", { id: toastId });
+            toast.success("Berhasil dibagikan! 📸✨ (Rincian otomatis tersalin ke clipboard)", { 
+              id: toastId,
+              duration: 4000 
+            });
             return;
           }
         } catch (shareErr) {
@@ -417,7 +427,7 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
           )}
 
           {/* Person Breakdown */}
-          {!isAuthenticated && !isPublic && (
+          {!isPublic && !billData && (
             <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-sm flex items-start gap-2.5 text-amber-800 text-[11px] font-bold leading-relaxed animate-in fade-in slide-in-from-top-2 duration-500">
               <span className="text-sm shrink-0">⚠️</span>
               <p className="flex-1 m-0">

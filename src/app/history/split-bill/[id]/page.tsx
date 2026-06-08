@@ -7,11 +7,12 @@ import { Footer } from "@/components/layout/Footer";
 import { useWalletStore } from "@/store/useWalletStore";
 import { Button } from "@/components/ui/Button";
 import { BillSummary, BillSummaryHandle } from "@/components/splitbill/BillSummary";
-import { ChevronRight, Loader2 } from "lucide-react";
+import { ChevronRight, Loader2, ReceiptText } from "lucide-react";
 import { ReviewBanner } from "@/components/splitbill/ReviewBanner";
 import { AnimatePresence } from "framer-motion";
 import { SocialReceiptPreviewBanner } from "@/components/splitbill/SocialReceiptPreviewBanner";
 import { useBillCalculations } from "@/hooks/useBillCalculations";
+import confetti from "canvas-confetti";
 
 import { useAuthStore } from "@/lib/stores/authStore";
 import { trackPublic, trackSplitBill } from "@/lib/gtag";
@@ -31,10 +32,40 @@ function SplitBillDetailContent() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (isNew) {
+    if (isNew && !isLoading && bill) {
       setShowBanner(true);
+      
+      // Trigger Confetti Celebration
+      const duration = 3 * 1000;
+      const animationEnd = Date.now() + duration;
+      const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 50 };
+
+      const randomInRange = (min: number, max: number) =>
+        Math.random() * (max - min) + min;
+
+      const interval: ReturnType<typeof setInterval> = setInterval(function () {
+        const timeLeft = animationEnd - Date.now();
+
+        if (timeLeft <= 0) {
+          return clearInterval(interval);
+        }
+
+        const particleCount = 50 * (timeLeft / duration);
+        confetti({
+          ...defaults,
+          particleCount,
+          origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+          colors: ["#7c3aed", "#a78bfa", "#ddd6fe"],
+        });
+        confetti({
+          ...defaults,
+          particleCount,
+          origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+          colors: ["#7c3aed", "#a78bfa", "#ddd6fe"],
+        });
+      }, 250);
     }
-  }, [isNew]);
+  }, [isNew, isLoading, bill]);
 
   useEffect(() => {
     const loadBill = async () => {
@@ -78,8 +109,21 @@ function SplitBillDetailContent() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6 text-center">
+        <div className="relative mb-6">
+          <div className="w-20 h-20 border-4 border-primary/10 border-t-primary rounded-full animate-spin"></div>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <ReceiptText className="w-8 h-8 text-primary animate-pulse" />
+          </div>
+        </div>
+        <div className="space-y-2 animate-in fade-in slide-in-from-bottom-4 duration-700">
+          <h2 className="text-xl font-black text-foreground tracking-tight">
+            Memuat Detail Split Bill...
+          </h2>
+          <p className="text-sm text-muted-foreground font-medium max-w-[250px] mx-auto leading-relaxed">
+            Sabar ya, lagi siapin rincian patungan kamu biar makin rapi! ✨
+          </p>
+        </div>
       </div>
     );
   }

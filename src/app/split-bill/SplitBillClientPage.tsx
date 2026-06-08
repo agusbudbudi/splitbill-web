@@ -118,7 +118,6 @@ const SplitBillContent = () => {
   const [activeTab, setActiveTab] = useState<"ai" | "manual">("manual");
   const [isAIBannerDismissed, setIsAIBannerDismissed] = useState(false);
   const [isAddWalletOpen, setIsAddWalletOpen] = useState(false);
-  const [showFinalizeModal, setShowFinalizeModal] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showAIScanAuthModal, setShowAIScanAuthModal] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
@@ -266,7 +265,6 @@ const SplitBillContent = () => {
     if (isFinalizingRef.current) return;
 
     if (!isAuthenticated) {
-      setShowFinalizeModal(false);
       setShowAuthModal(true);
       return;
     }
@@ -338,7 +336,6 @@ const SplitBillContent = () => {
         num_items: expenses.length + additionalExpenses.length,
         activity_name: activityName || "Aktivitas Split Bill",
       });
-      setShowFinalizeModal(false);
 
       // 1. Update current URL to include saved=true so back navigation shows the success card
       router.replace(`/split-bill?step=4&saved=true&id=${recordId}`);
@@ -351,9 +348,6 @@ const SplitBillContent = () => {
           router.push(`/history/split-bill/${recordId}?new=true`);
         }
       }, 100);
-
-      // Celeberation Effect
-      triggerConfetti();
     } catch (e: any) {
       console.error("Failed to finalize split bill:", e);
       toast.error("Gagal menyimpan split bill: " + (e.message || "Terjadi kesalahan"));
@@ -425,7 +419,10 @@ const SplitBillContent = () => {
             });
           }
         } else if (step === 2) {
-          let activeDraftId = draftId;
+          // Fetch the absolute latest draftId from the store right before checking
+          const { draftId: latestDraftId } = useSplitBillStore.getState();
+          let activeDraftId = latestDraftId;
+
           if (!activeDraftId) {
             if (isCreatingDraftRef.current) return;
             isCreatingDraftRef.current = true;
@@ -524,8 +521,25 @@ const SplitBillContent = () => {
         const isOwnershipConflict =
           status === 403 || /tidak memiliki akses/i.test(message);
         if (isOwnershipConflict && !isRetry) {
-          console.warn("Draft ownership conflict – clearing stale draftId and retrying.");
-          useSplitBillStore.getState().clearDraftId();
+          console.warn("Draft ownership conflict detected. Attempting to recover data before retrying.");
+          const { draftId, clearDraftId } = useSplitBillStore.getState();
+
+          try {
+            // Attempt to recover data from the old draft
+            if (draftId) {
+              const response = await draftApi.getById(draftId);
+              if (response.success && response.draft) {
+                console.log("Successfully recovered draft data.");
+                // Note: The UI state (expenses, participants, etc.)
+                // should already be in sync with the frontend state.
+                // We just need to ensure the stale ID is gone.
+              }
+            }
+          } catch (recoveryErr) {
+            console.error("Failed to recover draft data:", recoveryErr);
+          }
+
+          clearDraftId();
           return saveDraft(true);
         }
         console.error("Failed to save draft:", err);
@@ -910,13 +924,13 @@ const SplitBillContent = () => {
                   label: "Lihat History",
                   onClick: () =>
                     router.push(`/history/split-bill/${lastSavedId}?new=true`),
-                  variant: "outline",
+                  variant: "default",
                   icon: HistoryIcon,
                 },
                 {
                   label: "Kembali ke Beranda",
                   onClick: () => router.push("/"),
-                  variant: "default",
+                  variant: "outline",
                   icon: Home,
                 },
               ]}
@@ -952,8 +966,7 @@ const SplitBillContent = () => {
                 {!isSaved && (
                   <SaveBillNudge
                     onSave={() => {
-                      trackSplitBill.finalizeModalView();
-                      setShowFinalizeModal(true);
+                      handleFinalize();
                     }}
                     className="animate-in slide-in-from-top-4 duration-700"
                   />
@@ -1154,8 +1167,7 @@ const SplitBillContent = () => {
                     });
                     return;
                   }
-                  trackSplitBill.finalizeModalView();
-                  setShowFinalizeModal(true);
+                  handleFinalize();
                 }}
                 disabled={isFinalizing}
                 className="w-full h-14 text-lg font-bold rounded-2xl bg-primary text-white shadow-xl shadow-primary/30 active:scale-95 transition-all !disabled:opacity-70"
@@ -1175,26 +1187,6 @@ const SplitBillContent = () => {
           </div>
         </div>
       </div>
-
-      {/* Finalize Modal */}
-      <ConfirmationModal
-        isOpen={showFinalizeModal}
-        onClose={() => {
-          if (isFinalizing) return;
-          trackSplitBill.finalizeCancel();
-          setShowFinalizeModal(false);
-        }}
-        onConfirm={() => {
-          trackSplitBill.finalizeConfirm();
-          handleFinalize();
-        }}
-        title="Simpan ke Riwayat"
-        description="Kamu yakin ingin menyelesaikan split bill ini? Data yang disimpan akan muncul di riwayat transaksi kamu."
-        icon={CheckCircle2}
-        confirmText={isFinalizing ? "Menyimpan..." : "Ya, Simpan"}
-        cancelText="Batal"
-        isLoading={isFinalizing}
-      />
 
       {/* Auth Modal */}
       <AuthModal

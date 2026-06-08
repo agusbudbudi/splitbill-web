@@ -18,12 +18,12 @@ export const SiteFooter = ({ className }: SiteFooterProps) => {
         <div className="space-y-4">
           <div className="flex items-center gap-2">
             <div className="bg-white p-1.5 rounded-lg shadow-sm">
-              <Image 
-                src="/img/footer-icon.png" 
-                alt="SplitBill" 
+              <Image
+                src="/img/footer-icon.png"
+                alt="SplitBill"
                 width={24}
                 height={24}
-                className="w-6 h-6 object-contain" 
+                className="w-6 h-6 object-contain"
               />
             </div>
             <span className="text-xl font-bold tracking-tighter">SplitBill <span className="text-white/70 italic text-sm">Online</span></span>
@@ -53,9 +53,9 @@ export const SiteFooter = ({ className }: SiteFooterProps) => {
               <li><Link href="/terms" className="text-sm font-medium hover:text-white/70 transition-colors">Syarat & Ketentuan</Link></li>
               <li><Link href="/privacy" className="text-sm font-medium hover:text-white/70 transition-colors">Kebijakan Privasi</Link></li>
               <li>
-                <Link 
-                  href="https://www.instagram.com/splitbill.app/" 
-                  target="_blank" 
+                <Link
+                  href="https://www.instagram.com/splitbill.app/"
+                  target="_blank"
                   className="flex items-center gap-2 text-sm font-medium hover:text-white/70 transition-colors"
                 >
                   <Instagram className="w-4 h-4" /> Instagram
@@ -69,9 +69,6 @@ export const SiteFooter = ({ className }: SiteFooterProps) => {
 
         {/* Bottom Section */}
         <div className="flex flex-col items-center gap-4 pt-2 pb-8">
-          <div className="flex items-center gap-1.5 text-[10px] font-medium text-white/50">
-            Made with <Heart className="w-3 h-3 text-white fill-white animate-pulse" /> by SplitBill Team
-          </div>
           <div className="flex flex-col items-center gap-1.5">
             <span className="text-[10px] font-bold text-white/30 uppercase tracking-widest">
               © 2026 SplitBill Online • Smart Way to Split Expenses

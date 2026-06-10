@@ -123,6 +123,7 @@ const SplitBillContent = () => {
   const [validationError, setValidationError] = useState<string | null>(null);
   const [isFinalizing, setIsFinalizing] = useState(false);
   const [isCalculating, setIsCalculating] = useState(false);
+  const [isSavingDraft, setIsSavingDraft] = useState(false);
   const isFinalizingRef = useRef(false);
   const isCreatingDraftRef = useRef(false);
 
@@ -571,8 +572,17 @@ const SplitBillContent = () => {
         setIsCalculating(false);
       }
     } else {
-      // Run the background task without awaiting it for other steps
-      saveDraft();
+      // PRO TIP: We now await saveDraft even for Step 1 & 2 to ensure 
+      // the draftId is properly set in the store before moving to the next step.
+      // This prevents race conditions and "STEP_1" stuck issues for logged-in users.
+      setIsSavingDraft(true);
+      try {
+        await saveDraft();
+      } catch (err) {
+        console.error("Failed to save draft:", err);
+      } finally {
+        setIsSavingDraft(false);
+      }
     }
 
     setValidationError(null);
@@ -1079,17 +1089,30 @@ const SplitBillContent = () => {
             {step === 1 && (
               <Button
                 onClick={nextStep}
+                disabled={isSavingDraft}
                 className={cn(
-                  "w-full h-14 text-lg font-bold rounded-2xl shadow-xl transition-all duration-300 active:scale-95",
+                  "w-full h-14 text-lg font-bold rounded-2xl shadow-xl transition-all duration-300 active:scale-95 flex items-center justify-center",
                   people.length >= 2
                     ? "bg-primary text-white shadow-primary/20"
                     : "bg-primary/10 text-primary shadow-none opacity-80",
                 )}
               >
-                {people.length < 2
-                  ? `Tambah ${2 - people.length} Orang Lagi`
-                  : "Lanjut ke Input Pengeluaran"}
-                <ChevronRight className="ml-2 w-5 h-5" />
+                {isSavingDraft ? (
+                  <div className="flex items-center justify-center gap-2.5">
+                    <div className="relative flex h-3 w-3">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-3 w-3 bg-white"></span>
+                    </div>
+                    <span>Sabar bestie, lagi diproses... ✨</span>
+                  </div>
+                ) : (
+                  <>
+                    {people.length < 2
+                      ? `Tambah ${2 - people.length} Orang Lagi`
+                      : "Lanjut ke Input Pengeluaran"}
+                    <ChevronRight className="ml-2 w-5 h-5" />
+                  </>
+                )}
               </Button>
             )}
 
@@ -1101,9 +1124,9 @@ const SplitBillContent = () => {
 
                 <Button
                   onClick={nextStep}
-                  disabled={expenses.length === 0}
+                  disabled={expenses.length === 0 || isSavingDraft}
                   className={cn(
-                    "w-full h-14 text-lg font-bold rounded-2xl shadow-xl transition-all duration-300",
+                    "w-full h-14 text-lg font-bold rounded-2xl shadow-xl transition-all duration-300 flex items-center justify-center",
                     expenses.length > 0 &&
                       unassignedCount === 0 &&
                       unassignedAdxCount === 0
@@ -1113,12 +1136,24 @@ const SplitBillContent = () => {
                     "opacity-100 bg-[#ede9fe] text-primary/40 shadow-none",
                   )}
                 >
-                  {expenses.length > 0 &&
-                    unassignedCount === 0 &&
-                    unassignedAdxCount === 0
-                    ? "Berhasil, Lanjutkan! ✅"
-                    : "Lanjutkan"}
-                  <ChevronRight className="ml-2 w-5 h-5" />
+                  {isSavingDraft ? (
+                    <div className="flex items-center justify-center gap-2.5">
+                      <div className="relative flex h-3 w-3">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-3 w-3 bg-white"></span>
+                      </div>
+                      <span>Hold up, lagi masak... 👨‍🍳🔥</span>
+                    </div>
+                  ) : (
+                    <>
+                      {expenses.length > 0 &&
+                        unassignedCount === 0 &&
+                        unassignedAdxCount === 0
+                        ? "Berhasil, Lanjutkan! ✅"
+                        : "Lanjutkan"}
+                      <ChevronRight className="ml-2 w-5 h-5" />
+                    </>
+                  )}
                 </Button>
               </>
             )}
@@ -1127,13 +1162,16 @@ const SplitBillContent = () => {
               <Button
                 onClick={nextStep}
                 disabled={isCalculating}
-                className="w-full h-14 text-lg font-bold rounded-2xl bg-primary text-white shadow-xl shadow-primary/30 active:scale-95 transition-all"
+                className="w-full h-14 text-lg font-bold rounded-2xl bg-primary text-white shadow-xl shadow-primary/30 active:scale-95 transition-all flex items-center justify-center"
               >
                 {isCalculating ? (
-                  <>
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                    Menghitung...
-                  </>
+                  <div className="flex items-center justify-center gap-2.5">
+                    <div className="relative flex h-3 w-3">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-3 w-3 bg-white"></span>
+                    </div>
+                    <span>Lagi ngitung, jgn panik... 🧮🔥</span>
+                  </div>
                 ) : (
                   <>
                     <Rocket className="mr-2 w-5 h-5" /> Hitung Split Bill
@@ -1170,13 +1208,16 @@ const SplitBillContent = () => {
                   handleFinalize();
                 }}
                 disabled={isFinalizing}
-                className="w-full h-14 text-lg font-bold rounded-2xl bg-primary text-white shadow-xl shadow-primary/30 active:scale-95 transition-all !disabled:opacity-70"
+                className="w-full h-14 text-lg font-bold rounded-2xl bg-primary text-white shadow-xl shadow-primary/30 active:scale-95 transition-all !disabled:opacity-70 flex items-center justify-center"
               >
                 {isFinalizing ? (
-                  <>
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                    Menyimpan...
-                  </>
+                  <div className="flex items-center justify-center gap-2.5">
+                    <div className="relative flex h-3 w-3">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-3 w-3 bg-white"></span>
+                    </div>
+                    <span>Wait, lagi disimpen... 💅</span>
+                  </div>
                 ) : (
                   <>
                     <CheckCircle2 className="mr-2 w-5 h-5" /> Simpan & Share ✨

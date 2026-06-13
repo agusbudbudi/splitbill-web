@@ -39,13 +39,13 @@ export const AIScanQuotaBanner = ({
         <span>{isSubscribed ? "PRO" : "Free"}</span>
       </div>
 
-      <div className="relative overflow-hidden bg-white rounded-[calc(1rem-1.5px)] z-10 flex-grow flex flex-col justify-between p-4">
+      <div className="relative overflow-hidden bg-white rounded-[calc(1rem-1.5px)] z-10 flex-grow flex flex-col justify-between py-2 px-3">
         {/* Subtle background glow */}
         <div className="absolute top-0 right-0 w-24 h-24 bg-pink-500/5 rounded-full blur-2xl -mr-6 -mt-6 pointer-events-none" />
 
         <div className="flex items-center gap-3">
           {/* AI Icon wrapper */}
-          <div className="shrink-0 w-12 h-12 rounded-full flex items-center justify-center transition-transform group-hover/card:scale-110">
+          <div className="shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-transform group-hover/card:scale-110">
             <Image
               src="/img/ai-icon.png"
               alt="Ikon AI"
@@ -60,7 +60,7 @@ export const AIScanQuotaBanner = ({
               {isSubscribed ? (
                 "Scan struk tanpa batas sepuasnya! ⚡"
               ) : freeScanCount === maxScanCount ? (
-                "Ada 5x scan gratis spesial buat kamu! 🔥"
+                `Ada ${maxScanCount}x scan gratis spesial buat kamu! 🔥`
               ) : isExhausted ? (
                 "Scan habis, input manual dulu yuk! ✍️"
               ) : (

@@ -62,7 +62,7 @@ export const SegmentedControl = ({
             </div>
           )}
           {option.badge && (
-            <span className="bg-primary text-white text-[10px] px-1.5 py-[3px] rounded-full shadow-sm leading-none font-black animate-in zoom-in duration-300">
+            <span className="bg-gradient-to-r from-primary to-violet-600 text-white text-[10px] px-1.5 py-[3px] rounded-full shadow-sm shadow-primary/30 leading-none font-black animate-in zoom-in duration-300">
               {option.badge}
             </span>
           )}

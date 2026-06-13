@@ -11,6 +11,7 @@ import { ExpenseList } from "@/components/splitbill/ExpenseList";
 import { AdditionalExpenses } from "@/components/splitbill/AdditionalExpenses";
 import { BillSummary } from "@/components/splitbill/BillSummary";
 import { SaveBillNudge } from "@/components/splitbill/SaveBillNudge";
+import { VisualReceiptPreview } from "@/components/splitbill/VisualReceiptPreview";
 import { Card, CardContent } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
@@ -40,7 +41,7 @@ import {
 import { SuccessSection } from "@/components/ui/SuccessSection";
 import { cn, formatToIDR } from "@/lib/utils";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
-import { InfoBanner } from "@/components/ui/InfoBanner";
+
 import { SegmentedControl } from "@/components/ui/SegmentedControl";
 import confetti from "canvas-confetti";
 import { suggestEmoji } from "@/lib/emojiUtils";
@@ -55,6 +56,7 @@ import { trackSplitBill, trackSocial, trackWallet, trackAuth } from "@/lib/gtag"
 import { AuthModal } from "@/components/auth/AuthModal";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { useUIStore } from "@/lib/stores/uiStore";
+import { DropOffSurveyBottomSheet } from "@/components/splitbill/DropOffSurveyBottomSheet";
 
 const SplitBillContent = () => {
   const router = useRouter();
@@ -115,12 +117,14 @@ const SplitBillContent = () => {
   const calculationResult = useBillCalculations();
   const { totalSpent } = calculationResult;
 
-  const [activeTab, setActiveTab] = useState<"ai" | "manual">("manual");
+  const [activeTab, setActiveTab] = useState<"ai" | "manual">("ai");
   const [isAIBannerDismissed, setIsAIBannerDismissed] = useState(false);
   const [isAddWalletOpen, setIsAddWalletOpen] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showAIScanAuthModal, setShowAIScanAuthModal] = useState(false);
-  const [validationError, setValidationError] = useState<string | null>(null);
+  const [isSurveyOpen, setIsSurveyOpen] = useState(false);
+  const [surveyTriggerStep, setSurveyTriggerStep] = useState<number>(1);
+
   const [isFinalizing, setIsFinalizing] = useState(false);
   const [isCalculating, setIsCalculating] = useState(false);
   const [isSavingDraft, setIsSavingDraft] = useState(false);
@@ -226,9 +230,9 @@ const SplitBillContent = () => {
     if (tabParam === "ai" || tabParam === "manual") {
       setActiveTab(tabParam);
     } else {
-      setActiveTab(isAuthenticated ? "ai" : "manual");
+      setActiveTab("ai");
     }
-  }, [isAuthenticated, searchParams]);
+  }, [searchParams]);
 
   const triggerConfetti = () => {
     const duration = 3 * 1000;
@@ -386,7 +390,7 @@ const SplitBillContent = () => {
       if (unassignedItems.length > 0) {
         const errorMsg =
           "Beberapa item belum di-assign 'Split dengan' atau 'Dibayar oleh'. Tolong lengkapi dulu ya!";
-        setValidationError(errorMsg);
+        toast.error(errorMsg);
         trackSplitBill.validationError(step, errorMsg);
         return;
       }
@@ -585,7 +589,7 @@ const SplitBillContent = () => {
       }
     }
 
-    setValidationError(null);
+
     const nextStepNum = step + 1;
     const stepNames = ["", "Teman", "Bil", "Detail", "Hasil"];
     trackSplitBill.stepComplete(nextStepNum, stepNames[nextStepNum] || "");
@@ -593,8 +597,30 @@ const SplitBillContent = () => {
   };
 
   const prevStep = () => {
+    const hasSeen = localStorage.getItem("hasSeenDropOffSurvey");
+    if (!hasSeen) {
+      setSurveyTriggerStep(step);
+      setIsSurveyOpen(true);
+      return;
+    }
+
     if (step > 1) {
       router.replace(`/split-bill?step=${step - 1}`);
+    } else {
+      if (sourceBucketId) {
+        router.push(`/split-later/${sourceBucketId}`);
+      } else {
+        router.back();
+      }
+    }
+  };
+
+  const handleSurveyComplete = () => {
+    localStorage.setItem("hasSeenDropOffSurvey", "true");
+    setIsSurveyOpen(false);
+    
+    if (surveyTriggerStep > 1) {
+      router.replace(`/split-bill?step=${surveyTriggerStep - 1}`);
     } else {
       if (sourceBucketId) {
         router.push(`/split-later/${sourceBucketId}`);
@@ -1118,10 +1144,6 @@ const SplitBillContent = () => {
 
             {step === 2 && (
               <>
-                {validationError && (
-                  <InfoBanner message={validationError} variant="blue" />
-                )}
-
                 <Button
                   onClick={nextStep}
                   disabled={expenses.length === 0 || isSavingDraft}
@@ -1266,6 +1288,15 @@ const SplitBillContent = () => {
         }}
         onComplete={completeTutorial}
         onStepChange={handleTutorialStepChange}
+      />
+
+      {(step === 2 || step === 3) && <VisualReceiptPreview />}
+
+      <DropOffSurveyBottomSheet
+        isOpen={isSurveyOpen}
+        onClose={handleSurveyComplete}
+        onComplete={handleSurveyComplete}
+        step={surveyTriggerStep}
       />
     </div>
   );

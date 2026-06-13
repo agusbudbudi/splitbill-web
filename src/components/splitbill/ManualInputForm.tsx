@@ -70,6 +70,13 @@ export const ManualInputForm = () => {
             value={item}
             onChange={(e) => setItem(e.target.value)}
             className="bg-white border-primary/10 h-12"
+            tabIndex={1}
+            onKeyDown={(e) => {
+              if (e.key === "Tab" && !e.shiftKey) {
+                e.preventDefault();
+                document.getElementById("manual-amount-input")?.focus();
+              }
+            }}
           />
         </div>
         <div className="space-y-1">
@@ -77,6 +84,7 @@ export const ManualInputForm = () => {
             Jumlah (Rp)
             <button
               type="button"
+              tabIndex={-1}
               onClick={() => setIsInfoOpen(true)}
               className="inline-flex items-center justify-center hover:text-primary transition-colors cursor-pointer"
             >
@@ -84,6 +92,7 @@ export const ManualInputForm = () => {
             </button>
           </label>
           <Input
+            id="manual-amount-input"
             placeholder="Contoh: 50.000"
             value={amountStr}
             onChange={(e) => {
@@ -91,6 +100,7 @@ export const ManualInputForm = () => {
               setAmountStr(val ? formatToIDR(parseInt(val)) : "");
             }}
             className="bg-white border-primary/10 h-12 font-bold text-primary"
+            tabIndex={2}
           />
         </div>
       </div>

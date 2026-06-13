@@ -21,12 +21,12 @@ export const ExpenseList = () => {
   if (expenses.length === 0) return null;
 
   return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <div id="expense-list-section" className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <QuickAssignHeader />
 
       <div className="space-y-4">
         <div className="flex items-center justify-between px-1">
-          <h3 className="text-lg font-bold">Rincian Belanja 🧾</h3>
+          <h3 className="text-lg font-bold">Rincian Belanja</h3>
           <span className="text-xs font-bold text-muted-foreground bg-muted px-2 py-1 rounded-full">
             {expenses.length} Item
           </span>
@@ -46,7 +46,7 @@ export const ExpenseList = () => {
               <CardContent className="p-3 sm:p-4">
                 <div className="flex justify-between items-start gap-4">
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-bold text-xs sm:text-sm text-foreground/80 truncate">
+                    <h4 className="font-bold text-sm truncate">
                       {expense.item}
                     </h4>
                     <p className="text-primary font-black text-sm sm:text-base mt-0.5">
@@ -70,65 +70,103 @@ export const ExpenseList = () => {
                 </div>
 
                 <div className="mt-3 flex flex-col gap-2.5 pt-3 border-t border-dashed border-primary/10">
-                  <div className="flex items-center justify-between gap-4">
-                    <span className="text-[9px] text-muted-foreground/60 uppercase font-bold tracking-wider shrink-0">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[9px] text-muted-foreground/60 uppercase font-bold tracking-wider">
                       Split dengan
                     </span>
-                    <div className="flex flex-wrap gap-1 justify-end">
-                      {expense.who.length > 0 ? (
-                        expense.who.map((name) => (
-                          <div
+                    {useSplitBillStore.getState().people.length > 0 && (
+                      <button
+                        onClick={() => {
+                          const allPeople = useSplitBillStore.getState().people;
+                          // If already all selected, clear all. Otherwise, select all.
+                          const isAllSelected = expense.who.length === allPeople.length;
+                          useSplitBillStore.getState().updateExpense(expense.id, {
+                            who: isAllSelected ? [] : [...allPeople],
+                          });
+                        }}
+                        className="text-[9px] font-black text-primary hover:underline cursor-pointer bg-primary/5 px-2 py-0.5 rounded-full"
+                      >
+                        {expense.who.length === useSplitBillStore.getState().people.length
+                          ? "Reset"
+                          : "Bagi Rata (Semua)"}
+                      </button>
+                    )}
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {useSplitBillStore.getState().people.map((name) => {
+                      const isSelected = expense.who.includes(name);
+                      return (
+                        <button
+                          key={name}
+                          onClick={() => {
+                            const newWho = isSelected
+                              ? expense.who.filter((w) => w !== name)
+                              : [...expense.who, name];
+                            useSplitBillStore.getState().updateExpense(expense.id, { who: newWho });
+                          }}
+                          className={cn(
+                            "flex items-center gap-1.5 rounded-full pl-1 pr-2.5 py-1 border transition-all cursor-pointer text-[10px] font-bold",
+                            isSelected
+                              ? "bg-primary/10 border-primary/30 text-primary shadow-xs"
+                              : "bg-muted/30 border-muted text-muted-foreground hover:bg-muted/60"
+                          )}
+                          title={name}
+                        >
+                          <img
+                            src={`${AVATAR_SM_URL}${encodeURIComponent(name)}`}
+                            alt={name}
+                            className={cn(
+                              "w-5 h-5 rounded-full transition-transform duration-200",
+                              isSelected ? "scale-105" : "opacity-60"
+                            )}
+                          />
+                          <span className="truncate max-w-[60px]">{name}</span>
+                        </button>
+                      );
+                    })}
+                    {useSplitBillStore.getState().people.length === 0 && (
+                      <p className="text-[10px] text-muted-foreground italic">
+                        Belum ada anggota. Tambahkan teman di atas terlebih dahulu.
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="flex flex-col gap-2 mt-1">
+                    <span className="text-[9px] text-muted-foreground/60 uppercase font-bold tracking-wider">
+                      Dibayar oleh
+                    </span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {useSplitBillStore.getState().people.map((name) => {
+                        const isPayer = expense.paidBy === name;
+                        return (
+                          <button
                             key={name}
-                            className="flex items-center gap-1.5 bg-primary/5 rounded-full pl-1 pr-2.5 py-1 border border-primary/5"
+                            onClick={() => {
+                              useSplitBillStore.getState().updateExpense(expense.id, {
+                                paidBy: isPayer ? "" : name,
+                              });
+                            }}
+                            className={cn(
+                              "flex items-center gap-1.5 rounded-full pl-1 pr-2.5 py-1 border transition-all cursor-pointer text-[10px] font-bold",
+                              isPayer
+                                ? "bg-emerald-50 border-emerald-300 text-emerald-700 shadow-xs"
+                                : "bg-muted/30 border-muted text-muted-foreground hover:bg-muted/60"
+                            )}
                             title={name}
                           >
                             <img
                               src={`${AVATAR_SM_URL}${encodeURIComponent(name)}`}
                               alt={name}
-                              className="w-5 h-5 rounded-full"
+                              className={cn(
+                                "w-5 h-5 rounded-full transition-transform duration-200",
+                                isPayer ? "scale-105" : "opacity-60"
+                              )}
                             />
-                            <span className="text-[10px] font-bold text-primary/60 truncate max-w-[48px]">
-                              {name}
-                            </span>
-                          </div>
-                        ))
-                      ) : (
-                        <button
-                          onClick={() => setEditingId(expense.id)}
-                          className="text-[10px] font-bold text-amber-600 flex items-center gap-1 bg-amber-50 px-2 py-1 rounded-full border border-amber-200/50 hover:bg-amber-100 transition-colors cursor-pointer"
-                        >
-                          <Users className="w-3 h-3" /> Belum dipilih
-                        </button>
-                      )}
+                            <span className="truncate max-w-[60px]">{name}</span>
+                          </button>
+                        );
+                      })}
                     </div>
-                  </div>
-
-                  <div className="flex items-center justify-between gap-4">
-                    <span className="text-[9px] text-muted-foreground/60 uppercase font-bold tracking-wider shrink-0">
-                      Dibayar oleh
-                    </span>
-                    {expense.paidBy ? (
-                      <div className="flex items-center gap-1.5 bg-primary/5 rounded-full pl-1 pr-2.5 py-1 border border-primary/20">
-                        <img
-                          src={`${AVATAR_SM_URL}${encodeURIComponent(expense.paidBy)}`}
-                          alt={expense.paidBy}
-                          className="w-5 h-5 rounded-full"
-                        />
-                        <span className="text-[10px] font-bold text-primary">
-                          {expense.paidBy}
-                        </span>
-                      </div>
-                    ) : (
-                      <button
-                        onClick={() => setEditingId(expense.id)}
-                        className="flex items-center gap-1.5 bg-amber-50 rounded-full pl-1 pr-2.5 py-1 border border-amber-200 text-amber-700 hover:bg-amber-100 transition-colors cursor-pointer"
-                      >
-                        <AlertCircle className="w-3 h-3" />
-                        <span className="text-[10px] font-bold">
-                          Pilih Pembayar
-                        </span>
-                      </button>
-                    )}
                   </div>
                 </div>
               </CardContent>

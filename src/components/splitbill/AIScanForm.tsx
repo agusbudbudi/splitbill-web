@@ -43,6 +43,54 @@ const AIScanBenefits = () => (
   </div>
 );
 
+const GUEST_LIMIT = 2;
+const TRACKER_KEY = "sb_guest_scan_tracker";
+
+interface GuestTracker {
+  count: number;
+  lastScanDate: string;
+}
+
+const getGuestScanQuota = (): { allowed: boolean; remaining: number } => {
+  if (typeof window === "undefined") return { allowed: true, remaining: GUEST_LIMIT };
+  const today = new Date().toISOString().split("T")[0];
+  const dataStr = localStorage.getItem(TRACKER_KEY);
+
+  if (!dataStr) return { allowed: true, remaining: GUEST_LIMIT };
+
+  try {
+    const tracker: GuestTracker = JSON.parse(dataStr);
+    if (tracker.lastScanDate !== today) {
+      return { allowed: true, remaining: GUEST_LIMIT };
+    }
+    return {
+      allowed: tracker.count < GUEST_LIMIT,
+      remaining: Math.max(0, GUEST_LIMIT - tracker.count)
+    };
+  } catch {
+    return { allowed: true, remaining: GUEST_LIMIT };
+  }
+};
+
+const incrementGuestScanCount = () => {
+  if (typeof window === "undefined") return;
+  const today = new Date().toISOString().split("T")[0];
+  const dataStr = localStorage.getItem(TRACKER_KEY);
+  let tracker: GuestTracker = { count: 1, lastScanDate: today };
+
+  if (dataStr) {
+    try {
+      const parsed: GuestTracker = JSON.parse(dataStr);
+      if (parsed.lastScanDate === today) {
+        tracker.count = parsed.count + 1;
+      }
+    } catch (e) {
+      // Ignore
+    }
+  }
+  localStorage.setItem(TRACKER_KEY, JSON.stringify(tracker));
+};
+
 export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
   const [image, setImage] = useState<string | null>(null);
   const [isScanning, setIsScanning] = useState(false);
@@ -56,13 +104,21 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const scanStartTimeRef = useRef<number | null>(null);
 
-  const { addExpense, setActivityName, addAdditionalExpense, pendingCapturedImage, clearPendingCapturedImage } =
+  const { addExpense, setActivityName, addAdditionalExpense, pendingCapturedImage, clearPendingCapturedImage, addScannedReceiptImage } =
     useSplitBillStore();
   const { isAuthenticated, user, getCurrentUser, isInitialized } =
     useAuthStore();
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isMounted, setIsMounted] = React.useState(false);
+  const [guestRemainingScans, setGuestRemainingScans] = useState<number>(GUEST_LIMIT);
+
+  React.useEffect(() => {
+    if (isMounted && !isAuthenticated) {
+      const quota = getGuestScanQuota();
+      setGuestRemainingScans(quota.remaining);
+    }
+  }, [isMounted, isAuthenticated]);
 
   React.useEffect(() => {
     setIsMounted(true);
@@ -144,6 +200,23 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
 
   const handleScan = async () => {
     if (!image) return;
+
+    if (!isAuthenticated) {
+      const quota = getGuestScanQuota();
+      if (!quota.allowed) {
+        toast.error("Batas scan gratis untuk tamu hari ini sudah habis.");
+        if (onLoginClick) {
+          onLoginClick();
+        } else {
+          const currentQuery = typeof window !== 'undefined' ? window.location.search : '';
+          router.push(
+            `/register?redirect=${encodeURIComponent(`/split-bill${currentQuery}`)}`,
+          );
+        }
+        return;
+      }
+    }
+
     trackSplitBill.aiScan("start", retryCount, imageSource || undefined);
     setIsScanning(true);
     setError(null);
@@ -169,8 +242,14 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
       );
       setRetryCount(0);
 
-      // Refresh user data to update remaining scan quota
-      await getCurrentUser();
+      if (!isAuthenticated) {
+        incrementGuestScanCount();
+        const updatedQuota = getGuestScanQuota();
+        setGuestRemainingScans(updatedQuota.remaining);
+      } else {
+        // Refresh user data to update remaining scan quota
+        await getCurrentUser();
+      }
     } catch (err: any) {
       console.error("Scan failed", err);
       const duration = Date.now() - (scanStartTimeRef.current || Date.now());
@@ -193,6 +272,10 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
 
   const importItems = () => {
     if (!scanResult) return;
+
+    if (image) {
+      addScannedReceiptImage(image);
+    }
 
     // 1. Map Merchant Name
     if (scanResult.merchant_name) {
@@ -240,6 +323,14 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
       duration: 3000,
     });
 
+    // Auto scroll to Expense List section
+    setTimeout(() => {
+      const element = document.getElementById("expense-list-section");
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }, 100);
+
     trackSplitBill.aiImport(
       scanResult.items?.length || 0,
       scanResult.merchant_name || undefined,
@@ -274,8 +365,8 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
     );
   }
 
-  // Login Barrier for AI Scan
-  if (!isAuthenticated) {
+  // Guest Quota Exhausted Barrier - Prompt Login / Register
+  if (!isAuthenticated && guestRemainingScans <= 0 && !scanResult) {
     return (
       <div className="space-y-4 py-2 animate-in fade-in duration-500 relative">
         <div className="relative p-[1.5px] rounded-3xl bg-gradient-to-br from-violet-400 via-pink-400 to-primary/60 shadow-lg shadow-primary/5 overflow-hidden">
@@ -296,24 +387,20 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
               </div>
 
               <div className="space-y-1 max-w-[340px]">
-                <h3 className="text-xl font-bold text-foreground">
-                  Cukup Login buat Scan Struk
+                <h3 className="text-xl font-bold tracking-tight text-foreground">
+                  Scan Gratis Habis! 🚀
                 </h3>
                 <p className="text-xs text-muted-foreground leading-relaxed font-medium">
-                  Gak perlu ribet ketik manual! Cukup login dan nikmati fitur{" "}
-                  <span className="text-primary font-bold">
-                    Scan Struk Otomatis
-                  </span>{" "}
-                  secara gratis. ✨
+                  Batas scan gratis untuk kamu hari ini sudah habis. Yuk daftar sekarang (gratis!) biar bisa lanjut scan! ✨
                 </p>
               </div>
 
               <Button
                 onClick={() => {
                   trackSubscription.premiumFeatureClick(
-                    "ai_scan_login_barrier",
+                    "ai_scan_guest_quota_barrier",
                   );
-                  trackSubscription.initiateCheckout("login_barrier");
+                  trackSubscription.initiateCheckout("guest_quota_barrier");
                   if (onLoginClick) {
                     onLoginClick();
                   } else {
@@ -325,7 +412,7 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
                 }}
                 className="w-full max-w-[200px] h-10 bg-primary hover:bg-primary/90 text-white font-bold rounded-md shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] active:scale-[0.98] mt-1 text-sm"
               >
-                Login Sekarang
+                Login / Daftar Gratis
               </Button>
             </div>
           </div>
@@ -400,25 +487,33 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
   return (
     <div className="space-y-4 py-2 animate-in fade-in duration-500">
       {/* Quota Info Banner - Premium AI Theme */}
-      {!scanResult &&
-        freeScanCount !== undefined &&
-        (freeScanCount > 0 || user?.subscriptionStatus === "active") && (
+      {!scanResult && (
+        isAuthenticated ? (
+          freeScanCount !== undefined && (freeScanCount > 0 || user?.subscriptionStatus === "active") && (
+            <AIScanQuotaBanner
+              freeScanCount={freeScanCount}
+              isSubscribed={user?.subscriptionStatus === "active"}
+            />
+          )
+        ) : (
           <AIScanQuotaBanner
-            freeScanCount={freeScanCount}
-            isSubscribed={user?.subscriptionStatus === "active"}
+            freeScanCount={guestRemainingScans}
+            maxScanCount={GUEST_LIMIT}
+            isSubscribed={false}
           />
-        )}
+        )
+      )}
       {!image ? (
         <>
           {/* Camera capture area — tap to open camera directly */}
           <div
             onClick={handleCameraCapture}
-            className="border-2 border-dashed border-primary/20 rounded-2xl py-8 flex flex-col items-center justify-center gap-4 bg-primary/5 hover:bg-primary/10 transition-colors cursor-pointer group"
+            className="border-2 border-dashed border-primary/20 rounded-2xl pt-8 flex flex-col items-center justify-center gap-4 bg-primary/5 hover:bg-primary/10 transition-colors cursor-pointer group overflow-hidden"
           >
             <div className="w-16 h-16 rounded-full bg-white shadow-soft flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
               <Camera className="w-8 h-8" />
             </div>
-            <div className="text-center">
+            <div className="text-center px-4">
               <p className="font-bold text-sm text-foreground">
                 Foto Struk Sekarang
               </p>
@@ -426,18 +521,36 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
                 Tap untuk buka kamera
               </p>
             </div>
+
+            {/* Subtle Info Footer */}
+            <div className="w-full p-2.5 border-t border-dashed border-primary/20 px-4 text-center bg-primary/5">
+              <p className="text-[11px] font-bold text-foreground/80 flex items-center justify-center gap-1">
+                <span>💡 Pastikan struk terlihat jelas, terang, dan tidak terpotong</span>
+              </p>
+            </div>
           </div>
 
-          {/* Upload from gallery — secondary small button */}
-          <button
-            onClick={handleGalleryUpload}
-            className="w-full flex items-center justify-center gap-2 py-2.5 rounded-md border border-primary/15 bg-transparent hover:bg-primary/5 transition-colors active:scale-[0.98] cursor-pointer"
-          >
-            <ImagePlus className="w-3.5 h-3.5 text-muted-foreground" />
-            <span className="text-xs font-semibold text-muted-foreground">
-              Upload dari Galeri
-            </span>
-          </button>
+          {/* Action buttons row: Upload dari Galeri & Foto Struk */}
+          <div className="flex gap-2 w-full">
+            <button
+              onClick={handleGalleryUpload}
+              className="flex-1 flex items-center justify-center gap-2 h-12 rounded-md border border-primary/15 bg-transparent hover:bg-primary/5 transition-colors active:scale-[0.98] cursor-pointer"
+            >
+              <ImagePlus className="w-4 h-4 text-muted-foreground" />
+              <span className="text-xs font-semibold text-muted-foreground">
+                Upload dari Galeri
+              </span>
+            </button>
+            <button
+              onClick={handleCameraCapture}
+              className="flex-1 flex items-center justify-center gap-2 h-12 rounded-md bg-primary hover:bg-primary/90 text-white transition-colors active:scale-[0.98] cursor-pointer shadow-md shadow-primary/10"
+            >
+              <Camera className="w-4 h-4 text-white" />
+              <span className="text-xs font-bold text-white">
+                Foto Struk
+              </span>
+            </button>
+          </div>
 
           {/* Hidden inputs */}
           <input
@@ -458,23 +571,31 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
         </>
       ) : (
         <div className="space-y-4">
-          <div className="relative aspect-[4/3] rounded-2xl overflow-hidden border border-primary/20 bg-muted">
-            <Image
-              src={image}
-              alt="Receipt Preview"
-              fill
-              className="object-contain"
-              unoptimized={image.startsWith("data:")}
-            />
-            <button
-              onClick={() => {
-                trackSplitBill.removeImage();
-                setImage(null);
-              }}
-              className="absolute top-2 right-2 w-8 h-8 rounded-full bg-black/50 text-white flex items-center justify-center backdrop-blur-md cursor-pointer"
-            >
-              <X className="w-4 h-4" />
-            </button>
+          <div className="border border-primary/20 rounded-2xl bg-white overflow-hidden flex flex-col group">
+            <div className="relative bg-muted w-full flex items-center justify-center overflow-hidden min-h-[80px]">
+              <img
+                src={image}
+                alt="Receipt Preview"
+                className="max-w-full max-h-[360px] w-auto h-auto object-contain"
+              />
+              <button
+                onClick={() => {
+                  trackSplitBill.removeImage();
+                  setImage(null);
+                }}
+                className="absolute top-2 right-2 w-8 h-8 rounded-full bg-black/50 text-white flex items-center justify-center backdrop-blur-md cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {!scanResult && (
+              <div className="w-full p-2.5 border-t border-dashed border-primary/20 px-4 text-center bg-primary/5">
+                <p className="text-[11px] font-bold text-foreground/80 flex items-center justify-center gap-1">
+                  <span>💡 Pastikan struk terlihat jelas, terang, dan tidak terpotong</span>
+                </p>
+              </div>
+            )}
           </div>
 
           {!scanResult ? (
@@ -593,22 +714,9 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
                 </div>
               </div>
 
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    trackSplitBill.aiRetry();
-                    setImage(null);
-                    setImageSource(null);
-                  }}
-                  className="flex-1"
-                >
-                  Ulangi
-                </Button>
-                <Button onClick={importItems} className="flex-[2] font-bold">
-                  Import ke Daftar
-                </Button>
-              </div>
+              <Button onClick={importItems} className="w-full font-bold">
+                Import ke Daftar
+              </Button>
             </div>
           )}
         </div>

@@ -126,6 +126,17 @@
 
   --shadow-soft: 0 4px 20px -5px rgba(71, 159, 234, 0.02);
   --shadow-glow: 0 0 20px rgba(71, 159, 234, 0.3);
+
+  @keyframes bounce-subtle {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-6px);
+    }
+  }
+
+  --animate-bounce-subtle: bounce-subtle 2.5s ease-in-out infinite;
 }
 
 /* Removed utilities that are now in theme */

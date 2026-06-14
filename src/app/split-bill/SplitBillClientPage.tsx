@@ -37,6 +37,7 @@ import {
   Home,
   History as HistoryIcon,
   RotateCcw,
+  Share2,
 } from "lucide-react";
 import { SuccessSection } from "@/components/ui/SuccessSection";
 import { cn, formatToIDR } from "@/lib/utils";
@@ -266,6 +267,170 @@ const SplitBillContent = () => {
     }, 250);
   };
 
+  const formatCurrency = (amt: number) => {
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      minimumFractionDigits: 0,
+    }).format(amt);
+  };
+
+  // Save/update draft function (with 403 ownership-conflict retry)
+  const saveDraft = async (isRetry = false): Promise<void> => {
+    try {
+      const { draftId, setDraftId, clearDraftId } = useSplitBillStore.getState();
+      const backendParticipants = people.map(p => ({ id: p, name: p }));
+
+      if (step === 1) {
+        // Create draft if not exists, or update if exists
+        if (!draftId) {
+          if (isCreatingDraftRef.current) return;
+          isCreatingDraftRef.current = true;
+          try {
+            const response = await draftApi.create({
+              participants: backendParticipants,
+            });
+            if (response.success && response.draft?.id) {
+              setDraftId(response.draft.id);
+            }
+          } finally {
+            isCreatingDraftRef.current = false;
+          }
+        } else {
+          await draftApi.update(draftId, {
+            last_step: "STEP_1",
+            participants: backendParticipants,
+          });
+        }
+      } else if (step === 2) {
+        // Fetch the absolute latest draftId from the store right before checking
+        const { draftId: latestDraftId } = useSplitBillStore.getState();
+        let activeDraftId = latestDraftId;
+
+        if (!activeDraftId) {
+          if (isCreatingDraftRef.current) return;
+          isCreatingDraftRef.current = true;
+          try {
+            const response = await draftApi.create({
+              participants: backendParticipants,
+            });
+            if (response.success && response.draft?.id) {
+              activeDraftId = response.draft.id;
+              setDraftId(activeDraftId);
+            }
+          } finally {
+            isCreatingDraftRef.current = false;
+          }
+        }
+
+        if (activeDraftId) {
+          // Prepare backend format for expenses
+          const backendExpenses = expenses.map(exp => ({
+            id: exp.id,
+            description: exp.item,
+            amount: exp.amount,
+            paidBy: exp.paidBy,
+            participants: exp.who,
+            createdAt: Date.now(),
+          }));
+          const backendAdditionalExpenses = additionalExpenses.map(adx => ({
+            id: adx.id,
+            description: adx.name,
+            amount: adx.amount,
+            paidBy: adx.paidBy,
+            participants: adx.who,
+            splitType: adx.splitType,
+            createdAt: Date.now(),
+          }));
+          await draftApi.update(activeDraftId, {
+            last_step: "STEP_2",
+            expenses: backendExpenses,
+            additionalExpenses: backendAdditionalExpenses,
+            participants: backendParticipants,
+          });
+        }
+      } else if (step === 3) {
+        let activeDraftId = draftId;
+        if (!activeDraftId) {
+          if (isCreatingDraftRef.current) return;
+          isCreatingDraftRef.current = true;
+          try {
+            const response = await draftApi.create({
+              participants: backendParticipants,
+            });
+            if (response.success && response.draft?.id) {
+              activeDraftId = response.draft.id;
+              setDraftId(activeDraftId);
+            }
+          } finally {
+            isCreatingDraftRef.current = false;
+          }
+        }
+
+        if (activeDraftId) {
+          // Fully serialize draft using mapFrontendToBackend mapping logic
+          const payload = mapFrontendToBackend(
+            {
+              activityName: activityName || "Aktivitas Split Bill",
+              totalAmount: totalSpent,
+              people,
+              expenses,
+              additionalExpenses,
+              selectedPaymentMethodIds,
+            },
+            calculationResult,
+            paymentMethods
+          );
+
+          await draftApi.update(activeDraftId, {
+            last_step: "STEP_3",
+            activityName: payload.activityName,
+            occurredAt: payload.occurredAt,
+            participants: payload.participants,
+            expenses: payload.expenses,
+            additionalExpenses: payload.additionalExpenses,
+            paymentMethodIds: payload.paymentMethodIds,
+            paymentMethodSnapshots: payload.paymentMethodSnapshots,
+            summary: payload.summary,
+          });
+        }
+      }
+    } catch (err: unknown) {
+      // Ownership conflict: a guest draft created before login can't be
+      // updated once authenticated. Match on 403 OR the backend message
+      // (status code may vary), clear the stale draftId, and retry once –
+      // a fresh draft is then created under the current user.
+      const status = (err as { status?: number })?.status ?? (err as { response?: { status?: number } })?.response?.status;
+      const message = (err as { message?: string })?.message ?? "";
+      const isOwnershipConflict =
+        status === 403 || /tidak memiliki akses/i.test(message);
+      if (isOwnershipConflict && !isRetry) {
+        console.warn("Draft ownership conflict detected. Attempting to recover data before retrying.");
+        const { draftId, clearDraftId } = useSplitBillStore.getState();
+
+        try {
+          // Attempt to recover data from the old draft
+          if (draftId) {
+            const response = await draftApi.getById(draftId);
+            if (response.success && response.draft) {
+              console.log("Successfully recovered draft data.");
+              // Note: The UI state (expenses, participants, etc.)
+              // should already be in sync with the frontend state.
+              // We just need to ensure the stale ID is gone.
+            }
+          }
+        } catch (recoveryErr) {
+          console.error("Failed to recover draft data:", recoveryErr);
+        }
+
+        clearDraftId();
+        return saveDraft(true);
+      }
+      console.error("Failed to save draft:", err);
+      throw err;
+    }
+  };
+
   const handleFinalize = async () => {
     if (isFinalizingRef.current) return;
 
@@ -367,11 +532,18 @@ const SplitBillContent = () => {
     if (
       finalizeParam &&
       isAuthenticated &&
-      step === 4 &&
+      (step === 3 || step === 4) &&
       !isSaved &&
       !isFinalizingRef.current
     ) {
-      handleFinalize();
+      if (step === 3) {
+        setIsCalculating(true);
+        saveDraft()
+          .then(() => handleFinalize())
+          .catch(() => setIsCalculating(false));
+      } else {
+        handleFinalize();
+      }
     }
   }, [isAuthenticated, searchParams, step, isSaved]);
 
@@ -395,162 +567,6 @@ const SplitBillContent = () => {
         return;
       }
     }
-
-    // Save/update draft function (with 403 ownership-conflict retry)
-    const saveDraft = async (isRetry = false) => {
-      try {
-        const { draftId, setDraftId, clearDraftId } = useSplitBillStore.getState();
-        const backendParticipants = people.map(p => ({ id: p, name: p }));
-
-        if (step === 1) {
-          // Create draft if not exists, or update if exists
-          if (!draftId) {
-            if (isCreatingDraftRef.current) return;
-            isCreatingDraftRef.current = true;
-            try {
-              const response = await draftApi.create({
-                participants: backendParticipants,
-              });
-              if (response.success && response.draft?.id) {
-                setDraftId(response.draft.id);
-              }
-            } finally {
-              isCreatingDraftRef.current = false;
-            }
-          } else {
-            await draftApi.update(draftId, {
-              last_step: "STEP_1",
-              participants: backendParticipants,
-            });
-          }
-        } else if (step === 2) {
-          // Fetch the absolute latest draftId from the store right before checking
-          const { draftId: latestDraftId } = useSplitBillStore.getState();
-          let activeDraftId = latestDraftId;
-
-          if (!activeDraftId) {
-            if (isCreatingDraftRef.current) return;
-            isCreatingDraftRef.current = true;
-            try {
-              const response = await draftApi.create({
-                participants: backendParticipants,
-              });
-              if (response.success && response.draft?.id) {
-                activeDraftId = response.draft.id;
-                setDraftId(activeDraftId);
-              }
-            } finally {
-              isCreatingDraftRef.current = false;
-            }
-          }
-
-          if (activeDraftId) {
-            // Prepare backend format for expenses
-            const backendExpenses = expenses.map(exp => ({
-              id: exp.id,
-              description: exp.item,
-              amount: exp.amount,
-              paidBy: exp.paidBy,
-              participants: exp.who,
-              createdAt: Date.now(),
-            }));
-            const backendAdditionalExpenses = additionalExpenses.map(adx => ({
-              id: adx.id,
-              description: adx.name,
-              amount: adx.amount,
-              paidBy: adx.paidBy,
-              participants: adx.who,
-              splitType: adx.splitType,
-              createdAt: Date.now(),
-            }));
-            await draftApi.update(activeDraftId, {
-              last_step: "STEP_2",
-              expenses: backendExpenses,
-              additionalExpenses: backendAdditionalExpenses,
-              participants: backendParticipants,
-            });
-          }
-        } else if (step === 3) {
-          let activeDraftId = draftId;
-          if (!activeDraftId) {
-            if (isCreatingDraftRef.current) return;
-            isCreatingDraftRef.current = true;
-            try {
-              const response = await draftApi.create({
-                participants: backendParticipants,
-              });
-              if (response.success && response.draft?.id) {
-                activeDraftId = response.draft.id;
-                setDraftId(activeDraftId);
-              }
-            } finally {
-              isCreatingDraftRef.current = false;
-            }
-          }
-
-          if (activeDraftId) {
-            // Fully serialize draft using mapFrontendToBackend mapping logic
-            const payload = mapFrontendToBackend(
-              {
-                activityName: activityName || "Aktivitas Split Bill",
-                totalAmount: totalSpent,
-                people,
-                expenses,
-                additionalExpenses,
-                selectedPaymentMethodIds,
-              },
-              calculationResult,
-              paymentMethods
-            );
-
-            await draftApi.update(activeDraftId, {
-              last_step: "STEP_3",
-              activityName: payload.activityName,
-              occurredAt: payload.occurredAt,
-              participants: payload.participants,
-              expenses: payload.expenses,
-              additionalExpenses: payload.additionalExpenses,
-              paymentMethodIds: payload.paymentMethodIds,
-              paymentMethodSnapshots: payload.paymentMethodSnapshots,
-              summary: payload.summary,
-            });
-          }
-        }
-      } catch (err: unknown) {
-        // Ownership conflict: a guest draft created before login can't be
-        // updated once authenticated. Match on 403 OR the backend message
-        // (status code may vary), clear the stale draftId, and retry once –
-        // a fresh draft is then created under the current user.
-        const status = (err as { status?: number })?.status ?? (err as { response?: { status?: number } })?.response?.status;
-        const message = (err as { message?: string })?.message ?? "";
-        const isOwnershipConflict =
-          status === 403 || /tidak memiliki akses/i.test(message);
-        if (isOwnershipConflict && !isRetry) {
-          console.warn("Draft ownership conflict detected. Attempting to recover data before retrying.");
-          const { draftId, clearDraftId } = useSplitBillStore.getState();
-
-          try {
-            // Attempt to recover data from the old draft
-            if (draftId) {
-              const response = await draftApi.getById(draftId);
-              if (response.success && response.draft) {
-                console.log("Successfully recovered draft data.");
-                // Note: The UI state (expenses, participants, etc.)
-                // should already be in sync with the frontend state.
-                // We just need to ensure the stale ID is gone.
-              }
-            }
-          } catch (recoveryErr) {
-            console.error("Failed to recover draft data:", recoveryErr);
-          }
-
-          clearDraftId();
-          return saveDraft(true);
-        }
-        console.error("Failed to save draft:", err);
-        throw err;
-      }
-    };
 
     if (step === 3) {
       setIsCalculating(true);
@@ -889,9 +905,10 @@ const SplitBillContent = () => {
                       setIsAddWalletOpen(true);
                       trackWallet.addMethodInitiate();
                     }}
-                    className="shrink-0 w-20 h-20 rounded-lg border-1 border-dashed border-primary/20 flex flex-col items-center justify-center gap-2 text-primary/40 hover:text-primary hover:border-primary/40 hover:bg-primary/5 transition-all active:scale-95 cursor-pointer bg-white shadow-none"
+                    className="relative h-[30vw] sm:h-[157px] shrink-0 aspect-square rounded-2xl border border-dashed border-primary/20 flex flex-col items-center justify-center gap-1.5 text-primary/40 hover:text-primary hover:border-primary/40 hover:bg-primary/5 transition-all active:scale-95 cursor-pointer bg-white shadow-none"
                   >
                     <Plus className="w-5 h-5" />
+                    <span className="text-[11px] font-bold">Tambah</span>
                   </Card>
 
                   {paymentMethods.length > 0 ? (
@@ -915,7 +932,7 @@ const SplitBillContent = () => {
                       />
                     ))
                   ) : (
-                    <Card className="flex-1 flex items-center justify-center h-20 rounded-lg bg-muted/5 border border-dashed border-muted-foreground/10 px-4 text-center shadow-none">
+                    <Card className="flex-1 flex items-center justify-center h-[30vw] sm:h-[157px] rounded-2xl bg-muted/5 border border-dashed border-muted-foreground/10 px-4 text-center shadow-none">
                       <p className="text-[11px] text-muted-foreground leading-tight">
                         Belum ada dompet tersimpan. <br />
                         <span
@@ -1181,71 +1198,131 @@ const SplitBillContent = () => {
             )}
 
             {step === 3 && (
-              <Button
-                onClick={nextStep}
-                disabled={isCalculating}
-                className="w-full h-14 text-lg font-bold rounded-2xl bg-primary text-white shadow-xl shadow-primary/30 active:scale-95 transition-all flex items-center justify-center"
-              >
-                {isCalculating ? (
-                  <div className="flex items-center justify-center gap-2.5">
-                    <div className="relative flex h-3 w-3">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-3 w-3 bg-white"></span>
+              <div className="grid grid-cols-2 gap-3">
+                <Button
+                  onClick={nextStep}
+                  disabled={isCalculating}
+                  variant="outline"
+                  className="h-14 text-base font-bold rounded-2xl border-primary/20 text-primary hover:bg-primary/5 active:scale-95 transition-all flex items-center justify-center"
+                >
+                  {isCalculating ? (
+                    <div className="flex items-center justify-center gap-2">
+                      <span>Ngitung... 🧮</span>
                     </div>
-                    <span>Lagi ngitung, jgn panik... 🧮🔥</span>
-                  </div>
-                ) : (
-                  <>
-                    <Rocket className="mr-2 w-5 h-5" /> Hitung Split Bill
-                  </>
-                )}
-              </Button>
+                  ) : (
+                    <>
+                      <Rocket className="mr-1.5 w-4 h-4" /> Hitung Aja
+                    </>
+                  )}
+                </Button>
+
+                <Button
+                  onClick={() => {
+                    if (!isAuthenticated) {
+                      setShowAuthModal(true);
+                      return;
+                    }
+                    // If authenticated, do the save and calculate
+                    setIsCalculating(true);
+                    saveDraft()
+                      .then(() => handleFinalize())
+                      .catch(() => setIsCalculating(false));
+                  }}
+                  disabled={isCalculating || isFinalizing}
+                  className="h-14 text-base font-bold rounded-2xl bg-primary text-white shadow-xl shadow-primary/30 active:scale-95 transition-all flex items-center justify-center"
+                >
+                  {isCalculating || isFinalizing ? (
+                    <div className="flex items-center justify-center gap-2">
+                      <div className="relative flex h-3 w-3">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-3 w-3 bg-white"></span>
+                      </div>
+                      <span>Proses... ⚡</span>
+                    </div>
+                  ) : (
+                    <>
+                      <CheckCircle2 className="mr-1.5 w-4 h-4" /> Hitung & Simpan
+                    </>
+                  )}
+                </Button>
+              </div>
             )}
 
-            {step === 4 && !isSaved && (
-              <Button
-                onClick={() => {
-                  if (expenses.length === 0) {
-                    toast.error("Belum ada item nih! 📝", {
-                      description:
-                        "Yuk isi dulu item belanjaan atau pengeluarannya sebelum disimpan.",
-                      duration: 4000,
-                    });
-                    return;
-                  }
-                  const hasUnassigned = expenses.some(
-                    (e) => e.who.length === 0 || !e.paidBy
-                  );
-                  const hasUnassignedAdx = additionalExpenses.some(
-                    (e) => e.who.length === 0 || !e.paidBy
-                  );
-                  if (hasUnassigned || hasUnassignedAdx) {
-                    toast.error("Ada item yang belum dilengkapi! ⚠️", {
-                      description:
-                        "Pastikan semua item sudah di-assign 'Split dengan' dan 'Dibayar oleh' ya.",
-                      duration: 4000,
-                    });
-                    return;
-                  }
-                  handleFinalize();
-                }}
-                disabled={isFinalizing}
-                className="w-full h-14 text-lg font-bold rounded-2xl bg-primary text-white shadow-xl shadow-primary/30 active:scale-95 transition-all !disabled:opacity-70 flex items-center justify-center"
-              >
-                {isFinalizing ? (
-                  <div className="flex items-center justify-center gap-2.5">
-                    <div className="relative flex h-3 w-3">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-3 w-3 bg-white"></span>
+            {step === 4 && (
+              isSaved ? (
+                <Button
+                  onClick={() => {
+                    const origin = typeof window !== "undefined" ? window.location.origin : "https://splitbill.my.id";
+                    const shareUrl = lastSavedId ? `${origin}/history/split-bill/${lastSavedId}` : window.location.href.split("?")[0];
+                    const instructionsText = calculationResult.settlementInstructions.length > 0
+                      ? "\n\nRincian Transfer:\n" + calculationResult.settlementInstructions.map(inst => `• ${inst.from} ➡️ ${inst.to}: ${formatCurrency(inst.amount)}`).join("\n")
+                      : "";
+                    const caption = `💸 Habis seru-seruan bareng di "${activityName || "Makan-makan"}"!\n\nTotal tagihannya ${formatCurrency(totalSpent)}. Biar pertemanan makin asik, yuk lunasin tagihannya ya! 😉✨${instructionsText}\n\nCek rincian lengkapnya di sini:\n🔗 ${shareUrl}\n\nPowered by splitbill.my.id`;
+
+                    if (typeof navigator !== "undefined" && navigator.share) {
+                      navigator.share({
+                        title: activityName || "Split Bill Summary",
+                        text: caption,
+                      }).then(() => {
+                        toast.success("Berhasil dibagikan! 🚀✨");
+                      }).catch((err) => {
+                        console.warn("Share failed", err);
+                      });
+                    } else {
+                      navigator.clipboard.writeText(caption).then(() => {
+                        toast.success("Rincian & Link berhasil disalin! 📋✨");
+                      });
+                    }
+                  }}
+                  className="w-full h-14 text-lg font-bold rounded-2xl bg-primary text-white shadow-xl shadow-primary/30 active:scale-95 transition-all flex items-center justify-center"
+                >
+                  <Share2 className="mr-2 w-5 h-5" /> Bagikan Hasil Split Bill 🚀
+                </Button>
+              ) : (
+                <Button
+                  onClick={() => {
+                    if (expenses.length === 0) {
+                      toast.error("Belum ada item nih! 📝", {
+                        description:
+                          "Yuk isi dulu item belanjaan atau pengeluarannya sebelum disimpan.",
+                        duration: 4000,
+                      });
+                      return;
+                    }
+                    const hasUnassigned = expenses.some(
+                      (e) => e.who.length === 0 || !e.paidBy
+                    );
+                    const hasUnassignedAdx = additionalExpenses.some(
+                      (e) => e.who.length === 0 || !e.paidBy
+                    );
+                    if (hasUnassigned || hasUnassignedAdx) {
+                      toast.error("Ada item yang belum dilengkapi! ⚠️", {
+                        description:
+                          "Pastikan semua item sudah di-assign 'Split dengan' dan 'Dibayar oleh' ya.",
+                        duration: 4000,
+                      });
+                      return;
+                    }
+                    handleFinalize();
+                  }}
+                  disabled={isFinalizing}
+                  className="w-full h-14 text-lg font-bold rounded-2xl bg-primary text-white shadow-xl shadow-primary/30 active:scale-95 transition-all !disabled:opacity-70 flex items-center justify-center"
+                >
+                  {isFinalizing ? (
+                    <div className="flex items-center justify-center gap-2.5">
+                      <div className="relative flex h-3 w-3">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-3 w-3 bg-white"></span>
+                      </div>
+                      <span>Wait, lagi disimpen... 💅</span>
                     </div>
-                    <span>Wait, lagi disimpen... 💅</span>
-                  </div>
-                ) : (
-                  <>
-                    <CheckCircle2 className="mr-2 w-5 h-5" /> Simpan & Share ✨
-                  </>
-                )}
-              </Button>
+                  ) : (
+                    <>
+                      <CheckCircle2 className="mr-2 w-5 h-5" /> Simpan & Share ✨
+                    </>
+                  )}
+                </Button>
+              )
             )}
           </div>
         </div>
@@ -1260,7 +1337,12 @@ const SplitBillContent = () => {
           handleFinalize();
         }}
         iconSrc="/img/feature-splitbill-scan.png"
-        redirectPath={`${pathname}${searchParams.toString() ? `?${searchParams.toString()}&` : "?"}finalize=true`}
+        redirectPath={(() => {
+          const currentParams = new URLSearchParams(searchParams.toString());
+          currentParams.set("step", step.toString());
+          currentParams.set("finalize", "true");
+          return `${pathname}?${currentParams.toString()}`;
+        })()}
       />
 
       {/* Auth Modal for AI Scan Entry Points */}

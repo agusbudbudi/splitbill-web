@@ -1,7 +1,7 @@
 "use client";
 
-import React from "react";
-import { Crown, Calendar } from "lucide-react";
+import Image from "next/image";
+import { Calendar } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import type { User } from "@/lib/api/auth";
 
@@ -13,7 +13,7 @@ export function ActiveSubscriptionCard({ user }: ActiveSubscriptionCardProps) {
   if (user.subscriptionStatus !== "active") return null;
 
   return (
-    <div className="relative overflow-hidden rounded-[1.2rem] bg-white shadow-soft border-primary border">
+    <div className="relative overflow-hidden rounded-md bg-white shadow-soft">
       {/* Header: Blue Gradient Section */}
       <div className="relative bg-gradient-brand p-5 text-white overflow-hidden">
         {/* Background Decoration */}
@@ -21,13 +21,16 @@ export function ActiveSubscriptionCard({ user }: ActiveSubscriptionCardProps) {
 
         <div className="relative flex items-center justify-between">
           <div className="flex items-center gap-3.5">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-gold flex items-center justify-center border border-white/50 shadow-[0_4px_15px_rgba(203,155,81,0.4)] relative overflow-hidden">
-              {/* Suble shine highlight */}
-              <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-tr from-white/20 to-transparent pointer-events-none" />
-              <Crown className="w-7 h-7 text-gradient-gold-bright drop-shadow-md relative z-10" />
+            <div className="w-14 h-14 relative shrink-0">
+              <Image
+                src="/img/icon-vip.png"
+                alt="VIP"
+                fill
+                className="object-contain"
+              />
             </div>
             <div>
-              <h3 className="text-[10px] font-bold text-white/70 uppercase tracking-[0.2em] mb-0.5 leading-none">
+              <h3 className="text-[10px] font-bold text-white/70 uppercase tracking-[0.2em] mb-2 leading-none">
                 Status Langganan
               </h3>
               <p className="text-xl font-black tracking-tight leading-tight">

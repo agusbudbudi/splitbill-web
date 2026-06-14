@@ -7,35 +7,14 @@ import { useInvoiceStore } from "@/lib/stores/invoiceStore";
 import { useWalletStore } from "@/store/useWalletStore";
 import { Check, CreditCard, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
-import Image from "next/image";
 import { PaymentMethod as InvoicePaymentMethod } from "@/lib/types/invoice";
 import { AddPaymentMethodBottomSheet } from "@/components/wallet/AddPaymentMethodBottomSheet";
 import { AddButton } from "@/components/ui/AddButton";
 import { FormError } from "@/components/ui/FormError";
 import { TextButton } from "@/components/ui/TextButton";
+import { getProviderLogoInfo } from "@/lib/providerLogos";
+import { DynamicFinLogo } from "@/components/wallet/DynamicFinLogo";
 
-// Icon Mapping (Copied from PaymentMethodCard.tsx)
-const BANK_LOGOS: Record<string, { color: string; image: string }> = {
-  BCA: { color: "#0066cc", image: "/img/logo-bca.png" },
-  Mandiri: { color: "#ffcc00", image: "/img/logo-mandiri.png" },
-  BNI: { color: "#ff6600", image: "/img/logo-bni.png" },
-  BRI: { color: "#003d7a", image: "/img/logo-bri.png" },
-  "CIMB Niaga": { color: "#dc143c", image: "/img/logo.png" },
-  Danamon: { color: "#4169e1", image: "/img/logo-danamon.png" },
-  Permata: { color: "#228b22", image: "/img/logo-permata.png" },
-  BTN: { color: "#ff4500", image: "/img/logo-btn.png" },
-  BSI: { color: "#00a39d", image: "/img/logo-bsi.png" },
-  BankTransfer: { color: "#666", image: "/img/logo.png" },
-};
-
-const EWALLET_LOGOS: Record<string, { color: string; image: string }> = {
-  GoPay: { color: "#00aa13", image: "/img/logo-gopay.png" },
-  OVO: { color: "#4c2c92", image: "/img/logo-ovo.png" },
-  DANA: { color: "#118eea", image: "/img/logo-dana.png" },
-  ShopeePay: { color: "#ee4d2d", image: "/img/logo-shopeepay.png" },
-  LinkAja: { color: "#e31e24", image: "/img/logo-linkaja.png" },
-  Jenius: { color: "#00d4ff", image: "/img/logo-jenius.png" },
-};
 
 export function Step4Payment() {
   const { currentInvoice, togglePaymentMethod } = useInvoiceStore();
@@ -52,12 +31,7 @@ export function Step4Payment() {
   // Helper to get logo info for display
   const getLogoInfo = (method: any) => {
     const isBank = method.type === "bank";
-    return isBank
-      ? BANK_LOGOS[method.providerName] || BANK_LOGOS["BankTransfer"]
-      : EWALLET_LOGOS[method.providerName] || {
-          color: "#666",
-          image: "/img/wallet-icon.png",
-        };
+    return getProviderLogoInfo(method.providerName, isBank ? "bank" : "ewallet");
   };
 
   // Handle toggle with mapping
@@ -72,7 +46,7 @@ export function Step4Payment() {
       bankName: walletMethod.providerName,
       accountNumber: walletMethod.accountNumber,
       phone: walletMethod.phoneNumber,
-      logo: logoInfo.image, // Store logo URL
+      logo: logoInfo.slug ?? logoInfo.image, // slug preferred
     };
     togglePaymentMethod(invoiceMethod);
   };
@@ -123,19 +97,23 @@ export function Step4Payment() {
                       <div className="flex items-center gap-3">
                         <div
                           className={cn(
-                            "w-10 h-10 rounded-sm flex items-center justify-center p-1.5 transition-colors overflow-hidden relative",
+                            "w-10 h-10 rounded-sm flex items-center justify-center p-1.5 transition-colors overflow-hidden",
                             selected ? "bg-white" : "bg-muted/30",
                           )}
                         >
-                          <Image
-                            src={logoInfo.image}
-                            alt={method.providerName}
-                            fill
-                            className="object-contain p-1.5"
-                          />
-                          <span className="text-[10px] font-bold text-muted-foreground hidden group-has-[img[style*='display: none']]:block">
-                            {method.providerName.substring(0, 3)}
-                          </span>
+                          {logoInfo.slug ? (
+                            <DynamicFinLogo
+                              slug={logoInfo.slug}
+                              alt={method.providerName}
+                              className="w-full h-full"
+                            />
+                          ) : (
+                            <img
+                              src={logoInfo.image}
+                              alt={method.providerName}
+                              className="w-full h-full object-contain"
+                            />
+                          )}
                         </div>
                         <div>
                           <p className="font-bold text-sm text-foreground">

@@ -2,12 +2,12 @@ import type { Metadata } from "next";
 import MembershipClientPage from "./MembershipClientPage";
 
 export const metadata: Metadata = {
-  title: "Membership Premium - Nikmati Fitur SplitBill Tanpa Batas",
-  description: "Upgrade ke Membership Premium untuk akses tak terbatas ke AI Scan Struk, simpan history selamanya, dan pengalaman tanpa iklan. Cek fitur premium kami sekarang.",
+  title: "Membership VIP - Nikmati Fitur SplitBill Tanpa Batas",
+  description: "Upgrade ke Membership VIP untuk akses tak terbatas ke AI Scan Struk, simpan history selamanya, dan pengalaman tanpa iklan. Cek fitur VIP kami sekarang.",
   keywords: [
-    "splitbill premium",
+    "splitbill vip",
     "membership split bill",
-    "fitur premium splitbill",
+    "fitur vip splitbill",
     "scan struk unlimited",
   ],
   alternates: {

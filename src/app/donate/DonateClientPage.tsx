@@ -8,16 +8,18 @@ import { Button } from "@/components/ui/Button";
 import { toast } from "sonner";
 import { BrandingFooter } from "@/components/layout/BrandingFooter";
 import Image from "next/image";
+import { DynamicFinLogo } from "@/components/wallet/DynamicFinLogo";
+import { EWALLET_LOGOS } from "@/lib/providerLogos";
 
 interface DonationMethodProps {
-  logo: string;
+  slug: string;
   name: string;
   accountNumber: string;
   bankName: string;
 }
 
 const DonationMethod = ({
-  logo,
+  slug,
   name,
   accountNumber,
   bankName,
@@ -30,13 +32,8 @@ const DonationMethod = ({
   return (
     <div className="flex items-center justify-between p-4 bg-muted/30 rounded-lg border border-border/50 group transition-all hover:bg-muted/50">
       <div className="flex items-center gap-4">
-        <div className="w-12 h-12 rounded-lg bg-white flex items-center justify-center p-1 relative overflow-hidden">
-          <Image
-            src={logo}
-            alt={bankName}
-            fill
-            className="object-contain p-1"
-          />
+        <div className="w-12 h-12 rounded-lg bg-white flex items-center justify-center p-1">
+          <DynamicFinLogo slug={slug} alt={bankName} className="w-full h-full" />
         </div>
         <div className="space-y-0.5">
           <p className="text-[13px] font-bold text-foreground leading-tight">
@@ -62,13 +59,13 @@ const DonationMethod = ({
 export default function DonateClientPage() {
   const donationMethods = [
     {
-      logo: "/img/logo-ovo.png",
+      slug: EWALLET_LOGOS["OVO"].slug!,
       name: "Agus Budiman",
       accountNumber: "085559496968",
       bankName: "OVO",
     },
     {
-      logo: "/img/logo-dana.png",
+      slug: EWALLET_LOGOS["DANA"].slug!,
       name: "Agus Budiman",
       accountNumber: "085559496968",
       bankName: "DANA",

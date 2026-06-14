@@ -136,6 +136,7 @@ export const HomepageNavbar = () => {
           href="/member"
           className={cn(
             "group relative flex items-center justify-center rounded-full transition-all duration-300 w-9 h-9 border-2 border-slate-200 hover:border-primary bg-slate-50 backdrop-blur-sm",
+            user?.subscriptionStatus === "active" && "p-[2px] bg-gradient-gold shadow-[0_0_10px_rgba(246,226,122,0.4)]",
             className
           )}
           aria-label="Ke Dashboard Member"
@@ -147,6 +148,17 @@ export const HomepageNavbar = () => {
               className="w-full h-full object-cover"
             />
           </div>
+          {user?.subscriptionStatus === "active" && (
+            <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-white rounded-full flex items-center justify-center shadow-sm border border-slate-100 z-10 p-[1px]">
+              <Image
+                src="/img/icon-vip.png"
+                alt="VIP"
+                width={14}
+                height={14}
+                className="w-full h-full object-contain"
+              />
+            </div>
+          )}
         </Link>
       ) : (
         <Link
@@ -313,12 +325,26 @@ export const HomepageNavbar = () => {
                   className="flex items-center gap-3 px-4 py-3 rounded-lg text-base font-semibold text-slate-600 hover:text-primary hover:bg-primary/5 transition-all duration-200"
                   onClick={() => setMenuOpen(false)}
                 >
-                  <div className="w-6 h-6 rounded-full overflow-hidden bg-slate-100 border border-slate-200">
+                  <div className={cn(
+                    "relative w-6 h-6 rounded-full overflow-hidden bg-slate-100 border border-slate-200",
+                    user?.subscriptionStatus === "active" && "border-amber-400"
+                  )}>
                     <img
                       src={getAvatarUrl(user)}
                       alt="Avatar Profil"
                       className="w-full h-full object-cover"
                     />
+                    {user?.subscriptionStatus === "active" && (
+                      <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-white rounded-full flex items-center justify-center shadow-xs border border-slate-100 z-10 p-[0.5px]">
+                        <Image
+                          src="/img/icon-vip.png"
+                          alt="VIP"
+                          width={8}
+                          height={8}
+                          className="w-full h-full object-contain"
+                        />
+                      </div>
+                    )}
                   </div>
                   Dashboard
                 </Link>

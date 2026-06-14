@@ -9,6 +9,9 @@ import {
   CheckCircle2,
   Info,
   ImagePlus,
+  History,
+  Gift,
+  ShieldCheck,
 } from "lucide-react";
 import { useSplitBillStore } from "@/store/useSplitBillStore";
 import { scanReceipt, ReceiptScanResult, ReceiptItem } from "@/lib/AIService";
@@ -21,6 +24,7 @@ import { toast } from "sonner";
 
 import { AIScanQuotaBanner } from "@/components/ui/AIScanQuotaBanner";
 import { trackSplitBill, trackSubscription } from "@/lib/gtag";
+import { AuthModal } from "@/components/auth/AuthModal";
 
 const AIScanBenefits = () => (
   <div className="flex gap-3 items-start p-4 bg-primary/5 rounded-2xl border border-primary/10 transition-all hover:bg-primary/[0.07]">
@@ -100,6 +104,7 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
   const [imageSource, setImageSource] = useState<"camera" | "gallery" | null>(
     null,
   );
+  const [showImportAuthModal, setShowImportAuthModal] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const scanStartTimeRef = useRef<number | null>(null);
@@ -160,8 +165,85 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
         setImageSource("camera");
         clearPendingCapturedImage();
       }
+
+      // Check if we have a pending scan result waiting in localStorage from guest session
+      const pendingScan = localStorage.getItem("pending_ai_scan_result");
+      if (pendingScan) {
+        try {
+          const parsed = JSON.parse(pendingScan);
+          // Set scanResult and automatically run import
+          setScanResult(parsed.result);
+          if (parsed.image) {
+            setImage(parsed.image);
+          }
+          localStorage.removeItem("pending_ai_scan_result");
+          
+          // Delayed import to ensure store and DOM are fully synchronized
+          setTimeout(() => {
+            importItemsDirectly(parsed.result, parsed.image);
+          }, 100);
+        } catch (e) {
+          console.error("Failed to parse pending scan result:", e);
+        }
+      }
     }
   }, [isAuthenticated]);
+
+  // Helper function to run import directly without relying on state update timing
+  const importItemsDirectly = (result: ReceiptScanResult, imgStr: string | null) => {
+    if (!result) return;
+    if (imgStr) {
+      addScannedReceiptImage(imgStr);
+    }
+    if (result.merchant_name) {
+      setActivityName(result.merchant_name);
+    }
+    if (result.items && Array.isArray(result.items)) {
+      result.items.forEach((item: ReceiptItem) => {
+        addExpense({
+          item: item.name,
+          amount: item.price * (item.quantity || 1),
+          who: [],
+          paidBy: "",
+        });
+      });
+    }
+    const addtionalFields = [
+      { key: "tax", label: "Tax" },
+      { key: "service_charge", label: "Service Charge" },
+      { key: "discount", label: "Discount" },
+    ];
+    addtionalFields.forEach(({ key, label }) => {
+      const val = result[key];
+      if (val !== null && val !== undefined && val !== 0) {
+        addAdditionalExpense({
+          name: label,
+          amount: key === "discount" ? -Math.abs(val) : val,
+          who: [],
+          paidBy: "",
+          splitType: "proportionally",
+        });
+      }
+    });
+
+    setImage(null);
+    setScanResult(null);
+    toast.success("Berhasil import struk! 🧾✨", {
+      description: "Data belanja kamu sudah masuk ke daftar.",
+      duration: 3000,
+    });
+    setTimeout(() => {
+      const element = document.getElementById("expense-list-section");
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }, 100);
+
+    trackSplitBill.aiImport(
+      result.items?.length || 0,
+      result.merchant_name || undefined,
+    );
+  };
 
   // Refresh user data on mount to ensure quota is up to date
   React.useEffect(() => {
@@ -456,7 +538,7 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
                 </h3>
                 <p className="text-xs text-muted-foreground leading-relaxed font-medium">
                   Kuota gratis kamu sudah habis. Upgrade ke{" "}
-                  <span className="text-primary font-bold">Premium</span> untuk{" "}
+                  <span className="bg-gradient-to-r from-primary to-[#7c3aed] bg-clip-text text-transparent inline-block font-black">VIP</span> untuk{" "}
                   <span className="text-foreground font-bold">
                     Scan Tanpa Batas
                   </span>{" "}
@@ -474,7 +556,7 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
                 }}
                 className="w-full max-w-[200px] h-10 bg-primary hover:bg-primary/90 text-white font-bold rounded-md shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] active:scale-[0.98] mt-1 text-sm"
               >
-                Upgrade ke Premium
+                Upgrade ke VIP
               </Button>
             </div>
           </div>
@@ -621,49 +703,53 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
                 <p className="text-xs font-bold uppercase">Scan Berhasil! ✨</p>
               </div>
 
-              <div className="bg-muted/30 p-4 rounded-lg border border-dashed border-primary/20 space-y-4">
+              <div className="bg-gradient-to-b from-card to-card/90 p-5 rounded-2xl border border-primary/20 relative overflow-hidden space-y-4">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full blur-2xl pointer-events-none" />
+
                 {/* Merchant Name Preview */}
                 {scanResult.merchant_name && (
-                  <div className="pb-2 border-b border-primary/10">
-                    <p className="text-[9px] uppercase font-black text-primary/40 leading-none mb-1">
+                  <div className="pb-3 border-b border-border/80">
+                    <p className="text-[9px] uppercase font-black text-primary/60 tracking-wider leading-none mb-1.5">
                       Merchant
                     </p>
-                    <p className="text-sm font-black text-foreground">
+                    <p className="text-base font-black text-foreground">
                       {scanResult.merchant_name}
                     </p>
                   </div>
                 )}
 
                 {/* Items Preview */}
-                <div className="space-y-2">
-                  <p className="text-[9px] uppercase font-black text-muted-foreground leading-none mb-1">
+                <div className="space-y-3">
+                  <p className="text-[9px] uppercase font-black text-muted-foreground tracking-wider leading-none mb-1">
                     Items ({scanResult.items?.length || 0})
                   </p>
-                  {scanResult.items?.map((item: ReceiptItem, idx: number) => (
-                    <div
-                      key={idx}
-                      className="flex justify-between items-center text-xs"
-                    >
-                      <div className="flex items-center gap-1.5 flex-1 min-w-0 pr-4">
-                        <span className="text-muted-foreground font-bold shrink-0">
-                          {item.quantity}x
-                        </span>
-                        <span className="font-medium truncate leading-none">
-                          {item.name}
+                  <div className="space-y-2.5 max-h-[220px] overflow-y-auto pr-1">
+                    {scanResult.items?.map((item: ReceiptItem, idx: number) => (
+                      <div
+                        key={idx}
+                        className="flex justify-between items-center text-xs"
+                      >
+                        <div className="flex items-center gap-2 flex-1 min-w-0 pr-4">
+                          <span className="text-primary font-bold shrink-0 bg-primary/5 px-2 py-0.5 rounded text-[10px]">
+                            {item.quantity}x
+                          </span>
+                          <span className="font-medium truncate text-foreground/90">
+                            {item.name}
+                          </span>
+                        </div>
+                        <span className="font-black text-foreground shrink-0">
+                          {formatCurrency(item.price * item.quantity)}
                         </span>
                       </div>
-                      <span className="font-black text-primary shrink-0">
-                        {formatCurrency(item.price * item.quantity)}
-                      </span>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
 
                 {/* Summary / Tax Preview */}
                 {(scanResult.tax ||
                   scanResult.service_charge ||
                   scanResult.discount) && (
-                    <div className="pt-2 border-t border-primary/10 space-y-1.5">
+                    <div className="pt-3 border-t border-border/80 space-y-2">
                       {scanResult.tax && (
                         <div className="flex justify-between items-center text-[11px]">
                           <span className="text-muted-foreground font-bold">
@@ -698,25 +784,71 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
                   )}
               </div>
 
-              {/* Info Banner: Editable After Import - V2 Design Style */}
-              <div className="flex gap-3 items-start p-4 bg-secondary/30 dark:bg-secondary/10 rounded-2xl border border-secondary/20">
-                <div className="p-2 bg-white rounded-xl border border-primary/10 shrink-0 flex items-center justify-center">
-                  <Info className="w-4 h-4 text-primary" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-[10px] font-black uppercase text-secondary-foreground/60 tracking-wider leading-none mb-1.5">
-                    💡 Info Penting
+              {/* Post-scan nudge for guest: value prop before import gate */}
+              {!isAuthenticated && (
+                <div className="rounded-md bg-primary/5 px-4 py-3.5">
+                  <p className="text-sm font-black text-primary mb-3">
+                    Daftar gratis untuk import & simpan hasil scan!
                   </p>
-                  <p className="text-xs leading-relaxed text-secondary-foreground font-medium">
-                    Jangan khawatir! Semua data bisa diedit setelah di-import
-                    jika ada yang belum sesuai.
-                  </p>
+                  <div className="space-y-3">
+                    {[
+                      { icon: "✅", text: "Simpan & akses riwayat split bill kapan saja" },
+                      { icon: "⚡", text: "Kuota scan AI lebih banyak setiap hari" },
+                      { icon: "🎁", text: "100% gratis, tanpa kartu kredit" },
+                    ].map(({ icon, text }) => (
+                      <div key={text} className="flex items-center gap-2">
+                        <span className="text-sm leading-none">{icon}</span>
+                        <p className="text-xs text-foreground/70 font-semibold leading-none">{text}</p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
-              <Button onClick={importItems} className="w-full font-bold">
-                Import ke Daftar
-              </Button>
+              {/* Info Banner: Editable After Import - V2 Design Style (only for authenticated) */}
+              {isAuthenticated && (
+                <div className="flex gap-3 items-start p-4 bg-secondary/30 dark:bg-secondary/10 rounded-2xl border border-secondary/20">
+                  <div className="p-2 bg-white rounded-xl border border-primary/10 shrink-0 flex items-center justify-center">
+                    <Info className="w-4 h-4 text-primary" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[10px] font-black uppercase text-secondary-foreground/60 tracking-wider leading-none mb-1.5">
+                      💡 Info Penting
+                    </p>
+                    <p className="text-xs leading-relaxed text-secondary-foreground font-medium">
+                      Jangan khawatir! Semua data bisa diedit setelah di-import
+                      jika ada yang belum sesuai.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Import button — hard-gated for guests */}
+              {isAuthenticated ? (
+                <Button onClick={importItems} className="w-full font-bold">
+                  Import ke Daftar
+                </Button>
+              ) : (
+                <>
+                  <Button
+                    onClick={() => {
+                      // Save scanResult and image to localStorage so it survives the login redirect
+                      if (scanResult) {
+                        localStorage.setItem("pending_ai_scan_result", JSON.stringify({
+                          result: scanResult,
+                          image: image
+                        }));
+                      }
+                      trackSubscription.premiumFeatureClick("ai_scan_import_gate");
+                      setShowImportAuthModal(true);
+                    }}
+                    className="w-full h-12 font-bold bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20 rounded-md"
+                  >
+                    <ShieldCheck className="w-4 h-4 mr-2" />
+                    Daftar Gratis & Import Hasil Scan
+                  </Button>
+                </>
+              )}
             </div>
           )}
         </div>
@@ -725,6 +857,21 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
       {/* Benefits info */}
       {!scanResult && <AIScanBenefits />}
       <LoadingModal isOpen={isScanning} />
+
+      {/* Auth modal triggered when guest tries to import scan result */}
+      <AuthModal
+        isOpen={showImportAuthModal}
+        onClose={() => setShowImportAuthModal(false)}
+        onSuccess={() => {
+          setShowImportAuthModal(false);
+          // After login, auto-import the scan result
+          importItems();
+        }}
+        redirectPath={typeof window !== "undefined" ? window.location.pathname + window.location.search : "/split-bill?step=2"}
+        title="Hampir Selesai! 🎉"
+        description="Daftar gratis atau login dulu untuk import hasil scan dan simpan split bill kamu."
+        iconSrc="/img/feature-splitbill-scan.png"
+      />
     </div>
   );
 };

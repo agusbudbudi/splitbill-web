@@ -1,10 +1,14 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { Card } from "@/components/ui/Card";
 import { cn } from "@/lib/utils";
-import { Wallet, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { PaymentMethod } from "@/store/useWalletStore";
+import { BANK_LOGOS, EWALLET_LOGOS, maskNumber } from "./PaymentMethodCard";
+import { getProviderLogoInfo } from "@/lib/providerLogos";
+import { DynamicFinLogo } from "./DynamicFinLogo";
 
 interface WalletSelectionCardProps {
   method: PaymentMethod;
@@ -17,47 +21,81 @@ export const WalletSelectionCard = ({
   isSelected,
   onClick,
 }: WalletSelectionCardProps) => {
+  const isBank = method.type === "bank";
+  const logoInfo = getProviderLogoInfo(method.providerName, isBank ? "bank" : "ewallet");
+
+  const rawNumber = isBank ? method.accountNumber : method.phoneNumber;
+  const displayNumber = maskNumber(rawNumber);
+
   return (
     <Card
       onClick={onClick}
       className={cn(
-        "shrink-0 w-32 h-20 rounded-lg border-1 p-2.5 flex flex-col justify-between transition-all active:scale-95 text-left relative overflow-hidden group cursor-pointer",
+        "relative w-[42vw] sm:w-[220px] shrink-0 aspect-[1.4/1] rounded-2xl border p-3.5 flex flex-col justify-between transition-all active:scale-95 text-left overflow-hidden select-none cursor-pointer",
         isSelected
-          ? "border-primary bg-primary text-white shadow-md shadow-primary/20"
-          : "border-primary/10 bg-white text-foreground hover:border-primary/30",
+          ? "border-primary bg-primary text-white shadow-md shadow-primary/10"
+          : "border-slate-200 bg-white text-slate-800 hover:border-slate-300",
       )}
     >
-      <div className="relative z-10">
+      {/* Top: Logo */}
+      <div className="flex items-start justify-between">
+        <div className="h-7 w-16 flex items-center">
+          {logoInfo.slug ? (
+            <DynamicFinLogo
+              slug={logoInfo.slug}
+              alt={method.providerName}
+              className={cn(
+                "filter drop-shadow-xs w-full h-full",
+                isSelected && "brightness-0 invert"
+              )}
+            />
+          ) : (
+            <img
+              src={logoInfo.image}
+              alt={method.providerName}
+              className={cn(
+                "h-full w-auto object-contain filter drop-shadow-xs",
+                isSelected && "brightness-0 invert"
+              )}
+            />
+          )}
+        </div>
+      </div>
+
+      {/* Bottom: Name & Number */}
+      <div className="text-left space-y-0.5">
         <p
           className={cn(
-            "text-[9px] font-black uppercase tracking-wider mb-0.5",
-            isSelected ? "text-white/80" : "text-primary/60",
+            "text-[10px] font-semibold truncate leading-tight",
+            isSelected ? "text-white/80" : "text-slate-500"
+          )}
+        >
+          {method.accountName}
+        </p>
+        <p
+          className={cn(
+            "text-[9px] font-extrabold uppercase tracking-widest leading-none",
+            isSelected ? "text-white/60" : "text-slate-400"
           )}
         >
           {method.providerName}
         </p>
-        <h4 className="font-bold text-[11px] line-clamp-1 leading-tight mb-0.5">
-          {method.accountName}
-        </h4>
-        <p
-          className={cn(
-            "text-[9px] font-medium break-all opacity-80",
-            isSelected ? "text-white/70" : "text-muted-foreground",
-          )}
-        >
-          {method.accountNumber || method.phoneNumber}
-        </p>
-      </div>
-
-      {/* Icon Branding */}
-      <div className="absolute right-1 bottom-1 opacity-5 group-hover:scale-110 transition-transform">
-        <Wallet className="w-10 h-10" />
+        <div className="flex items-center gap-1.5 pt-0.5">
+          <p
+            className={cn(
+              "font-mono text-sm tracking-widest font-black leading-tight",
+              isSelected ? "text-white" : "text-slate-800"
+            )}
+          >
+            {displayNumber}
+          </p>
+        </div>
       </div>
 
       {/* Selection Check */}
       {isSelected && (
-        <div className="absolute top-1.5 right-1.5 flex items-center justify-center w-4 h-4 bg-white rounded-full text-primary shadow-sm animate-in zoom-in duration-300">
-          <Plus className="w-2.5 h-2.5 rotate-45" />
+        <div className="absolute top-1.5 right-1.5 flex items-center justify-center w-3.5 h-3.5 bg-white rounded-full text-primary shadow-sm animate-in zoom-in duration-300">
+          <Plus className="w-2 h-2 rotate-45" />
         </div>
       )}
     </Card>

@@ -4,11 +4,13 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { useWalletStore } from "@/store/useWalletStore";
-import { X, Save, ArrowLeft } from "lucide-react";
+import { Save, ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { createPortal } from "react-dom";
 import { trackWallet } from "@/lib/gtag";
+import { ProviderPickerGrid } from "./ProviderPickerGrid";
+import { BANK_LOGOS, EWALLET_LOGOS } from "@/lib/providerLogos";
 
 interface AddPaymentMethodBottomSheetProps {
   isOpen: boolean;
@@ -16,14 +18,10 @@ interface AddPaymentMethodBottomSheetProps {
   onMethodAdded?: (id: string) => void;
 }
 
+/** Derived from central providerLogos — automatically includes any new provider added there. */
 const PROVIDERS = [
-  { value: "BankTransfer", label: "Bank Transfer", type: "bank" },
-  { value: "GoPay", label: "GoPay", type: "ewallet" },
-  { value: "OVO", label: "OVO", type: "ewallet" },
-  { value: "DANA", label: "DANA", type: "ewallet" },
-  { value: "ShopeePay", label: "ShopeePay", type: "ewallet" },
-  { value: "LinkAja", label: "LinkAja", type: "ewallet" },
-  { value: "Jenius", label: "Jenius", type: "ewallet" },
+  ...Object.keys(BANK_LOGOS).map((key) => ({ value: key, label: key, type: "bank" as const })),
+  ...Object.keys(EWALLET_LOGOS).map((key) => ({ value: key, label: key, type: "ewallet" as const })),
 ];
 
 export const AddPaymentMethodBottomSheet = ({
@@ -84,31 +82,20 @@ export const AddPaymentMethodBottomSheet = ({
 
   if (!isOpen) return null;
 
+  const selectedProviderObj = PROVIDERS.find((p) => p.value === provider);
+  const isBank = selectedProviderObj?.type === "bank";
+
   return createPortal(
     <div className="fixed inset-0 z-[100] flex justify-center pointer-events-auto">
-      {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity animate-in fade-in"
-        onClick={onClose}
-      />
-
-      {/* Sheet Content */}
+      {/* Sheet Content — full screen like a new page */}
       <div
         className={cn(
-          "absolute bottom-0 w-full max-w-[600px] bg-white rounded-t-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]",
+          "absolute inset-0 w-full max-w-[600px] mx-auto bg-background flex flex-col",
           "animate-in slide-in-from-bottom-full duration-300 ease-out",
         )}
       >
-        {/* Drag handle */}
-        <div
-          className="w-full flex justify-center pt-2 pb-1 cursor-pointer"
-          onClick={onClose}
-        >
-          <div className="w-12 h-1.5 rounded-full bg-muted/40" />
-        </div>
-
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-2 border-b border-primary/5">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-primary/5 bg-background/95 backdrop-blur-sm sticky top-0 z-10">
           <div className="flex items-center gap-2">
             <button
               onClick={() => {
@@ -124,25 +111,16 @@ export const AddPaymentMethodBottomSheet = ({
         </div>
 
         {/* Form Body */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-6">
+        <div className="flex-1 overflow-y-auto p-6 space-y-6 pb-safe">
           <div className="space-y-4">
-            <div className="space-y-2">
-              <label className="text-sm font-semibold">Jenis Metode</label>
-              <select
-                className="w-full h-12 px-3 rounded-lg border border-input bg-background text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 appearance-none"
-                value={provider}
-                onChange={(e) => setProvider(e.target.value)}
-              >
-                <option value="" disabled>
-                  Pilih Metode
-                </option>
-                {PROVIDERS.map((p) => (
-                  <option key={p.value} value={p.value}>
-                    {p.label}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <ProviderPickerGrid
+              selectedProvider={provider}
+              onChange={(val) => {
+                setProvider(val);
+                setDetails("");
+                setBankName("");
+              }}
+            />
 
             {provider === "BankTransfer" && (
               <div className="space-y-2 animate-in fade-in slide-in-from-bottom-2">
@@ -159,7 +137,7 @@ export const AddPaymentMethodBottomSheet = ({
               <>
                 <div className="space-y-2 animate-in fade-in slide-in-from-bottom-2">
                   <label className="text-sm font-semibold">
-                    {provider === "BankTransfer"
+                    {isBank
                       ? "Nama Pemilik Rekening"
                       : "Nama Pemilik Akun"}
                   </label>
@@ -172,13 +150,13 @@ export const AddPaymentMethodBottomSheet = ({
 
                 <div className="space-y-2 animate-in fade-in slide-in-from-bottom-2">
                   <label className="text-sm font-semibold">
-                    {provider === "BankTransfer"
+                    {isBank
                       ? "Nomor Rekening"
                       : "Nomor HP"}
                   </label>
                   <Input
                     placeholder={
-                      provider === "BankTransfer"
+                      isBank
                         ? "Contoh: 1234567890"
                         : "Contoh: 08123456789"
                     }

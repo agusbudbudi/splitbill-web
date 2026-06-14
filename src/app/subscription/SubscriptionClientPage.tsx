@@ -65,54 +65,63 @@ export default function SubscriptionClientPage() {
     <div className="min-h-screen bg-background flex flex-col items-center">
       <Header title="Langganan" showBackButton />
 
-      <main className="w-full max-w-[600px] pb-10">
-        {/* Hero Section */}
-        <div className="px-4 pt-4 flex flex-col gap-6">
-          {/* <div className="relative aspect-[360/113] w-full overflow-hidden rounded-2xl">
-            <Image
-              src="/img/banner-donate.png"
-              alt="Subscription Banner"
-              fill
-              className="object-cover"
-              priority
-            />
-          </div> */}
+      <div className="relative w-full max-w-[600px] flex-1 flex flex-col">
+        {/* Gradient background */}
+        <div className="absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-primary via-primary/50 to-transparent pointer-events-none z-0" />
 
-          <div className="flex items-center gap-4">
-            <div className="shrink-0 w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
-              <Crown className="w-6 h-6" />
-            </div>
-            <div className="space-y-0.5">
-              <div className="flex items-center gap-1.5">
-                <h1 className="text-lg font-extrabold tracking-tight text-foreground leading-tight">
-                  Pilih Paket Langganan
-                </h1>
-                <Sparkles className="w-4 h-4 text-yellow-400 shrink-0" />
+        <main className="relative z-10 w-full pb-4">
+          {/* Hero Section */}
+          <div className="px-4 pt-4 flex flex-col gap-6">
+            {/* <div className="relative aspect-[360/113] w-full overflow-hidden rounded-2xl">
+              <Image
+                src="/img/banner-donate.png"
+                alt="Subscription Banner"
+                fill
+                className="object-cover"
+                priority
+              />
+            </div> */}
+
+            <div className="flex items-center gap-3">
+              <div className="shrink-0 w-16 h-16 relative">
+                <Image
+                  src="/img/icon-vip.png"
+                  alt="VIP"
+                  fill
+                  className="object-contain"
+                />
               </div>
-              <p className="text-[13px] text-muted-foreground leading-relaxed">
-                Nikmati fitur premium tanpa batas, pilih durasi yang sesuai
-                kebutuhanmu.
-              </p>
+              <div className="space-y-0.5">
+                <div className="flex items-center gap-1.5">
+                  <h1 className="text-lg font-extrabold tracking-tight text-white leading-tight">
+                    Pilih Paket Langganan
+                  </h1>
+                </div>
+                <p className="text-[13px] text-white/90 leading-relaxed">
+                  Nikmati fitur VIP tanpa batas, pilih durasi yang sesuai
+                  kebutuhanmu.
+                </p>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Package list */}
-        <div className="px-4 mt-5">
-          {error ? (
-            <div className="text-center py-12">
-              <p className="text-sm text-muted-foreground">{error}</p>
-            </div>
-          ) : (
-            <SubscriptionList
-              packages={packages}
-              isLoading={isLoading}
-              onBuy={handleBuy}
-              processingId={processingId}
-            />
-          )}
-        </div>
-      </main>
+          {/* Package list */}
+          <div className="px-4 mt-5">
+            {error ? (
+              <div className="text-center py-12">
+                <p className="text-sm text-muted-foreground">{error}</p>
+              </div>
+            ) : (
+              <SubscriptionList
+                packages={packages}
+                isLoading={isLoading}
+                onBuy={handleBuy}
+                processingId={processingId}
+              />
+            )}
+          </div>
+        </main>
+      </div>
     </div>
   );
 }

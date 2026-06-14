@@ -158,8 +158,14 @@ export const Header = ({
                       />
                     </div>
                     {user?.subscriptionStatus === "active" && (
-                      <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-gold rounded-full flex items-center justify-center shadow-sm z-10">
-                        <Crown className="w-2 h-2 lg:w-2.5 lg:h-2.5 text-white fill-white" />
+                      <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-white rounded-full flex items-center justify-center shadow-sm border border-slate-100 z-10 p-[1px]">
+                        <Image
+                          src="/img/icon-vip.png"
+                          alt="VIP"
+                          width={14}
+                          height={14}
+                          className="w-full h-full object-contain"
+                        />
                       </div>
                     )}
                   </Link>

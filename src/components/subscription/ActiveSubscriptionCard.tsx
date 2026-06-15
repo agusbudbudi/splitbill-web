@@ -26,6 +26,7 @@ export function ActiveSubscriptionCard({ user }: ActiveSubscriptionCardProps) {
                 src="/img/icon-vip.png"
                 alt="VIP"
                 fill
+                sizes="56px"
                 className="object-contain"
               />
             </div>

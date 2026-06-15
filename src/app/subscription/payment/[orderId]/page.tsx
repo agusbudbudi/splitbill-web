@@ -380,6 +380,7 @@ export default function PaymentPage() {
                         src={order.qrisData?.image || ""}
                         alt="QRIS Payment"
                         fill
+                        sizes="280px"
                         className="object-contain"
                         priority
                       />
@@ -434,6 +435,7 @@ export default function PaymentPage() {
                           src={order.qrisData?.image || ""}
                           alt="QRIS Payment"
                           fill
+                          sizes="200px"
                           className="object-contain"
                           priority
                         />
@@ -537,6 +539,7 @@ export default function PaymentPage() {
                 src="/img/icon-privacy.png"
                 alt="Pembayaran Aman"
                 fill
+                sizes="48px"
                 className="object-contain"
               />
             </div>

@@ -19,6 +19,7 @@ export default function ReviewClientPage() {
               src="/img/banner-feedback.jpg"
               alt="Berikan Review dan Masukan untuk Aplikasi SplitBill Online — Masukanmu sangat berarti bagi kami"
               fill
+              sizes="(max-width: 600px) 100vw, 600px"
               className="object-cover"
               priority
             />

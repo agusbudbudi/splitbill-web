@@ -84,6 +84,7 @@ export default function DonateClientPage() {
               src="/img/banner-donate.png"
               alt="Dukung Developer SplitBill — Donasi untuk operasional server dan pengembangan fitur baru"
               fill
+              sizes="(max-width: 600px) 100vw, 600px"
               className="object-cover"
               priority
             />

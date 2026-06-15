@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { Header } from "@/components/layout/Header";
 import { Blog } from "@/lib/types/blog";
 import { BlogCard } from "@/components/blog/BlogCard";
@@ -127,11 +128,13 @@ export default function BlogDetailClient({
         <main className="w-full lg:flex-1 flex flex-col gap-6">
           {/* Article Hero */}
           <section className="relative w-[calc(100%+48px)] -mx-6 -mt-0 rounded-none lg:w-full lg:mx-0 lg:mt-0 lg:rounded-lg aspect-[4/3] md:aspect-[16/9] min-h-[300px] bg-muted overflow-hidden shadow-soft">
-            <img
+            <Image
               src={blog.thumbnail || "/img/pwa-banner.png"}
               alt={blog.thumbnailAlt || blog.title}
+              fill
+              sizes="(max-width: 1200px) 100vw, 800px"
               className="w-full h-full object-cover"
-              loading="eager"
+              priority
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
 

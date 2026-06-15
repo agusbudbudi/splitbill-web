@@ -2,6 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { ArrowRight, Camera } from "lucide-react";
 
@@ -128,10 +129,12 @@ export const CTABannerSection = () => {
                   whileHover={{ x: 6, scale: 1.02 }}
                   className={`flex gap-4 p-5 sm:p-6 rounded-2xl bg-white/70 backdrop-blur-md border ${card.bg} shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_12px_40px_rgba(71,159,234,0.06)] transition-[box-shadow,border-color,background-color] duration-300`}
                 >
-                  <div className={`flex-shrink-0 w-12 h-12 rounded-lg ${card.bgLight} ${card.bgHover} flex items-center justify-center p-1 transition-all duration-300 group-hover:scale-105`}>
-                    <img
+                  <div className={`flex-shrink-0 w-12 h-12 rounded-lg ${card.bgLight} ${card.bgHover} flex items-center justify-center p-1 transition-all duration-300 group-hover:scale-105 relative`}>
+                    <Image
                       src={card.imageSrc}
                       alt={card.title}
+                      width={48}
+                      height={48}
                       className="w-full h-full object-contain"
                     />
                   </div>

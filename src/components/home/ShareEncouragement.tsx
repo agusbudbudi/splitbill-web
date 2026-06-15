@@ -29,6 +29,7 @@ export const ShareEncouragement = ({ isCompact = false }: ShareEncouragementProp
             src="/img/hero-split-later.png"
             alt="SplitBill Share Encouragement"
             fill
+            sizes="(max-width: 1024px) 65vw, 55vw"
             className={`object-cover object-center ${isCompact
               ? ""
               : "lg:object-right"

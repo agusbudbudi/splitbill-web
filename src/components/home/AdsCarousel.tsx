@@ -49,6 +49,7 @@ export const AdsCarousel = () => {
           src={ad.image}
           alt={ad.alt}
           fill
+          sizes="178px"
           className="object-cover"
           draggable={false}
         />

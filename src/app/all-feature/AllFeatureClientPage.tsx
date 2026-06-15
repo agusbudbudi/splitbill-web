@@ -110,6 +110,7 @@ export const AllFeatureClientPage = () => {
             alt="Semua Fitur Banner"
             width={600}
             height={200}
+            sizes="(max-width: 600px) 100vw, 600px"
             className="w-full h-auto object-cover"
           />
         </div>

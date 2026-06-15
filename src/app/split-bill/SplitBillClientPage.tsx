@@ -58,6 +58,8 @@ import { AuthModal } from "@/components/auth/AuthModal";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { useUIStore } from "@/lib/stores/uiStore";
 import { DropOffSurveyBottomSheet } from "@/components/splitbill/DropOffSurveyBottomSheet";
+import { getRandomAdCampaign, type AdCampaign } from "@/lib/ads/adsConfig";
+import { InterstitialAdModal } from "@/components/ads/InterstitialAdModal";
 
 const SplitBillContent = () => {
   const router = useRouter();
@@ -125,6 +127,9 @@ const SplitBillContent = () => {
   const [showAIScanAuthModal, setShowAIScanAuthModal] = useState(false);
   const [isSurveyOpen, setIsSurveyOpen] = useState(false);
   const [surveyTriggerStep, setSurveyTriggerStep] = useState<number>(1);
+  const [showAdModal, setShowAdModal] = useState(false);
+  const [currentAd, setCurrentAd] = useState<AdCampaign | null>(null);
+  const [onAdFinishedCallback, setOnAdFinishedCallback] = useState<(() => void) | null>(null);
 
   const [isFinalizing, setIsFinalizing] = useState(false);
   const [isCalculating, setIsCalculating] = useState(false);
@@ -547,6 +552,32 @@ const SplitBillContent = () => {
     }
   }, [isAuthenticated, searchParams, step, isSaved]);
 
+  const proceedToStep4 = async () => {
+    setIsCalculating(true);
+    try {
+      await saveDraft();
+      toast.success("Split Bill Berhasil Dihitung! 💸✨", {
+        description: "Yuk cek rincian pembayarannya.",
+        duration: 3000,
+      });
+      triggerConfetti();
+      trackSplitBill.calculate({
+        total_amount: totalSpent,
+        num_participants: people.length,
+      });
+      if (activityName) {
+        trackSplitBill.autofillView(activityName);
+      }
+      const nextStepNum = 4;
+      trackSplitBill.stepComplete(nextStepNum, "Hasil");
+      router.replace(`/split-bill?step=${nextStepNum}`);
+    } catch (err) {
+      toast.error("Gagal menyimpan detail split bill. Silakan coba lagi.");
+    } finally {
+      setIsCalculating(false);
+    }
+  };
+
   const nextStep = async () => {
     if (step === 1 && people.length < 2) {
       const errorMsg =
@@ -569,28 +600,15 @@ const SplitBillContent = () => {
     }
 
     if (step === 3) {
-      setIsCalculating(true);
-      try {
-        await saveDraft();
-        toast.success("Split Bill Berhasil Dihitung! 💸✨", {
-          description: "Yuk cek rincian pembayarannya.",
-          duration: 3000,
-        });
-        triggerConfetti();
-        trackSplitBill.calculate({
-          total_amount: totalSpent,
-          num_participants: people.length,
-        });
-        if (activityName) {
-          trackSplitBill.autofillView(activityName);
-        }
-      } catch (err) {
-        toast.error("Gagal menyimpan detail split bill. Silakan coba lagi.");
-        setIsCalculating(false);
-        return; // Stop execution, do not proceed to step 4
-      } finally {
-        setIsCalculating(false);
+      if (!isAuthenticated) {
+        const selectedAd = getRandomAdCampaign();
+        setCurrentAd(selectedAd);
+        setOnAdFinishedCallback(() => proceedToStep4);
+        setShowAdModal(true);
+        return;
       }
+      await proceedToStep4();
+      return;
     } else {
       // PRO TIP: We now await saveDraft even for Step 1 & 2 to ensure 
       // the draftId is properly set in the store before moving to the next step.
@@ -610,6 +628,14 @@ const SplitBillContent = () => {
     const stepNames = ["", "Teman", "Bil", "Detail", "Hasil"];
     trackSplitBill.stepComplete(nextStepNum, stepNames[nextStepNum] || "");
     router.replace(`/split-bill?step=${nextStepNum}`);
+  };
+
+  const handleAdClose = () => {
+    setShowAdModal(false);
+    if (onAdFinishedCallback) {
+      onAdFinishedCallback();
+      setOnAdFinishedCallback(null);
+    }
   };
 
   const prevStep = () => {
@@ -1379,6 +1405,12 @@ const SplitBillContent = () => {
         onClose={handleSurveyComplete}
         onComplete={handleSurveyComplete}
         step={surveyTriggerStep}
+      />
+
+      <InterstitialAdModal
+        isOpen={showAdModal}
+        ad={currentAd}
+        onClose={handleAdClose}
       />
     </div>
   );

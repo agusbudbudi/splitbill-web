@@ -30,11 +30,12 @@ const routeConfigs: RouteConfig[] = [
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://splitbill.my.id";
   const now = new Date();
+  const todayStr = now.toISOString().split("T")[0];
 
   // Static routes
   const staticRoutes = routeConfigs.map(({ path, priority, changeFrequency }) => ({
     url: `${baseUrl}${path === "/" ? "" : path}`,
-    lastModified: now,
+    lastModified: todayStr,
     changeFrequency,
     priority,
   }));
@@ -50,22 +51,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         .filter(blog => blog.status === "published" && blog.slug)
         .map((blog) => {
           // Ensure we have a valid date
-          let lastMod = now;
+          let lastModStr = todayStr;
           try {
             const dateStr = blog.updatedAt || blog.publishedAt || blog.createdAt;
             if (dateStr) {
               const d = new Date(dateStr);
               if (!isNaN(d.getTime())) {
-                lastMod = d;
+                lastModStr = d.toISOString().split("T")[0];
               }
             }
           } catch (e) {
-            // Fallback to now
+            // Fallback to today
           }
 
           return {
             url: `${baseUrl}/blog/${blog.slug}`,
-            lastModified: lastMod,
+            lastModified: lastModStr,
             changeFrequency: "weekly" as const,
             priority: 0.7,
           };

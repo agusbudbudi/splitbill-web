@@ -178,7 +178,7 @@ export const HomepageNavbar = () => {
     <>
       <header ref={headerRef}
         className={cn(
-          "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
+          "fixed top-0 left-0 right-0 z-50 transition-all duration-300 pt-safe",
           scrolled
             ? "bg-white/90 backdrop-blur-md shadow-[0_8px_30px_rgba(0,0,0,0.03)]"
             : "bg-transparent"

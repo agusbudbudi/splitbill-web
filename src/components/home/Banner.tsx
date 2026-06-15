@@ -259,6 +259,7 @@ export const Banner = () => {
                 alt={banner.alt}
                 width={1080}
                 height={608}
+                sizes="(max-width: 768px) 50vw, (max-width: 1280px) 33vw, 426px"
                 className={cn(
                   "w-full h-full block object-cover transition-all duration-700 group-hover:scale-105",
                   !loadedImages[banner.id] ? "opacity-0" : "opacity-100",

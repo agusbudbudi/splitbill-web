@@ -2,6 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { Clock, ArrowRight } from "lucide-react";
 import { Blog } from "@/lib/types/blog";
@@ -27,11 +28,13 @@ export const BlogCard = ({ blog, priority = false }: BlogCardProps) => {
         <Card className="h-full flex flex-col overflow-hidden border-none shadow-soft hover:shadow-md transition-all duration-500 bg-white hover:bg-accent/5">
           {/* Thumbnail Image */}
           <div className="relative aspect-[16/9] overflow-hidden">
-            <img
+            <Image
               src={blog.thumbnail || "/img/pwa-banner.png"}
               alt={blog.thumbnailAlt || blog.title}
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
-              loading={priority ? "eager" : "lazy"}
+              priority={priority}
             />
             {/* Category Badge overlay */}
             <div className="absolute top-2 left-2 z-10">

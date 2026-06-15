@@ -178,6 +178,7 @@ function LoginPageContent() {
                 src="/img/hero-login.png"
                 alt="SplitBill Hero"
                 fill
+                sizes="(max-width: 1024px) 340px, 420px"
                 className="object-contain"
                 priority
                 fetchPriority="high"

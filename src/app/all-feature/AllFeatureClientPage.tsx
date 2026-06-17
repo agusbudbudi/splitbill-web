@@ -102,47 +102,52 @@ export const AllFeatureClientPage = () => {
         showBackButton
       />
 
-      <main className="w-full max-w-[600px] flex-1 pb-20 pt-4 px-4 relative z-10 flex flex-col">
-        {/* PWA Banner */}
-        <div className="w-full rounded-2xl overflow-hidden mb-4">
-          <Image
-            src="/img/banner-all-feature.png"
-            alt="Semua Fitur Banner"
-            width={600}
-            height={200}
-            sizes="(max-width: 600px) 100vw, 600px"
-            className="w-full h-auto object-cover"
-          />
-        </div>
+      <div className="relative w-full max-w-[600px] flex-1 flex flex-col">
+        {/* Gradient background */}
+        <div className="absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-primary via-primary/50 to-transparent pointer-events-none z-0" />
 
-        <section className="mb-8">
-          <div className="flex flex-col mb-4">
-            <h2 className="text-xl font-bold text-foreground">Populer 🔥</h2>
-            <p className="text-xs text-muted-foreground font-medium mt-1">
-              Fitur favorit yang paling sering dipakai bestie kamu
-            </p>
+        <main className="relative z-10 w-full flex-1 pb-20 pt-4 px-4 flex flex-col">
+          {/* PWA Banner */}
+          <div className="w-full rounded-2xl overflow-hidden mb-4">
+            <Image
+              src="/img/banner-all-feature.png"
+              alt="Semua Fitur Banner"
+              width={600}
+              height={200}
+              sizes="(max-width: 600px) 100vw, 600px"
+              className="w-full h-auto object-cover"
+            />
           </div>
 
-          <div>
-            <FeatureGrid items={populerFeatures} />
-          </div>
-        </section>
+          <section className="mb-8">
+            <div className="flex flex-col mb-4">
+              <h2 className="text-xl font-bold text-foreground">Populer 🔥</h2>
+              <p className="text-xs text-muted-foreground font-medium mt-1">
+                Fitur favorit yang paling sering dipakai bestie kamu
+              </p>
+            </div>
 
-        <section>
-          <div className="flex flex-col mb-4">
-            <h2 className="text-xl font-bold text-foreground">
-              Semua Fitur 🚀
-            </h2>
-            <p className="text-xs text-muted-foreground font-medium mt-1">
-              Jelajahi fitur lengkap untuk kelola duit bareng teman
-            </p>
-          </div>
+            <div>
+              <FeatureGrid items={populerFeatures} />
+            </div>
+          </section>
 
-          <div>
-            <FeatureGrid items={allFeatures} />
-          </div>
-        </section>
-      </main>
+          <section>
+            <div className="flex flex-col mb-4">
+              <h2 className="text-xl font-bold text-foreground">
+                Semua Fitur 🚀
+              </h2>
+              <p className="text-xs text-muted-foreground font-medium mt-1">
+                Jelajahi fitur lengkap untuk kelola duit bareng teman
+              </p>
+            </div>
+
+            <div>
+              <FeatureGrid items={allFeatures} />
+            </div>
+          </section>
+        </main>
+      </div>
 
       <Footer />
 

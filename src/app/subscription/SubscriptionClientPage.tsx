@@ -72,16 +72,6 @@ export default function SubscriptionClientPage() {
         <main className="relative z-10 w-full pb-4">
           {/* Hero Section */}
           <div className="px-4 pt-4 flex flex-col gap-6">
-            {/* <div className="relative aspect-[360/113] w-full overflow-hidden rounded-2xl">
-              <Image
-                src="/img/banner-donate.png"
-                alt="Subscription Banner"
-                fill
-                className="object-cover"
-                priority
-              />
-            </div> */}
-
             <div className="flex items-center gap-3">
               <div className="shrink-0 w-16 h-16 relative">
                 <Image

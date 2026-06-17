@@ -54,7 +54,7 @@ export const InvoiceLanding = () => {
     <div className="space-y-5">
       {/* Hero CTA Card */}
       <FeatureBanner
-        title="Kelola Invoice No Ribet. 🎉"
+        title="Kelola Invoice No Ribet"
         description={
           <>
             Buat invoice profesional dalam sekejap. <br />
@@ -147,13 +147,13 @@ export const InvoiceLanding = () => {
                             <p className="text-[9px] font-medium">
                               {inv.createdAt
                                 ? new Date(inv.createdAt).toLocaleDateString(
-                                    "id-ID",
-                                    {
-                                      day: "numeric",
-                                      month: "short",
-                                      year: "numeric",
-                                    },
-                                  )
+                                  "id-ID",
+                                  {
+                                    day: "numeric",
+                                    month: "short",
+                                    year: "numeric",
+                                  },
+                                )
                                 : "N/A"}
                             </p>
                           </div>

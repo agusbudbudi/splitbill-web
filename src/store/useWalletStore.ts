@@ -60,7 +60,7 @@ export const useWalletStore = create<WalletState>()(
       addPaymentMethod: (method) => {
         const id = Math.random().toString(36).substring(7);
         set((state) => ({
-          paymentMethods: [...state.paymentMethods, { ...method, id }],
+          paymentMethods: [{ ...method, id }, ...state.paymentMethods],
         }));
         return id;
       },

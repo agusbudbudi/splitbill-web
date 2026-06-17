@@ -59,14 +59,14 @@ export const FeatureBanner = ({
         className={cn(
           "w-full rounded-xl p-6 relative overflow-hidden transition-all duration-300 h-full",
           variant === "primary" &&
-            "bg-primary text-white shadow-xl shadow-primary/20",
+          "bg-primary text-white shadow-xl shadow-primary/20",
           variant === "secondary" && "bg-[#f0f4ff] text-foreground",
           variant === "plain" &&
-            "bg-white border border-border shadow-soft text-foreground",
+          "bg-white border border-border shadow-soft text-foreground",
         )}
       >
         <div className="relative z-10 flex flex-col justify-between h-full w-full">
-          <div className="space-y-3 max-w-[60%] flex-grow">
+          <div className="space-y-3 max-w-[70%] flex-grow">
             <h2
               className={cn(
                 "text-xl font-bold leading-tight",
@@ -85,7 +85,7 @@ export const FeatureBanner = ({
             </div>
           </div>
 
-          <div className="w-full mt-8">
+          <div className="w-full mt-6">
             <Link href={ctaHref} className="w-full">
               <Button
                 onClick={onCtaClick}

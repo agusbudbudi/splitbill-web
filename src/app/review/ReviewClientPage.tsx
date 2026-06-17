@@ -11,26 +11,31 @@ export default function ReviewClientPage() {
     <div className="min-h-screen bg-background flex flex-col items-center">
       <Header title="Review" showBackButton />
 
-      <main className="flex-1 w-full max-w-[600px] flex flex-col">
-        {/* Banner Section */}
-        <div className="w-full px-4 pt-4">
-          <div className="relative aspect-[360/113] w-full overflow-hidden rounded-lg">
-            <Image
-              src="/img/banner-feedback.jpg"
-              alt="Berikan Review dan Masukan untuk Aplikasi SplitBill Online — Masukanmu sangat berarti bagi kami"
-              fill
-              sizes="(max-width: 600px) 100vw, 600px"
-              className="object-cover"
-              priority
-            />
-          </div>
-        </div>
+      <div className="relative w-full max-w-[600px] flex-1 flex flex-col">
+        {/* Gradient background */}
+        <div className="absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-primary via-primary/50 to-transparent pointer-events-none z-0" />
 
-        <div className="px-4 mt-4 flex-1 flex flex-col">
-          {/* Form Section */}
-          <ReviewForm />
-        </div>
-      </main>
+        <main className="relative z-10 flex-1 w-full flex flex-col">
+          {/* Banner Section */}
+          <div className="w-full px-4 pt-4">
+            <div className="relative aspect-[360/113] w-full overflow-hidden rounded-lg">
+              <Image
+                src="/img/banner-feedback.jpg"
+                alt="Berikan Review dan Masukan untuk Aplikasi SplitBill Online — Masukanmu sangat berarti bagi kami"
+                fill
+                sizes="(max-width: 600px) 100vw, 600px"
+                className="object-cover"
+                priority
+              />
+            </div>
+          </div>
+
+          <div className="px-4 mt-4 flex-1 flex flex-col">
+            {/* Form Section */}
+            <ReviewForm />
+          </div>
+        </main>
+      </div>
     </div>
   );
 }

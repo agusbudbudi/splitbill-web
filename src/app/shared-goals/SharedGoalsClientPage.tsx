@@ -18,11 +18,11 @@ export default function SharedGoalsClientPage() {
   return (
     <div className="min-h-screen bg-background flex flex-col items-center relative">
       {/* Purple background behind header and top banner */}
-      <div 
+      <div
         className={cn(
           "absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[600px] bg-primary z-0 rounded-b-[20px] transition-all duration-300",
           selectedGoalId ? "h-[250px]" : "h-[150px]"
-        )} 
+        )}
       />
 
       <div className="w-full max-w-[600px] min-h-screen flex flex-col relative z-10">
@@ -45,7 +45,7 @@ export default function SharedGoalsClientPage() {
             {/* Content */}
             <div className="flex-1 p-4 pb-10 space-y-6">
               <FeatureBanner
-                title="Raih Impian Bareng! 🎯"
+                title="Raih Impian Bareng!"
                 description={
                   <>
                     Nabung bareng buat liburan! <br />

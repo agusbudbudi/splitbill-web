@@ -37,8 +37,11 @@ import { Card, CardContent } from "@/components/ui/Card";
 import { EmptyState } from "@/components/ui/EmptyState";
 import confetti from "canvas-confetti";
 import { ShareCollectionReceipt } from "./ShareCollectionReceipt";
-import { ProviderLogo } from "@/components/ui/ProviderLogo";
+import { DynamicFinLogo } from "@/components/wallet/DynamicFinLogo";
+import { getProviderLogoInfo } from "@/lib/providerLogos";
 import { CollectionMoreBottomSheet } from "./CollectionMoreBottomSheet";
+import { WalletSelectionCard } from "@/components/wallet/WalletSelectionCard";
+import { AddPaymentMethodBottomSheet } from "@/components/wallet/AddPaymentMethodBottomSheet";
 
 const AVATAR_BASE_URL =
   "https://api.dicebear.com/9.x/personas/svg?backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf&size=64&scale=100&seed=";
@@ -62,16 +65,18 @@ export const CollectionDashboard = ({
   const [isCopying, setIsCopying] = useState(false);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [isMoreOpen, setIsMoreOpen] = useState(false);
+  const [isAddWalletOpen, setIsAddWalletOpen] = useState(false);
   const { paymentMethods } = useWalletStore();
-  const {
-    togglePayerStatus,
-    addPayer,
-    removePayer,
-    deleteCollection,
-    updateCollectionTitle,
-    markAllAsPaid,
-    toggleArchiveCollection,
-  } = useCollectMoneyStore();
+
+  const togglePayerStatus = useCollectMoneyStore((state) => state.togglePayerStatus);
+  const addPayer = useCollectMoneyStore((state) => state.addPayer);
+  const removePayer = useCollectMoneyStore((state) => state.removePayer);
+  const deleteCollection = useCollectMoneyStore((state) => state.deleteCollection);
+  const updateCollectionTitle = useCollectMoneyStore((state) => state.updateCollectionTitle);
+  const markAllAsPaid = useCollectMoneyStore((state) => state.markAllAsPaid);
+  const toggleArchiveCollection = useCollectMoneyStore((state) => state.toggleArchiveCollection);
+  const updatePaymentMethodIds = useCollectMoneyStore((state) => state.updatePaymentMethodIds);
+
   const hasCelebrated = useRef(false);
 
   const receiptRef = useRef<HTMLDivElement>(null);
@@ -182,9 +187,24 @@ export const CollectionDashboard = ({
     }
   };
 
+  const selectedPaymentMethodIds = collection.paymentMethodIds || [];
   const linkedMethods = paymentMethods.filter((m) =>
-    collection.paymentMethodIds?.includes(m.id),
+    selectedPaymentMethodIds.includes(m.id),
   );
+
+  // Only count IDs that actually exist in the wallet to avoid ghost counts
+  const actualSelectedCount = selectedPaymentMethodIds.filter(id =>
+    paymentMethods.some(m => m.id === id)
+  ).length;
+
+  const togglePaymentMethodSelection = (methodId: string) => {
+    const isSelected = selectedPaymentMethodIds.includes(methodId);
+    const newIds = isSelected
+      ? selectedPaymentMethodIds.filter((id) => id !== methodId)
+      : [...selectedPaymentMethodIds, methodId];
+
+    updatePaymentMethodIds(collection.id, newIds);
+  };
 
   const handleCopyList = () => {
     setIsCopying(true);
@@ -625,50 +645,72 @@ export const CollectionDashboard = ({
             </div>
 
             {/* Linked Payment Methods Section */}
-            {linkedMethods.length > 0 && (
-              <div className="mt-8 space-y-3 pb-8">
-                <h3 className="text-sm font-bold text-foreground/70 flex items-center gap-2 px-1">
-                  <Wallet className="w-4 h-4" /> Informasi Transfer
-                </h3>
-                <div className="grid grid-cols-1 gap-2">
-                  {linkedMethods.map((method) => (
-                    <div
-                      key={method.id}
-                      className="p-4 bg-primary/5 border border-primary/10 rounded-2xl flex items-center gap-4"
-                    >
-                      <ProviderLogo name={method.providerName} size="md" />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-[10px] uppercase font-bold text-primary/60 leading-none mb-1 tracking-tight">
-                          {method.providerName}
-                        </p>
-                        <p className="font-bold text-sm text-foreground mb-0.5">
-                          {method.accountNumber || method.phoneNumber}
-                        </p>
-                        <p className="text-xs text-muted-foreground font-medium">
-                          a.n {method.accountName}
-                        </p>
-                      </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-8 w-8 p-0 hover:bg-primary/10 cursor-pointer"
-                        onClick={() => {
-                          navigator.clipboard.writeText(
-                            method.accountNumber || method.phoneNumber || "",
-                          );
-                          toast.success("Nomor rekening disalin!");
-                        }}
-                      >
-                        <Copy className="w-3.5 h-3.5" />
-                      </Button>
-                    </div>
-                  ))}
+            <Card className="border-primary/10 shadow-soft overflow-hidden">
+              <CardContent className="p-5 space-y-4">
+                <div className="flex items-center justify-between px-1">
+                  <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+                    <Wallet className="w-4 h-4 text-primary" /> Informasi Transfer 📥
+                  </h3>
+                  {actualSelectedCount > 0 && (
+                    <span className="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+                      {actualSelectedCount} Terpilih
+                    </span>
+                  )}
                 </div>
-              </div>
-            )}
+
+
+                <p className="text-[11px] text-muted-foreground px-1 -mt-2 leading-relaxed">
+                  Pilih dompet kamu biar temen gampang bayarnya.
+                </p>
+
+                <div className="flex items-center gap-3 overflow-x-auto pb-2 scrollbar-hide -mx-1 px-1">
+                  {/* Add New Button at the beginning */}
+                  <Card
+                    onClick={() => setIsAddWalletOpen(true)}
+                    className="relative h-[30vw] sm:h-[157px] shrink-0 aspect-square rounded-2xl border border-dashed border-primary/20 flex flex-col items-center justify-center gap-1.5 text-primary/40 hover:text-primary hover:border-primary/40 hover:bg-primary/5 transition-all active:scale-95 cursor-pointer bg-white shadow-none"
+                  >
+                    <Plus className="w-5 h-5" />
+                    <span className="text-[11px] font-bold">Tambah</span>
+                  </Card>
+
+                  {paymentMethods.length > 0 ? (
+                    paymentMethods.map((method) => (
+                      <WalletSelectionCard
+                        key={method.id}
+                        method={method}
+                        isSelected={selectedPaymentMethodIds.includes(method.id)}
+                        onClick={() => togglePaymentMethodSelection(method.id)}
+                      />
+                    ))
+                  ) : (
+                    <div className="flex-1 min-w-[200px] h-[30vw] sm:h-[157px] flex flex-col items-center justify-center py-4 px-6 rounded-2xl bg-muted/5 border border-dashed border-muted-foreground/10 text-center">
+                      <p className="text-[10px] text-muted-foreground leading-tight">
+                        Belum ada dompet tersimpan. <br />
+                        <span
+                          onClick={() => setIsAddWalletOpen(true)}
+                          className="font-bold underline text-primary cursor-pointer"
+                        >
+                          Tambah sekarang
+                        </span>
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>
+
+      <AddPaymentMethodBottomSheet
+        isOpen={isAddWalletOpen}
+        onClose={() => setIsAddWalletOpen(false)}
+        onMethodAdded={(id) => {
+          if (!selectedPaymentMethodIds.includes(id)) {
+            updatePaymentMethodIds(collection.id, [...selectedPaymentMethodIds, id]);
+          }
+        }}
+      />
 
       {/* Hidden Card for Screenshot */}
       <div className="fixed top-0 left-[-9999px] pointer-events-none">

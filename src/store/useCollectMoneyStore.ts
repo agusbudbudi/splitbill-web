@@ -43,6 +43,7 @@ interface CollectMoneyState {
   deleteCollection: (id: string) => void;
   toggleArchiveCollection: (id: string) => void;
   updateCollectionTitle: (id: string, title: string) => void;
+  updatePaymentMethodIds: (id: string, paymentMethodIds: string[]) => void;
   getActiveCollection: () => CollectionSession | undefined;
 }
 
@@ -64,7 +65,7 @@ export const useCollectMoneyStore = create<CollectMoneyState>()(
             id: uuidv4(),
             isPaid: false,
           })),
-          paymentMethodIds,
+          paymentMethodIds: paymentMethodIds || [],
           isArchived: false,
           sourceId,
         };
@@ -173,6 +174,13 @@ export const useCollectMoneyStore = create<CollectMoneyState>()(
         set((state) => ({
           collections: state.collections.map((c) =>
             c.id === id ? { ...c, title } : c,
+          ),
+        })),
+
+      updatePaymentMethodIds: (id, paymentMethodIds) =>
+        set((state) => ({
+          collections: state.collections.map((c) =>
+            c.id === id ? { ...c, paymentMethodIds } : c,
           ),
         })),
 

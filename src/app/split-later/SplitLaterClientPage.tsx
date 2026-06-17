@@ -807,7 +807,7 @@ export default function SplitLaterClientPage() {
         <div className="flex-1 p-4 pb-10 space-y-6">
           {/* Feature Banner */}
           <FeatureBanner
-            title="Split Later 🗂️"
+            title="Split Later Easy"
             description={
               <>
                 Kumpulin semua struk dulu, <br />

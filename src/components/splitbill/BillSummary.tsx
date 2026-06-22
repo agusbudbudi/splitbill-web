@@ -83,6 +83,7 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
       useBillCalculations(dataForCalc);
 
     const people = billData ? billData.people : store.people;
+    const expenses = billData ? billData.expenses : store.expenses;
     const additionalExpenses = billData
       ? billData.additionalExpenses
       : store.additionalExpenses;
@@ -659,6 +660,72 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
               </div>
             )}
 
+          </div>
+        </Card>
+
+        {/* Detailed Expenses & Costs Card */}
+        <Card className="p-4 border-primary/20 shadow-md overflow-hidden relative">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 blur-3xl pointer-events-none" />
+          <div className="space-y-6 relative z-10">
+            {expenses && expenses.length > 0 && (
+              <div className="space-y-3">
+                <h3 className="font-bold text-xs text-foreground/70 uppercase px-1">
+                  Item Pengeluaran 🛍️
+                </h3>
+                <div className="grid gap-2">
+                  {expenses.map((expense) => (
+                    <div
+                      key={expense.id}
+                      className="p-3 rounded-lg border border-primary/10 bg-white/40 flex flex-col gap-2"
+                    >
+                      <div className="flex justify-between items-start">
+                        <div className="min-w-0 flex-1">
+                          <p className="font-bold text-sm text-foreground truncate">
+                            {expense.item}
+                          </p>
+                          {expense.paidBy ? (
+                            <p className="text-[10px] text-muted-foreground font-medium mt-0.5">
+                              Dibayar oleh <strong className="text-primary">{expense.paidBy}</strong>
+                            </p>
+                          ) : (
+                            <p className="text-[10px] text-muted-foreground font-medium mt-0.5">
+                              Belum ada pembayar
+                            </p>
+                          )}
+                        </div>
+                        <span className="text-xs font-black text-primary shrink-0">
+                          {formatToIDR(expense.amount)}
+                        </span>
+                      </div>
+
+                      {expense.who && expense.who.length > 0 && (
+                        <div className="flex flex-wrap items-center gap-1 pt-1.5 border-t border-dashed border-primary/5">
+                          <span className="text-[9px] text-muted-foreground/60 uppercase font-bold tracking-wider mr-1">
+                            Bagi ke:
+                          </span>
+                          <div className="flex flex-wrap gap-1">
+                            {expense.who.map((name) => (
+                              <div
+                                key={name}
+                                className="flex items-center gap-1 bg-primary/5 border border-primary/10 rounded-full pl-0.5 pr-2 py-0.5 text-[9px] font-bold text-primary"
+                              >
+                                <img
+                                  src={`${AVATAR_BASE_URL}${encodeURIComponent(name)}`}
+                                  alt={name}
+                                  className="w-4 h-4 rounded-full bg-white"
+                                />
+                                <span className="truncate max-w-[50px]">{name}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Additional Expenses Info Section */}
             {additionalExpenses && additionalExpenses.length > 0 && (
               <div className="space-y-3">
@@ -802,8 +869,8 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
                   transferTo: inst.to,
                 }));
 
-                const finalPaymentMethodIds = selectedPaymentMethodIds.length > 0 
-                  ? selectedPaymentMethodIds 
+                const finalPaymentMethodIds = selectedPaymentMethodIds.length > 0
+                  ? selectedPaymentMethodIds
                   : storePaymentMethods.map(m => m.id);
 
                 useCollectMoneyStore.getState().createCollection(

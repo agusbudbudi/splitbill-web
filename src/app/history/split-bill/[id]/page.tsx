@@ -204,7 +204,7 @@ function SplitBillDetailView({
       />
 
       {/* Primary hero zone — flows seamlessly from the header */}
-      <div className="bg-primary p-4 relative">
+      <div className="bg-gradient-to-b from-primary via-primary/50 to-transparent p-4 relative">
         <SocialReceiptPreviewBanner
           activityName={bill.activityName}
           people={bill.people}

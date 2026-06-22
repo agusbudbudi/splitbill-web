@@ -65,7 +65,7 @@ export const SocialReceiptPreviewBanner = ({
   const visibleReceiptHeight = scale > 0 ? PREVIEW_HEIGHT / scale : 0;
 
   return (
-    <div className="rounded-2xl overflow-hidden bg-white shadow-[0_8px_32px_rgba(0,0,0,0.10)]">
+    <div className="rounded-2xl overflow-hidden bg-white shadow-[0_8px_32px_rgba(0,0,0,0.05)]">
       {/* Measurement anchor + scaled receipt */}
       <div
         ref={containerRef}

@@ -35,6 +35,27 @@ const populerFeatures = [
 
 const allFeatures = [
   {
+    id: "split",
+    label: "Split Bill",
+    image: "/img/menu-split-bill.png",
+    badge: "Populer",
+    href: "/split-bill",
+  },
+  {
+    id: "kantong",
+    label: "Split Later",
+    badge: "New",
+    image: "/img/menu-split-later.png",
+    href: "/split-later",
+  },
+  {
+    id: "invoice",
+    badge: "Populer",
+    label: "Invoice",
+    image: "/img/menu-invoice.png",
+    href: "/invoice",
+  },
+  {
     id: "nabung",
     label: "SharedGoal",
     image: "/img/menu-shared-goal.png",
@@ -62,7 +83,7 @@ interface FeatureItem {
   badge?: string;
 }
 
-const FeatureGrid = ({ items }: { items: FeatureItem[] }) => {
+const FeatureGrid = ({ items, hideBadges = false }: { items: FeatureItem[]; hideBadges?: boolean }) => {
   return (
     <div className="grid grid-cols-4 sm:flex sm:flex-wrap items-start justify-items-start justify-start gap-2 sm:gap-12 py-2 px-2">
       {items.map((item) => (
@@ -72,7 +93,7 @@ const FeatureGrid = ({ items }: { items: FeatureItem[] }) => {
           className="group flex flex-col items-center gap-2 w-[80px] cursor-pointer"
         >
           <div className="relative">
-            {item.badge && <FloatingBadge>{item.badge}</FloatingBadge>}
+            {!hideBadges && item.badge && <FloatingBadge>{item.badge}</FloatingBadge>}
             <div className="w-16 h-16 rounded-[30%] bg-white flex items-center justify-center transition-all group-hover:scale-105 shadow-soft border border-primary/5">
               <Image
                 src={item.image}
@@ -103,8 +124,6 @@ export const AllFeatureClientPage = () => {
       />
 
       <div className="relative w-full max-w-[600px] flex-1 flex flex-col">
-        {/* Gradient background */}
-        <div className="absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-primary via-primary/50 to-transparent pointer-events-none z-0" />
 
         <main className="relative z-10 w-full flex-1 pb-20 pt-4 px-4 flex flex-col">
           {/* PWA Banner */}
@@ -143,7 +162,7 @@ export const AllFeatureClientPage = () => {
             </div>
 
             <div>
-              <FeatureGrid items={allFeatures} />
+              <FeatureGrid items={allFeatures} hideBadges />
             </div>
           </section>
         </main>

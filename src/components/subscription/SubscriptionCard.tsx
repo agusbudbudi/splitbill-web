@@ -134,7 +134,7 @@ export function SubscriptionCard({
             onClick={() => onBuy?.(pkg._id)}
             disabled={isProcessing}
           >
-            {isProcessing ? "Memproses..." : "Beli Sekarang"}
+            {isProcessing ? "Memproses..." : "Upgrade Sekarang"}
           </Button>
         </div>
       </div>

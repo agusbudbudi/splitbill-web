@@ -59,7 +59,7 @@ export const BlogCard = ({ blog, priority = false }: BlogCardProps) => {
               {blog.title}
             </h3>
 
-            <p className="text-muted-foreground text-sm line-clamp-3 mb-6 leading-relaxed">
+            <p className="text-muted-foreground text-sm line-clamp-2 mb-6 leading-relaxed">
               {blog.excerpt}
             </p>
 

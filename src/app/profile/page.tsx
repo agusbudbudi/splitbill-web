@@ -33,6 +33,8 @@ import { AdsCarousel } from "@/components/home/AdsCarousel";
 
 import { useWalletStore } from "@/store/useWalletStore";
 import { PaymentMethodCard } from "@/components/wallet/PaymentMethodCard";
+import { useFriendStore } from "@/lib/stores/friendStore";
+import { getOrders } from "@/lib/api/subscription";
 
 // --- Reusable Components ---
 
@@ -60,6 +62,7 @@ interface MenuItemProps {
   trailing?: React.ReactNode;
   children?: React.ReactNode;
   isExpanded?: boolean;
+  count?: number;
 }
 
 const MenuItem = ({
@@ -70,6 +73,7 @@ const MenuItem = ({
   trailing,
   children,
   isExpanded,
+  count,
 }: MenuItemProps) => {
   const content = (
     <div className="flex items-center justify-between p-4 hover:bg-accent/40 transition-all cursor-pointer group">
@@ -77,9 +81,16 @@ const MenuItem = ({
         <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-muted-foreground group-hover:bg-primary/5 group-hover:text-primary transition-all duration-300">
           <Icon className="w-5 h-5" />
         </div>
-        <span className="text-sm font-medium text-foreground/80 tracking-tight">
-          {label}
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-medium text-foreground/80 tracking-tight">
+            {label}
+          </span>
+          {count !== undefined && count > 0 && (
+            <span className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-primary text-white text-[9px] font-black leading-none animate-in zoom-in duration-200">
+              {count}
+            </span>
+          )}
+        </div>
       </div>
       {trailing || (
         <ChevronRight className="w-4 h-4 text-muted-foreground/60 group-hover:translate-x-0.5 transition-transform" />
@@ -115,10 +126,29 @@ export default function ProfilePage() {
   const router = useRouter();
   const { user: authUser, logout } = useAuthStore();
   const { theme, toggleTheme } = useThemeStore();
-  const { paymentMethods } = useWalletStore();
+  const friends = useFriendStore((state) => state.friends);
+  const { paymentMethods, savedBills, fetchBills } = useWalletStore();
+  const [ordersCount, setOrdersCount] = useState(0);
   const isThemeDark = theme === "dark";
   const [isContactOpen, setIsContactOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  React.useEffect(() => {
+    fetchBills().catch((err) => console.error("Error fetching bills:", err));
+    getOrders()
+      .then((orders) => {
+        if (Array.isArray(orders)) {
+          setOrdersCount(orders.length);
+        }
+      })
+      .catch((err) => {
+        console.warn("Failed to fetch orders count:", err);
+      });
+  }, [fetchBills]);
+
+  const backendBillsCount = savedBills.filter((b) =>
+    /^[0-9a-fA-F]{24}$/.test(b.id)
+  ).length;
 
   // Use auth user data or fallback to defaults
   const user = authUser || {
@@ -285,14 +315,26 @@ export default function ProfilePage() {
                   icon={ShoppingBag}
                   label="Pesanan Saya"
                   href="/profile/orders"
+                  count={ordersCount}
                 />
                 <MenuItem
                   icon={Users}
                   label="Teman Saya"
                   href="/profile/friends"
+                  count={friends.length}
                 />
-                <MenuItem icon={ReceiptText} label="History" href="/history" />
-                <MenuItem icon={Wallet} label="Wallet" href="/wallet" />
+                <MenuItem
+                  icon={ReceiptText}
+                  label="History"
+                  href="/history"
+                  count={backendBillsCount}
+                />
+                <MenuItem
+                  icon={Wallet}
+                  label="Wallet"
+                  href="/wallet"
+                  count={paymentMethods.length}
+                />
               </MenuGroup>
 
               <MenuGroup title="Preferensi & Masukan">
@@ -300,7 +342,7 @@ export default function ProfilePage() {
               </MenuGroup>
 
               <MenuGroup title="Dukungan & Komunitas">
-                <MenuItem icon={Heart} label="Donasi Developer" href="/donate" />
+                <MenuItem icon={Heart} label="Support Developer" href="/donate" />
                 <MenuItem
                   icon={Share2}
                   label="Share SplitBill"

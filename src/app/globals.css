@@ -179,6 +179,13 @@
   }
 }
 
+/* In PWA standalone mode, footer doesn't need safe area padding */
+@media (display-mode: standalone) {
+  .pb-safe {
+    padding-bottom: 1.25rem;
+  }
+}
+
 .pt-safe {
   padding-top: env(safe-area-inset-top);
 }

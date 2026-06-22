@@ -77,10 +77,9 @@ export const NavigationMenu = ({ variant = "flex" }: { variant?: "flex" | "grid"
                 )
           )}
         >
-          <div className="relative">
-            {item.badge && <FloatingBadge className="-top-2">{item.badge}</FloatingBadge>}
+          <div className="relative pb-2">
             <div className={cn(
-              "rounded-[30%] bg-white flex items-center justify-center transition-all group-hover:scale-105 shadow-soft border border-primary/5 w-[72px] h-[72px]"
+              "rounded-[30%] bg-white flex items-center justify-center transition-all group-hover:scale-105 shadow-soft border border-primary/5 w-[72px] h-[72px] overflow-visible relative"
             )}>
               <Image
                 src={item.image}
@@ -89,6 +88,7 @@ export const NavigationMenu = ({ variant = "flex" }: { variant?: "flex" | "grid"
                 height={80}
                 className="w-14 h-14 object-contain transition-transform duration-300"
               />
+              {item.badge && <FloatingBadge position="bottom">{item.badge}</FloatingBadge>}
             </div>
           </div>
           <span className="text-[11px] sm:text-[12px] text-muted-foreground group-hover:text-primary transition-colors text-center font-bold tracking-tight">

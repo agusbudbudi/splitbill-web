@@ -117,7 +117,7 @@ export default function MemberPage() {
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.25, ease: "easeInOut" }}
-            className="w-full overflow-hidden bg-white/90 backdrop-blur-md bg-gradient-to-r from-primary/10 via-primary/5 to-white border-t border-slate-100 text-slate-700 sticky top-14 lg:top-16 z-40 shadow-[0_8px_30px_rgba(0,0,0,0.03)]"
+            className="w-full overflow-hidden bg-primary/90 backdrop-blur-md text-white border-t border-white/10 sticky top-14 lg:top-16 z-40 "
           >
             <div className="w-full py-2 px-4 flex items-center justify-between max-w-7xl mx-auto">
               <span className="text-xs sm:text-sm font-medium flex items-center gap-1.5 tracking-wide">
@@ -126,13 +126,13 @@ export default function MemberPage() {
               <div className="flex items-center gap-2">
                 <button
                   onClick={handlePwaInstall}
-                  className="cursor-pointer font-black text-primary text-xs flex items-center gap-1 hover:underline"
+                  className="cursor-pointer font-black text-white text-xs flex items-center gap-1 hover:underline bg-white/15 px-2.5 py-1 rounded-md hover:bg-white/25 transition-all"
                 >
                   ⚡ {isIOS ? "Cara Install" : "Install"}
                 </button>
                 <button
                   onClick={handleDismissPwa}
-                  className="cursor-pointer text-slate-400 hover:text-slate-600 p-0.5"
+                  className="cursor-pointer text-white/70 hover:text-white p-0.5"
                   aria-label="Tutup banner"
                 >
                   <X className="w-3.5 h-3.5" />
@@ -149,7 +149,7 @@ export default function MemberPage() {
       />
 
       <main className="w-full max-w-[600px] lg:max-w-7xl mx-auto px-4 pt-4 lg:pt-12 pb-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-14 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 lg:gap-14 items-start">
 
           {/* Left Side: Activity Content (Activity Pane) */}
           <div className="lg:col-span-7 space-y-6 lg:space-y-10">
@@ -159,9 +159,11 @@ export default function MemberPage() {
                 <FeatureHighlights heroMode />
               </section>
             ) : (
-              <section className="space-y-4">
-                <SplitBillHeroCard />
-              </section>
+              <div className="w-[calc(100%+2rem)] -mx-4 -mt-4 pt-6 bg-gradient-to-b from-primary via-primary/50 to-transparent sm:w-full sm:mx-0 sm:mt-0 sm:pt-0 sm:pb-0 sm:bg-none">
+                <section className="space-y-4 mx-4 sm:mx-0">
+                  <SplitBillHeroCard />
+                </section>
+              </div>
             )}
 
             {hasActiveBill ? (
@@ -186,10 +188,6 @@ export default function MemberPage() {
 
             <section className="space-y-4">
               <ReviewRewardBanner />
-            </section>
-
-            <section className="space-y-4">
-              <ShareEncouragement isCompact />
             </section>
           </div>
 
@@ -230,11 +228,15 @@ export default function MemberPage() {
                     Mulai Sat Set ⚡
                   </h2>
                   <p className="text-sm text-muted-foreground font-medium">
-                    Biar acara nongkrong no-drama, cobain navigasi gampang ini.
+                    Biar nongkrong tetap no-drama, semua ada di sini
                   </p>
                 </div>
               </div>
               <MemberGettingStarted />
+            </section>
+
+            <section className="space-y-4">
+              <ShareEncouragement isCompact />
             </section>
 
             <section className="space-y-4">

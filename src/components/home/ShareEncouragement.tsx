@@ -39,34 +39,33 @@ export const ShareEncouragement = ({ isCompact = false }: ShareEncouragementProp
       </div>
 
       <div className={`relative z-10 flex flex-col justify-center ${isCompact
-        ? "p-6 min-h-[180px]"
+        ? "p-4 sm:p-5 min-h-[140px]"
         : "p-6 lg:p-8 min-h-[180px] lg:min-h-[160px]"
         }`}>
-        <div className={`text-left space-y-2 ${isCompact
-          ? "w-[50%]"
+        <div className={`text-left space-y-1.5 ${isCompact
+          ? "w-[55%]"
           : "w-[50%] lg:w-[45%] lg:space-y-4"
           }`}>
           <h2 className={`text-white font-bold tracking-tight leading-[1.2] ${isCompact
-            ? "text-[18px]"
+            ? "text-[16px]"
             : "text-[18px] lg:text-4xl"
             }`}>
-            Fokus healing dulu bestie,<br className={isCompact ? "hidden" : "hidden lg:block"} />
-            <span className={isCompact ? "text-blue-100/90" : "text-blue-100/90 lg:text-white"}> split bill-nya belakangan!</span>
+            Fokus healing dulu,<br className={isCompact ? "hidden" : "hidden lg:block"} />
+            <span className={isCompact ? "text-blue-100/90" : "text-blue-100/90 lg:text-white"}> split bill belakangan! 🌴</span>
           </h2>
-          <p className={`text-white/90 leading-[1.4] font-medium ${isCompact
-            ? "text-[11px]"
+          <p className={`text-white/90 leading-[1.3] font-medium ${isCompact
+            ? "text-[10px]"
             : "text-[11px] lg:text-lg lg:leading-relaxed"
             }`}>
-            Tinggal catat pengeluaran,<br className={isCompact ? "hidden" : "hidden lg:block"} />
-            bagi rata pas udah santai. Anti ribet!
+            {isCompact ? "Catat dulu, bagi rata pas santai." : "Tinggal catat pengeluaran, bagi rata pas udah santai. Anti ribet!"}
           </p>
 
-          <div className="pt-2">
+          <div className="pt-1">
             <span className={`inline-flex bg-white text-[#2E6FF3] font-bold rounded-xl items-center justify-center gap-2 hover:bg-blue-50 transition-all shadow-md group-hover:translate-x-1 duration-300 ${isCompact
-              ? "text-[12px] px-5 py-2.5"
+              ? "text-[10px] px-4 py-2"
               : "text-[12px] lg:text-base px-5 lg:px-8 py-2.5 lg:py-4 lg:rounded-2xl"
               }`}>
-              Coba Sekarang <ArrowRight className={`w-4 h-4 ${isCompact ? "" : "lg:w-5 lg:h-5"}`} />
+              Coba Sekarang <ArrowRight className={`w-3.5 h-3.5 ${isCompact ? "" : "lg:w-5 lg:h-5"}`} />
             </span>
           </div>
         </div>

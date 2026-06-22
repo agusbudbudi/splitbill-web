@@ -54,7 +54,7 @@ export const SplitBillHeroCard = () => {
   return (
     <HeroBanner
       variant="light"
-      className="w-full"
+      className="w-full bg-white border border-slate-100/80 shadow-[0_8px_30px_rgba(0,0,0,0.04)]"
       badgeText="Scan Struk Otomatis"
       badgeIcon={<Sparkles className="w-3 h-3 text-primary fill-primary" />}
       title={

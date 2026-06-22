@@ -61,55 +61,57 @@ export const FeatureHighlights = ({ heroMode = false }: FeatureHighlightsProps) 
   // ── HERO MODE ────────────────────────────────────────────────────────────
   if (heroMode) {
     return (
-      <div className="relative w-[calc(100%+2rem)] -mx-4 -mt-4 sm:mx-0 sm:mt-0 sm:w-full overflow-hidden bg-gradient-to-br from-primary via-blue-600 to-indigo-700 pt-6 pb-6 sm:pt-8 sm:pb-8 rounded-none sm:rounded-lg">
-        {/* Decorative blobs — same as HeroBanner */}
-        <div className="absolute top-0 right-0 w-[80%] h-full bg-gradient-to-l from-white/10 to-transparent pointer-events-none" />
-        <div className="absolute top-0 left-[-10%] w-[40%] h-[60%] bg-blue-400/20 rounded-full blur-[60px] pointer-events-none" />
-        <div className="absolute bottom-[-10%] right-[-5%] w-[50%] h-[50%] bg-indigo-400/15 rounded-full blur-[80px] pointer-events-none" />
-
-        <div className="relative z-10 px-5 sm:px-6 space-y-4">
+      <div className="w-[calc(100%+2rem)] -mx-4 -mt-4 pt-6 bg-gradient-to-b from-primary via-primary/50 to-transparent sm:w-full sm:mx-0 sm:mt-0 sm:pt-0 sm:pb-0 sm:bg-none">
+        <div className="bg-white rounded-2xl border border-slate-100/80 shadow-[0_8px_30px_rgba(0,0,0,0.04)] p-5 sm:p-6 mx-4 sm:mx-0 space-y-4">
           {/* Greeting row */}
           <div className="flex items-start justify-between gap-3">
             <div>
-              <h2 className="text-white font-bold text-[32px] sm:text-[40px] leading-[1.2]">
+              <h2 className="text-slate-900 font-bold text-2xl sm:text-3xl leading-[1.2]">
                 Halo,{" "}
-                <span className="font-extrabold text-amber-300">
+                <span className="font-extrabold text-primary">
                   {firstName}!
                 </span>{" "}
                 👋
               </h2>
-              <p className="text-blue-100 text-xs sm:text-sm font-medium mt-1 leading-relaxed">
+              <p className="text-slate-500 text-xs sm:text-sm font-medium mt-1 leading-relaxed">
                 Yuk selesain patungan tanpa drama hari ini
               </p>
             </div>
           </div>
 
           {/* Storytelling text */}
-          <div className="bg-white/10 mb-2 rounded-sm px-4 py-3">
-            <p className="text-blue-100 text-sm font-medium leading-relaxed">
-              Mantap!,{" "}
-              <span className="font-black text-white">
-                {totalBills} split bill 🔥
-              </span>{" "}
-              selesai tanpa ribet dan kamu udah bantu{" "}
-              <span className="font-black text-white">
-                {totalFriends} teman
-              </span>{" "}
-              biar tagihan gak drama. Keep it up! biar gak ada lagi &quot;eh gue transfer ke siapa?&quot; 😌
-            </p>
-          </div>
+          <p className="text-slate-600 text-sm font-medium leading-relaxed">
+            Mantap!,{" "}
+            <span className="font-black text-slate-800">
+              {totalBills} split bill 🔥
+            </span>{" "}
+            selesai tanpa ribet dan kamu udah bantu{" "}
+            <span className="font-black text-slate-800">
+              {totalFriends} teman
+            </span>{" "}
+            biar tagihan gak drama. Keep it up! biar gak ada lagi &quot;eh gue transfer ke siapa?&quot; 😌
+          </p>
 
-          {/* Metric pills — compact horizontal row */}
-          <div className="flex items-center justify-between bg-white/10 rounded-sm py-2.5 px-3">
-            {metrics.map((m, idx) => (
-              <div key={m.label} className={`flex-1 flex items-center justify-center gap-2 px-1 ${idx < metrics.length - 1 ? "border-r border-white/20" : ""}`}>
-                <div className="flex items-center gap-1.5">
-                  <Image src={m.iconSrc} alt={m.label} width={20} height={20} className="object-contain shrink-0" />
-                  <span className="font-black text-white text-xl leading-none">
-                    {m.value}
-                  </span>
+          {/* Metric cards grid */}
+          <div className="grid grid-cols-3 gap-3 pt-1">
+            {metrics.map((m) => (
+              <div
+                key={m.label}
+                className="bg-slate-50/80 rounded-2xl p-3 sm:p-4 flex flex-col items-center justify-center text-center border border-slate-100/80 hover:shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:scale-[1.02] hover:bg-white transition-all duration-300 group/metric"
+              >
+                <div className="mb-2 transition-transform group-hover/metric:scale-110 shrink-0">
+                  <Image
+                    src={m.iconSrc}
+                    alt={m.label}
+                    width={28}
+                    height={28}
+                    className="object-contain"
+                  />
                 </div>
-                <span className="text-[9px] text-blue-100 font-semibold uppercase tracking-tight">
+                <span className="font-black text-slate-900 text-lg sm:text-xl leading-none">
+                  {m.value}
+                </span>
+                <span className="text-[9px] sm:text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-1 leading-none">
                   {m.label}
                 </span>
               </div>

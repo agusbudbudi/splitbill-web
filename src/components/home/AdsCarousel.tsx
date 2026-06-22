@@ -34,7 +34,7 @@ const SAMPLE_ADS: AdItem[] = [
   {
     id: 3,
     image: "/img/ads-donasi.png",
-    alt: "Donasi Developer — Dukung keberlangsungan server SplitBill Online",
+    alt: "Support Developer — Dukung keberlangsungan server SplitBill Online",
     url: "/donate",
   },
 ];

@@ -24,6 +24,8 @@ import { usePWA } from "@/hooks/usePWA";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { X } from "lucide-react";
+import { ChatAgentFAB } from "@/components/splitbill/chat/ChatAgentFAB";
+import { ChatRoom } from "@/components/splitbill/chat/ChatRoom";
 
 export default function MemberPage() {
   const router = useRouter();
@@ -252,6 +254,10 @@ export default function MemberPage() {
 
       {/* Footer Navbar for Mobile */}
       <Footer />
+
+      {/* Chat Agent FAB */}
+      <ChatAgentFAB bottomClass="bottom-24 lg:bottom-6" />
+      <ChatRoom />
 
       {/* Decorative Background Elements */}
       <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">

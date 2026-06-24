@@ -1,0 +1,346 @@
+"use client";
+
+import React, { useState, useRef, useCallback } from "react";
+import {
+  Camera,
+  ImagePlus,
+  Sparkles,
+  X,
+  CheckCircle2,
+  RotateCcw,
+  Check,
+} from "lucide-react";
+import { useSplitBillChatStore, type ChatStep } from "@/store/useSplitBillChatStore";
+import { scanReceipt, type ReceiptScanResult, type ReceiptItem } from "@/lib/AIService";
+import { formatToIDR } from "@/lib/utils";
+import { cn } from "@/lib/utils";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { trackChatBill } from "@/lib/gtag";
+
+const STEP_ORDER: ChatStep[] = [
+  "GREETING",
+  "ADD_FRIENDS",
+  "SCAN_RECEIPT",
+  "ASSIGN_ITEMS",
+  "SET_TAX_METHOD",
+  "SET_ACTIVITY",
+  "SET_PAYMENT",
+  "REVIEW",
+  "GIVE_REVIEW",
+  "DONE",
+];
+
+interface ReceiptScanCardProps {
+  onConfirm: (result: ReceiptScanResult, imageDataUrl: string) => void;
+}
+
+export function ReceiptScanCard({ onConfirm }: ReceiptScanCardProps) {
+  const { step, scannedResult, activityName, closeChat } = useSplitBillChatStore();
+  const router = useRouter();
+  const isCompleted =
+    STEP_ORDER.indexOf(step) > STEP_ORDER.indexOf("SCAN_RECEIPT");
+
+  const [image, setImage] = useState<string | null>(null);
+  const [isScanning, setIsScanning] = useState(false);
+  const [scanResult, setScanResult] = useState<ReceiptScanResult | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [imageSource, setImageSource] = useState<"camera" | "gallery" | "unknown">("unknown");
+
+  const fileRef = useRef<HTMLInputElement>(null);
+  const cameraRef = useRef<HTMLInputElement>(null);
+
+  // ── Frozen state ────────────────────────────────────────────────────────────
+  if (isCompleted && scannedResult) {
+    return (
+      <div className="rounded-2xl border border-emerald-200 bg-white overflow-hidden shadow-sm">
+        <div className="flex items-center gap-2 px-4 py-3 bg-emerald-50 border-b border-emerald-100">
+          <div className="w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center">
+            <Check className="w-3 h-3 text-white" />
+          </div>
+          <p className="text-xs font-bold text-emerald-700">Struk Terbaca</p>
+          {activityName && (
+            <span className="ml-auto text-xs text-emerald-600 font-semibold">
+              {activityName}
+            </span>
+          )}
+        </div>
+        <div className="px-4 py-3 text-xs text-muted-foreground flex flex-wrap gap-x-2 gap-y-1">
+          <span>
+            <span className="font-bold text-foreground">
+              {scannedResult.items?.length ?? 0} item
+            </span>{" "}
+            berhasil di-scan
+          </span>
+          {scannedResult.tax ? (
+            <span className="text-amber-600 font-semibold">
+              + Pajak {formatToIDR(scannedResult.tax)}
+            </span>
+          ) : null}
+          {scannedResult.service_charge ? (
+            <span className="text-amber-600 font-semibold">
+              + Service Charge {formatToIDR(scannedResult.service_charge)}
+            </span>
+          ) : null}
+          {scannedResult.discount ? (
+            <span className="text-emerald-600 font-semibold">
+              - Diskon {formatToIDR(Math.abs(scannedResult.discount))}
+            </span>
+          ) : null}
+        </div>
+      </div>
+    );
+  }
+
+  // ── File selection ──────────────────────────────────────────────────────────
+  const handleFile = (e: React.ChangeEvent<HTMLInputElement>, source: "camera" | "gallery") => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImage(reader.result as string);
+      setImageSource(source);
+      setScanResult(null);
+      setError(null);
+      trackChatBill.scanImageSelected(source);
+    };
+    reader.readAsDataURL(file);
+    e.target.value = "";
+  };
+
+  // ── AI Scan ─────────────────────────────────────────────────────────────────
+  const handleScan = async () => {
+    if (!image) return;
+
+    // Re-scan = scan ulang gambar yang sama setelah scan pertama gagal
+    if (error) {
+      trackChatBill.scanRetried({ source: imageSource });
+    } else {
+      trackChatBill.scanStarted({ source: imageSource });
+    }
+
+    setIsScanning(true);
+    setError(null);
+    try {
+      const result = await scanReceipt(image);
+      setScanResult(result);
+      toast.success("Scan berhasil! ✨", { duration: 2000 });
+    } catch (err: any) {
+      setError(
+        "Waduh, maaf banget ya... AI Billy lagi agak sibuk/capek nih. Bisa coba lagi nanti, lanjut ngopi dulu, atau kamu bisa lanjut input manual dulu ya! ☕"
+      );
+    } finally {
+      setIsScanning(false);
+    }
+  };
+
+  const handleGoToManual = () => {
+    trackChatBill.scanFallbackManual();
+    closeChat();
+    router.push("/split-bill?step=2&tab=manual");
+  };
+
+  // ── Confirm result ──────────────────────────────────────────────────────────
+  const handleConfirm = () => {
+    if (!scanResult || !image) return;
+    const additionalCount = [
+      scanResult.tax,
+      scanResult.service_charge,
+      scanResult.discount,
+    ].filter(Boolean).length;
+    trackChatBill.scanAccepted({
+      item_count: scanResult.items?.length ?? 0,
+      additional_item_count: additionalCount,
+      has_merchant: !!scanResult.merchant_name,
+    });
+    onConfirm(scanResult, image);
+  };
+
+  return (
+    <div className="rounded-2xl border border-primary/20 bg-white overflow-hidden shadow-sm">
+      {/* Header */}
+      <div className="px-4 py-3 bg-gradient-to-r from-primary/5 to-violet-500/5 border-b border-primary/10 flex items-center gap-2">
+        <Sparkles className="w-4 h-4 text-primary" />
+        <p className="text-xs font-bold text-primary uppercase tracking-wide">
+          Scan Struk AI
+        </p>
+      </div>
+
+      <div className="p-4 space-y-3">
+        {/* No image yet */}
+        {!image && (
+          <>
+            <button
+              onClick={() => cameraRef.current?.click()}
+              className="w-full h-24 rounded-sm border-2 border-dashed border-primary/20 bg-primary/5 hover:bg-primary/10 transition flex flex-col items-center justify-center gap-2 text-primary cursor-pointer"
+            >
+              <Camera className="w-6 h-6" />
+              <span className="text-xs font-bold">Foto Struk</span>
+            </button>
+            <button
+              onClick={() => fileRef.current?.click()}
+              className="w-full h-9 rounded-sm border border-border text-xs font-semibold text-muted-foreground hover:border-primary/40 hover:text-primary hover:bg-primary/5 transition flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <ImagePlus className="w-3.5 h-3.5" />
+              Upload dari Galeri
+            </button>
+          </>
+        )}
+
+        {/* Image preview */}
+        {image && !scanResult && (
+          <>
+            <div className="relative rounded-sm overflow-hidden border border-border">
+              <img
+                src={image}
+                alt="Struk"
+                className="w-full max-h-48 object-contain bg-muted"
+              />
+              <button
+                onClick={() => setImage(null)}
+                className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/50 text-white flex items-center justify-center backdrop-blur-sm cursor-pointer"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+            {error && (
+              <div className="space-y-2 w-full">
+                <p className="text-xs text-destructive font-medium bg-destructive/10 px-3 py-2.5 rounded-sm leading-relaxed">
+                  {error}
+                </p>
+                <button
+                  type="button"
+                  onClick={handleGoToManual}
+                  className="w-full h-10 rounded-sm bg-primary/10 hover:bg-primary/20 text-primary font-bold text-xs flex items-center justify-center gap-1.5 transition active:scale-[0.98] cursor-pointer"
+                >
+                  Lanjut Input Manual ✍️
+                </button>
+              </div>
+            )}
+            <button
+              onClick={handleScan}
+              disabled={isScanning}
+              className="w-full h-10 rounded-sm bg-primary text-white font-bold text-sm flex items-center justify-center gap-2 disabled:opacity-60 transition hover:bg-primary/90 active:scale-[0.98] cursor-pointer"
+            >
+              {isScanning ? (
+                <>
+                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  Scanning...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="w-4 h-4" />
+                  Mulai Scan AI
+                </>
+              )}
+            </button>
+          </>
+        )}
+
+        {/* Scan result */}
+        {scanResult && image && (
+          <>
+            <div className="flex items-center gap-1.5 text-emerald-600">
+              <CheckCircle2 className="w-4 h-4" />
+              <p className="text-xs font-bold">Scan Berhasil!</p>
+            </div>
+
+            {/* Compact result preview */}
+            <div className="rounded-sm border border-border bg-muted/30 p-3 space-y-2">
+              {scanResult.merchant_name && (
+                <p className="text-xs font-black text-foreground">
+                  {scanResult.merchant_name}
+                </p>
+              )}
+              <div className="space-y-1">
+                {scanResult.items?.map((item: ReceiptItem, i: number) => (
+                  <div key={i} className="flex justify-between text-xs">
+                    <span className="text-foreground/80 flex-1 pr-2 break-words whitespace-normal flex items-start gap-1">
+                      <span className="text-muted-foreground select-none">•</span>
+                      <span>
+                        {item.quantity > 1 && (
+                          <span className="text-primary font-bold mr-1">
+                            {item.quantity}x
+                          </span>
+                        )}
+                        {item.name}
+                      </span>
+                    </span>
+                    <span className="font-bold shrink-0">
+                      {formatToIDR(item.price * (item.quantity || 1))}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              {(scanResult.tax || scanResult.service_charge || scanResult.discount) && (
+                <div className="pt-2 border-t border-border space-y-1">
+                  {scanResult.tax && (
+                    <div className="flex justify-between text-xs text-muted-foreground">
+                      <span>Tax</span>
+                      <span className="font-bold">
+                        {formatToIDR(scanResult.tax)}
+                      </span>
+                    </div>
+                  )}
+                  {scanResult.service_charge && (
+                    <div className="flex justify-between text-xs text-muted-foreground">
+                      <span>Service Charge</span>
+                      <span className="font-bold">
+                        {formatToIDR(scanResult.service_charge)}
+                      </span>
+                    </div>
+                  )}
+                  {scanResult.discount && (
+                    <div className="flex justify-between text-xs text-emerald-600 font-semibold">
+                      <span>Diskon</span>
+                      <span className="font-bold">
+                        -{formatToIDR(Math.abs(scanResult.discount))}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            <div className="flex gap-2">
+              <button
+                onClick={() => {
+                  trackChatBill.scanReset();
+                  setScanResult(null);
+                  setImage(null);
+                }}
+                className="h-10 px-4 rounded-sm border border-border text-xs font-semibold text-muted-foreground hover:border-primary/30 transition flex items-center gap-1.5 cursor-pointer"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                Ulangi
+              </button>
+              <button
+                onClick={handleConfirm}
+                className="flex-1 h-10 rounded-sm bg-primary text-white font-bold text-sm flex items-center justify-center gap-2 hover:bg-primary/90 active:scale-[0.98] transition cursor-pointer"
+              >
+                Pakai Hasil Ini
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* Hidden inputs */}
+      <input
+        ref={fileRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={(e) => handleFile(e, "gallery")}
+      />
+      <input
+        ref={cameraRef}
+        type="file"
+        accept="image/*"
+        capture="environment"
+        className="hidden"
+        onChange={(e) => handleFile(e, "camera")}
+      />
+    </div>
+  );
+}

@@ -60,6 +60,8 @@ import { useUIStore } from "@/lib/stores/uiStore";
 import { DropOffSurveyBottomSheet } from "@/components/splitbill/DropOffSurveyBottomSheet";
 import { getRandomAdCampaign, type AdCampaign } from "@/lib/ads/adsConfig";
 import { InterstitialAdModal } from "@/components/ads/InterstitialAdModal";
+import { ChatAgentFAB } from "@/components/splitbill/chat/ChatAgentFAB";
+import { ChatRoom } from "@/components/splitbill/chat/ChatRoom";
 
 const SplitBillContent = () => {
   const router = useRouter();
@@ -1412,6 +1414,10 @@ const SplitBillContent = () => {
         ad={currentAd}
         onClose={handleAdClose}
       />
+
+      {/* SplitBill Chat Agent */}
+      <ChatAgentFAB />
+      <ChatRoom />
     </div>
   );
 };

@@ -178,3 +178,94 @@ export const trackMarketing = {
   setSocialEngagement: (bestiesCount: number) => setUserProperties({ besties_count: bestiesCount }),
   setUsageIntensity: (totalBills: number) => setUserProperties({ total_bills_created: totalBills }),
 };
+
+/**
+ * Chat Split Bill (Agent Billy) event trackers
+ * Prefix: chat_
+ */
+export const trackChatBill = {
+  // #1 — User membuka chatroom (dari halaman mana, dan wizard step berapa jika dari /split-bill)
+  open: (params: {
+    referrer_page: string;
+    wizard_step?: number;
+  }) => trackEvent("chat_open", params),
+
+  // #2 — Klik Lanjut di FriendPickerCard
+  friendsConfirmed: (params: { participant_count: number }) =>
+    trackEvent("chat_friends_confirmed", params),
+
+  // #3 — Gambar dipilih sebelum scan (foto kamera atau upload galeri)
+  scanImageSelected: (source: "camera" | "gallery") =>
+    trackEvent("chat_scan_image_selected", { source }),
+
+  // #4 — Klik tombol "Mulai Scan AI"
+  scanStarted: (params: { source: "camera" | "gallery" | "unknown" }) =>
+    trackEvent("chat_scan_started", params),
+
+  // #5 — Klik "Lanjut Input Manual" saat scan gagal (fallback ke wizard manual)
+  scanFallbackManual: () => trackEvent("chat_scan_fallback_manual"),
+
+  // #6 — Re-scan: scan ulang gambar yang sama setelah API Gemini gagal/error pertama
+  scanRetried: (params: { source: "camera" | "gallery" | "unknown" }) =>
+    trackEvent("chat_scan_retried", params),
+
+  // #7 — Klik tombol "Ulangi": reset gambar + hasil scan ke kondisi awal
+  scanReset: () => trackEvent("chat_scan_reset"),
+
+  // #8 — Klik "Pakai Hasil Ini" setelah scan berhasil
+  scanAccepted: (params: {
+    item_count: number;
+    additional_item_count: number;
+    has_merchant: boolean;
+  }) => trackEvent("chat_scan_accepted", params),
+
+  // #9 — Klik Lanjut di ItemAssignCard
+  itemsAssigned: (params: { total_items: number }) =>
+    trackEvent("chat_items_assigned", params),
+
+  // #10 — Klik Lanjut di TaxMethodCard
+  taxMethodConfirmed: (params: {
+    additional_item_count: number;
+    methods: string; // comma-separated, e.g. "equally,proportionally"
+  }) => trackEvent("chat_tax_method_confirmed", params),
+
+  // #11 — Klik Lanjut di ActivityInputCard
+  activityConfirmed: (params: {
+    activity_name: string;
+    used_quick_pick: boolean;
+    quick_pick_value?: string;
+  }) => trackEvent("chat_activity_confirmed", params),
+
+  // #12 — Klik "Lewati" di PaymentPickerCard
+  paymentSkipped: () => trackEvent("chat_payment_skipped"),
+
+  // #13 — Klik "Simpan" di PaymentPickerCard
+  paymentSaved: (params: {
+    method_count: number;
+    method_names: string; // comma-separated provider names
+  }) => trackEvent("chat_payment_saved", params),
+
+  // #14 — Klik "+Tambah" di PaymentPickerCard (buka AddPaymentMethodBottomSheet)
+  paymentAddClicked: () => trackEvent("chat_payment_add_clicked"),
+
+  // #15 — Klik "Lihat Ringkasan Lengkap" di SummaryCard
+  summaryViewed: (params: { auth_state: "login" | "non_login" }) =>
+    trackEvent("chat_summary_viewed", params),
+
+  // #16 — Klik "Mulai Lagi dari Awal" di SummaryCard
+  restarted: () => trackEvent("chat_restarted"),
+
+  // #17 — Klik "Kirim Review" di ReviewInputCard
+  reviewSent: (params: {
+    rating: number;
+    auth_state: "login" | "non_login";
+  }) => trackEvent("chat_review_sent", params),
+
+  // #18 — Klik tombol refresh (RotateCcw) di header chatroom
+  headerRefreshClicked: (params: { current_step: string }) =>
+    trackEvent("chat_header_refresh_clicked", params),
+
+  // Bonus: Drop-off analysis — chatroom ditutup di step mana
+  closed: (params: { at_step: string }) =>
+    trackEvent("chat_closed", params),
+};

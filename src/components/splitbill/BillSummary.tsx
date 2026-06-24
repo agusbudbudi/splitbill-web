@@ -679,8 +679,8 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
                       className="p-3 rounded-lg border border-primary/10 bg-white/40 flex flex-col gap-2"
                     >
                       <div className="flex justify-between items-start">
-                        <div className="min-w-0 flex-1">
-                          <p className="font-bold text-sm text-foreground truncate">
+                        <div className="min-w-0 flex-1 pr-2">
+                          <p className="font-bold text-sm text-foreground break-words whitespace-normal">
                             {expense.item}
                           </p>
                           {expense.paidBy ? (

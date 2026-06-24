@@ -772,11 +772,11 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
                       )}
                       {scanResult.discount && (
                         <div className="flex justify-between items-center text-[11px]">
-                          <span className="text-destructive font-bold">
+                          <span className="text-emerald-600 font-bold">
                             Discount
                           </span>
-                          <span className="font-bold text-destructive">
-                            -{formatCurrency(scanResult.discount)}
+                          <span className="font-bold text-emerald-600">
+                            -{formatCurrency(Math.abs(scanResult.discount))}
                           </span>
                         </div>
                       )}

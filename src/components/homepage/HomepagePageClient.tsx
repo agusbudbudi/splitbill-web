@@ -41,6 +41,14 @@ const HomepagePromoSlider = dynamic(
   () => import("./HomepagePromoSlider").then((mod) => mod.HomepagePromoSlider),
   { ssr: true }
 );
+const ChatAgentFAB = dynamic(
+  () => import("@/components/splitbill/chat/ChatAgentFAB").then((mod) => mod.ChatAgentFAB),
+  { ssr: false }
+);
+const ChatRoom = dynamic(
+  () => import("@/components/splitbill/chat/ChatRoom").then((mod) => mod.ChatRoom),
+  { ssr: false }
+);
 
 export const HomepagePageClient = () => {
   const { isAuthenticated } = useAuthStore();
@@ -147,6 +155,10 @@ export const HomepagePageClient = () => {
 
       {/* Site Footer */}
       <HomepageFooter />
+
+      {/* Chat Agent FAB */}
+      {isMounted && <ChatAgentFAB bottomClass="bottom-6" />}
+      {isMounted && <ChatRoom />}
     </div>
   );
 };

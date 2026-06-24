@@ -52,6 +52,7 @@ interface SplitBillState {
   addExpense: (expense: Omit<Expense, "id">) => void;
   updateExpense: (id: string, expense: Partial<Expense>) => void;
   removeExpense: (id: string) => void;
+  setExpenses: (expenses: Expense[]) => void;
   setAllExpensesPaidBy: (name: string) => void;
   setAllExpensesWho: (names: string[]) => void;
 
@@ -61,6 +62,7 @@ interface SplitBillState {
     expense: Partial<AdditionalExpense>,
   ) => void;
   removeAdditionalExpense: (id: string) => void;
+  setAdditionalExpenses: (expenses: AdditionalExpense[]) => void;
   setAllAdditionalExpensesPaidBy: (name: string) => void;
   setAllAdditionalExpensesWho: (names: string[]) => void;
 
@@ -147,6 +149,8 @@ export const useSplitBillStore = create<SplitBillState>()(
           expenses: state.expenses.filter((e) => e.id !== id),
         })),
 
+      setExpenses: (expenses) => set({ expenses }),
+
       setAllExpensesPaidBy: (name) =>
         set((state) => ({
           expenses: state.expenses.map((e) => ({
@@ -163,20 +167,34 @@ export const useSplitBillStore = create<SplitBillState>()(
         })),
 
       addAdditionalExpense: (expense) =>
-        set((state) => ({
-          additionalExpenses: [
-            ...state.additionalExpenses,
-            { ...expense, id: Math.random().toString(36).substring(7) },
-          ],
-          lastPaidBy: expense.paidBy || state.lastPaidBy,
-          lastWho: expense.who.length > 0 ? expense.who : state.lastWho,
-        })),
+        set((state) => {
+          const nameLower = expense.name.toLowerCase();
+          const isDiscount = nameLower.includes("diskon") || nameLower.includes("discount");
+          const finalAmount = isDiscount ? -Math.abs(expense.amount) : expense.amount;
+          const finalPaidBy = isDiscount ? "merchant" : expense.paidBy;
+          return {
+            additionalExpenses: [
+              ...state.additionalExpenses,
+              { ...expense, amount: finalAmount, paidBy: finalPaidBy, id: Math.random().toString(36).substring(7) },
+            ],
+            lastPaidBy: finalPaidBy || state.lastPaidBy,
+            lastWho: expense.who.length > 0 ? expense.who : state.lastWho,
+          };
+        }),
 
       updateAdditionalExpense: (id, updatedExpense) =>
         set((state) => ({
-          additionalExpenses: state.additionalExpenses.map((e) =>
-            e.id === id ? { ...e, ...updatedExpense } : e,
-          ),
+          additionalExpenses: state.additionalExpenses.map((e) => {
+            if (e.id === id) {
+              const newFields = { ...e, ...updatedExpense };
+              const nameLower = newFields.name.toLowerCase();
+              const isDiscount = nameLower.includes("diskon") || nameLower.includes("discount");
+              const finalAmount = isDiscount ? -Math.abs(newFields.amount) : newFields.amount;
+              const finalPaidBy = isDiscount ? "merchant" : newFields.paidBy;
+              return { ...newFields, amount: finalAmount, paidBy: finalPaidBy };
+            }
+            return e;
+          }),
           lastPaidBy: updatedExpense.paidBy || state.lastPaidBy,
           lastWho: updatedExpense.who || state.lastWho,
         })),
@@ -187,6 +205,18 @@ export const useSplitBillStore = create<SplitBillState>()(
             (e) => e.id !== id,
           ),
         })),
+
+      setAdditionalExpenses: (expenses) =>
+        set({
+          additionalExpenses: expenses.map((e) => {
+            const nameLower = e.name.toLowerCase();
+            const isDiscount = nameLower.includes("diskon") || nameLower.includes("discount");
+            if (isDiscount) {
+              return { ...e, amount: -Math.abs(e.amount), paidBy: "merchant" };
+            }
+            return e;
+          }),
+        }),
 
       setAllAdditionalExpensesPaidBy: (name) =>
         set((state) => ({

@@ -94,6 +94,18 @@ export const scanReceipt = async (
       };
     }
 
+    // Helper to safely parse numeric fields that may arrive as strings (e.g. "-19,650")
+    const parseNumericField = (value: any): number | null => {
+      if (value === null || value === undefined) return null;
+      const str = value.toString().trim();
+      if (str === "") return null;
+      const isNegative = str.startsWith("-");
+      const digits = str.replace(/[^\d]/g, "");
+      if (!digits) return null;
+      const num = parseInt(digits, 10);
+      return isNegative ? -num : num;
+    };
+
     // Clean up items in the object if they exist
     if (rawTaxonomy.items && Array.isArray(rawTaxonomy.items)) {
       rawTaxonomy.items = rawTaxonomy.items.map((item: any) => ({
@@ -107,6 +119,11 @@ export const scanReceipt = async (
         quantity: item.quantity || 1,
       }));
     }
+
+    // Normalize numeric summary fields (API may return them as strings)
+    rawTaxonomy.tax = parseNumericField(rawTaxonomy.tax);
+    rawTaxonomy.service_charge = parseNumericField(rawTaxonomy.service_charge);
+    rawTaxonomy.discount = parseNumericField(rawTaxonomy.discount);
 
     return rawTaxonomy as ReceiptScanResult;
   } catch (error: any) {

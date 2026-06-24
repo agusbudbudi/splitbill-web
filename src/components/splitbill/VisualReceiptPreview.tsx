@@ -94,7 +94,7 @@ export const VisualReceiptPreview = () => {
   return (
     <>
       {/* Floating Action Button */}
-      <div className="fixed bottom-24 right-4 z-40 md:right-[calc(50vw-300px+16px)]">
+      <div className="fixed bottom-24 left-4 z-40 md:left-[calc(50vw-300px+16px)]">
         <button
           onClick={() => setIsOpen(true)}
           className="relative flex items-center gap-2 px-4 py-3 bg-gradient-to-r from-primary to-violet-600 hover:from-primary/95 hover:to-violet-600/95 text-white font-bold rounded-full shadow-lg shadow-primary/30 transition-all hover:scale-105 active:scale-95 group focus:outline-hidden cursor-pointer"

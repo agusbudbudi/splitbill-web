@@ -144,7 +144,7 @@ export default function RootLayout({
         {GA_ID && <GoogleAnalytics gaId={GA_ID} />}
         <AppEntryTracker />
         <ThemeProvider>
-          <SessionProvider>
+          <SessionProvider basePath="/api/auth">
             <ResponsiveShell>
               {children}
             </ResponsiveShell>

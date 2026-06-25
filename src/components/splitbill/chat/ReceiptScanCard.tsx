@@ -126,9 +126,15 @@ export function ReceiptScanCard({ onConfirm }: ReceiptScanCardProps) {
       setScanResult(result);
       toast.success("Scan berhasil! ✨", { duration: 2000 });
     } catch (err: any) {
-      setError(
-        "Waduh, maaf banget ya... AI Billy lagi agak sibuk/capek nih. Bisa coba lagi nanti, lanjut ngopi dulu, atau kamu bisa lanjut input manual dulu ya! ☕"
-      );
+      if (err.status === 429) {
+        setError(
+          "Yah, limit scan gratis abis! Guest cuma dapet 1x scan. Daftar dulu yuk biar bisa scan lagi! 🚀"
+        );
+      } else {
+        setError(
+          "Waduh, AI Billy lagi sibuk nih. Coba lagi nanti, sambil ngopi, atau lanjut ketik manual aja ya! ☕"
+        );
+      }
     } finally {
       setIsScanning(false);
     }

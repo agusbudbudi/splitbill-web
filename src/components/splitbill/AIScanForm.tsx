@@ -177,7 +177,7 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
             setImage(parsed.image);
           }
           localStorage.removeItem("pending_ai_scan_result");
-          
+
           // Delayed import to ensure store and DOM are fully synchronized
           setTimeout(() => {
             importItemsDirectly(parsed.result, parsed.image);
@@ -337,9 +337,15 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
       const duration = Date.now() - (scanStartTimeRef.current || Date.now());
       const newRetryCount = retryCount + 1;
       setRetryCount(newRetryCount);
-      setError(
-        "Waduh, AI-nya lagi sibuk nih. Kamu bisa lanjut ngopi dulu atau ketik manual aja ya! ☕️",
-      );
+      if (err.status === 429) {
+        setError(
+          "Yah, limit scan gratis abis! Guest cuma dapet 1x scan. Daftar dulu yuk biar bisa scan lagi! 🚀"
+        );
+      } else {
+        setError(
+          "Waduh, AI Billy lagi sibuk nih. Coba lagi nanti, sambil ngopi, atau lanjut ketik manual aja ya! ☕"
+        );
+      }
       trackSplitBill.aiScan(
         "error",
         newRetryCount,

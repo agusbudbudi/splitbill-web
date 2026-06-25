@@ -162,7 +162,7 @@ export function ReceiptScanCard({ onConfirm }: ReceiptScanCardProps) {
       <div className="px-4 py-3 bg-gradient-to-r from-primary/5 to-violet-500/5 border-b border-primary/10 flex items-center gap-2">
         <Sparkles className="w-4 h-4 text-primary" />
         <p className="text-xs font-bold text-primary uppercase tracking-wide">
-          Scan Struk AI
+          Scan Struk AI (estimasi 1 - 2 menit)
         </p>
       </div>
 
@@ -215,6 +215,14 @@ export function ReceiptScanCard({ onConfirm }: ReceiptScanCardProps) {
                 >
                   Lanjut Input Manual ✍️
                 </button>
+              </div>
+            )}
+            {isScanning && (
+              <div className="rounded-sm bg-amber-50/60 border border-amber-100/80 p-2.5 text-[11px] text-amber-800/90 leading-relaxed flex items-start gap-2">
+                <span className="text-sm shrink-0">⏳</span>
+                <div>
+                  <span className="font-bold">Estimasi scan 1-2 menit.</span> Sabar ya bestie, AI Billy lagi baca struknya biar gak ada salah paham di antara kita, no salty-salty! ☕✨
+                </div>
               </div>
             )}
             <button

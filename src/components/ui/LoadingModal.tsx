@@ -77,6 +77,11 @@ export function LoadingModal({ isOpen }: LoadingModalProps) {
         <div className="w-56 bg-slate-100 h-2 rounded-full overflow-hidden border border-slate-200/50 relative shadow-inner">
           <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 via-primary to-indigo-500 rounded-full w-full h-full animate-shimmer-progress" />
         </div>
+
+        {/* Scan Time Estimate */}
+        <p className="text-xs text-muted-foreground animate-pulse duration-[2000ms]">
+          ⏳ Estimasi scan 1-2 menit, stay tune ya bestie! 💅✨
+        </p>
       </div>
     </div>,
     document.body,

@@ -27,7 +27,7 @@ interface FriendPickerCardProps {
 
 export function FriendPickerCard({ onConfirm }: FriendPickerCardProps) {
   const { step, participants, setParticipants } = useSplitBillChatStore();
-  const { friends } = useFriendStore();
+  const { friends, addFriend, trackFriendUsage } = useFriendStore();
 
   const [inputValue, setInputValue] = useState("");
 
@@ -81,6 +81,17 @@ export function FriendPickerCard({ onConfirm }: FriendPickerCardProps) {
       } else {
         newParticipants.push(name);
         addedAny = true;
+      }
+
+      // Auto-save to friend store if doesn't exist by name
+      const existingFriend = friends.find(
+        (f) => f.name.toLowerCase() === name.toLowerCase()
+      );
+      if (!existingFriend) {
+        addFriend({ name });
+      } else {
+        // If already exists, track usage
+        trackFriendUsage(existingFriend.id);
       }
     });
     if (addedAny) {

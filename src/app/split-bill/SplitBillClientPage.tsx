@@ -62,6 +62,7 @@ import { getRandomAdCampaign, type AdCampaign } from "@/lib/ads/adsConfig";
 import { InterstitialAdModal } from "@/components/ads/InterstitialAdModal";
 import { ChatAgentFAB } from "@/components/splitbill/chat/ChatAgentFAB";
 import { ChatRoom } from "@/components/splitbill/chat/ChatRoom";
+import { AIScanQuotaBanner } from "@/components/ui/AIScanQuotaBanner";
 
 const SplitBillContent = () => {
   const router = useRouter();
@@ -662,7 +663,7 @@ const SplitBillContent = () => {
   const handleSurveyComplete = () => {
     localStorage.setItem("hasSeenDropOffSurvey", "true");
     setIsSurveyOpen(false);
-    
+
     if (surveyTriggerStep > 1) {
       router.replace(`/split-bill?step=${surveyTriggerStep - 1}`);
     } else {
@@ -746,6 +747,13 @@ const SplitBillContent = () => {
                   }}
                   className="mb-3"
                 />
+
+                {/* Quota card — attached directly below Scan AI tab */}
+                {activeTab === "ai" && (
+                  <div className="px-4 mb-3">
+                    <AIScanQuotaBanner />
+                  </div>
+                )}
 
                 {activeTab === "manual" && !isAuthenticated && !isAIBannerDismissed && (
                   <div className="px-4 pb-4">

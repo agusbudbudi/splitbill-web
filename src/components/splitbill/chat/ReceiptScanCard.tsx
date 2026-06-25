@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState, useRef, useCallback, useEffect } from "react";
 import {
   Camera,
   ImagePlus,
@@ -17,6 +17,10 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { trackChatBill } from "@/lib/gtag";
+import { useAuthStore } from "@/lib/stores/authStore";
+import { AuthModal } from "@/components/auth/AuthModal";
+import { AIScanQuotaBanner } from "@/components/ui/AIScanQuotaBanner";
+import { GUEST_LIMIT, getGuestScanQuota, incrementGuestScanCount } from "@/lib/utils/guestQuota";
 
 const STEP_ORDER: ChatStep[] = [
   "GREETING",
@@ -41,6 +45,10 @@ export function ReceiptScanCard({ onConfirm }: ReceiptScanCardProps) {
   const isCompleted =
     STEP_ORDER.indexOf(step) > STEP_ORDER.indexOf("SCAN_RECEIPT");
 
+  const { isAuthenticated, user, getCurrentUser } = useAuthStore();
+  const [guestRemainingScans, setGuestRemainingScans] = useState<number>(GUEST_LIMIT);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+
   const [image, setImage] = useState<string | null>(null);
   const [isScanning, setIsScanning] = useState(false);
   const [scanResult, setScanResult] = useState<ReceiptScanResult | null>(null);
@@ -49,6 +57,113 @@ export function ReceiptScanCard({ onConfirm }: ReceiptScanCardProps) {
 
   const fileRef = useRef<HTMLInputElement>(null);
   const cameraRef = useRef<HTMLInputElement>(null);
+
+  // Sync guest scan quota
+  useEffect(() => {
+    if (!isAuthenticated) {
+      const quota = getGuestScanQuota();
+      setGuestRemainingScans(quota.remaining);
+    }
+  }, [isAuthenticated]);
+
+  // Sync user data on mount/auth change
+  useEffect(() => {
+    if (isAuthenticated) {
+      getCurrentUser();
+    }
+  }, [isAuthenticated, getCurrentUser]);
+
+  // ── Guest Limit Barrier ───────────────────────────────────────────────────
+  if (!isAuthenticated && guestRemainingScans <= 0 && !isCompleted && !scanResult) {
+    return (
+      <div className="rounded-2xl border border-primary/20 bg-white overflow-hidden shadow-sm">
+        <div className="px-4 py-3 bg-gradient-to-r from-primary/5 to-violet-500/5 border-b border-primary/10 flex items-center gap-2">
+          <Sparkles className="w-4 h-4 text-primary" />
+          <p className="text-xs font-bold text-primary uppercase tracking-wide">
+            Scan Struk AI
+          </p>
+        </div>
+        <div className="p-6 flex flex-col items-center text-center gap-4">
+          <div className="w-12 h-12 rounded-full bg-primary/5 flex items-center justify-center border border-primary/10">
+            <img
+              src="/img/ai-icon.png"
+              alt="AI Icon"
+              className="w-7 h-7 object-contain"
+            />
+          </div>
+          <div className="space-y-1">
+            <h3 className="text-sm font-bold text-foreground">
+              Scan Gratis Habis! 🚀
+            </h3>
+            <p className="text-xs text-muted-foreground leading-relaxed font-medium">
+              Batas scan gratis untuk kamu hari ini sudah habis. Yuk daftar sekarang (gratis!) biar bisa lanjut scan! ✨
+            </p>
+          </div>
+          <button
+            onClick={() => setShowAuthModal(true)}
+            className="w-full max-w-[200px] h-9 bg-primary hover:bg-primary/95 text-white font-bold rounded-lg shadow-lg shadow-primary/10 transition-all text-xs cursor-pointer"
+          >
+            Login / Daftar Gratis
+          </button>
+        </div>
+        <AuthModal
+          isOpen={showAuthModal}
+          onClose={() => setShowAuthModal(false)}
+          redirectPath={typeof window !== "undefined" ? `${window.location.pathname}?openChat=true` : "/member"}
+          title="Login / Daftar Gratis"
+          description="Yuk daftar akun dulu (gratis!) biar bisa lanjut scan struk dan pakai fitur lengkap AI Billy!"
+        />
+      </div>
+    );
+  }
+
+  // ── VIP Quota Barrier ─────────────────────────────────────────────────────
+  const freeScanCount = user?.freeScanCount;
+  const isVip = user?.subscriptionStatus === "active";
+  if (
+    isAuthenticated &&
+    freeScanCount !== undefined &&
+    freeScanCount <= 0 &&
+    !isVip &&
+    !isCompleted &&
+    !scanResult
+  ) {
+    return (
+      <div className="rounded-2xl border border-primary/20 bg-white overflow-hidden shadow-sm">
+        <div className="px-4 py-3 bg-gradient-to-r from-primary/5 to-violet-500/5 border-b border-primary/10 flex items-center gap-2">
+          <Sparkles className="w-4 h-4 text-primary" />
+          <p className="text-xs font-bold text-primary uppercase tracking-wide">
+            Scan Struk AI
+          </p>
+        </div>
+        <div className="p-6 flex flex-col items-center text-center gap-4">
+          <div className="w-12 h-12 rounded-full bg-primary/5 flex items-center justify-center border border-primary/10">
+            <img
+              src="/img/ai-icon.png"
+              alt="AI Icon"
+              className="w-7 h-7 object-contain"
+            />
+          </div>
+          <div className="space-y-1">
+            <h3 className="text-sm font-bold text-foreground">
+              Scan Habis! 🚀
+            </h3>
+            <p className="text-xs text-muted-foreground leading-relaxed font-medium">
+              Kuota gratis kamu sudah habis. Upgrade ke <span className="bg-gradient-to-r from-primary to-[#7c3aed] bg-clip-text text-transparent font-black">VIP</span> untuk <span className="text-foreground font-bold">Scan Tanpa Batas</span> dan fitur eksklusif lainnya!
+            </p>
+          </div>
+          <button
+            onClick={() => {
+              router.push("/subscription");
+            }}
+            className="w-full max-w-[200px] h-9 bg-primary hover:bg-primary/95 text-white font-bold rounded-lg shadow-lg shadow-primary/10 transition-all text-xs cursor-pointer"
+          >
+            Upgrade ke VIP
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   // ── Frozen state ────────────────────────────────────────────────────────────
   if (isCompleted && scannedResult) {
@@ -125,6 +240,14 @@ export function ReceiptScanCard({ onConfirm }: ReceiptScanCardProps) {
       const result = await scanReceipt(image);
       setScanResult(result);
       toast.success("Scan berhasil! ✨", { duration: 2000 });
+
+      if (!isAuthenticated) {
+        incrementGuestScanCount();
+        const updatedQuota = getGuestScanQuota();
+        setGuestRemainingScans(updatedQuota.remaining);
+      } else {
+        await getCurrentUser();
+      }
     } catch (err: any) {
       if (err.status === 429) {
         setError(
@@ -166,11 +289,13 @@ export function ReceiptScanCard({ onConfirm }: ReceiptScanCardProps) {
     <div className="rounded-2xl border border-primary/20 bg-white overflow-hidden shadow-sm">
       {/* Header */}
       <div className="px-4 py-3 bg-gradient-to-r from-primary/5 to-violet-500/5 border-b border-primary/10 flex items-center gap-2">
-        <Sparkles className="w-4 h-4 text-primary" />
         <p className="text-xs font-bold text-primary uppercase tracking-wide">
           Scan Struk AI (estimasi 1 - 2 menit)
         </p>
       </div>
+
+      {/* Quota strip — attached directly below header */}
+      {!scanResult && <AIScanQuotaBanner variant="strip" />}
 
       <div className="p-4 space-y-3">
         {/* No image yet */}

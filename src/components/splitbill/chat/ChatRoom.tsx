@@ -121,6 +121,23 @@ export function ChatRoom() {
     }
   }, [isInitialized, isAuthenticated, openChat, handleSaveBill, expenses.length]);
 
+  // ── Auto-open chatroom on mount if ?openChat=true ────────────────
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const openChatParam = params.get("openChat") === "true";
+    if (openChatParam && isInitialized) {
+      // Clear flag from URL immediately
+      const paramsObj = Object.fromEntries(params.entries());
+      delete paramsObj.openChat;
+      const searchStr = new URLSearchParams(paramsObj).toString();
+      const newUrl = window.location.pathname + (searchStr ? `?${searchStr}` : "");
+      window.history.replaceState({}, "", newUrl);
+
+      openChat();
+    }
+  }, [isInitialized, openChat]);
+
   // ── Initialize greeting on first open ──────────────────────────────────────
   const initializeGreeting = useCallback(async () => {
     if (hasInitializedRef.current) return;

@@ -106,7 +106,7 @@ export function PaymentPickerCard({ onConfirm, onSkip }: PaymentPickerCardProps)
               Belum ada dompet pembayaran tersimpan.
             </p>
             <p className="text-[10px] text-muted-foreground/80">
-              Kamu bisa lewati dulu, tambah metode baru di atas, atau mengaturnya nanti di langkah akhir wizard.
+              Yuk pilih atau tambahkan metode pembayaran sekarang biar teman-teman tinggal sekali klik untuk transfer! 🚀
             </p>
           </div>
         ) : (

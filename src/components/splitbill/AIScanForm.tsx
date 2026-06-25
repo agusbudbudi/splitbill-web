@@ -26,74 +26,8 @@ import { AIScanQuotaBanner } from "@/components/ui/AIScanQuotaBanner";
 import { trackSplitBill, trackSubscription } from "@/lib/gtag";
 import { AuthModal } from "@/components/auth/AuthModal";
 
-const AIScanBenefits = () => (
-  <div className="flex gap-3 items-start p-4 bg-primary/5 rounded-2xl border border-primary/10 transition-all hover:bg-primary/[0.07]">
-    <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0">
-      <Image
-        src="/img/icon-ai-info.png"
-        alt="AI Scan"
-        width={40}
-        height={40}
-        className="w-full h-full object-contain rounded-full"
-      />
-    </div>
-    <div>
-      <p className="text-sm font-bold text-primary">Kelebihan Scan AI</p>
-      <p className="text-[11px] leading-relaxed mt-0.5 text-muted-foreground font-medium">
-        Otomatis deteksi item, harga, dan pajak tanpa perlu ketik manual
-        satu-satu. Hemat waktu & tenaga! ⚡
-      </p>
-    </div>
-  </div>
-);
-
-const GUEST_LIMIT = 2;
-const TRACKER_KEY = "sb_guest_scan_tracker";
-
-interface GuestTracker {
-  count: number;
-  lastScanDate: string;
-}
-
-const getGuestScanQuota = (): { allowed: boolean; remaining: number } => {
-  if (typeof window === "undefined") return { allowed: true, remaining: GUEST_LIMIT };
-  const today = new Date().toISOString().split("T")[0];
-  const dataStr = localStorage.getItem(TRACKER_KEY);
-
-  if (!dataStr) return { allowed: true, remaining: GUEST_LIMIT };
-
-  try {
-    const tracker: GuestTracker = JSON.parse(dataStr);
-    if (tracker.lastScanDate !== today) {
-      return { allowed: true, remaining: GUEST_LIMIT };
-    }
-    return {
-      allowed: tracker.count < GUEST_LIMIT,
-      remaining: Math.max(0, GUEST_LIMIT - tracker.count)
-    };
-  } catch {
-    return { allowed: true, remaining: GUEST_LIMIT };
-  }
-};
-
-const incrementGuestScanCount = () => {
-  if (typeof window === "undefined") return;
-  const today = new Date().toISOString().split("T")[0];
-  const dataStr = localStorage.getItem(TRACKER_KEY);
-  let tracker: GuestTracker = { count: 1, lastScanDate: today };
-
-  if (dataStr) {
-    try {
-      const parsed: GuestTracker = JSON.parse(dataStr);
-      if (parsed.lastScanDate === today) {
-        tracker.count = parsed.count + 1;
-      }
-    } catch (e) {
-      // Ignore
-    }
-  }
-  localStorage.setItem(TRACKER_KEY, JSON.stringify(tracker));
-};
+import { AIScanBenefits } from "@/components/ui/AIScanBenefits";
+import { GUEST_LIMIT, getGuestScanQuota, incrementGuestScanCount } from "@/lib/utils/guestQuota";
 
 export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
   const [image, setImage] = useState<string | null>(null);
@@ -574,23 +508,6 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
 
   return (
     <div className="space-y-4 py-2 animate-in fade-in duration-500">
-      {/* Quota Info Banner - Premium AI Theme */}
-      {!scanResult && (
-        isAuthenticated ? (
-          freeScanCount !== undefined && (freeScanCount > 0 || user?.subscriptionStatus === "active") && (
-            <AIScanQuotaBanner
-              freeScanCount={freeScanCount}
-              isSubscribed={user?.subscriptionStatus === "active"}
-            />
-          )
-        ) : (
-          <AIScanQuotaBanner
-            freeScanCount={guestRemainingScans}
-            maxScanCount={GUEST_LIMIT}
-            isSubscribed={false}
-          />
-        )
-      )}
       {!image ? (
         <>
           {/* Camera capture area — tap to open camera directly */}

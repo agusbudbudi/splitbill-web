@@ -108,7 +108,7 @@ export function activitySetMessages(activityName: string): MessagePayload[] {
     userText(`Namanya: ${activityName} 👍`),
     agentText(`Mantap! Kegiatan ini dinamai **${activityName}**.`),
     agentCard(
-      "Terakhir (opsional), **mau dibayar ke mana?** Pilih dompet kamu biar teman-teman gampang transfernya. Kamu bisa lewati dulu, tambah metode baru di atas, atau mengaturnya nanti di langkah akhir wizard. 👇",
+      "Terakhir (opsional), **mau dibayar ke mana?** Yuk pilih atau tambahkan rekening/e-wallet kamu sekarang biar teman-teman bisa langsung transfer dan salin nomor rekening dengan praktis! Cepat & antiribet! 🚀👇",
       "payment_picker"
     ),
   ];

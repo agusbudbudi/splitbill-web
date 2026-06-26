@@ -81,96 +81,117 @@ declare global {
  * Predefined Event Trackers for Consistency
  */
 export const trackAuth = {
-  login: () => trackEvent("login"),
-  signUp: () => trackEvent("sign_up"),
-  googleLoginClicked: () => trackEvent("google_login_clicked"),
-  googleLoginSuccess: () => trackEvent("google_login_success"),
-  googleLoginFailed: (reason?: string) => trackEvent("google_login_failed", { reason }),
-  googleRegistrationSuccess: () => trackEvent("google_registration_success"),
-  splitbillFinalizeAfterGoogleLogin: () => trackEvent("splitbill_finalize_after_google_login"),
-  logoutSuccess: () => trackEvent("logout_success"),
+  login: () => trackEvent("user_login", { method: "email" }),
+  signUp: () => trackEvent("user_signup", { method: "email" }),
+  googleLoginClicked: () => trackEvent("user_login_click", { method: "google" }),
+  googleLoginSuccess: () => trackEvent("user_login", { method: "google" }),
+  googleLoginFailed: (reason?: string) => trackEvent("user_login_failed", { method: "google", reason }),
+  googleRegistrationSuccess: () => trackEvent("user_signup", { method: "google" }),
+  splitbillFinalizeAfterGoogleLogin: () => trackEvent("bill_finalize_after_google_login"),
+  logoutSuccess: () => trackEvent("user_logout"),
 };
 
 export const trackSubscription = {
-  viewPlans: () => trackEvent("view_subscription_plans"),
-  initiateCheckout: (planId: string) => trackEvent("initiate_checkout", { plan_id: planId }),
-  purchaseSuccess: (planId: string, amount: number) => trackEvent("purchase_success", { plan_id: planId, amount }),
+  viewPlans: () => trackEvent("subscription_plans_viewed"),
+  initiateCheckout: (planId: string) => trackEvent("checkout_initiated", { plan_id: planId }),
+  purchaseSuccess: (planId: string, amount: number) => trackEvent("purchase_completed", { plan_id: planId, amount }),
   premiumFeatureClick: (featureName: string) => trackEvent("premium_feature_click", { feature_name: featureName }),
 };
 
 export const trackSplitBill = {
-  start: () => trackEvent("split_bill_start"),
+  start: () => trackEvent("bill_funnel_start", { flow_type: "wizard" }),
   stepComplete: (stepNumber: number, stepName: string) => 
-    trackEvent("split_bill_step_complete", { step_number: stepNumber, step_name: stepName }),
+    trackEvent("bill_step_completed", { flow_type: "wizard", step_number: stepNumber, step_name: stepName }),
   aiScan: (
     status: "start" | "success" | "error", 
     retryCount?: number, 
     source?: "camera" | "gallery",
     duration?: number,
     itemCount?: number
-  ) => 
-    trackEvent("ai_scan_receipt", { 
-      status, 
-      retry_count: retryCount || 0,
-      image_source: source || "unknown",
-      duration_ms: duration,
-      item_count: itemCount
-    }),
-  aiRetry: () => trackEvent("ai_scan_retry"),
+  ) => {
+    if (status === "start") {
+      trackEvent("bill_scan_started", { 
+        flow_type: "wizard", 
+        image_source: source || "unknown" 
+      });
+    } else {
+      trackEvent("bill_scan_completed", { 
+        flow_type: "wizard",
+        status, 
+        retry_count: retryCount || 0,
+        image_source: source || "unknown",
+        duration_ms: duration,
+        item_count: itemCount
+      });
+    }
+  },
+  aiRetry: () => trackEvent("bill_scan_retry", { flow_type: "wizard" }),
   aiImport: (itemCount?: number, merchantName?: string) => 
-    trackEvent("ai_import_result", { 
+    trackEvent("bill_scan_completed", { 
+      flow_type: "wizard",
+      status: "success",
       item_count: itemCount,
       merchant_name: merchantName,
       has_merchant: !!merchantName
     }),
-  selectImage: (source: "camera" | "gallery") => trackEvent("ai_select_image", { source }),
-  removeImage: () => trackEvent("ai_remove_image"),
-  quickPickActivity: (name: string) => trackEvent("quick_pick_activity", { activity_name: name }),
+  selectImage: (source: "camera" | "gallery") => trackEvent("bill_image_selected", { flow_type: "wizard", image_source: source }),
+  removeImage: () => trackEvent("bill_image_removed", { flow_type: "wizard" }),
+  quickPickActivity: (name: string) => trackEvent("bill_quick_pick_activity", { flow_type: "wizard", activity_name: name }),
   calculate: (params: { total_amount: number; num_participants: number }) => 
-    trackEvent("calculate_split_bill", params),
-  autofillView: (name: string) => trackEvent("activity_name_autofill_view", { name }),
-  inputMethod: (method: "ai" | "manual") => trackEvent("split_bill_input_method", { method }),
+    trackEvent("bill_calculated", { 
+      flow_type: "wizard",
+      total_amount: params.total_amount,
+      participant_count: params.num_participants
+    }),
+  autofillView: (name: string) => trackEvent("bill_autofill_view", { flow_type: "wizard", name }),
+  inputMethod: (method: "ai" | "manual") => trackEvent("bill_input_method", { flow_type: "wizard", method }),
   save: (params: { total_amount: number; num_participants: number; num_items: number; activity_name: string }) => 
-    trackEvent("save_split_bill", params),
+    trackEvent("bill_created", { 
+      flow_type: "wizard",
+      total_amount: params.total_amount,
+      participant_count: params.num_participants,
+      item_count: params.num_items,
+      activity_name: params.activity_name
+    }),
   share: (method: "share_api" | "copy_link" | "download_image" | "share_button", id: string) => 
-    trackEvent("share_split_bill", { method, id }),
-  reEntry: () => trackEvent("re_entry_split_bill"),
-  monitorStatus: (id?: string) => trackEvent("monitor_payment_status_click", { bill_id: id }),
+    trackEvent("bill_shared", { flow_type: "wizard", share_method: method, bill_id: id }),
+  reEntry: () => trackEvent("bill_re_entry", { flow_type: "wizard" }),
+  monitorStatus: (id?: string) => trackEvent("bill_monitor_status_click", { flow_type: "wizard", bill_id: id }),
   validationError: (step: number, errorMessage: string) => 
-    trackEvent("form_validation_error", { step, error_message: errorMessage }),
-  finalizeModalView: () => trackEvent("finalize_modal_view"),
-  finalizeConfirm: () => trackEvent("finalize_modal_confirm"),
-  finalizeCancel: () => trackEvent("finalize_modal_cancel"),
-  restart: () => trackEvent("restart_split_bill"),
-  delete: (id: string) => trackEvent("delete_split_bill", { id }),
+    trackEvent("bill_validation_error", { flow_type: "wizard", step, error_message: errorMessage }),
+  finalizeModalView: () => trackEvent("bill_finalize_modal_view", { flow_type: "wizard" }),
+  finalizeConfirm: () => trackEvent("bill_finalize_modal_confirm", { flow_type: "wizard" }),
+  finalizeCancel: () => trackEvent("bill_finalize_modal_cancel", { flow_type: "wizard" }),
+  restart: () => trackEvent("bill_restart", { flow_type: "wizard" }),
+  delete: (id: string) => trackEvent("bill_delete", { flow_type: "wizard", bill_id: id }),
   toggleDetails: (name: string, isOpen: boolean) => 
-    trackEvent("toggle_person_details", { person_name: name, is_open: isOpen }),
+    trackEvent("bill_toggle_person_details", { flow_type: "wizard", person_name: name, is_open: isOpen }),
 };
 
 export const trackPublic = {
-  openBill: (billId: string) => trackEvent("open_public_bill", { bill_id: billId }),
+  openBill: (billId: string) => trackEvent("bill_open_public", { bill_id: billId }),
 };
 
 export const trackSocial = {
-  addFriend: () => trackEvent("add_friend"),
-  useSuggestion: (type: "friend" | "group") => trackEvent("use_besties_suggestion", { type }),
+  addFriend: () => trackEvent("social_add_friend"),
+  useSuggestion: (type: "friend" | "group") => trackEvent("social_use_suggestion", { type }),
   tutorialComplete: () => trackEvent("tutorial_complete"),
 };
 
 export const trackGeneral = {
   appEntry: () => trackEvent("app_entry"),
-  viewHistory: () => trackEvent("view_split_bill_history"),
+  viewHistory: () => trackEvent("history_viewed"),
   reviewBannerClick: () => trackEvent("review_banner_click"),
   reviewBannerClose: () => trackEvent("review_banner_close"),
 };
 
 export const trackWallet = {
-  addMethodInitiate: () => trackEvent("add_payment_method_start"),
-  addMethod: (type: string) => trackEvent("add_payment_method", { method_type: type }),
+  addMethodInitiate: () => trackEvent("payment_method_add_started"),
+  addMethod: (type: string) => trackEvent("payment_method_added", { method_type: type }),
   selectPaymentMethod: (id: string, isSelected: boolean) => 
-    trackEvent("select_payment_method", { method_id: id, is_selected: isSelected }),
-  copyAccount: (provider: string) => trackEvent("copy_payment_account", { provider }),
-  dropOff: () => trackEvent("drop_off_payment_method"),
+    trackEvent("payment_method_selected", { method_id: id, is_selected: isSelected }),
+  copyAccount: (provider: string) => trackEvent("payment_method_account_copied", { provider }),
+  dropOff: () => trackEvent("payment_method_drop_off"),
 };
 
 export const trackMarketing = {
@@ -181,91 +202,108 @@ export const trackMarketing = {
 
 /**
  * Chat Split Bill (Agent Billy) event trackers
- * Prefix: chat_
+ * Prefix: chat_ -> Standardized under bill_* events with flow_type: "chat"
  */
 export const trackChatBill = {
-  // #1 — User membuka chatroom (dari halaman mana, dan wizard step berapa jika dari /split-bill)
   open: (params: {
     referrer_page: string;
     wizard_step?: number;
-  }) => trackEvent("chat_open", params),
+  }) => trackEvent("bill_funnel_start", { 
+    flow_type: "chat", 
+    entry_point: params.referrer_page, 
+    wizard_step: params.wizard_step 
+  }),
 
-  // #2 — Klik Lanjut di FriendPickerCard
   friendsConfirmed: (params: { participant_count: number }) =>
-    trackEvent("chat_friends_confirmed", params),
+    trackEvent("bill_friends_confirmed", { 
+      flow_type: "chat", 
+      participant_count: params.participant_count 
+    }),
 
-  // #3 — Gambar dipilih sebelum scan (foto kamera atau upload galeri)
   scanImageSelected: (source: "camera" | "gallery") =>
-    trackEvent("chat_scan_image_selected", { source }),
+    trackEvent("bill_scan_started", { flow_type: "chat", image_source: source }),
 
-  // #4 — Klik tombol "Mulai Scan AI"
   scanStarted: (params: { source: "camera" | "gallery" | "unknown" }) =>
-    trackEvent("chat_scan_started", params),
+    trackEvent("bill_scan_started", { flow_type: "chat", image_source: params.source }),
 
-  // #5 — Klik "Lanjut Input Manual" saat scan gagal (fallback ke wizard manual)
-  scanFallbackManual: () => trackEvent("chat_scan_fallback_manual"),
+  scanFallbackManual: () => trackEvent("bill_scan_fallback_manual", { flow_type: "chat" }),
 
-  // #6 — Re-scan: scan ulang gambar yang sama setelah API Gemini gagal/error pertama
   scanRetried: (params: { source: "camera" | "gallery" | "unknown" }) =>
-    trackEvent("chat_scan_retried", params),
+    trackEvent("bill_scan_retry", { flow_type: "chat", image_source: params.source }),
 
-  // #7 — Klik tombol "Ulangi": reset gambar + hasil scan ke kondisi awal
-  scanReset: () => trackEvent("chat_scan_reset"),
+  scanReset: () => trackEvent("bill_scan_reset", { flow_type: "chat" }),
 
-  // #8 — Klik "Pakai Hasil Ini" setelah scan berhasil
   scanAccepted: (params: {
     item_count: number;
     additional_item_count: number;
     has_merchant: boolean;
-  }) => trackEvent("chat_scan_accepted", params),
+  }) => trackEvent("bill_scan_completed", { 
+    flow_type: "chat", 
+    status: "success",
+    item_count: params.item_count,
+    additional_item_count: params.additional_item_count,
+    has_merchant: params.has_merchant
+  }),
 
-  // #9 — Klik Lanjut di ItemAssignCard
   itemsAssigned: (params: { total_items: number }) =>
-    trackEvent("chat_items_assigned", params),
+    trackEvent("bill_items_assigned", { 
+      flow_type: "chat", 
+      item_count: params.total_items 
+    }),
 
-  // #10 — Klik Lanjut di TaxMethodCard
   taxMethodConfirmed: (params: {
     additional_item_count: number;
-    methods: string; // comma-separated, e.g. "equally,proportionally"
-  }) => trackEvent("chat_tax_method_confirmed", params),
+    methods: string;
+  }) => trackEvent("bill_tax_confirmed", { 
+    flow_type: "chat", 
+    additional_item_count: params.additional_item_count,
+    tax_methods: params.methods
+  }),
 
-  // #11 — Klik Lanjut di ActivityInputCard
   activityConfirmed: (params: {
     activity_name: string;
     used_quick_pick: boolean;
     quick_pick_value?: string;
-  }) => trackEvent("chat_activity_confirmed", params),
+  }) => trackEvent("bill_activity_confirmed", { 
+    flow_type: "chat", 
+    activity_name: params.activity_name,
+    used_quick_pick: params.used_quick_pick,
+    quick_pick_value: params.quick_pick_value
+  }),
 
-  // #12 — Klik "Lewati" di PaymentPickerCard
-  paymentSkipped: () => trackEvent("chat_payment_skipped"),
+  paymentSkipped: () => trackEvent("bill_payment_skipped", { flow_type: "chat" }),
 
-  // #13 — Klik "Simpan" di PaymentPickerCard
   paymentSaved: (params: {
     method_count: number;
-    method_names: string; // comma-separated provider names
-  }) => trackEvent("chat_payment_saved", params),
+    method_names: string;
+  }) => trackEvent("bill_payment_saved", { 
+    flow_type: "chat", 
+    method_count: params.method_count,
+    method_names: params.method_names
+  }),
 
-  // #14 — Klik "+Tambah" di PaymentPickerCard (buka AddPaymentMethodBottomSheet)
-  paymentAddClicked: () => trackEvent("chat_payment_add_clicked"),
+  paymentAddClicked: () => trackEvent("bill_payment_add_clicked", { flow_type: "chat" }),
 
-  // #15 — Klik "Lihat Ringkasan Lengkap" di SummaryCard
   summaryViewed: (params: { auth_state: "login" | "non_login" }) =>
-    trackEvent("chat_summary_viewed", params),
+    trackEvent("bill_created", { 
+      flow_type: "chat", 
+      auth_state: params.auth_state 
+    }),
 
-  // #16 — Klik "Mulai Lagi dari Awal" di SummaryCard
-  restarted: () => trackEvent("chat_restarted"),
+  restarted: () => trackEvent("bill_restart", { flow_type: "chat" }),
 
-  // #17 — Klik "Kirim Review" di ReviewInputCard
   reviewSent: (params: {
     rating: number;
     auth_state: "login" | "non_login";
-  }) => trackEvent("chat_review_sent", params),
+  }) => trackEvent("bill_review_sent", { 
+    flow_type: "chat", 
+    rating: params.rating,
+    auth_state: params.auth_state
+  }),
 
-  // #18 — Klik tombol refresh (RotateCcw) di header chatroom
   headerRefreshClicked: (params: { current_step: string }) =>
-    trackEvent("chat_header_refresh_clicked", params),
+    trackEvent("bill_header_refresh_clicked", { flow_type: "chat", current_step: params.current_step }),
 
-  // Bonus: Drop-off analysis — chatroom ditutup di step mana
   closed: (params: { at_step: string }) =>
-    trackEvent("chat_closed", params),
+    trackEvent("bill_funnel_closed", { flow_type: "chat", at_step: params.at_step }),
 };

@@ -1,3 +1,5 @@
+import { API_BASE_URL } from "@/lib/constants";
+
 export interface AdCampaign {
   id: string;
   sponsorName: string;
@@ -10,6 +12,7 @@ export interface AdCampaign {
   durationSeconds: number;
 }
 
+/** Hardcoded fallback — used when the API is unreachable or returns no active ads */
 export const activeAdCampaigns: AdCampaign[] = [
   {
     id: "premium-membership-ad",
@@ -35,7 +38,26 @@ export const activeAdCampaigns: AdCampaign[] = [
   },
 ];
 
-export const getRandomAdCampaign = (): AdCampaign => {
+/**
+ * Fetches a random active ad campaign from the API.
+ * Falls back to hardcoded `activeAdCampaigns` if the API is unavailable or returns no data.
+ */
+export const getRandomAdCampaign = async (): Promise<AdCampaign> => {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/ad-campaigns`, {
+      cache: "no-store",
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+        const randomIndex = Math.floor(Math.random() * data.data.length);
+        return data.data[randomIndex] as AdCampaign;
+      }
+    }
+  } catch {
+    // Silently fall back to hardcoded ads
+  }
   const randomIndex = Math.floor(Math.random() * activeAdCampaigns.length);
   return activeAdCampaigns[randomIndex];
 };
+

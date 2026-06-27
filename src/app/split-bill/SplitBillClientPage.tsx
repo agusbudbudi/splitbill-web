@@ -604,7 +604,7 @@ const SplitBillContent = () => {
 
     if (step === 3) {
       if (!isAuthenticated) {
-        const selectedAd = getRandomAdCampaign();
+        const selectedAd = await getRandomAdCampaign();
         setCurrentAd(selectedAd);
         setOnAdFinishedCallback(() => proceedToStep4);
         setShowAdModal(true);

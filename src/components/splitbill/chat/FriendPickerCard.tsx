@@ -2,37 +2,26 @@
 
 import React, { useState } from "react";
 import { useFriendStore } from "@/lib/stores/friendStore";
-import { useSplitBillChatStore, type ChatStep } from "@/store/useSplitBillChatStore";
 import { Plus, X, Users, ChevronRight, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { trackChatBill } from "@/lib/gtag";
 
-const STEP_ORDER: ChatStep[] = [
-  "GREETING",
-  "ADD_FRIENDS",
-  "SCAN_RECEIPT",
-  "ASSIGN_ITEMS",
-  "SET_TAX_METHOD",
-  "SET_ACTIVITY",
-  "SET_PAYMENT",
-  "REVIEW",
-  "GIVE_REVIEW",
-  "DONE",
-];
-
 interface FriendPickerCardProps {
+  participants: string[];
+  isCompleted: boolean;
+  setParticipants: (names: string[]) => void;
   onConfirm: (names: string[]) => void;
 }
 
-export function FriendPickerCard({ onConfirm }: FriendPickerCardProps) {
-  const { step, participants, setParticipants } = useSplitBillChatStore();
+export function FriendPickerCard({
+  participants,
+  isCompleted,
+  setParticipants,
+  onConfirm,
+}: FriendPickerCardProps) {
   const { friends, addFriend, trackFriendUsage } = useFriendStore();
-
   const [inputValue, setInputValue] = useState("");
-
-  const isCompleted =
-    STEP_ORDER.indexOf(step) > STEP_ORDER.indexOf("ADD_FRIENDS");
 
   // ── Frozen state (already completed) ──────────────────────────────────────
   if (isCompleted) {
@@ -64,7 +53,6 @@ export function FriendPickerCard({ onConfirm }: FriendPickerCardProps) {
   );
 
   const handleAddFriend = (text: string) => {
-    // Split by comma, trim, filter out empty values
     const names = text
       .split(",")
       .map((name) => name.trim())
@@ -83,14 +71,12 @@ export function FriendPickerCard({ onConfirm }: FriendPickerCardProps) {
         addedAny = true;
       }
 
-      // Auto-save to friend store if doesn't exist by name
       const existingFriend = friends.find(
         (f) => f.name.toLowerCase() === name.toLowerCase()
       );
       if (!existingFriend) {
         addFriend({ name });
       } else {
-        // If already exists, track usage
         trackFriendUsage(existingFriend.id);
       }
     });

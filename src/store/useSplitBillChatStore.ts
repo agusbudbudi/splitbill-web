@@ -8,6 +8,7 @@ import type { ReceiptScanResult } from "@/lib/AIService";
 export type ChatStep =
   | "GREETING"
   | "ADD_FRIENDS"
+  | "SELECT_PAYER"
   | "SCAN_RECEIPT"
   | "ASSIGN_ITEMS"
   | "SET_TAX_METHOD"
@@ -21,6 +22,7 @@ export type ChatStep =
 export type MessageType =
   | "text"
   | "friend_picker"
+  | "payer_picker"
   | "receipt_scan"
   | "item_assign"
   | "tax_method"
@@ -48,6 +50,7 @@ interface SplitBillChatState {
   step: ChatStep;
   messages: ChatMessage[];
   participants: string[];
+  payerName: string;
   scannedResult: ReceiptScanResult | null;
   expenses: Expense[];
   additionalExpenses: AdditionalExpense[];
@@ -69,6 +72,9 @@ interface SplitBillChatState {
   setParticipants: (names: string[]) => void;
   addParticipant: (name: string) => void;
   removeParticipant: (name: string) => void;
+
+  // Payer
+  setPayerName: (name: string) => void;
 
   // Receipt
   setScannedResult: (result: ReceiptScanResult) => void;
@@ -101,6 +107,7 @@ export const useSplitBillChatStore = create<SplitBillChatState>()(
       step: "GREETING",
       messages: [],
       participants: [],
+      payerName: "",
       scannedResult: null,
       expenses: [],
       additionalExpenses: [],
@@ -138,6 +145,9 @@ export const useSplitBillChatStore = create<SplitBillChatState>()(
         set((state) => ({
           participants: state.participants.filter((p) => p !== name),
         })),
+
+      // ── Payer ─────────────────────────────────────────────────────────────
+      setPayerName: (name) => set({ payerName: name }),
 
       // ── Receipt ───────────────────────────────────────────────────────────
       setScannedResult: (result) => set({ scannedResult: result }),
@@ -199,6 +209,7 @@ export const useSplitBillChatStore = create<SplitBillChatState>()(
           step: "GREETING",
           messages: [],
           participants: [],
+          payerName: "",
           scannedResult: null,
           expenses: [],
           additionalExpenses: [],
@@ -214,6 +225,7 @@ export const useSplitBillChatStore = create<SplitBillChatState>()(
         step: state.step,
         messages: state.messages,
         participants: state.participants,
+        payerName: state.payerName,
         scannedResult: state.scannedResult,
         expenses: state.expenses,
         additionalExpenses: state.additionalExpenses,

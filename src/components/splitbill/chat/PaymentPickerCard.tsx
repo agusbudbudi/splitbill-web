@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import { Check, ChevronRight } from "lucide-react";
-import { useSplitBillChatStore, type ChatStep } from "@/store/useSplitBillChatStore";
 import { useWalletStore } from "@/store/useWalletStore";
 import { cn } from "@/lib/utils";
 import { Plus } from "lucide-react";
@@ -11,32 +10,22 @@ import { DynamicFinLogo } from "@/components/wallet/DynamicFinLogo";
 import { getProviderLogoInfo } from "@/lib/providerLogos";
 import { trackChatBill } from "@/lib/gtag";
 
-const STEP_ORDER: ChatStep[] = [
-  "GREETING",
-  "ADD_FRIENDS",
-  "SCAN_RECEIPT",
-  "ASSIGN_ITEMS",
-  "SET_TAX_METHOD",
-  "SET_ACTIVITY",
-  "SET_PAYMENT",
-  "REVIEW",
-  "GIVE_REVIEW",
-  "DONE",
-];
-
 interface PaymentPickerCardProps {
+  isCompleted: boolean;
+  selectedPaymentMethodIds: string[];
   onConfirm: (selectedIds: string[]) => void;
   onSkip: () => void;
 }
 
-export function PaymentPickerCard({ onConfirm, onSkip }: PaymentPickerCardProps) {
-  const { step, selectedPaymentMethodIds } = useSplitBillChatStore();
+export function PaymentPickerCard({
+  isCompleted,
+  selectedPaymentMethodIds,
+  onConfirm,
+  onSkip,
+}: PaymentPickerCardProps) {
   const { paymentMethods } = useWalletStore();
   const [selected, setSelected] = useState<string[]>(selectedPaymentMethodIds || []);
   const [isAddOpen, setIsAddOpen] = useState(false);
-
-  const isCompleted =
-    STEP_ORDER.indexOf(step) > STEP_ORDER.indexOf("SET_PAYMENT");
 
   if (isCompleted) {
     const selectedMethods = paymentMethods.filter((m) =>

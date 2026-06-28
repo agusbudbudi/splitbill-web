@@ -63,6 +63,7 @@ import { InterstitialAdModal } from "@/components/ads/InterstitialAdModal";
 import { ChatAgentFAB } from "@/components/splitbill/chat/ChatAgentFAB";
 import { ChatRoom } from "@/components/splitbill/chat/ChatRoom";
 import { AIScanQuotaBanner } from "@/components/ui/AIScanQuotaBanner";
+import { AgentBillyEntryCard } from "@/components/splitbill/chat/ChatAgentEntryCard";
 
 const SplitBillContent = () => {
   const router = useRouter();
@@ -231,7 +232,8 @@ const SplitBillContent = () => {
     searchParams.get("id"),
   );
 
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, user } = useAuthStore();
+  const isVip = user?.subscriptionStatus === "active";
   const { isPWABannerVisible } = useUIStore();
 
   useEffect(() => {
@@ -603,7 +605,7 @@ const SplitBillContent = () => {
     }
 
     if (step === 3) {
-      if (!isAuthenticated) {
+      if (!isVip) {
         const selectedAd = await getRandomAdCampaign();
         setCurrentAd(selectedAd);
         setOnAdFinishedCallback(() => proceedToStep4);
@@ -697,34 +699,42 @@ const SplitBillContent = () => {
             <div className="flex flex-col items-center text-center gap-2">
               <h2 className="text-2xl font-bold">Input Pengeluaran 📊</h2>
               <p className="text-muted-foreground text-sm max-w-[360px]">
-                Scan struk pake AI biar cepet, atau input manual satu-satu.
+                Scan struk pake AI biar cepet, atau input manual
               </p>
             </div>
 
             {people.length < 2 && (
               <Card
                 onClick={prevStep}
-                className="border-amber-200 bg-amber-50/50 cursor-pointer hover:bg-amber-100/50 transition-colors animate-in fade-in zoom-in-95 duration-300"
+                className="border border-amber-500/10 bg-amber-50/50 cursor-pointer hover:bg-amber-100/50 transition-colors animate-in fade-in zoom-in-95 duration-300"
               >
-                <CardContent className="p-4 flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-full bg-amber-500/10 flex items-center justify-center shrink-0">
+                <CardContent className="px-4 py-3 flex items-center gap-3">
+                  <div className="w-11 h-11 rounded-full bg-amber-500/10 flex items-center justify-center shrink-0">
                     <Users className="w-5 h-5 text-amber-600" />
                   </div>
                   <div>
                     <h4 className="font-bold text-amber-800 text-sm">
-                      Waduh, belum ada teman nih! 👥
+                      Waduh, belum ada teman nih!
                     </h4>
                     <p className="text-xs text-amber-700/70 mt-0.5">
-                      Tap di sini buat tambahin teman yang mau diajak patungan
-                      dulu ya.
+                      Tap di sini buat tambahin teman dulu ya.
                     </p>
                   </div>
                 </CardContent>
               </Card>
             )}
 
-            <Card className="rounded-xl bg-white backdrop-blur-xs shadow-soft text-card-foreground shadow-soft">
-              <CardContent className="p-1 sm:p-2">
+            <AgentBillyEntryCard />
+
+            <Card className="rounded-lg bg-white backdrop-blur-xs shadow-soft text-card-foreground shadow-soft">
+              {/* Quota card — attached directly below Scan AI tab */}
+              {activeTab === "ai" && (
+                <div>
+                  <AIScanQuotaBanner className="rounded-t-lg" variant="strip" />
+                </div>
+              )}
+              <CardContent className="p-0 sm:p-0">
+
                 <SegmentedControl
                   id="onboarding-input-method"
                   options={[
@@ -745,15 +755,15 @@ const SplitBillContent = () => {
                     }
                     trackSplitBill.inputMethod(method);
                   }}
-                  className="mb-3"
+                  className="mb-0"
                 />
 
-                {/* Quota card — attached directly below Scan AI tab */}
+                {/* Quota card — attached directly below Scan AI tab
                 {activeTab === "ai" && (
-                  <div className="px-4 mb-3">
+                  <div className="mb-3">
                     <AIScanQuotaBanner />
                   </div>
-                )}
+                )} */}
 
                 {activeTab === "manual" && !isAuthenticated && !isAIBannerDismissed && (
                   <div className="px-4 pb-4">
@@ -1254,15 +1264,27 @@ const SplitBillContent = () => {
 
                 <Button
                   onClick={() => {
-                    if (!isAuthenticated) {
-                      setShowAuthModal(true);
+                    const action = () => {
+                      if (!isAuthenticated) {
+                        setShowAuthModal(true);
+                        return;
+                      }
+                      // If authenticated, do the save and calculate
+                      setIsCalculating(true);
+                      saveDraft()
+                        .then(() => handleFinalize())
+                        .catch(() => setIsCalculating(false));
+                    };
+
+                    if (!isVip) {
+                      getRandomAdCampaign().then((selectedAd) => {
+                        setCurrentAd(selectedAd);
+                        setOnAdFinishedCallback(() => action);
+                        setShowAdModal(true);
+                      });
                       return;
                     }
-                    // If authenticated, do the save and calculate
-                    setIsCalculating(true);
-                    saveDraft()
-                      .then(() => handleFinalize())
-                      .catch(() => setIsCalculating(false));
+                    action();
                   }}
                   disabled={isCalculating || isFinalizing}
                   className="h-14 text-base font-bold rounded-2xl bg-primary text-white shadow-xl shadow-primary/30 active:scale-95 transition-all flex items-center justify-center"

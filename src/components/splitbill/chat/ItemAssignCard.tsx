@@ -7,38 +7,28 @@ import {
   AlertCircle,
   Edit2,
 } from "lucide-react";
-import {
-  useSplitBillChatStore,
-  type ChatStep,
-} from "@/store/useSplitBillChatStore";
 import type { Expense } from "@/store/useSplitBillStore";
 import { formatToIDR, cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { EditChatExpenseBottomSheet } from "./EditChatExpenseBottomSheet";
 import { trackChatBill } from "@/lib/gtag";
 
-const STEP_ORDER: ChatStep[] = [
-  "GREETING",
-  "ADD_FRIENDS",
-  "SCAN_RECEIPT",
-  "ASSIGN_ITEMS",
-  "SET_TAX_METHOD",
-  "SET_ACTIVITY",
-  "SET_PAYMENT",
-  "REVIEW",
-  "GIVE_REVIEW",
-  "DONE",
-];
-
 interface ItemAssignCardProps {
+  isCompleted: boolean;
+  expenses: Expense[];
+  participants: string[];
+  onUpdateExpense: (id: string, update: Partial<Expense>) => void;
   onConfirm: () => void;
 }
 
-export function ItemAssignCard({ onConfirm }: ItemAssignCardProps) {
-  const { step, expenses, participants, updateExpense } = useSplitBillChatStore();
+export function ItemAssignCard({
+  isCompleted,
+  expenses,
+  participants,
+  onUpdateExpense,
+  onConfirm,
+}: ItemAssignCardProps) {
   const [editingId, setEditingId] = useState<string | null>(null);
-  const isCompleted =
-    STEP_ORDER.indexOf(step) > STEP_ORDER.indexOf("ASSIGN_ITEMS");
 
   // ── Frozen state ────────────────────────────────────────────────────────────
   if (isCompleted) {
@@ -90,15 +80,15 @@ export function ItemAssignCard({ onConfirm }: ItemAssignCardProps) {
     const newWho = isSelected
       ? expense.who.filter((w) => w !== person)
       : [...expense.who, person];
-    updateExpense(expenseId, { who: newWho });
+    onUpdateExpense(expenseId, { who: newWho });
   };
 
   const handleSetPaidBy = (expenseId: string, person: string) => {
-    updateExpense(expenseId, { paidBy: person });
+    onUpdateExpense(expenseId, { paidBy: person });
   };
 
   const handleSelectAll = (expenseId: string) => {
-    updateExpense(expenseId, { who: [...participants] });
+    onUpdateExpense(expenseId, { who: [...participants] });
   };
 
   const handleConfirm = () => {

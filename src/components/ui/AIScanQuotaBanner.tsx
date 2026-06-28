@@ -86,7 +86,7 @@ const CardVariant = ({
             />
           </div>
 
-          <div className="space-y-1 pr-12">
+          <div className="space-y-1 pr-10">
             <h4 className="font-bold text-slate-800 tracking-tight leading-tight text-sm">
               {isSubscribed ? (
                 "Scan struk tanpa batas sepuasnya! ⚡"
@@ -157,12 +157,12 @@ const StripVariant = ({ className }: { className?: string }) => {
   return (
     <div
       className={cn(
-        "flex items-center gap-1.5 px-3 py-1.5",
+        "flex items-center gap-1.5 px-3 py-2",
         isSubscribed
           ? "bg-gradient-to-r from-primary/60 to-violet-600 border-b border-primary/20"
           : isExhausted
-            ? "bg-rose-50 border-b border-rose-100"
-            : "bg-primary/[0.04] border-b border-primary/10",
+            ? "bg-rose-50 border border-rose-100"
+            : "bg-primary/10",
         className
       )}
     >
@@ -175,12 +175,12 @@ const StripVariant = ({ className }: { className?: string }) => {
       />
       <span
         className={cn(
-          "text-[10px] font-semibold tracking-tight flex-1",
+          "text-xs font-semibold tracking-tight flex-1",
           isSubscribed
             ? "text-white"
             : isExhausted
               ? "text-rose-600"
-              : "text-primary/80"
+              : "text-primary"
         )}
       >
         {label}

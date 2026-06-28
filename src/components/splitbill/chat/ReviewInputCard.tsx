@@ -2,32 +2,18 @@
 
 import React, { useState, useEffect } from "react";
 import { Star, Check, ChevronRight } from "lucide-react";
-import { useSplitBillChatStore, type ChatStep } from "@/store/useSplitBillChatStore";
 import { useReview } from "@/hooks/useReview";
 import { useAuthStore } from "@/lib/stores/authStore";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { trackChatBill } from "@/lib/gtag";
 
-const STEP_ORDER: ChatStep[] = [
-  "GREETING",
-  "ADD_FRIENDS",
-  "SCAN_RECEIPT",
-  "ASSIGN_ITEMS",
-  "SET_TAX_METHOD",
-  "SET_ACTIVITY",
-  "SET_PAYMENT",
-  "REVIEW",
-  "GIVE_REVIEW",
-  "DONE",
-];
-
 interface ReviewInputCardProps {
+  isCompleted: boolean;
   onSuccess: (skipped: boolean) => void;
 }
 
-export function ReviewInputCard({ onSuccess }: ReviewInputCardProps) {
-  const { step } = useSplitBillChatStore();
+export function ReviewInputCard({ isCompleted, onSuccess }: ReviewInputCardProps) {
   const { submitReview, isSubmitting, remainingCooldown, formatCountdown, isInCooldown } = useReview();
   const { user, isAuthenticated } = useAuthStore();
 
@@ -42,8 +28,6 @@ export function ReviewInputCard({ onSuccess }: ReviewInputCardProps) {
       setName(user.name || "");
     }
   }, [isAuthenticated, user]);
-
-  const isCompleted = step === "DONE";
 
   if (isCompleted) {
     return (

@@ -17,6 +17,8 @@ import { useAuthStore } from "@/lib/stores/authStore";
 import { AuthModal } from "@/components/auth/AuthModal";
 import { useSaveChatBill } from "@/hooks/useSaveChatBill";
 import { trackChatBill } from "@/lib/gtag";
+import { InterstitialAdModal } from "@/components/ads/InterstitialAdModal";
+import { getRandomAdCampaign, AdCampaign } from "@/lib/ads/adsConfig";
 
 export function SummaryCard() {
   const router = useRouter();
@@ -31,9 +33,22 @@ export function SummaryCard() {
     setStep,
   } = useSplitBillChatStore();
 
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, user } = useAuthStore();
+  const isVip = user?.subscriptionStatus === "active";
   const { handleSaveBill } = useSaveChatBill();
   const [showAuthModal, setShowAuthModal] = useState(false);
+
+  const [showAdModal, setShowAdModal] = useState(false);
+  const [currentAd, setCurrentAd] = useState<AdCampaign | null>(null);
+  const [onAdFinishedCallback, setOnAdFinishedCallback] = useState<(() => void) | null>(null);
+
+  const handleAdClose = () => {
+    setShowAdModal(false);
+    if (onAdFinishedCallback) {
+      onAdFinishedCallback();
+      setOnAdFinishedCallback(null);
+    }
+  };
 
   // ── Calculate using the existing engine ──────────────────────────────────────
   const { balances, totalSpent, settlementInstructions, badges } =
@@ -44,11 +59,25 @@ export function SummaryCard() {
     trackChatBill.summaryViewed({
       auth_state: isAuthenticated ? "login" : "non_login",
     });
-    if (!isAuthenticated) {
-      setShowAuthModal(true);
+
+    const proceedAction = () => {
+      if (!isAuthenticated) {
+        setShowAuthModal(true);
+        return;
+      }
+      handleSaveBill();
+    };
+
+    if (!isVip) {
+      getRandomAdCampaign().then((selectedAd) => {
+        setCurrentAd(selectedAd);
+        setOnAdFinishedCallback(() => proceedAction);
+        setShowAdModal(true);
+      });
       return;
     }
-    handleSaveBill();
+
+    proceedAction();
   };
 
 
@@ -216,6 +245,12 @@ export function SummaryCard() {
         redirectPath={typeof window !== "undefined" ? `${window.location.pathname}?finalizeChat=true` : "/member"}
         title="Simpan Hasil Split Bill"
         description="Masuk dulu yuk agar split bill kamu tersimpan dan bisa langsung dibagikan ke teman-teman."
+      />
+
+      <InterstitialAdModal
+        isOpen={showAdModal}
+        ad={currentAd}
+        onClose={handleAdClose}
       />
     </div>
   );

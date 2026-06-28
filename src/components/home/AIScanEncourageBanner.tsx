@@ -7,6 +7,7 @@ export const AIScanEncourageBanner = () => {
   return (
     <AIScanQuotaBanner 
       showRedirect={true} 
+      variant="card"
     />
   );
 };

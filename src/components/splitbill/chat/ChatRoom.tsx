@@ -4,12 +4,15 @@ import React, { useEffect, useRef, useCallback } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { X, RotateCcw, Sparkles } from "lucide-react";
 import { trackChatBill } from "@/lib/gtag";
-import { useSplitBillChatStore } from "@/store/useSplitBillChatStore";
+import { useSplitBillChatStore, type ChatStep } from "@/store/useSplitBillChatStore";
 import { useChatAgent } from "@/hooks/useChatAgent";
 import { ChatMessage, TypingIndicator } from "./ChatMessage";
+import { validateStepTransition } from "@/lib/chat/chatTransitionGuard";
+import { toast } from "sonner";
 import {
   GREETING_MESSAGES,
   friendsConfirmedMessages,
+  payerSelectedMessages,
   receiptConfirmedMessages,
   taxPromptMessages,
   noTaxActivityPromptMessages,
@@ -29,6 +32,7 @@ import { useSaveChatBill } from "@/hooks/useSaveChatBill";
 const STEP_LABELS: Record<string, string> = {
   GREETING: "Memulai...",
   ADD_FRIENDS: "Tambah Teman",
+  SELECT_PAYER: "Pilih Pembayar",
   SCAN_RECEIPT: "Scan Struk",
   ASSIGN_ITEMS: "Assign Item",
   SET_TAX_METHOD: "Atur Pajak",
@@ -42,16 +46,17 @@ const STEP_LABELS: Record<string, string> = {
 const STEP_PROGRESS: Record<string, number> = {
   GREETING: 0,
   ADD_FRIENDS: 1,
-  SCAN_RECEIPT: 2,
-  ASSIGN_ITEMS: 3,
-  SET_TAX_METHOD: 4,
-  SET_ACTIVITY: 5,
-  SET_PAYMENT: 6,
-  REVIEW: 7,
-  GIVE_REVIEW: 8,
-  DONE: 8,
+  SELECT_PAYER: 2,
+  SCAN_RECEIPT: 3,
+  ASSIGN_ITEMS: 4,
+  SET_TAX_METHOD: 5,
+  SET_ACTIVITY: 6,
+  SET_PAYMENT: 7,
+  REVIEW: 8,
+  GIVE_REVIEW: 9,
+  DONE: 9,
 };
-const TOTAL_STEPS = 8;
+const TOTAL_STEPS = 9;
 
 // ─── Component ────────────────────────────────────────────────────────────────
 export function ChatRoom() {
@@ -60,19 +65,38 @@ export function ChatRoom() {
     openChat,
     closeChat,
     step,
-    setStep,
+    setStep: storeSetStep,
     messages,
     isTyping,
     expenses,
     additionalExpenses,
+    payerName,
     setScannedResult,
     setExpenses,
     setAdditionalExpenses,
     setActivityName,
+    setPayerName,
     setSelectedPaymentMethodIds,
     addMessage,
     resetChat,
   } = useSplitBillChatStore();
+
+  const setStep = useCallback((nextStep: ChatStep) => {
+    const store = useSplitBillChatStore.getState();
+    const validation = validateStepTransition(step, nextStep, {
+      participants: store.participants,
+      payerName: store.payerName,
+      scannedResult: store.scannedResult,
+      expenses: store.expenses,
+    });
+
+    if (!validation.isValid) {
+      toast.error(validation.error || "Gagal berpindah langkah.");
+      return;
+    }
+
+    storeSetStep(nextStep);
+  }, [step, storeSetStep]);
 
   const { isAuthenticated, isInitialized } = useAuthStore();
   const { handleSaveBill } = useSaveChatBill();
@@ -165,9 +189,18 @@ export function ChatRoom() {
     async (names: string[]) => {
       addMessage(userText(`Oke siap, ada ${names.join(", ")} 👍`));
       await sendAgentMessages(friendsConfirmedMessages(names), 600);
-      setStep("SCAN_RECEIPT");
+      setStep("SELECT_PAYER");
     },
     [addMessage, sendAgentMessages, setStep]
+  );
+
+  const handlePayerSelected = useCallback(
+    async (name: string) => {
+      setPayerName(name);
+      await sendAgentMessages(payerSelectedMessages(name), 600);
+      setStep("SCAN_RECEIPT");
+    },
+    [setPayerName, sendAgentMessages, setStep]
   );
 
   const handleReceiptConfirmed = useCallback(
@@ -180,7 +213,7 @@ export function ChatRoom() {
         item: item.name,
         amount: item.price * (item.quantity || 1),
         who: [] as string[],
-        paidBy: "",
+        paidBy: payerName,
       }));
 
       // Convert tax/service/discount → AdditionalExpense[]
@@ -199,7 +232,7 @@ export function ChatRoom() {
           name: "Tax",
           amount: result.tax,
           who: [],
-          paidBy: "",
+          paidBy: payerName,
           splitType: "proportionally",
         });
       }
@@ -209,7 +242,7 @@ export function ChatRoom() {
           name: "Service Charge",
           amount: result.service_charge,
           who: [],
-          paidBy: "",
+          paidBy: payerName,
           splitType: "proportionally",
         });
       }
@@ -235,6 +268,7 @@ export function ChatRoom() {
       setStep("ASSIGN_ITEMS");
     },
     [
+      payerName,
       setScannedResult,
       setExpenses,
       setAdditionalExpenses,
@@ -406,6 +440,7 @@ export function ChatRoom() {
                     <ChatMessage
                       message={msg}
                       onFriendsConfirmed={handleFriendsConfirmed}
+                      onPayerSelected={handlePayerSelected}
                       onReceiptConfirmed={handleReceiptConfirmed}
                       onItemsAssigned={handleItemsAssigned}
                       onTaxMethodSet={handleTaxMethodSet}

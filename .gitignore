@@ -58,4 +58,5 @@ doc/
 # Tool Configs
 .antigravitycli/
 .antigravity/
+.agents/
 

@@ -14,7 +14,7 @@ const AVATAR_SM_URL =
   "https://api.dicebear.com/9.x/personas/svg?backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf&size=24&scale=100&seed=";
 
 export const ExpenseList = () => {
-  const { expenses, removeExpense } = useSplitBillStore();
+  const { expenses, removeExpense, people, updateExpense } = useSplitBillStore();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
@@ -40,7 +40,7 @@ export const ExpenseList = () => {
                 "overflow-hidden transition-all duration-300 border",
                 expense.who.length === 0 || !expense.paidBy
                   ? "rounded-[1.2rem] border-amber-200 bg-amber-50/20 backdrop-blur-xs shadow-soft text-card-foreground"
-                  : "rounded-xl border-primary/0 bg-white shadow-sm",
+                  : "rounded-lg border-primary/0 bg-white shadow-sm",
               )}
             >
               <CardContent className="p-3 sm:p-4">
@@ -74,26 +74,26 @@ export const ExpenseList = () => {
                     <span className="text-[9px] text-muted-foreground/60 uppercase font-bold tracking-wider">
                       Split dengan
                     </span>
-                    {useSplitBillStore.getState().people.length > 0 && (
+                    {people.length > 0 && (
                       <button
                         onClick={() => {
-                          const allPeople = useSplitBillStore.getState().people;
+                          const allPeople = people;
                           // If already all selected, clear all. Otherwise, select all.
                           const isAllSelected = expense.who.length === allPeople.length;
-                          useSplitBillStore.getState().updateExpense(expense.id, {
+                          updateExpense(expense.id, {
                             who: isAllSelected ? [] : [...allPeople],
                           });
                         }}
                         className="text-[9px] font-black text-primary hover:underline cursor-pointer bg-primary/5 px-2 py-0.5 rounded-full"
                       >
-                        {expense.who.length === useSplitBillStore.getState().people.length
+                        {expense.who.length === people.length
                           ? "Reset"
                           : "Bagi Rata (Semua)"}
                       </button>
                     )}
                   </div>
                   <div className="flex flex-wrap gap-1.5">
-                    {useSplitBillStore.getState().people.map((name) => {
+                    {people.map((name) => {
                       const isSelected = expense.who.includes(name);
                       return (
                         <button
@@ -102,7 +102,7 @@ export const ExpenseList = () => {
                             const newWho = isSelected
                               ? expense.who.filter((w) => w !== name)
                               : [...expense.who, name];
-                            useSplitBillStore.getState().updateExpense(expense.id, { who: newWho });
+                            updateExpense(expense.id, { who: newWho });
                           }}
                           className={cn(
                             "flex items-center gap-1.5 rounded-full pl-1 pr-2.5 py-1 border transition-all cursor-pointer text-[10px] font-bold",
@@ -124,7 +124,7 @@ export const ExpenseList = () => {
                         </button>
                       );
                     })}
-                    {useSplitBillStore.getState().people.length === 0 && (
+                    {people.length === 0 && (
                       <p className="text-[10px] text-muted-foreground italic">
                         Belum ada anggota. Tambahkan teman di atas terlebih dahulu.
                       </p>
@@ -136,13 +136,13 @@ export const ExpenseList = () => {
                       Dibayar oleh
                     </span>
                     <div className="flex flex-wrap gap-1.5">
-                      {useSplitBillStore.getState().people.map((name) => {
+                      {people.map((name) => {
                         const isPayer = expense.paidBy === name;
                         return (
                           <button
                             key={name}
                             onClick={() => {
-                              useSplitBillStore.getState().updateExpense(expense.id, {
+                              updateExpense(expense.id, {
                                 paidBy: isPayer ? "" : name,
                               });
                             }}

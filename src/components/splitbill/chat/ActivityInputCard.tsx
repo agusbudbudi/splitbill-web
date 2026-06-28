@@ -2,34 +2,23 @@
 
 import React, { useState } from "react";
 import { Check, ChevronRight, PenLine } from "lucide-react";
-import { useSplitBillChatStore, type ChatStep } from "@/store/useSplitBillChatStore";
 import { suggestEmoji } from "@/lib/emojiUtils";
 import { cn } from "@/lib/utils";
 import { trackChatBill } from "@/lib/gtag";
 
-const STEP_ORDER: ChatStep[] = [
-  "GREETING",
-  "ADD_FRIENDS",
-  "SCAN_RECEIPT",
-  "ASSIGN_ITEMS",
-  "SET_TAX_METHOD",
-  "SET_ACTIVITY",
-  "SET_PAYMENT",
-  "REVIEW",
-  "GIVE_REVIEW",
-  "DONE",
-];
-
 interface ActivityInputCardProps {
+  isCompleted: boolean;
+  activityName: string;
   onConfirm: (activityName: string) => void;
 }
 
-export function ActivityInputCard({ onConfirm }: ActivityInputCardProps) {
-  const { step, activityName } = useSplitBillChatStore();
+export function ActivityInputCard({
+  isCompleted,
+  activityName,
+  onConfirm,
+}: ActivityInputCardProps) {
   const [value, setValue] = useState(activityName || "");
   const [selectedQuickPick, setSelectedQuickPick] = useState<string | null>(null);
-  const isCompleted =
-    STEP_ORDER.indexOf(step) > STEP_ORDER.indexOf("SET_ACTIVITY");
 
   if (isCompleted) {
     return (
@@ -55,7 +44,6 @@ export function ActivityInputCard({ onConfirm }: ActivityInputCardProps) {
 
   const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
-    // Clear quick pick selection if user types manually
     setSelectedQuickPick(null);
     const emoji = suggestEmoji(newValue);
     if (emoji && !newValue.includes(emoji)) {
@@ -98,35 +86,29 @@ export function ActivityInputCard({ onConfirm }: ActivityInputCardProps) {
 
         <div className="flex flex-wrap gap-1.5 pt-1">
           {[
-            { name: "Makan Bareng", emoji: "🍱" },
-            { name: "Liburan", emoji: "✈️" },
-            { name: "Patungan Kado", emoji: "🎁" },
-            { name: "Tagihan", emoji: "🏠" },
-            { name: "Belanja", emoji: "🛒" },
-          ].map((pick) => (
+            { label: "Makan Bareng", emoji: "🍔" },
+            { label: "Kopi Santai", emoji: "☕" },
+            { label: "Liburan", emoji: "✈️" },
+            { label: "Patungan Kado", emoji: "🎁" },
+          ].map((item) => (
             <button
-              key={pick.name}
-              type="button"
-              onClick={() => handleSuggest(pick.name, pick.emoji)}
+              key={item.label}
+              onClick={() => handleSuggest(item.label, item.emoji)}
               className={cn(
-                "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold transition-all active:scale-95 cursor-pointer border border-primary/10",
-                value === `${pick.emoji} ${pick.name}`
-                  ? "bg-primary text-white border-primary"
-                  : "bg-primary/5 text-primary/70 hover:bg-primary/10"
+                "px-3 py-1.5 rounded-full text-xs font-semibold border border-border bg-white text-muted-foreground transition hover:border-primary/40 hover:text-primary cursor-pointer",
+                selectedQuickPick === item.label && "border-primary bg-primary/5 text-primary"
               )}
             >
-              <span>{pick.emoji}</span>
-              <span>{pick.name}</span>
+              {item.emoji} {item.label}
             </button>
           ))}
         </div>
 
         <button
-          type="button"
           onClick={handleSubmit}
-          className="w-full h-10 rounded-sm bg-primary text-white font-bold text-sm flex items-center justify-center gap-2 hover:bg-primary/90 active:scale-[0.98] transition-all shadow-md shadow-primary/20 cursor-pointer"
+          className="w-full h-10 rounded-sm bg-primary text-white font-bold text-sm flex items-center justify-center gap-2 hover:bg-primary/90 active:scale-[0.98] transition shadow-md shadow-primary/10 cursor-pointer"
         >
-          Lanjut <ChevronRight className="w-4 h-4" />
+          Simpan & Lanjut <ChevronRight className="w-4 h-4" />
         </button>
       </div>
     </div>

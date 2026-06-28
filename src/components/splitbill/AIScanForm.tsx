@@ -390,7 +390,7 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
   // Guest Quota Exhausted Barrier - Prompt Login / Register
   if (!isAuthenticated && guestRemainingScans <= 0 && !scanResult) {
     return (
-      <div className="space-y-4 py-2 animate-in fade-in duration-500 relative">
+      <div className="space-y-4 animate-in fade-in duration-500 relative">
         <div className="relative p-[1.5px] rounded-3xl bg-gradient-to-br from-violet-400 via-pink-400 to-primary/60 shadow-lg shadow-primary/5 overflow-hidden">
           <div className="relative overflow-hidden bg-white rounded-[calc(1.5rem-1.5px)] p-6">
             {/* Subtle background glow */}
@@ -454,7 +454,7 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
     !scanResult
   ) {
     return (
-      <div className="space-y-4 py-2 animate-in fade-in duration-500 relative">
+      <div className="space-y-4 animate-in fade-in duration-500 relative">
         <div className="relative p-[1.5px] rounded-3xl bg-gradient-to-br from-violet-400 via-pink-400 to-primary/60 shadow-lg shadow-primary/5 overflow-hidden">
           <div className="relative overflow-hidden bg-white rounded-[calc(1.5rem-1.5px)] p-6">
             {/* Subtle background glow */}
@@ -507,7 +507,7 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
   }
 
   return (
-    <div className="space-y-4 py-2 animate-in fade-in duration-500">
+    <div className="space-y-4 animate-in fade-in duration-500">
       {!image ? (
         <>
           {/* Camera capture area — tap to open camera directly */}

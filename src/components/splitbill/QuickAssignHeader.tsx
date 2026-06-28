@@ -36,7 +36,7 @@ export const QuickAssignHeader = () => {
   const handleSetAllPaidBy = (name: string) => {
     setAllExpensesPaidBy(name);
     setAllAdditionalExpensesPaidBy(name);
-    
+
     if (negativeItemsCount > 0) {
       toast.success(
         `Berhasil! Item dibayar oleh ${name}. ${negativeItemsCount} item diskon/kredit diabaikan 💸`
@@ -53,7 +53,7 @@ export const QuickAssignHeader = () => {
   };
 
   return (
-    <Card className="rounded-3xl bg-white shadow-sm overflow-hidden animate-in fade-in slide-in-from-top-4 duration-500">
+    <Card className="rounded-lg bg-white shadow-sm overflow-hidden animate-in fade-in slide-in-from-top-4 duration-500">
       {/* Subtotal Section */}
       <div className="bg-primary/10 p-4 flex justify-between items-center">
         <div className="space-y-0.5">
@@ -81,7 +81,6 @@ export const QuickAssignHeader = () => {
 
       <CardContent className="p-4 space-y-4">
         <div className="flex items-center gap-2">
-          <Sparkles className="w-3.5 h-3.5 text-primary" />
           <h3 className="text-xs font-bold text-primary">Quick Assign ⚡</h3>
         </div>
 
@@ -106,7 +105,7 @@ export const QuickAssignHeader = () => {
           <Button
             onClick={handleSplitWithEveryone}
             variant="outline"
-            className="w-full h-10 rounded-lg border-primary/20 text-primary bg-white hover:bg-primary/5 transition-all font-bold text-xs gap-2"
+            className="w-full h-10 rounded-sm border-primary/20 text-primary bg-white hover:bg-primary/5 transition-all font-bold text-xs gap-2"
           >
             <Users className="w-4 h-4" />
             Bagi Rata ke Semua Teman ({people.length} Orang)

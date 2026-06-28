@@ -47,6 +47,18 @@ export function friendsConfirmedMessages(names: string[]): MessagePayload[] {
       `Asyik, seru nih! Jadi ada **${names.join(", ")}** yang bakal patungan kali ini. Catat! 📝`
     ),
     agentCard(
+      "Sebelum kita scan struknya, **siapa nih yang bayar bill ini terlebih dahulu?** Yuk pilih salah satu di bawah ini 👇",
+      "payer_picker"
+    ),
+  ];
+}
+
+// ─── After payer selected ─────────────────────────────────────────────────────
+export function payerSelectedMessages(payerName: string): MessagePayload[] {
+  return [
+    userText(`${payerName} yang bayar 👍`),
+    agentText(`Sip, **${payerName}** dicatat sebagai pembayar utama! 💳`),
+    agentCard(
       "Nah, sekarang giliran **foto atau upload struk belanjaan/makan malam kalian**. Biar Billy yang panggilin AI buat baca dan catat semua itemnya secara otomatis! 📸👇",
       "receipt_scan"
     ),
@@ -134,11 +146,12 @@ export function paymentSetMessages(count: number): MessagePayload[] {
 export function reviewPromptMessages(): MessagePayload[] {
   return [
     agentText(
-      "Senang bisa bantu kamu split bill hari ini! 🎉\n\nSebelum kamu pergi, boleh minta **feedback singkat** tentang pengalaman pakai Agent Billy? Cuma 1 menit kok, dan sangat berarti buat Billy berkembang! ⭐"
+      "Senang bisa bantu kamu split bill hari ini! 🎉. Sebelum kamu pergi, boleh minta **feedback singkat** tentang pengalaman pakai Agent Billy? Cuma 1 menit kok, dan sangat berarti buat Billy berkembang! ⭐"
     ),
     agentCard(
-      "Bayar makan habis begadang...<br>Untung Split Bill bikin tenang...<br>Kalau ada masukan atau bintang...<br>Kasih ke Billy ya, biar makin cemerlang...😎👇",
-      "review_input"
+      "Bayar makan habis begadang...<br>Pake Split Bill bikin tenang...<br>Kalau ada masukan atau bintang...<br>Kasih ke Billy ya, biar makin cemerlang...😎👇",
+      "review_input",
+      "/img/review-agent-billy.png"
     ),
   ];
 }

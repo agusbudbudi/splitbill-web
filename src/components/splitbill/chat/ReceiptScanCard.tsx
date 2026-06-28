@@ -10,7 +10,6 @@ import {
   RotateCcw,
   Check,
 } from "lucide-react";
-import { useSplitBillChatStore, type ChatStep } from "@/store/useSplitBillChatStore";
 import { scanReceipt, type ReceiptScanResult, type ReceiptItem } from "@/lib/AIService";
 import { formatToIDR } from "@/lib/utils";
 import { cn } from "@/lib/utils";
@@ -22,28 +21,22 @@ import { AuthModal } from "@/components/auth/AuthModal";
 import { AIScanQuotaBanner } from "@/components/ui/AIScanQuotaBanner";
 import { GUEST_LIMIT, getGuestScanQuota, incrementGuestScanCount } from "@/lib/utils/guestQuota";
 
-const STEP_ORDER: ChatStep[] = [
-  "GREETING",
-  "ADD_FRIENDS",
-  "SCAN_RECEIPT",
-  "ASSIGN_ITEMS",
-  "SET_TAX_METHOD",
-  "SET_ACTIVITY",
-  "SET_PAYMENT",
-  "REVIEW",
-  "GIVE_REVIEW",
-  "DONE",
-];
-
 interface ReceiptScanCardProps {
   onConfirm: (result: ReceiptScanResult, imageDataUrl: string) => void;
+  isCompleted: boolean;
+  scannedResult: ReceiptScanResult | null;
+  activityName: string;
+  onCloseChat: () => void;
 }
 
-export function ReceiptScanCard({ onConfirm }: ReceiptScanCardProps) {
-  const { step, scannedResult, activityName, closeChat } = useSplitBillChatStore();
+export function ReceiptScanCard({
+  onConfirm,
+  isCompleted,
+  scannedResult,
+  activityName,
+  onCloseChat,
+}: ReceiptScanCardProps) {
   const router = useRouter();
-  const isCompleted =
-    STEP_ORDER.indexOf(step) > STEP_ORDER.indexOf("SCAN_RECEIPT");
 
   const { isAuthenticated, user, getCurrentUser } = useAuthStore();
   const [guestRemainingScans, setGuestRemainingScans] = useState<number>(GUEST_LIMIT);
@@ -265,7 +258,7 @@ export function ReceiptScanCard({ onConfirm }: ReceiptScanCardProps) {
 
   const handleGoToManual = () => {
     trackChatBill.scanFallbackManual();
-    closeChat();
+    onCloseChat();
     router.push("/split-bill?step=2&tab=manual");
   };
 

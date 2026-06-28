@@ -32,7 +32,7 @@ export const SegmentedControl = ({
     <div
       id={id}
       className={cn(
-        "flex p-1 bg-muted/20 rounded-lg gap-1 transition-all border border-border/20",
+        "flex p-3 rounded-t-xl gap-1 transition-all",
         className,
       )}
     >

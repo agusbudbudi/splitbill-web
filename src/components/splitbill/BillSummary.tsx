@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useImperativeHandle } from "react";
+import React, { useImperativeHandle, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSplitBillStore } from "@/store/useSplitBillStore";
 import { Card, CardContent } from "@/components/ui/Card";
@@ -37,6 +37,8 @@ import * as htmlToImage from "html-to-image";
 import { SocialSplitBillReceipt } from "./SocialSplitBillReceipt";
 import { trackSplitBill, trackWallet } from "@/lib/gtag";
 import { useAuthStore } from "@/lib/stores/authStore";
+import { AuthModal } from "@/components/auth/AuthModal";
+import { SecureDraftBanner } from "./SecureDraftBanner";
 
 export interface BillSummaryHandle {
   triggerShare: () => void;
@@ -56,6 +58,10 @@ interface BillSummaryProps {
   isPublic?: boolean;
   /** Hide the Bagikan + Salin Link buttons (used when they're shown in a parent card instead) */
   hideShareActions?: boolean;
+  /** Reuse the parent's own save/login flow (e.g. the "Simpan & Share" CTA's auth popup)
+   *  instead of showing a separate local auth modal. If omitted, falls back to a
+   *  self-contained AuthModal. */
+  onLoginClick?: () => void;
 }
 
 export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>(
@@ -64,10 +70,12 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
     showDownload = true,
     isPublic = false,
     hideShareActions = false,
+    onLoginClick,
   }: BillSummaryProps, ref) {
     const store = useSplitBillStore();
     const { paymentMethods: storePaymentMethods } = useWalletStore();
     const { isAuthenticated } = useAuthStore();
+    const [showAuthModal, setShowAuthModal] = useState(false);
 
     // Use props if provided, otherwise fall back to store
     const router = useRouter();
@@ -323,11 +331,17 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
 
     return (
       <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-        <Card className="p-4 border-primary/20 shadow-md overflow-hidden relative">
+        <Card className="border-primary/20 shadow-md overflow-hidden relative">
+          {!isAuthenticated && !isPublic && !billData && (
+            <SecureDraftBanner
+              onLoginClick={onLoginClick ?? (() => setShowAuthModal(true))}
+            />
+          )}
+
           {/* Decorative background element */}
           <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 blur-3xl pointer-events-none" />
 
-          <div className="space-y-6 relative z-10">
+          <div className="p-4 space-y-6 relative z-10">
             {/* Header */}
             <div className="flex flex-col gap-4">
               <div className="flex items-start justify-between gap-4">
@@ -348,9 +362,6 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
                         </span>
                       )}
                   </div>
-                </div>
-                <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center flex-shrink-0">
-                  <ReceiptText className="w-6 h-6 text-primary" />
                 </div>
               </div>
 
@@ -413,7 +424,7 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
                           <span className="text-destructive font-bold">
                             {inst.from}
                           </span>{" "}
-                          →{" "}
+                          bayar ke{" "}
                           <span className="text-emerald-600 font-bold">
                             {inst.to}
                           </span>
@@ -429,14 +440,6 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
             )}
 
             {/* Person Breakdown */}
-            {!isPublic && !billData && (
-              <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-sm flex items-start gap-2.5 text-amber-800 text-[11px] font-bold leading-relaxed animate-in fade-in slide-in-from-top-2 duration-500">
-                <span className="text-sm shrink-0">⚠️</span>
-                <p className="flex-1 m-0">
-                  <strong>Rincian ini cuma numpang lewat sementara, lho!</strong> Biar gak hilang, yuk <em>secure</em> & simpan ke akun kamu!
-                </p>
-              </div>
-            )}
             <div className="space-y-4">
               <h3 className="font-bold text-xs text-foreground/70 uppercase px-1">
                 Rincian Per Orang
@@ -912,6 +915,13 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
             }}
           />
         </div>
+
+        {!onLoginClick && (
+          <AuthModal
+            isOpen={showAuthModal}
+            onClose={() => setShowAuthModal(false)}
+          />
+        )}
       </div>
     );
   }

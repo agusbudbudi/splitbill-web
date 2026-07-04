@@ -12,6 +12,7 @@ import { AdditionalExpenses } from "@/components/splitbill/AdditionalExpenses";
 import { BillSummary } from "@/components/splitbill/BillSummary";
 import { SaveBillNudge } from "@/components/splitbill/SaveBillNudge";
 import { VisualReceiptPreview } from "@/components/splitbill/VisualReceiptPreview";
+import { StepperV2 } from "@/components/splitbill/StepperV2";
 import { Card, CardContent } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
@@ -410,27 +411,39 @@ const SplitBillContent = () => {
       // updated once authenticated. Match on 403 OR the backend message
       // (status code may vary), clear the stale draftId, and retry once –
       // a fresh draft is then created under the current user.
+      // Draft-gone (404): the draft row was deleted server-side (e.g. manual
+      // cleanup of stale STEP_1-only drafts). Treat the same way as an
+      // ownership conflict — drop the dead ID and let the retry create a
+      // fresh draft, so the user's flow is never blocked by a missing row.
       const status = (err as { status?: number })?.status ?? (err as { response?: { status?: number } })?.response?.status;
       const message = (err as { message?: string })?.message ?? "";
       const isOwnershipConflict =
         status === 403 || /tidak memiliki akses/i.test(message);
-      if (isOwnershipConflict && !isRetry) {
-        console.warn("Draft ownership conflict detected. Attempting to recover data before retrying.");
+      const isDraftGone =
+        status === 404 || /draft.*tidak ditemukan/i.test(message);
+      if ((isOwnershipConflict || isDraftGone) && !isRetry) {
+        console.warn(
+          isDraftGone
+            ? "Draft not found (likely deleted server-side). Retrying with a fresh draft."
+            : "Draft ownership conflict detected. Attempting to recover data before retrying."
+        );
         const { draftId, clearDraftId } = useSplitBillStore.getState();
 
-        try {
-          // Attempt to recover data from the old draft
-          if (draftId) {
-            const response = await draftApi.getById(draftId);
-            if (response.success && response.draft) {
-              console.log("Successfully recovered draft data.");
-              // Note: The UI state (expenses, participants, etc.)
-              // should already be in sync with the frontend state.
-              // We just need to ensure the stale ID is gone.
+        if (isOwnershipConflict) {
+          try {
+            // Attempt to recover data from the old draft
+            if (draftId) {
+              const response = await draftApi.getById(draftId);
+              if (response.success && response.draft) {
+                console.log("Successfully recovered draft data.");
+                // Note: The UI state (expenses, participants, etc.)
+                // should already be in sync with the frontend state.
+                // We just need to ensure the stale ID is gone.
+              }
             }
+          } catch (recoveryErr) {
+            console.error("Failed to recover draft data:", recoveryErr);
           }
-        } catch (recoveryErr) {
-          console.error("Failed to recover draft data:", recoveryErr);
         }
 
         clearDraftId();
@@ -466,11 +479,18 @@ const SplitBillContent = () => {
             (finalizeErr as { status?: number })?.status ??
             (finalizeErr as { response?: { status?: number } })?.response?.status;
           const message = (finalizeErr as { message?: string })?.message ?? "";
-          if (status === 403 || /tidak memiliki akses/i.test(message)) {
-            // Stale draftId from a different user/session (e.g. a guest draft
-            // created before login) — discard it and create a fresh record
-            // directly so the user's work is not lost.
-            console.warn("Finalize ownership conflict: stale draftId, falling back to direct create.");
+          const isOwnershipConflict = status === 403 || /tidak memiliki akses/i.test(message);
+          const isDraftGone = status === 404 || /draft.*tidak ditemukan/i.test(message);
+          if (isOwnershipConflict || isDraftGone) {
+            // Stale draftId — either from a different user/session (guest
+            // draft created before login) or because the draft row was
+            // deleted server-side. Either way, discard it and create a
+            // fresh record directly so the user's work is not lost/blocked.
+            console.warn(
+              isDraftGone
+                ? "Finalize: draft not found (deleted server-side), falling back to direct create."
+                : "Finalize ownership conflict: stale draftId, falling back to direct create."
+            );
             clearDraftId();
           } else {
             throw finalizeErr;
@@ -683,8 +703,8 @@ const SplitBillContent = () => {
         return (
           <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
             <div className="flex flex-col items-center text-center gap-2">
-              <h2 className="text-2xl font-bold">Siapa aja nih? 👥</h2>
-              <p className="text-muted-foreground text-sm max-w-[360px]">
+              <h2 className="text-2xl font-bold text-white">Siapa aja nih?</h2>
+              <p className="text-white/80 text-sm max-w-[360px]">
                 Tambahkan minimal 2 orang untuk mulai split bill.
               </p>
             </div>
@@ -697,8 +717,8 @@ const SplitBillContent = () => {
         return (
           <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
             <div className="flex flex-col items-center text-center gap-2">
-              <h2 className="text-2xl font-bold">Input Pengeluaran 📊</h2>
-              <p className="text-muted-foreground text-sm max-w-[360px]">
+              <h2 className="text-2xl font-bold text-white">Input Pengeluaran</h2>
+              <p className="text-white/80 text-sm max-w-[360px]">
                 Scan struk pake AI biar cepet, atau input manual
               </p>
             </div>
@@ -791,28 +811,45 @@ const SplitBillContent = () => {
       case 3:
         return (
           <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
+            <div className="flex flex-col items-center text-center gap-2">
+              <h2 className="text-2xl font-bold text-white">Langkah Terakhir!</h2>
+              <p className="text-white/80 text-sm max-w-[360px]">
+                Nama kegiatannya apa & mau dibayar kemana?
+              </p>
+            </div>
+
             {/* Bill Quick View - Realistic Ticket Style */}
-            <div className="relative group">
+            <div className="relative group mb-4">
               <div
                 className="bg-white border-x border-primary/10 p-8 pt-6 pb-14 relative"
                 style={{
                   filter: "drop-shadow(0 10px 15px -3px rgba(0, 0, 0, 0.05))",
                   maskImage:
-                    "linear-gradient(to bottom, black 85%, transparent 100%)",
+                    "radial-gradient(circle 12px at left 50%, transparent 99%, black 100%), radial-gradient(circle 12px at right 50%, transparent 99%, black 100%), linear-gradient(to bottom, black 50%, transparent 100%)",
                   WebkitMaskImage:
-                    "linear-gradient(to bottom, black 85%, transparent 100%)",
+                    "radial-gradient(circle 12px at left 50%, transparent 99%, black 100%), radial-gradient(circle 12px at right 50%, transparent 99%, black 100%), linear-gradient(to bottom, black 50%, transparent 100%)",
+                  maskComposite: "intersect",
+                  WebkitMaskComposite: "source-in, source-in",
                 }}
               >
                 {/* Ticket Punch Notches (Sides) */}
-                <div className="absolute top-1/2 -left-3 w-6 h-6 bg-background border border-primary/10 rounded-full z-10 -translate-y-1/2 shadow-inner" />
-                <div className="absolute top-1/2 -right-3 w-6 h-6 bg-background border border-primary/10 rounded-full z-10 -translate-y-1/2 shadow-inner" />
+                <div className="absolute top-1/2 -left-3 w-6 h-6 bg-transparent border border-primary/10 rounded-full z-10 -translate-y-1/2 shadow-inner" />
+                <div className="absolute top-1/2 -right-3 w-6 h-6 bg-transparent border border-primary/10 rounded-full z-10 -translate-y-1/2 shadow-inner" />
 
                 {/* Decorative Pattern Background */}
-                <div className="absolute inset-0 opacity-[0.02] pointer-events-none bg-[radial-gradient(#7c3aed_1px,transparent_1px)] [background-size:12px_12px]" />
+                <div
+                  className="absolute inset-0 opacity-[0.02] pointer-events-none bg-[radial-gradient(#7c3aed_1px,transparent_1px)] [background-size:12px_12px]"
+                  style={{
+                    maskImage:
+                      "linear-gradient(to bottom, black 85%, transparent 100%)",
+                    WebkitMaskImage:
+                      "linear-gradient(to bottom, black 85%, transparent 100%)",
+                  }}
+                />
 
                 <div className="relative z-10 flex items-center justify-between">
                   <div className="space-y-1">
-                    <p className="text-[10px] font-black uppercase text-primary/40 tracking-widest">
+                    <p className="text-[10px] font-black uppercase text-primary/80 tracking-widest">
                       Estimasi Tagihan
                     </p>
                     <h3 className="text-3xl font-black text-primary/90 tracking-tighter">
@@ -848,22 +885,13 @@ const SplitBillContent = () => {
               </div>
 
               {/* Lock Indicator Overlay */}
-              <div className="absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-background via-background/80 to-transparent flex items-end justify-center pb-2 z-20">
-                <div className="flex items-center gap-2 px-4 py-1.5 bg-white border border-primary/10 rounded-full shadow-lg shadow-primary/5 ">
+              <div className="absolute inset-x-0 bottom-0 h-14 flex items-end justify-center pb-2 z-20">
+                <div className="flex items-center gap-2 px-4 py-1.5 bg-white rounded-full shadow-lg shadow-primary/5 ">
                   <span className="text-xs font-bold text-primary">
                     Selesaikan Detail di Bawah ✨
                   </span>
                 </div>
               </div>
-            </div>
-
-            <div className="text-center space-y-1 pt-2">
-              <h2 className="text-2xl font-bold tracking-tight">
-                Langkah Terakhir! 🚀
-              </h2>
-              <p className="text-muted-foreground text-sm">
-                Nama kegiatannya apa & mau dibayar kemana?
-              </p>
             </div>
 
             <Card className="border-primary/10 shadow-soft">
@@ -1039,8 +1067,8 @@ const SplitBillContent = () => {
         return (
           <div className="space-y-6 animate-in fade-in zoom-in duration-500">
             <div className="text-center space-y-2">
-              <h2 className="text-2xl font-bold">Beres! 💸</h2>
-              <p className="text-muted-foreground text-sm">
+              <h2 className="text-2xl text-white font-bold">Beres!</h2>
+              <p className="text-muted-foreground text-sm text-white">
                 Ini rincian siapa bayar ke siapa.
               </p>
             </div>
@@ -1071,7 +1099,10 @@ const SplitBillContent = () => {
                   />
                 )}
 
-                <BillSummary showDownload={false} />
+                <BillSummary
+                  showDownload={false}
+                  onLoginClick={() => setShowAuthModal(true)}
+                />
 
                 <div className="flex flex-col items-center gap-3 pt-4">
                   <Button
@@ -1095,10 +1126,10 @@ const SplitBillContent = () => {
     }
   };
   const steps = [
-    { id: 1, label: "Teman", icon: Users },
-    { id: 2, label: "Bil", icon: ReceiptText },
-    { id: 3, label: "Detail", icon: PenLine },
-    { id: 4, label: "Hasil", icon: CheckSquare },
+    { id: 1, label: "Input Teman", icon: Users },
+    { id: 2, label: "Input Bill", icon: ReceiptText },
+    { id: 3, label: "Input Detail", icon: PenLine },
+    { id: 4, label: "Hasil Beres", icon: CheckSquare },
   ];
 
   return (
@@ -1120,55 +1151,21 @@ const SplitBillContent = () => {
         }
       />
 
-      {/* Sticky Stepper Row */}
-      {!isSaved && (
-        <div className="w-full flex flex-col items-center -mt-px relative z-20">
-          <div className="w-full max-w-[600px] bg-primary flex justify-between items-center px-8 pt-2 pb-8 rounded-b-2xl shadow-lg shadow-primary/20 relative">
-            <div className="absolute top-[32%] left-12 right-16 h-0.5 bg-white/20 z-0" />
-            <div className="absolute top-[32%] left-12 right-16 h-0.5 z-0 overflow-hidden">
-              <div
-                className="h-full bg-white transition-all duration-500 ease-in-out"
-                style={{ width: `${((step - 1) / (steps.length - 1)) * 100}%` }}
-              />
-            </div>
-            {steps.map((s) => (
-              <div
-                key={s.id}
-                className={cn(
-                  "relative z-10 w-8 h-8 rounded-full flex flex-col items-center justify-center transition-all duration-500 border-2",
-                  step === s.id
-                    ? "bg-white border-white scale-110 shadow-lg shadow-black/10"
-                    : step > s.id
-                      ? "bg-white border-white"
-                      : "bg-primary border-white/40 text-white/40",
-                )}
-              >
-                <s.icon
-                  className={cn(
-                    "w-4 h-4 font-bold transition-colors duration-500",
-                    step >= s.id ? "text-primary" : "text-white/40",
-                  )}
-                />
+      <div className="relative w-full max-w-[600px] flex-1 flex flex-col">
+        {/* Gradient background, connecting seamlessly from the header down */}
+        <div className="absolute inset-x-0 top-0 h-96 bg-gradient-to-b from-primary via-primary/50 to-transparent pointer-events-none z-0" />
 
-                <span
-                  className={cn(
-                    "absolute -bottom-5 text-[9px] font-bold uppercase tracking-tighter whitespace-nowrap transition-colors duration-500",
-                    step === s.id
-                      ? "text-white opacity-100"
-                      : "text-white/40 opacity-50",
-                  )}
-                >
-                  {s.label}
-                </span>
-              </div>
-            ))}
+        {/* Stepper Row */}
+        {!isSaved && (
+          <div className="relative z-20">
+            <StepperV2 steps={steps} currentStep={step} />
           </div>
-        </div>
-      )}
+        )}
 
-      <main className="w-full max-w-[600px] px-4 pt-8 pb-8 space-y-8 relative z-10">
-        {renderStep()}
-      </main>
+        <main className="relative z-10 w-full px-4 pt-4 pb-8 space-y-8">
+          {renderStep()}
+        </main>
+      </div>
 
       {/* Sticky CTA Footer */}
       <div className="sticky bottom-0 w-full z-50 pointer-events-none flex justify-center mt-auto">

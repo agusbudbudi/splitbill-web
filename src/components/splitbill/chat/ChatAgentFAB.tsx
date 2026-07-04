@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSplitBillChatStore } from "@/store/useSplitBillChatStore";
 import { trackChatBill } from "@/lib/gtag";
@@ -9,11 +9,20 @@ interface ChatAgentFABProps {
   bottomClass?: string;
 }
 
+const TOOLTIP_VISIBLE_MS = 4000;
+
 export function ChatAgentFAB({ bottomClass = "bottom-24" }: ChatAgentFABProps) {
   const { openChat, isOpen, step, messages } = useSplitBillChatStore();
+  const [showTooltip, setShowTooltip] = useState(true);
 
   // Session is active if there are messages and the flow isn't finished
   const hasActiveSession = messages.length > 0 && step !== "DONE";
+
+  useEffect(() => {
+    setShowTooltip(true);
+    const timer = setTimeout(() => setShowTooltip(false), TOOLTIP_VISIBLE_MS);
+    return () => clearTimeout(timer);
+  }, [hasActiveSession]);
 
   // Don't render FAB while chat is open
   if (isOpen) return null;
@@ -37,19 +46,21 @@ export function ChatAgentFAB({ bottomClass = "bottom-24" }: ChatAgentFABProps) {
     <div className={`fixed ${bottomClass} right-4 z-[45] flex flex-col items-end gap-2.5 pointer-events-none`}>
       {/* Tooltip label */}
       <AnimatePresence>
-        <motion.div
-          initial={{ opacity: 0, x: 12 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: 12 }}
-          transition={{ delay: 0.7, duration: 0.3 }}
-          className="pointer-events-none"
-        >
-          <div className="relative bg-white/95 backdrop-blur-sm rounded-xl px-3 py-1.5 shadow-lg border border-border/60">
-            <p className="text-[11px] font-bold text-foreground whitespace-nowrap">
-              {hasActiveSession ? "Lanjut Split Bill 💬" : "Split via Chat ✨"}
-            </p>
-          </div>
-        </motion.div>
+        {showTooltip && (
+          <motion.div
+            initial={{ opacity: 0, x: 12 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 12 }}
+            transition={{ delay: 0.7, duration: 0.3 }}
+            className="pointer-events-none"
+          >
+            <div className="relative bg-white/95 backdrop-blur-sm rounded-xl px-3 py-1.5 shadow-lg border border-border/60">
+              <p className="text-[11px] font-bold text-foreground whitespace-nowrap">
+                {hasActiveSession ? "Lanjut Split Bill 💬" : "Split via Chat ✨"}
+              </p>
+            </div>
+          </motion.div>
+        )}
       </AnimatePresence>
 
       {/* FAB button */}
@@ -63,7 +74,7 @@ export function ChatAgentFAB({ bottomClass = "bottom-24" }: ChatAgentFABProps) {
         className="relative w-14 h-14 rounded-full bg-slate-100 shadow-xl shadow-primary/35 flex items-center justify-center pointer-events-auto border-2 border-primary cursor-pointer"
       >
         {/* Pulse ring when session is active */}
-        {hasActiveSession && (
+        {hasActiveSession && showTooltip && (
           <span className="absolute inset-0 rounded-full bg-primary/30 animate-ping" />
         )}
 

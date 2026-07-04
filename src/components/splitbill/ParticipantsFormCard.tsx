@@ -1,0 +1,185 @@
+"use client";
+
+import React, { useState } from "react";
+import { Plus, X, Users2, Check } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Card, CardContent } from "@/components/ui/Card";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { Input } from "@/components/ui/Input";
+import { Button } from "@/components/ui/Button";
+
+const AVATAR_BASE_URL =
+  "https://api.dicebear.com/9.x/personas/svg?backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf&size=64&scale=100&seed=";
+
+interface ParticipantsFormCardProps {
+  /** Currently selected participant names */
+  people: string[];
+  /** Called with the deduped, not-yet-added names parsed from the input */
+  onAdd: (names: string[]) => void;
+  /** Called when a submitted name is already in `people` */
+  onDuplicate?: (name: string) => void;
+  onRemove: (name: string) => void;
+  minCount?: number;
+  addLabel?: string;
+  participantsLabel?: string;
+  suggestions?: string[];
+  inputPlaceholder?: string;
+}
+
+export const ParticipantsFormCard = ({
+  people,
+  onAdd,
+  onDuplicate,
+  onRemove,
+  minCount = 2,
+  addLabel = "Tambah Orang 👥",
+  participantsLabel = "Peserta Split Bill 👥",
+  suggestions = ["Gua", "Temen 1", "Temen 2"],
+  inputPlaceholder = "Nama teman (bisa lebih dari 1, pisah koma)",
+}: ParticipantsFormCardProps) => {
+  const [newName, setNewName] = useState("");
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newName.trim()) return;
+
+    const names = [...new Set(newName.split(",").map((n) => n.trim()).filter(Boolean))];
+    const dupes = names.filter((n) => people.includes(n));
+    const toAdd = names.filter((n) => !people.includes(n));
+
+    dupes.forEach((n) => onDuplicate?.(n));
+    if (toAdd.length > 0) {
+      onAdd(toAdd);
+    }
+    setNewName("");
+  };
+
+  return (
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2">
+      {/* 1. Tambah Orang (Primary Action) */}
+      <Card id="onboarding-people-list" className="border-primary/20 shadow-md">
+        <CardContent className="p-4 space-y-4">
+          <div className="space-y-3">
+            <label className="text-sm font-bold text-foreground px-1">{addLabel}</label>
+            <form onSubmit={handleSubmit} className="flex items-center gap-2">
+              <Input
+                type="text"
+                placeholder={inputPlaceholder}
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                className="flex-1 h-12"
+              />
+              <Button
+                type="submit"
+                disabled={!newName.trim()}
+                size="icon"
+                className="shrink-0 h-12 w-12"
+              >
+                <Plus className="w-6 h-6" />
+              </Button>
+            </form>
+          </div>
+
+          {people.length < minCount && (
+            <div className="flex flex-wrap gap-2 pt-1">
+              {suggestions
+                .filter((name) => !people.includes(name))
+                .map((suggest) => (
+                  <button
+                    key={suggest}
+                    onClick={() => onAdd([suggest])}
+                    className="flex items-center gap-1.5 pl-1.5 pr-3 py-1 rounded-full text-xs font-bold bg-primary/5 text-primary/80 hover:bg-primary/10 border border-primary/10 transition-all active:scale-95 shadow-soft-sm cursor-pointer"
+                  >
+                    <img
+                      src={`${AVATAR_BASE_URL}${encodeURIComponent(suggest)}`}
+                      alt={suggest}
+                      className="w-6 h-6 rounded-full border-1 border-white bg-white shadow-sm"
+                    />
+                    <span>+ {suggest}</span>
+                  </button>
+                ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* 2. Selected People Grid (Live Feedback) */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between px-1">
+          <label className="text-sm font-bold text-foreground">{participantsLabel}</label>
+          <span
+            className={cn(
+              "px-2 py-0.5 rounded-full text-[10px] font-black transition-all",
+              people.length >= minCount
+                ? "bg-green-100 text-green-700"
+                : "bg-primary/10 text-primary",
+            )}
+          >
+            {people.length} Teman / min. {minCount}
+          </span>
+        </div>
+
+        <div
+          className={cn(
+            "p-4 rounded-2xl border-1 border-dashed transition-all duration-500 min-h-[140px] flex flex-col items-center justify-center gap-4",
+            people.length === 0
+              ? "bg-muted/5 border-muted-foreground/10"
+              : people.length === 1
+                ? "bg-amber-50/30 border-amber-200"
+                : "bg-primary/5 border-primary/20 shadow-soft-sm",
+          )}
+        >
+          {people.length === 0 ? (
+            <EmptyState
+              icon={Users2}
+              message="Belum ada orang"
+              subtitle="Yuk tambah minimal 2 orang!"
+              className="bg-transparent border-none py-2"
+            />
+          ) : (
+            <>
+              <div className="grid grid-cols-5 sm:grid-cols-8 gap-y-6 gap-x-2 w-full">
+                {people.map((name) => (
+                  <div key={name} className="relative flex flex-col items-center gap-2 group">
+                    <button
+                      onClick={() => onRemove(name)}
+                      className="absolute -top-1 -right-1 z-10 bg-destructive text-white rounded-full p-1 hover:scale-110 active:scale-90 transition-all border-2 border-white shadow-sm cursor-pointer"
+                    >
+                      <X className="w-2.5 h-2.5" />
+                    </button>
+                    <div className="w-14 h-14 rounded-full border-2 border-white shadow-soft overflow-hidden bg-white ring-2 ring-primary/5 transition-all">
+                      <img
+                        src={`${AVATAR_BASE_URL}${encodeURIComponent(name)}`}
+                        alt={name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <span className="text-[10px] font-bold text-foreground/70 truncate w-full text-center px-1">
+                      {name}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              {people.length < minCount ? (
+                <div className="flex items-center gap-2 px-3 py-1.5 bg-amber-100/50 rounded-full border border-amber-200/50 animate-in fade-in slide-in-from-top-1">
+                  <div className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                  <p className="text-[10px] font-bold text-amber-700">
+                    Tinggal {minCount - people.length} orang lagi nih! 🙏
+                  </p>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 px-3 py-1.5 bg-green-100/50 rounded-full border border-green-200/50 animate-in fade-in slide-in-from-top-1">
+                  <Check className="w-3 h-3 text-green-600 stroke-[3]" />
+                  <p className="text-[10px] font-bold text-green-700">
+                    Siap lanjut ke tahap berikutnya! ✅
+                  </p>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};

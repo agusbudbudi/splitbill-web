@@ -4,11 +4,8 @@ import React, { useState, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/Button";
 import {
   Sparkles,
-  Camera,
-  X,
   CheckCircle2,
   Info,
-  ImagePlus,
   History,
   Gift,
   ShieldCheck,
@@ -28,6 +25,7 @@ import { AuthModal } from "@/components/auth/AuthModal";
 
 import { AIScanBenefits } from "@/components/ui/AIScanBenefits";
 import { GUEST_LIMIT, getGuestScanQuota, incrementGuestScanCount } from "@/lib/utils/guestQuota";
+import { ReceiptImagePicker } from "@/components/splitbill/ReceiptImagePicker";
 
 export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
   const [image, setImage] = useState<string | null>(null);
@@ -39,8 +37,6 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
     null,
   );
   const [showImportAuthModal, setShowImportAuthModal] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const cameraInputRef = useRef<HTMLInputElement>(null);
   const scanStartTimeRef = useRef<number | null>(null);
 
   const { addExpense, setActivityName, addAdditionalExpense, pendingCapturedImage, clearPendingCapturedImage, addScannedReceiptImage } =
@@ -186,32 +182,18 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
     }
   }, [isAuthenticated, getCurrentUser]);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImage(reader.result as string);
-        setScanResult(null);
-        setError(null);
-        setRetryCount(0);
-      };
-      reader.readAsDataURL(file);
-    }
-    // Reset input value so the same file can be re-selected
-    e.target.value = "";
-  };
+  const handleFileSelect = useCallback((file: File, source: "camera" | "gallery") => {
+    setImageSource(source);
+    trackSplitBill.selectImage(source);
 
-  const handleCameraCapture = useCallback(() => {
-    setImageSource("camera");
-    trackSplitBill.selectImage("camera");
-    cameraInputRef.current?.click();
-  }, []);
-
-  const handleGalleryUpload = useCallback(() => {
-    setImageSource("gallery");
-    trackSplitBill.selectImage("gallery");
-    fileInputRef.current?.click();
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImage(reader.result as string);
+      setScanResult(null);
+      setError(null);
+      setRetryCount(0);
+    };
+    reader.readAsDataURL(file);
   }, []);
 
   const handleScan = async () => {
@@ -509,99 +491,24 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
   return (
     <div className="space-y-4 animate-in fade-in duration-500">
       {!image ? (
-        <>
-          {/* Camera capture area — tap to open camera directly */}
-          <div
-            onClick={handleCameraCapture}
-            className="border-2 border-dashed border-primary/20 rounded-2xl pt-8 flex flex-col items-center justify-center gap-4 bg-primary/5 hover:bg-primary/10 transition-colors cursor-pointer group overflow-hidden"
-          >
-            <div className="w-16 h-16 rounded-full bg-white shadow-soft flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
-              <Camera className="w-8 h-8" />
-            </div>
-            <div className="text-center px-4">
-              <p className="font-bold text-sm text-foreground">
-                Foto Struk Sekarang
-              </p>
-              <p className="text-[10px] text-muted-foreground mt-1">
-                Tap untuk buka kamera
-              </p>
-            </div>
-
-            {/* Subtle Info Footer */}
-            <div className="w-full p-2.5 border-t border-dashed border-primary/20 px-4 text-center bg-primary/5">
-              <p className="text-[11px] font-bold text-foreground/80 flex items-center justify-center gap-1">
-                <span>💡 Pastikan struk terlihat jelas, terang, dan tidak terpotong</span>
-              </p>
-            </div>
-          </div>
-
-          {/* Action buttons row: Upload dari Galeri & Foto Struk */}
-          <div className="flex gap-2 w-full">
-            <button
-              onClick={handleGalleryUpload}
-              className="flex-1 flex items-center justify-center gap-2 h-12 rounded-md border border-primary/15 bg-transparent hover:bg-primary/5 transition-colors active:scale-[0.98] cursor-pointer"
-            >
-              <ImagePlus className="w-4 h-4 text-muted-foreground" />
-              <span className="text-xs font-semibold text-muted-foreground">
-                Upload dari Galeri
-              </span>
-            </button>
-            <button
-              onClick={handleCameraCapture}
-              className="flex-1 flex items-center justify-center gap-2 h-12 rounded-md bg-primary hover:bg-primary/90 text-white transition-colors active:scale-[0.98] cursor-pointer shadow-md shadow-primary/10"
-            >
-              <Camera className="w-4 h-4 text-white" />
-              <span className="text-xs font-bold text-white">
-                Foto Struk
-              </span>
-            </button>
-          </div>
-
-          {/* Hidden inputs */}
-          <input
-            type="file"
-            ref={fileInputRef}
-            onChange={handleFileChange}
-            accept="image/*"
-            className="hidden"
-          />
-          <input
-            type="file"
-            ref={cameraInputRef}
-            onChange={handleFileChange}
-            accept="image/*"
-            capture="environment"
-            className="hidden"
-          />
-        </>
+        <ReceiptImagePicker image={null} onFileSelect={handleFileSelect} onRemove={() => {}} />
       ) : (
         <div className="space-y-4">
-          <div className="border border-primary/20 rounded-2xl bg-white overflow-hidden flex flex-col group">
-            <div className="relative bg-muted w-full flex items-center justify-center overflow-hidden min-h-[80px]">
-              <img
-                src={image}
-                alt="Receipt Preview"
-                className="max-w-full max-h-[360px] w-auto h-auto object-contain"
-              />
-              <button
-                onClick={() => {
-                  trackSplitBill.removeImage();
-                  setImage(null);
-                }}
-                className="absolute top-2 right-2 w-8 h-8 rounded-full bg-black/50 text-white flex items-center justify-center backdrop-blur-md cursor-pointer"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            {!scanResult && (
-              <div className="w-full p-2.5 border-t border-dashed border-primary/20 px-4 text-center bg-primary/5">
+          <ReceiptImagePicker
+            image={image}
+            onFileSelect={handleFileSelect}
+            onRemove={() => {
+              trackSplitBill.removeImage();
+              setImage(null);
+            }}
+            footerNote={
+              !scanResult ? (
                 <p className="text-[11px] font-bold text-foreground/80 flex items-center justify-center gap-1">
                   <span>💡 Pastikan struk terlihat jelas, terang, dan tidak terpotong</span>
                 </p>
-              </div>
-            )}
-          </div>
+              ) : undefined
+            }
+          />
 
           {!scanResult ? (
             <div className="space-y-3">

@@ -151,7 +151,7 @@ function RegisterPageContent() {
       </div>
 
       {/* RIGHT SIDE PANEL (Mobile: Full Page, Desktop: 50% width) - Now shifted to Left (md:order-1) */}
-      <div className="flex-1 flex flex-col items-center justify-start md:justify-center py-12 px-4 sm:py-10 md:p-8 lg:p-12 relative z-10 overflow-y-auto md:order-2 md:h-full">
+      <div className="flex-1 flex flex-col items-center justify-start md:justify-center pt-[calc(3rem+env(safe-area-inset-top))] pb-12 px-4 sm:pt-[calc(2.5rem+env(safe-area-inset-top))] sm:pb-10 md:p-8 lg:p-12 relative z-10 overflow-y-auto md:order-2 md:h-full">
         <div className="w-full max-w-[440px] flex flex-col gap-4">
 
           {/* MOBILE ONLY TOP SECTION: Logo + Title + Hero Image */}

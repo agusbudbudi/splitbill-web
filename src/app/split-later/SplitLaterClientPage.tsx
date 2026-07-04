@@ -16,16 +16,13 @@ import {
   FolderOpen,
   Plus,
   ArrowLeft,
-  X,
   Camera,
   Upload,
-  ImagePlus,
   ChevronDown,
   ChevronUp,
   Info,
   Check,
   CheckCircle2,
-  Trash2,
   PenLine,
   Briefcase,
   Users,
@@ -33,9 +30,9 @@ import {
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { SavedBestiesSelection } from "@/components/splitbill/SavedBestiesSelection";
-
-const AVATAR_BASE_URL =
-  "https://api.dicebear.com/9.x/personas/svg?backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf&size=64&scale=100&seed=";
+import { StepperV2 } from "@/components/splitbill/StepperV2";
+import { ParticipantsFormCard } from "@/components/splitbill/ParticipantsFormCard";
+import { ReceiptImagePicker } from "@/components/splitbill/ReceiptImagePicker";
 
 const BUCKET_TYPE_OPTIONS: {
   value: BucketType;
@@ -90,7 +87,6 @@ export default function SplitLaterClientPage() {
   const [selectedCategoryLabel, setSelectedCategoryLabel] = useState<string>(
     "Liburan / Traveling",
   );
-  const [newParticipant, setNewParticipant] = useState("");
   const [participants, setParticipants] = useState<string[]>([]);
   const [participantsError, setParticipantsError] = useState<string | null>(
     null,
@@ -101,9 +97,6 @@ export default function SplitLaterClientPage() {
   const [receiptPreview, setReceiptPreview] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
 
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [isDragging, setIsDragging] = useState(false);
-
   // Clean form states when step parameter is cleared (goes back to main page)
   useEffect(() => {
     if (step === 0) {
@@ -111,77 +104,31 @@ export default function SplitLaterClientPage() {
     }
   }, [step]);
 
+  const syncFriendToStore = (name: string) => {
+    const existingFriend = friends.find(
+      (f) => f.name.toLowerCase() === name.toLowerCase(),
+    );
+    if (!existingFriend) {
+      addFriend({ name });
+    } else {
+      trackFriendUsage(existingFriend.id);
+    }
+  };
+
   const resetForm = () => {
     setTitle("");
     setEmoji("✈️");
     setBucketType("trip");
     setSelectedCategoryLabel("Liburan / Traveling");
     setParticipants([]);
-    setNewParticipant("");
     setParticipantsError(null);
     setReceiptFile(null);
     setReceiptPreview(null);
     setIsUploading(false);
   };
 
-  const handleAddParticipant = () => {
-    setParticipantsError(null);
-    if (!newParticipant.trim()) return;
-
-    const names = newParticipant
-      .split(",")
-      .map((n) => n.trim())
-      .filter(Boolean);
-    const dupes = names.filter((n) => participants.includes(n));
-
-    if (dupes.length > 0) {
-      setParticipantsError(`"${dupes[0]}" sudah ditambahkan.`);
-    }
-
-    const toAdd = [...new Set(names)].filter((n) => !participants.includes(n));
-    if (toAdd.length > 0) {
-      setParticipants([...participants, ...toAdd]);
-      setNewParticipant("");
-    }
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const allowedTypes = [
-      "image/jpeg",
-      "image/png",
-      "image/webp",
-      "application/pdf",
-    ];
-    if (!allowedTypes.includes(file.type)) {
-      toast.error("Format file tidak didukung. Gunakan JPG, PNG, atau WebP.");
-      return;
-    }
-
-    if (file.size > 10 * 1024 * 1024) {
-      toast.error("Ukuran file terlalu besar. Maksimal 10MB.");
-      return;
-    }
-
-    setReceiptFile(file);
-    setReceiptPreview(URL.createObjectURL(file));
-    e.target.value = "";
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-    const file = e.dataTransfer.files?.[0];
-    if (!file) return;
-
-    const allowedTypes = [
-      "image/jpeg",
-      "image/png",
-      "image/webp",
-      "application/pdf",
-    ];
+  const handleReceiptFileSelect = (file: File) => {
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
     if (!allowedTypes.includes(file.type)) {
       toast.error("Format file tidak didukung. Gunakan JPG, PNG, atau WebP.");
       return;
@@ -284,8 +231,8 @@ export default function SplitLaterClientPage() {
         return (
           <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
             <div className="flex flex-col items-center text-center gap-2">
-              <h2 className="text-2xl font-bold">Ini Acara Apaan Nih? 🍜</h2>
-              <p className="text-muted-foreground text-sm max-w-[360px]">
+              <h2 className="text-2xl font-bold text-white">Ini Acara Apaan Nih? 🍜</h2>
+              <p className="text-white/80 text-sm max-w-[360px]">
                 Pilih kategori circle/trip lu. Emojinya bakal otomatis
                 menyesuaikan, kece kan?
               </p>
@@ -312,10 +259,10 @@ export default function SplitLaterClientPage() {
                       }
                     }}
                     className={cn(
-                      "flex flex-col items-center gap-1.5 py-4 px-2 rounded-2xl text-xs font-bold transition-all active:scale-95 cursor-pointer border",
+                      "flex flex-col items-center gap-1.5 py-4 px-2 rounded-2xl text-xs font-bold transition-all active:scale-95 cursor-pointer border-2",
                       selectedCategoryLabel === opt.label
-                        ? "bg-primary text-white border-primary shadow-lg shadow-primary/10"
-                        : "bg-white border-primary/5 text-muted-foreground hover:bg-primary/5 hover:text-primary",
+                        ? "bg-primary/10 border-primary/50 text-primary"
+                        : "bg-muted/30 border-transparent text-muted-foreground hover:bg-primary/5 hover:text-primary",
                     )}
                   >
                     <span className="text-2xl">{opt.emoji}</span>
@@ -332,16 +279,16 @@ export default function SplitLaterClientPage() {
         return (
           <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
             <div className="flex flex-col items-center text-center gap-2">
-              <h2 className="text-2xl font-bold">
+              <h2 className="text-2xl font-bold text-white">
                 Kasih Nama & Emoji Unik! 🏷️
               </h2>
-              <p className="text-muted-foreground text-sm max-w-[360px]">
+              <p className="text-white/80 text-sm max-w-[360px]">
                 Biar ga ketuker sama Split Later sebelah. Bebas edit nama & ganti
                 emoji sesuka hati lu!
               </p>
             </div>
 
-            <div className="bg-white rounded-xl p-5 border border-primary/5 shadow-soft space-y-6">
+            <div className="bg-white rounded-2xl p-5 border border-primary/5 shadow-soft space-y-6">
               <div className="space-y-2">
                 <label className="text-sm text-foreground px-1">
                   Nama Acara / Trip
@@ -368,7 +315,7 @@ export default function SplitLaterClientPage() {
                       className={cn(
                         "w-full aspect-square text-xl rounded-sm transition-all active:scale-95 cursor-pointer flex items-center justify-center",
                         emoji === e
-                          ? "bg-primary/10 border-2 border-primary scale-105"
+                          ? "bg-primary/10 border-2 border-primary/50 scale-105"
                           : "bg-muted/30 border-2 border-transparent hover:bg-primary/5",
                       )}
                     >
@@ -384,98 +331,35 @@ export default function SplitLaterClientPage() {
         return (
           <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
             <div className="flex flex-col items-center text-center gap-2">
-              <h2 className="text-2xl font-bold">Siapa Aja yang Join? 👥</h2>
-              <p className="text-muted-foreground text-sm max-w-[360px]">
+              <h2 className="text-2xl font-bold text-white">Siapa Aja yang Join? 👥</h2>
+              <p className="text-white/80 text-sm max-w-[360px]">
                 Minimal ajak 2 bestie biar bisa patungan. Tambah manual atau tap
                 dari Besties Gua!
               </p>
             </div>
 
-            <div className="bg-white rounded-xl p-5 border border-primary/5 shadow-soft space-y-6 mb-4">
-              {/* Manual input */}
-              <div className="space-y-3">
-                <label className="text-sm font-bold text-foreground px-1 flex items-center justify-between">
-                  <span>Daftar Peserta</span>
-                  <span
-                    className={cn(
-                      "text-[10px] px-2 py-0.5 rounded-full font-black",
-                      participants.length >= 2
-                        ? "bg-green-100 text-green-700"
-                        : "bg-amber-100 text-amber-700",
-                    )}
-                  >
-                    {participants.length} Terpilih (min. 2)
-                  </span>
-                </label>
+            <ParticipantsFormCard
+              people={participants}
+              onAdd={(names) => {
+                setParticipants([...participants, ...names]);
+                names.forEach(syncFriendToStore);
+              }}
+              onDuplicate={(name) =>
+                setParticipantsError(`"${name}" sudah ditambahkan.`)
+              }
+              onRemove={(name) =>
+                setParticipants(participants.filter((p) => p !== name))
+              }
+              addLabel="Daftar Peserta 👥"
+              participantsLabel="Peserta Split Later 👥"
+              inputPlaceholder="Nama peserta (bisa lebih dari 1, pisah koma)"
+            />
 
-                <div className="flex items-center gap-2">
-                  <Input
-                    placeholder="Nama peserta (bisa lebih dari 1, pisah koma)"
-                    value={newParticipant}
-                    onChange={(e) => {
-                      setNewParticipant(e.target.value);
-                      if (participantsError) setParticipantsError(null);
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        handleAddParticipant();
-                      }
-                    }}
-                    className="flex-1 bg-white border-primary/10 h-12 text-sm px-4 focus-visible:ring-primary/20"
-                  />
-                  <Button
-                    type="button"
-                    onClick={handleAddParticipant}
-                    disabled={!newParticipant.trim()}
-                    size="icon"
-                    className="shrink-0 h-12 w-12 rounded-2xl"
-                  >
-                    <Plus className="w-5 h-5" />
-                  </Button>
-                </div>
-
-                {participantsError && (
-                  <p className="text-[10px] text-destructive px-1">
-                    {participantsError}
-                  </p>
-                )}
-
-                {/* Participant bubbles list */}
-                {participants.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    {participants.map((name, i) => (
-                      <div
-                        key={i}
-                        className="flex items-center gap-2 bg-muted/30 px-2 py-1.5 rounded-full border border-primary/5 group"
-                      >
-                        <div className="w-5 h-5 rounded-full border border-white overflow-hidden bg-white shrink-0">
-                          <img
-                            src={`${AVATAR_BASE_URL}${encodeURIComponent(name)}`}
-                            alt={name}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                        <span className="text-xs font-bold text-foreground leading-none">
-                          {name}
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setParticipants(
-                              participants.filter((p) => p !== name),
-                            )
-                          }
-                          className="hover:text-destructive transition-colors cursor-pointer text-muted-foreground p-0.5"
-                        >
-                          <X className="w-3 h-3" />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
+            {participantsError && (
+              <p className="text-[10px] text-destructive px-1 -mt-4">
+                {participantsError}
+              </p>
+            )}
 
             {/* Besties & Circle Selection */}
             <SavedBestiesSelection
@@ -516,89 +400,19 @@ export default function SplitLaterClientPage() {
         return (
           <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
             <div className="flex flex-col items-center text-center gap-2">
-              <h2 className="text-2xl font-bold">Spill Struk Pertama Lu! 📸</h2>
-              <p className="text-muted-foreground text-sm max-w-[360px]">
+              <h2 className="text-2xl font-bold text-white">Spill Struk Pertama Lu! 📸</h2>
+              <p className="text-white/80 text-sm max-w-[360px]">
                 Biar langsung diproses pas lu lagi santai. Selow, ini opsional,
                 bisa di-skip dulu!
               </p>
             </div>
 
-            <div className="bg-white rounded-xl p-5 border border-primary/5 shadow-soft space-y-6">
-              {receiptPreview ? (
-                <div className="space-y-3 w-full">
-                  {/* Receipt preview container */}
-                  <div className="relative overflow-hidden flex flex-col items-center justify-center gap-3 w-full">
-                    <button
-                      type="button"
-                      onClick={handleRemoveReceiptFile}
-                      className="absolute top-2 right-2 p-1.5 rounded-full bg-destructive text-white border-2 border-white hover:scale-105 active:scale-95 transition-all shadow-md cursor-pointer z-20"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                    <div className="w-full aspect-[4/3] rounded-lg overflow-hidden flex items-center justify-center relative border border-primary/20 bg-muted">
-                      <img
-                        src={receiptPreview}
-                        alt="Pratinjau Struk"
-                        className="w-full h-full object-contain"
-                      />
-                    </div>
-                  </div>
-                  {/* File Name Label Outside Preview Area */}
-                  <div className="flex items-center gap-2 px-3 py-2.5 text-xs font-bold text-muted-foreground bg-primary/5 rounded-md">
-                    <div className="bg-primary/10 text-primary w-6 h-6 rounded-lg flex items-center justify-center shrink-0">
-                      📄
-                    </div>
-                    <span className="truncate flex-1">{receiptFile?.name}</span>
-                  </div>
-                </div>
-              ) : (
-                /* Upload Drag & drop container */
-                <div
-                  onDragOver={(e) => {
-                    e.preventDefault();
-                    setIsDragging(true);
-                  }}
-                  onDragLeave={() => setIsDragging(false)}
-                  onDrop={handleDrop}
-                  className={cn(
-                    "border-2 border-dashed rounded-2xl p-6 flex flex-col items-center justify-center gap-4 transition-all duration-300 cursor-pointer min-h-[200px]",
-                    isDragging
-                      ? "border-primary bg-primary/5 scale-[1.01]"
-                      : "border-primary/20 bg-primary/2 hover:border-primary/40 hover:bg-primary/5",
-                    isUploading && "opacity-60 pointer-events-none",
-                  )}
-                  onClick={() => fileInputRef.current?.click()}
-                >
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/jpeg,image/png,image/webp,application/pdf"
-                    className="hidden"
-                    onChange={handleFileChange}
-                    capture="environment"
-                  />
-
-                  <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center">
-                    <ImagePlus className="w-6 h-6 text-primary" />
-                  </div>
-                  <div className="text-center">
-                    <p className="text-sm font-bold text-foreground">
-                      Tap atau Tarik File Struk
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-0.5">
-                      Gunakan kamera HP atau upload file JPG, PNG, WebP
-                    </p>
-                  </div>
-                  <div className="flex gap-2">
-                    <span className="flex items-center gap-1.5 px-3 py-1.5 bg-primary text-white rounded-full text-xs font-bold cursor-pointer transition-transform">
-                      <Camera className="w-3.5 h-3.5" /> Ambil Foto
-                    </span>
-                    <span className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-primary/20 text-primary rounded-full text-xs font-bold cursor-pointer transition-transform">
-                      <Upload className="w-3.5 h-3.5" /> Cari File
-                    </span>
-                  </div>
-                </div>
-              )}
+            <div className="bg-white rounded-2xl p-5 border border-primary/5 shadow-soft space-y-6">
+              <ReceiptImagePicker
+                image={receiptPreview}
+                onFileSelect={(file: File) => handleReceiptFileSelect(file)}
+                onRemove={handleRemoveReceiptFile}
+              />
             </div>
           </div>
         );
@@ -632,53 +446,19 @@ export default function SplitLaterClientPage() {
           className="rounded-b-none shadow-none"
         />
 
-        {/* Sticky Stepper Row */}
-        <div className="w-full flex flex-col items-center -mt-px relative z-20">
-          <div className="w-full max-w-[600px] bg-primary flex justify-between items-center px-8 pt-2 pb-8 rounded-b-2xl shadow-lg shadow-primary/20 relative">
-            <div className="absolute top-[32%] left-12 right-12 h-0.5 bg-white/20 z-0" />
-            <div className="absolute top-[32%] left-12 right-12 h-0.5 z-0 overflow-hidden">
-              <div
-                className="h-full bg-white transition-all duration-500 ease-in-out"
-                style={{ width: `${((step - 1) / (steps.length - 1)) * 100}%` }}
-              />
-            </div>
-            {steps.map((s) => (
-              <div
-                key={s.id}
-                className={cn(
-                  "relative z-10 w-8 h-8 rounded-full flex flex-col items-center justify-center transition-all duration-500 border-2",
-                  step === s.id
-                    ? "bg-white border-white scale-110 shadow-lg shadow-black/10"
-                    : step > s.id
-                      ? "bg-white border-white"
-                      : "bg-primary border-white/40 text-white/40",
-                )}
-              >
-                <s.icon
-                  className={cn(
-                    "w-4 h-4 font-bold transition-colors duration-500",
-                    step >= s.id ? "text-primary" : "text-white/40",
-                  )}
-                />
+        <div className="relative w-full max-w-[600px] flex-1 flex flex-col">
+          {/* Gradient background, connecting seamlessly from the header down */}
+          <div className="absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-primary via-primary/80 to-transparent pointer-events-none z-0" />
 
-                <span
-                  className={cn(
-                    "absolute -bottom-5 text-[9px] font-bold uppercase tracking-tighter whitespace-nowrap transition-colors duration-500",
-                    step === s.id
-                      ? "text-white opacity-100"
-                      : "text-white/40 opacity-50",
-                  )}
-                >
-                  {s.label}
-                </span>
-              </div>
-            ))}
+          {/* Stepper Row */}
+          <div className="relative z-20">
+            <StepperV2 steps={steps} currentStep={step} />
           </div>
-        </div>
 
-        <main className="w-full max-w-[600px] px-4 pt-8 pb-32 space-y-6 relative z-10">
-          {renderStepContent()}
-        </main>
+          <main className="relative z-10 w-full px-4 py-8 space-y-6">
+            {renderStepContent()}
+          </main>
+        </div>
 
         {/* Sticky CTA Footer */}
         <div className="sticky bottom-0 w-full z-50 pointer-events-none flex justify-center mt-auto">

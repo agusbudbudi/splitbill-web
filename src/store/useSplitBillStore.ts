@@ -286,6 +286,10 @@ export const useSplitBillStore = create<SplitBillState>()(
     }),
     {
       name: "split-bill-storage",
+      partialize: (state) => {
+        const { scannedReceiptImages, pendingCapturedImage, ...rest } = state;
+        return rest;
+      },
     },
   ),
 );

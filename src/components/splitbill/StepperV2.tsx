@@ -48,7 +48,7 @@ export function StepperV2({ steps, currentStep }: StepperV2Props) {
       <div ref={containerRef} className="relative w-full max-w-[360px] h-6">
         {leftLine && (
           <div
-            className="absolute top-1/2 h-0.5 -translate-y-1/2 rounded-full bg-white/60"
+            className="absolute top-1/2 h-0.5 -translate-y-1/2 rounded-full bg-white/20"
             style={{ left: leftLine.left, width: leftLine.width }}
           />
         )}

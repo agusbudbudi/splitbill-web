@@ -117,40 +117,45 @@ export const InterstitialAdModal = ({
           className="relative w-full h-full max-w-[600px] bg-slate-950 flex flex-col justify-between text-white"
         >
           {/* ── Header: sponsor info + countdown / close arrow ── */}
-          <div className="absolute top-0 inset-x-0 p-4 border-b border-white/5 flex items-center justify-between bg-slate-950/60 backdrop-blur-xs z-30">
-            <div className="flex items-center gap-2">
-              <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase bg-primary/20 text-primary-foreground px-2.5 py-1 rounded-full tracking-wider">
-                Sponsor
-              </span>
-              <span className="text-xs font-black text-slate-200 tracking-tight">
-                {ad.sponsorName}
-              </span>
+          <div className="absolute top-0 inset-x-0 z-30 flex flex-col bg-slate-950/60 backdrop-blur-xs">
+            <div
+              className="flex items-center justify-between p-4 border-b border-white/5"
+              style={{ paddingTop: "calc(1rem + env(safe-area-inset-top))" }}
+            >
+              <div className="flex items-center gap-2">
+                <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase bg-primary/20 text-primary-foreground px-2.5 py-1 rounded-full tracking-wider">
+                  Sponsor
+                </span>
+                <span className="text-xs font-black text-slate-200 tracking-tight">
+                  {ad.sponsorName}
+                </span>
+              </div>
+
+              {/* Countdown spinner OR blue chevron to close */}
+              {!isFinished ? (
+                <div className="flex items-center gap-2 text-xs font-bold text-slate-300 bg-black/40 px-3 py-1.5 rounded-full border border-white/5">
+                  <span className="w-3.5 h-3.5 rounded-full border-2 border-slate-600 border-t-white animate-spin" />
+                  <span>{Math.ceil(timeLeft)}s</span>
+                </div>
+              ) : (
+                <button
+                  onClick={onClose}
+                  className="flex items-center justify-center p-1.5 rounded-full text-blue-400 bg-blue-950/70 hover:bg-blue-900/80 active:scale-95 transition-all cursor-pointer shadow-md"
+                  aria-label="Tutup iklan"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              )}
             </div>
 
-            {/* Countdown spinner OR blue chevron to close */}
-            {!isFinished ? (
-              <div className="flex items-center gap-2 text-xs font-bold text-slate-300 bg-black/40 px-3 py-1.5 rounded-full border border-white/5">
-                <span className="w-3.5 h-3.5 rounded-full border-2 border-slate-600 border-t-white animate-spin" />
-                <span>{Math.ceil(timeLeft)}s</span>
-              </div>
-            ) : (
-              <button
-                onClick={onClose}
-                className="flex items-center justify-center p-1.5 rounded-full text-blue-400 bg-blue-950/70 hover:bg-blue-900/80 active:scale-95 transition-all cursor-pointer shadow-md"
-                aria-label="Tutup iklan"
-              >
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            )}
-          </div>
-
-          {/* ── Progress bar ── */}
-          <div className="absolute top-[60px] inset-x-0 h-1 bg-white/10 z-30">
-            <motion.div
-              className="absolute left-0 top-0 bottom-0 bg-primary"
-              style={{ width: `${progressPercent}%` }}
-              transition={{ duration: 0.1, ease: "linear" }}
-            />
+            {/* ── Progress bar ── */}
+            <div className="relative inset-x-0 h-1 bg-white/10">
+              <motion.div
+                className="absolute left-0 top-0 bottom-0 bg-primary"
+                style={{ width: `${progressPercent}%` }}
+                transition={{ duration: 0.1, ease: "linear" }}
+              />
+            </div>
           </div>
 
           {/* ── Ad Media ── */}
@@ -198,7 +203,8 @@ export const InterstitialAdModal = ({
           {ad.mediaType === "video" && videoInfo && !isEmbedVideo && (
             <button
               onClick={handleToggleMute}
-              className="absolute top-20 right-4 p-2.5 rounded-full bg-black/60 hover:bg-black/80 text-white transition-all cursor-pointer z-40"
+              className="absolute right-4 p-2.5 rounded-full bg-black/60 hover:bg-black/80 text-white transition-all cursor-pointer z-40"
+              style={{ top: "calc(80px + env(safe-area-inset-top))" }}
               aria-label={isMuted ? "Unmute video" : "Mute video"}
             >
               {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}

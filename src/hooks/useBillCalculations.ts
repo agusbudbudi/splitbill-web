@@ -85,6 +85,20 @@ export const useBillCalculations = (
       // Add to paid amount for the person who paid (if specified)
       if (adx.paidBy && balances[adx.paidBy]) {
         balances[adx.paidBy].paid += adx.amount;
+      } else if (adx.amount < 0) {
+        // Merchant discount (no specific payer): it already reduced the amount
+        // actually handed over at checkout, so distribute the reduction across
+        // paid amounts proportionally to what each person has paid so far.
+        const totalPaidSoFar = people.reduce(
+          (acc, p) => acc + (balances[p]?.paid || 0),
+          0,
+        );
+        if (totalPaidSoFar > 0) {
+          people.forEach((person) => {
+            const share = (balances[person].paid / totalPaidSoFar) * adx.amount;
+            balances[person].paid += share;
+          });
+        }
       }
 
       if (adx.splitType === "proportionally") {

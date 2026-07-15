@@ -21,7 +21,11 @@ export const QuickAssignHeader = () => {
     lastPaidBy,
   } = useSplitBillStore();
 
-  const subtotal = expenses.reduce((acc, curr) => acc + curr.amount, 0);
+  const subtotal =
+    expenses.reduce((acc, curr) => acc + curr.amount, 0) +
+    additionalExpenses
+      .filter((adx) => adx.amount < 0)
+      .reduce((acc, curr) => acc + curr.amount, 0);
   const unassignedCount = expenses.filter(
     (e) => e.who.length === 0 || !e.paidBy,
   ).length;
@@ -58,7 +62,7 @@ export const QuickAssignHeader = () => {
       <div className="bg-primary/10 p-4 flex justify-between items-center">
         <div className="space-y-0.5">
           <p className="text-[10px] font-black uppercase text-primary/40 tracking-wider leading-none">
-            Subtotal Belanja
+            Total Belanja
           </p>
           <p className="text-xl font-black text-primary leading-none">
             {formatToIDR(subtotal)}
@@ -68,11 +72,11 @@ export const QuickAssignHeader = () => {
           <div className="flex items-center gap-1 justify-end">
             {unassignedCount > 0 ? (
               <span className="text-[9px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
-                {unassignedCount} butuh aksi
+                {unassignedCount} item belum diatur
               </span>
             ) : (
               <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                Rapi! ✨
+                Semua item udah diatur ✨
               </span>
             )}
           </div>
@@ -80,13 +84,10 @@ export const QuickAssignHeader = () => {
       </div>
 
       <CardContent className="p-4 space-y-4">
-        <div className="flex items-center gap-2">
-          <h3 className="text-xs font-bold text-primary">Quick Assign ⚡</h3>
-        </div>
 
         <div className="space-y-3">
           <label className="text-[10px] font-black uppercase text-muted-foreground/60 tracking-wider">
-            Set Pembayar ke Semua Item
+            1. Siapa yang bayar semua item ini?
           </label>
           <div className="flex flex-wrap gap-3">
             {people.map((name) => (
@@ -101,7 +102,10 @@ export const QuickAssignHeader = () => {
           </div>
         </div>
 
-        <div className="pt-1">
+        <div className="space-y-2 pt-1">
+          <label className="text-[10px] font-black uppercase text-muted-foreground/60 tracking-wider">
+            2. Siapa aja yang kebagian?
+          </label>
           <Button
             onClick={handleSplitWithEveryone}
             variant="outline"

@@ -285,10 +285,10 @@ export const HeroSection = () => {
               {/* Phone Mock behind the main card - shifted left */}
               <div className="absolute -z-10 pointer-events-none opacity-90 -translate-x-20 xs:-translate-x-24 sm:-translate-x-28 transition-transform w-[500px] xs:w-[480px] sm:w-[560px] h-auto">
                 <Image
-                  src="/img/mockup-phone.png"
+                  src="/img/mockup-phone.webp"
                   alt="Phone Mockup"
-                  width={560}
-                  height={1120}
+                  width={720}
+                  height={720}
                   sizes="(max-width: 640px) 280px, 560px"
                   className="object-contain w-full h-auto"
                   priority

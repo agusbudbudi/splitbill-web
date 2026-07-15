@@ -116,6 +116,9 @@ export const useAuthStore = create<AuthState>((set) => ({
       // Store user data in localStorage for offline access
       if (typeof window !== "undefined") {
         localStorage.setItem("currentUser", JSON.stringify(response.user));
+        // Remember this device has used Google auth, so future initialize()
+        // calls know it's worth checking NextAuth's session for auto-login.
+        localStorage.setItem("usedGoogleAuth", "true");
       }
 
       // Show success toast
@@ -217,7 +220,15 @@ export const useAuthStore = create<AuthState>((set) => ({
 
     // Check if we have tokens first
     if (!hasTokens()) {
-      const loggedInWithGoogle = await checkGoogleSession();
+      // Only bother checking NextAuth's session (extra network round trip)
+      // if this device has actually used Google login before — avoids firing
+      // /api/auth/session on every anonymous pageview (SessionProvider already
+      // does its own fetch on mount; this was a redundant second one).
+      const hasUsedGoogleAuth =
+        typeof window !== "undefined" &&
+        localStorage.getItem("usedGoogleAuth") === "true";
+
+      const loggedInWithGoogle = hasUsedGoogleAuth && (await checkGoogleSession());
       if (loggedInWithGoogle) return;
 
       set({

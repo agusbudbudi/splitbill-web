@@ -9,6 +9,7 @@ import { getErrorMessage } from "@/lib/auth/utils";
 import { CheckCircle2, XCircle, Loader2, Mail } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { LoadingIndicator } from "@/components/ui/LoadingIndicator";
 
 function VerifyContent() {
   const searchParams = useSearchParams();
@@ -72,12 +73,7 @@ function VerifyContent() {
 
       <CardContent className="flex flex-col items-center justify-center p-8 space-y-6">
         {status === "loading" && (
-          <>
-            <Loader2 className="h-16 w-16 text-primary animate-spin" />
-            <p className="text-muted-foreground text-center">
-              Sedang memverifikasi email kamu...
-            </p>
-          </>
+          <LoadingIndicator size={48} text="Sedang memverifikasi email kamu..." />
         )}
 
         {status === "success" && (
@@ -192,7 +188,7 @@ export default function VerifyPage() {
           fallback={
             <Card className="border-border/50 shadow-soft w-full max-w-md">
               <CardContent className="flex flex-col items-center justify-center p-8">
-                <Loader2 className="h-16 w-16 text-primary animate-spin" />
+                <LoadingIndicator size={48} />
               </CardContent>
             </Card>
           }

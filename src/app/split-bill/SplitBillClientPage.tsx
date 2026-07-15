@@ -16,6 +16,7 @@ import { StepperV2 } from "@/components/splitbill/StepperV2";
 import { Card, CardContent } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
+import { LoadingIndicator } from "@/components/ui/LoadingIndicator";
 import { useSplitBillStore } from "@/store/useSplitBillStore";
 import { useSplitLaterStore } from "@/store/useSplitLaterStore";
 import { useWalletStore, type PaymentMethod } from "@/store/useWalletStore";
@@ -1454,7 +1455,7 @@ export default function SplitBillClientPage() {
     <Suspense
       fallback={
         <div className="min-h-screen flex items-center justify-center">
-          Loading...
+          <LoadingIndicator />
         </div>
       }
     >

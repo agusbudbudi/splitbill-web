@@ -9,8 +9,9 @@ import { RegisterForm } from "@/components/auth/RegisterForm";
 import { useAuthStore } from "@/lib/stores/authStore";
 import { getErrorMessage } from "@/lib/auth/utils";
 import { trackAuth } from "@/lib/gtag";
-import { Loader2, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
+import { LoadingIndicator } from "@/components/ui/LoadingIndicator";
 
 const avatarSeeds = ["Aria", "Bobi", "Cika"];
 
@@ -300,7 +301,7 @@ export default function RegisterPage() {
     <Suspense
       fallback={
         <div className="min-h-screen flex items-center justify-center bg-[#f8f9fd]">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <LoadingIndicator />
         </div>
       }
     >

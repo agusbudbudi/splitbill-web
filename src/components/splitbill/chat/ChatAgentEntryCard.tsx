@@ -27,32 +27,34 @@ export const AgentBillyEntryCard = () => {
     return (
         <button
             onClick={handleOpen}
-            className="relative flex items-center gap-3 w-full px-4 py-3 bg-gradient-to-r from-primary to-blue-600 hover:from-primary/95 hover:to-blue-600/95 rounded-2xl transition-all hover:scale-[1.02] active:scale-95 group focus:outline-hidden cursor-pointer"
+            className="relative px-[1.5px] pt-[1.5px] pb-[4px] rounded-2xl bg-gradient-to-r from-violet-400 via-pink-400 to-primary/70 shadow-lg shadow-pink-500/5 transition-all duration-300 overflow-hidden cursor-pointer h-full w-full group hover:scale-[1.01] active:scale-[0.99] focus:outline-hidden"
         >
-            {/* Avatar */}
-            <div className="w-11 h-11 rounded-full overflow-hidden shrink-0">
-                <Image
-                    src="/img/agent-billy.png"
-                    alt="Agent Billy"
-                    width={44}
-                    height={44}
-                    className="w-full h-full object-cover"
-                />
-            </div>
+            <div className="flex items-center gap-3 w-full h-full px-4 py-3 bg-card rounded-[15px]">
+                {/* Avatar */}
+                <div className="w-11 h-11 rounded-full overflow-hidden shrink-0">
+                    <Image
+                        src="/img/agent-billy.png"
+                        alt="Agent Billy"
+                        width={44}
+                        height={44}
+                        className="w-full h-full object-cover"
+                    />
+                </div>
 
-            {/* Text */}
-            <div className="flex-1 min-w-0 text-left">
-                <p className="text-sm font-bold text-white tracking-tight">
-                    Bingung Mulai dari mana?
-                </p>
-                <p className="text-[11px] leading-relaxed mt-0.5 text-white/80 font-medium">
-                    Chat aja ke Agent Billy, dipandu sampe beres!
-                </p>
-            </div>
+                {/* Text */}
+                <div className="flex-1 min-w-0 text-left">
+                    <p className="text-sm font-bold text-foreground tracking-tight">
+                        Bingung Mulai dari mana?
+                    </p>
+                    <p className="text-[11px] leading-relaxed mt-0.5 text-muted-foreground font-medium">
+                        Chat aja ke Agent Billy, dipandu sampe beres!
+                    </p>
+                </div>
 
-            {/* CTA arrow */}
-            <div className="shrink-0 w-8 h-8 rounded-full bg-white/20 flex items-center justify-center group-hover:translate-x-0.5 transition-transform">
-                <ArrowRight className="w-4 h-4 text-white" />
+                {/* CTA arrow */}
+                <div className="shrink-0 w-8 h-8 rounded-full bg-primary/5 flex items-center justify-center group-hover:translate-x-0.5 transition-transform">
+                    <ArrowRight className="w-4 h-4 text-primary" />
+                </div>
             </div>
         </button>
     );

@@ -109,7 +109,7 @@ export const SocialReceiptPreviewBanner = ({
         <button
           onClick={onShareClick}
           disabled={isSharing}
-          className="h-11 rounded-lg font-bold text-sm transition-all active:scale-[0.98] bg-primary text-white shadow-lg shadow-primary/20 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-70"
+          className="h-11 rounded-sm font-bold text-sm transition-all active:scale-[0.98] bg-primary text-white shadow-lg shadow-primary/20 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-70"
         >
           <Share2
             className={`w-4 h-4 ${isSharing ? "animate-pulse" : "group-hover:rotate-12 transition-transform"}`}
@@ -119,7 +119,7 @@ export const SocialReceiptPreviewBanner = ({
 
         <button
           onClick={onCopyLink}
-          className="h-11 rounded-lg font-bold text-sm transition-all active:scale-[0.98] bg-white border border-primary/20 text-primary hover:bg-primary/5 flex items-center justify-center gap-2 cursor-pointer"
+          className="h-11 rounded-sm font-bold text-sm transition-all active:scale-[0.98] bg-white border border-primary/20 text-primary hover:bg-primary/5 flex items-center justify-center gap-2 cursor-pointer"
         >
           <Copy className="w-4 h-4 transition-transform" />
           Salin Link

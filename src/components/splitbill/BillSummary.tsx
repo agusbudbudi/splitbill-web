@@ -15,9 +15,9 @@ import {
   Check,
   ChevronDown,
   ChevronUp,
+  Calendar,
 } from "lucide-react";
 import { SplitBadge } from "./SplitBadge";
-import { HowToReadSummary } from "./HowToReadSummary";
 import {
   useBillCalculations,
   SplitBillData,
@@ -26,15 +26,13 @@ import {
   BillItem,
 } from "@/hooks/useBillCalculations";
 import { useWalletStore } from "@/store/useWalletStore";
-import { Wallet, PiggyBank } from "lucide-react";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-import { useCollectMoneyStore } from "@/store/useCollectMoneyStore";
 import { DynamicFinLogo } from "@/components/wallet/DynamicFinLogo";
 import { getProviderLogoInfo } from "@/lib/providerLogos";
 import { Sparkles, Share2 } from "lucide-react";
 import * as htmlToImage from "html-to-image";
 import { SocialSplitBillReceipt } from "./SocialSplitBillReceipt";
+import { MonitorStatusButton } from "./MonitorStatusButton";
 import { trackSplitBill, trackWallet } from "@/lib/gtag";
 import { useAuthStore } from "@/lib/stores/authStore";
 import { AuthModal } from "@/components/auth/AuthModal";
@@ -58,6 +56,8 @@ interface BillSummaryProps {
   isPublic?: boolean;
   /** Hide the Bagikan + Salin Link buttons (used when they're shown in a parent card instead) */
   hideShareActions?: boolean;
+  /** Hide the Monitor Status Bayar button (used when the parent renders it elsewhere on the page) */
+  hideMonitorButton?: boolean;
   /** Reuse the parent's own save/login flow (e.g. the "Simpan & Share" CTA's auth popup)
    *  instead of showing a separate local auth modal. If omitted, falls back to a
    *  self-contained AuthModal. */
@@ -70,6 +70,7 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
     showDownload = true,
     isPublic = false,
     hideShareActions = false,
+    hideMonitorButton = false,
     onLoginClick,
   }: BillSummaryProps, ref) {
     const store = useSplitBillStore();
@@ -78,7 +79,6 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
     const [showAuthModal, setShowAuthModal] = useState(false);
 
     // Use props if provided, otherwise fall back to store
-    const router = useRouter();
     const dataForCalc = billData
       ? {
         people: billData.people,
@@ -316,21 +316,21 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
       }
     };
 
-    const getBadgeColor = (badge: string) => {
+    const getRibbonColor = (badge: string) => {
       switch (badge) {
         case "Si Paling Traktir":
-          return "bg-emerald-500/10 text-emerald-600 border-emerald-500/20";
+          return "bg-emerald-100 text-emerald-700";
         case "Si Paling Sultan":
-          return "bg-amber-500/10 text-amber-600 border-amber-500/20";
+          return "bg-amber-100 text-amber-700";
         case "Si Paling Hemat":
-          return "bg-blue-500/10 text-blue-600 border-blue-500/20";
+          return "bg-blue-100 text-blue-700";
         default:
-          return "bg-primary/5 text-primary border-primary/10";
+          return "bg-primary/10 text-primary";
       }
     };
 
     return (
-      <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
         <Card className="border-primary/20 shadow-md overflow-hidden relative">
           {!isAuthenticated && !isPublic && !billData && (
             <SecureDraftBanner
@@ -341,32 +341,37 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
           {/* Decorative background element */}
           <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 blur-3xl pointer-events-none" />
 
-          <div className="p-4 space-y-6 relative z-10">
+          <div className="p-4 space-y-4 relative z-10">
             {/* Header */}
             <div className="flex flex-col gap-4">
-              <div className="flex items-start justify-between gap-4">
-                <div className="space-y-1 flex-1">
-                  <h2 className="text-xl font-black text-foreground">
+              <div className="flex items-start justify-between gap-3">
+                <div className="space-y-1 flex-1 min-w-0">
+                  <h2 className="text-xl font-black text-foreground truncate">
                     {activityName || "Aktivitas Tanpa Nama"}
                   </h2>
-                  <div className="flex items-center gap-2">
-                    <p className="text-[10px] text-muted-foreground font-bold flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-primary/40" />
-                      Dibuat pada {currentDate}
-                    </p>
-                    {typeof window !== "undefined" &&
-                      new URLSearchParams(window.location.search).get("new") ===
-                      "true" && (
-                        <span className="text-[8px] font-black bg-primary text-white px-1.5 py-0.5 rounded-full shadow-sm shadow-primary/20">
-                          BARU
-                        </span>
-                      )}
-                  </div>
+                  <p className="text-[11px] text-muted-foreground font-medium flex items-center gap-1.5">
+                    <Calendar className="w-3 h-3 text-primary/60" />
+                    Dibuat pada {currentDate}
+                  </p>
+                </div>
+                <div className="shrink-0 flex flex-col items-end gap-1.5">
+                  <img
+                    src="/img/icon-splitbill.png"
+                    alt="Split Bill"
+                    className="w-8 h-8 object-contain"
+                  />
+                  {typeof window !== "undefined" &&
+                    new URLSearchParams(window.location.search).get("new") ===
+                    "true" && (
+                      <span className="text-[8px] font-black bg-primary text-white px-1.5 py-0.5 rounded-full shadow-sm shadow-primary/20">
+                        BARU
+                      </span>
+                    )}
                 </div>
               </div>
 
               {/* Consolidated Stats Display */}
-              <div className="bg-primary/5 border border-primary/10 rounded-lg p-6 flex flex-row items-center justify-between transition-all hover:bg-primary/[0.07]">
+              <div className="flex flex-row items-center justify-between border-t border-primary/10 pt-4">
                 <div className="flex flex-col gap-1">
                   <p className="text-[10px] uppercase font-black text-primary/60 tracking-wider">
                     Total Tagihan
@@ -397,12 +402,12 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
 
             {/* Settlement Instructions Banner */}
             {settlementInstructions.length > 0 && (
-              <div className="p-4 bg-primary/5 rounded-lg space-y-3">
+              <div className="p-3 bg-primary rounded-sm space-y-3 shadow-sm">
                 <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 bg-primary/10 rounded-full flex items-center justify-center">
-                    <ArrowRight className="w-3.5 h-3.5 text-primary" />
+                  <div className="w-7 h-7 bg-white/20 rounded-full flex items-center justify-center">
+                    <ArrowRight className="w-4 h-4 text-white" />
                   </div>
-                  <p className="text-xs font-bold text-foreground tracking-tight">
+                  <p className="text-sm font-black text-white tracking-tight">
                     Instruksi Transfer
                   </p>
                 </div>
@@ -410,7 +415,7 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
                   {settlementInstructions.map((inst, idx) => (
                     <div
                       key={idx}
-                      className="flex items-center justify-between p-2.5 bg-white/60 border border-primary/10 rounded-lg"
+                      className="flex items-center justify-between p-3 bg-white border border-primary/10 rounded-sm"
                     >
                       <div className="flex items-center gap-2.5">
                         <div className="relative">
@@ -420,17 +425,17 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
                             alt={inst.from}
                           />
                         </div>
-                        <p className="text-[11px] font-medium text-muted-foreground">
+                        <p className="text-xs font-medium text-muted-foreground">
                           <span className="text-destructive font-bold">
                             {inst.from}
                           </span>{" "}
-                          bayar ke{" "}
+                          Transfer ke{" "}
                           <span className="text-emerald-600 font-bold">
                             {inst.to}
                           </span>
                         </p>
                       </div>
-                      <span className="text-xs font-black text-primary">
+                      <span className="text-sm font-black text-primary">
                         {formatToIDR(inst.amount)}
                       </span>
                     </div>
@@ -438,7 +443,13 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
                 </div>
               </div>
             )}
+          </div>
+        </Card>
 
+        {/* Detailed Expenses & Costs Card */}
+        <Card className="p-3 border-primary/20 shadow-md overflow-hidden relative">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 blur-3xl pointer-events-none" />
+          <div className="space-y-4 relative z-10">
             {/* Person Breakdown */}
             <div className="space-y-4">
               <h3 className="font-bold text-xs text-foreground/70 uppercase px-1">
@@ -461,94 +472,75 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
                         className="overflow-hidden rounded-lg border border-primary/10 bg-muted/5 transition-all hover:border-primary/20"
                       >
                         {/* Person Header */}
-                        <div
-                          onClick={() => togglePerson(name)}
-                          className="bg-primary/5 px-3 py-2.5 flex items-center justify-between border-b border-primary/10 cursor-pointer hover:bg-primary/10 transition-colors"
-                        >
-                          <div className="flex items-center gap-2.5">
-                            <div className="w-7 h-7 rounded-full border border-primary/10 overflow-hidden bg-white">
-                              <img
-                                src={`${AVATAR_BASE_URL}${encodeURIComponent(name)}`}
-                                alt={name}
-                                className="w-full h-full"
-                              />
+                        <div className="bg-primary/5 border-b border-primary/10 hover:bg-primary/10 transition-colors">
+                          {badges[name]?.[0] && (
+                            <div
+                              className={cn(
+                                "w-fit rounded-br-sm px-2 py-1 text-[8px] font-black flex items-center gap-0.5",
+                                getRibbonColor(badges[name][0]),
+                              )}
+                            >
+                              <span>{getBadgeIcon(badges[name][0])}</span>
+                              {badges[name][0]}
                             </div>
-                            <h4 className="font-bold text-sm tracking-tight text-foreground">
-                              {name}
-                            </h4>
-                            {badges[name]?.map((badge: string) => (
-                              <span
-                                key={badge}
-                                className={cn(
-                                  "text-[8px] font-black px-1.5 py-0.5 rounded-full border flex items-center gap-0.5",
-                                  getBadgeColor(badge),
-                                )}
-                              >
-                                <span>{getBadgeIcon(badge)}</span>
-                                {badge}
-                              </span>
-                            ))}
-                          </div>
-                          <div className="flex items-center gap-3">
-                            <div className="text-right">
-                              <div
-                                className={cn(
-                                  "text-[9px] font-black uppercase tracking-tighter px-1.5 py-0.5 rounded-full inline-block",
-                                  diff === 0
-                                    ? "bg-muted text-muted-foreground"
-                                    : isOwed
-                                      ? "bg-emerald-500/10 text-emerald-600"
-                                      : "bg-destructive/10 text-destructive",
-                                )}
-                              >
-                                {diff === 0
-                                  ? "Lunas"
-                                  : isOwed
-                                    ? "Terima"
-                                    : "Bayar"}
+                          )}
+                          <div
+                            onClick={() => togglePerson(name)}
+                            className="px-3 py-2.5 flex items-center justify-between cursor-pointer"
+                          >
+                            <div className="flex items-center gap-2.5">
+                              <div className="w-7 h-7 rounded-full border border-primary/10 overflow-hidden bg-white">
+                                <img
+                                  src={`${AVATAR_BASE_URL}${encodeURIComponent(name)}`}
+                                  alt={name}
+                                  className="w-full h-full"
+                                />
                               </div>
-                              <p
-                                className={cn(
-                                  "text-xs font-black mt-0.5",
-                                  diff === 0
-                                    ? "text-muted-foreground"
-                                    : isOwed
-                                      ? "text-emerald-600"
-                                      : "text-destructive",
-                                )}
-                              >
-                                {formatToIDR(Math.abs(diff))}
-                              </p>
+                              <h4 className="font-bold text-sm tracking-tight text-foreground">
+                                {name}
+                              </h4>
                             </div>
-                            {b.items.length > 0 && (
-                              <div className="text-muted-foreground">
-                                {expandedPeople[name] ? (
-                                  <ChevronUp className="w-4 h-4" />
-                                ) : (
-                                  <ChevronDown className="w-4 h-4" />
-                                )}
+                            <div className="flex items-center gap-3">
+                              <div className="text-right">
+                                <div
+                                  className={cn(
+                                    "text-[8px] font-black tracking-tight px-2 py-0.5 rounded-full inline-block whitespace-nowrap",
+                                    diff === 0
+                                      ? "bg-muted text-muted-foreground"
+                                      : isOwed
+                                        ? "bg-emerald-500/10 text-emerald-600"
+                                        : "bg-destructive/10 text-destructive",
+                                  )}
+                                >
+                                  {diff === 0
+                                    ? "Lunas"
+                                    : isOwed
+                                      ? "Akan Menerima"
+                                      : "Harus Bayar"}
+                                </div>
+                                <p
+                                  className={cn(
+                                    "text-xs font-black mt-0.5",
+                                    diff === 0
+                                      ? "text-muted-foreground"
+                                      : isOwed
+                                        ? "text-emerald-600"
+                                        : "text-destructive",
+                                  )}
+                                >
+                                  {formatToIDR(Math.abs(diff))}
+                                </p>
                               </div>
-                            )}
-                          </div>
-                        </div>
-
-                        {/* Summary Row */}
-                        <div className="grid grid-cols-2 divide-x divide-primary/5 border-b border-primary/5 bg-white/40">
-                          <div className="px-3 py-1.5">
-                            <p className="text-[9px] text-muted-foreground font-bold uppercase">
-                              Membayar
-                            </p>
-                            <p className="text-xs font-bold text-foreground">
-                              {formatToIDR(b.paid)}
-                            </p>
-                          </div>
-                          <div className="px-3 py-1.5 text-right">
-                            <p className="text-[9px] text-muted-foreground font-bold uppercase">
-                              Total Beban
-                            </p>
-                            <p className="text-xs font-bold text-primary">
-                              {formatToIDR(b.spent)}
-                            </p>
+                              {b.items.length > 0 && (
+                                <div className="text-muted-foreground">
+                                  {expandedPeople[name] ? (
+                                    <ChevronUp className="w-4 h-4" />
+                                  ) : (
+                                    <ChevronDown className="w-4 h-4" />
+                                  )}
+                                </div>
+                              )}
+                            </div>
                           </div>
                         </div>
 
@@ -597,6 +589,26 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
                             </motion.div>
                           )}
                         </AnimatePresence>
+
+                        {/* Summary Row */}
+                        <div className="grid grid-cols-2 divide-x divide-primary/5 border-t border-primary/5 bg-white/40">
+                          <div className="px-3 py-1.5">
+                            <p className="text-[9px] text-muted-foreground font-bold uppercase">
+                              Sudah Dibayar
+                            </p>
+                            <p className="text-xs font-bold text-foreground">
+                              {formatToIDR(b.paid)}
+                            </p>
+                          </div>
+                          <div className="px-3 py-1.5 text-right">
+                            <p className="text-[9px] text-muted-foreground font-bold uppercase">
+                              Tagihan Kamu
+                            </p>
+                            <p className="text-xs font-bold text-primary">
+                              {formatToIDR(b.spent)}
+                            </p>
+                          </div>
+                        </div>
                       </div>
                     );
                   })}
@@ -662,126 +674,95 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
                 </div>
               </div>
             )}
-
           </div>
         </Card>
 
-        {/* Detailed Expenses & Costs Card */}
-        <Card className="p-4 border-primary/20 shadow-md overflow-hidden relative">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 blur-3xl pointer-events-none" />
-          <div className="space-y-6 relative z-10">
-            {expenses && expenses.length > 0 && (
-              <div className="space-y-3">
-                <h3 className="font-bold text-xs text-foreground/70 uppercase px-1">
-                  Item Pengeluaran 🛍️
-                </h3>
-                <div className="grid gap-2">
-                  {expenses.map((expense) => (
-                    <div
-                      key={expense.id}
-                      className="p-3 rounded-lg border border-primary/10 bg-white/40 flex flex-col gap-2"
-                    >
-                      <div className="flex justify-between items-start">
-                        <div className="min-w-0 flex-1 pr-2">
-                          <p className="font-bold text-sm text-foreground break-words whitespace-normal">
-                            {expense.item}
-                          </p>
-                          {expense.paidBy ? (
-                            <p className="text-[10px] text-muted-foreground font-medium mt-0.5">
-                              Dibayar oleh <strong className="text-primary">{expense.paidBy}</strong>
-                            </p>
-                          ) : (
-                            <p className="text-[10px] text-muted-foreground font-medium mt-0.5">
-                              Belum ada pembayar
-                            </p>
-                          )}
-                        </div>
-                        <span className="text-xs font-black text-primary shrink-0">
-                          {formatToIDR(expense.amount)}
-                        </span>
-                      </div>
-
-                      {expense.who && expense.who.length > 0 && (
-                        <div className="flex flex-wrap items-center gap-1 pt-1.5 border-t border-dashed border-primary/5">
-                          <span className="text-[9px] text-muted-foreground/60 uppercase font-bold tracking-wider mr-1">
-                            Bagi ke:
-                          </span>
-                          <div className="flex flex-wrap gap-1">
-                            {expense.who.map((name) => (
-                              <div
-                                key={name}
-                                className="flex items-center gap-1 bg-primary/5 border border-primary/10 rounded-full pl-0.5 pr-2 py-0.5 text-[9px] font-bold text-primary"
-                              >
-                                <img
-                                  src={`${AVATAR_BASE_URL}${encodeURIComponent(name)}`}
-                                  alt={name}
-                                  className="w-4 h-4 rounded-full bg-white"
-                                />
-                                <span className="truncate max-w-[50px]">{name}</span>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Additional Expenses Info Section */}
-            {additionalExpenses && additionalExpenses.length > 0 && (
-              <div className="space-y-3">
-                <h3 className="font-bold text-xs text-foreground/70 uppercase px-1">
-                  Biaya & Potongan Tambahan 🏷️
-                </h3>
-                <div className="grid gap-2">
-                  {additionalExpenses.map((adx) => {
-                    const isNegative = adx.amount < 0;
-                    return (
+        {/* Expenses Detail Card */}
+        {((expenses && expenses.length > 0) || (additionalExpenses && additionalExpenses.length > 0)) && (
+          <Card className="p-3 border-primary/20 shadow-md overflow-hidden relative">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 blur-3xl pointer-events-none" />
+            <div className="space-y-4 relative z-10">
+              {/* Item Pengeluaran */}
+              {expenses && expenses.length > 0 && (
+                <div className="space-y-3">
+                  <h3 className="font-bold text-xs text-foreground/70 uppercase px-1">
+                    Item Pengeluaran 🛍️
+                  </h3>
+                  <div className="divide-y divide-dashed divide-primary/10 px-1">
+                    {expenses.map((expense, idx) => (
                       <div
-                        key={adx.id}
-                        className={cn(
-                          "p-3 rounded-md border flex items-center justify-between transition-all",
-                          isNegative
-                            ? "bg-emerald-500/5 border-emerald-500/10"
-                            : "bg-primary/5 border-primary/10"
-                        )}
+                        key={expense.id}
+                        className="py-2.5 flex flex-col gap-0.5"
                       >
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-1.5">
-                            <span className="font-bold text-xs text-foreground">
+                        <div className="flex justify-between items-start">
+                          <p className="font-bold text-sm text-foreground break-words whitespace-normal min-w-0 flex-1 pr-2">
+                            <span className="text-muted-foreground font-medium">{idx + 1}.</span> {expense.item}
+                          </p>
+                          <span className="text-xs font-black text-primary shrink-0">
+                            {formatToIDR(expense.amount)}
+                          </span>
+                        </div>
+                        <p className="text-[10px] text-muted-foreground font-medium">
+                          {expense.paidBy ? (
+                            <>Dibayar oleh <strong className="text-primary">{expense.paidBy}</strong></>
+                          ) : (
+                            "Belum ada pembayar"
+                          )}
+                          {expense.who && expense.who.length > 0 && (
+                            <> • Dibagi ke <strong className="text-primary">{expense.who.join(", ")}</strong></>
+                          )}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Additional Expenses Info Section */}
+              {additionalExpenses && additionalExpenses.length > 0 && (
+                <div className="space-y-3">
+                  <h3 className="font-bold text-xs text-foreground/70 uppercase px-1">
+                    Biaya & Potongan Tambahan 🏷️
+                  </h3>
+                  <div className="divide-y divide-dashed divide-primary/10 px-1">
+                    {additionalExpenses.map((adx, idx) => {
+                      const isNegative = adx.amount < 0;
+                      return (
+                        <div
+                          key={adx.id}
+                          className="py-2.5 flex flex-col gap-0.5"
+                        >
+                          <div className="flex justify-between items-start">
+                            <p className="font-bold text-sm text-foreground min-w-0 flex-1 pr-2 flex items-center gap-1.5">
+                              <span className="text-muted-foreground font-medium">{idx + 1}.</span>
                               {adx.name}
+                              <SplitBadge type={adx.splitType} className="scale-90 origin-left" />
+                            </p>
+                            <span className={cn(
+                              "text-xs font-black shrink-0",
+                              isNegative ? "text-emerald-600" : "text-primary"
+                            )}>
+                              {formatToIDR(adx.amount)}
                             </span>
-                            <SplitBadge type={adx.splitType} className="scale-90 origin-left" />
                           </div>
-                          <p className="text-[9px] text-muted-foreground font-medium">
+                          <p className="text-[10px] text-muted-foreground font-medium">
                             {isNegative ? (
-                              <span>🏷️ Potongan Merchant</span>
+                              "🏷️ Potongan Merchant"
                             ) : (
-                              <span>Dibayar oleh <strong className="text-primary">{adx.paidBy}</strong></span>
+                              <>Dibayar oleh <strong className="text-primary">{adx.paidBy}</strong></>
                             )}
                             {" • "}
-                            <span>{adx.who.length} Orang terlibat</span>
+                            {adx.who.length} Orang terlibat
                           </p>
                         </div>
-                        <span className={cn(
-                          "text-xs font-black",
-                          isNegative ? "text-emerald-600" : "text-primary"
-                        )}>
-                          {formatToIDR(adx.amount)}
-                        </span>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-            )}
-
-            {/* How to Read Section */}
-            <HowToReadSummary />
-          </div>
-        </Card>
+              )}
+            </div>
+          </Card>
+        )}
 
         {/* Action Buttons (Share/Download/Monitor) */}
         <div className="space-y-3 mt-4 mb-0 relative group/actions">
@@ -837,64 +818,14 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
             </div>
           )}
 
-          {!isPublic && (
-            <button
-              onClick={() => {
-                if (!showDownload) return;
-                trackSplitBill.monitorStatus(billData?.id);
-                const collections = useCollectMoneyStore.getState().collections;
-                const sourceId = billData?.id;
-
-                // 1. If we have a sourceId, check if it already has a collection
-                if (sourceId) {
-                  const existingCollection = collections.find(
-                    (c) => c.sourceId === sourceId,
-                  );
-                  if (existingCollection) {
-                    useCollectMoneyStore
-                      .getState()
-                      .setActiveCollection(existingCollection.id);
-                    router.push("/collect-money?autoOpen=true");
-                    toast.success("Membuka monitor status bayar...");
-                    return;
-                  }
-                }
-
-                // 2. If no existing collection or no sourceId (unsaved draft), create new
-                if (settlementInstructions.length === 0) {
-                  toast.success("Semua orang sudah lunas/impas! 🎉");
-                  return;
-                }
-
-                const payers = settlementInstructions.map((inst) => ({
-                  name: inst.from,
-                  amount: inst.amount,
-                  transferTo: inst.to,
-                }));
-
-                const finalPaymentMethodIds = selectedPaymentMethodIds.length > 0
-                  ? selectedPaymentMethodIds
-                  : storePaymentMethods.map(m => m.id);
-
-                useCollectMoneyStore.getState().createCollection(
-                  activityName || "Split Bill",
-                  payers,
-                  finalPaymentMethodIds,
-                  sourceId, // Pass the sourceId to associate it
-                );
-
-                router.push("/collect-money?autoOpen=true");
-                toast.success("Monitoring Patungan dibuat!");
-              }}
+          {!isPublic && !hideMonitorButton && (
+            <MonitorStatusButton
+              billId={billData?.id}
+              activityName={activityName}
+              settlementInstructions={settlementInstructions}
+              selectedPaymentMethodIds={selectedPaymentMethodIds}
               disabled={!showDownload}
-              className={cn(
-                "w-full h-12 rounded-lg font-bold gap-2 text-sm transition-all active:scale-[0.98] bg-white border border-primary/20 text-primary hover:bg-primary/5 flex items-center justify-center group cursor-pointer",
-                !showDownload && "opacity-50 blur-[0.5px] pointer-events-none",
-              )}
-            >
-              <PiggyBank className="w-4 h-4 group-hover:scale-110 transition-transform" />
-              Monitor Status Bayar
-            </button>
+            />
           )}
         </div>
 

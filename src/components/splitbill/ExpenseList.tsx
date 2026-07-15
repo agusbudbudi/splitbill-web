@@ -22,7 +22,18 @@ export const ExpenseList = () => {
 
   return (
     <div id="expense-list-section" className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <QuickAssignHeader />
+      <div className="relative -mx-4 px-3 pt-4 space-y-4 rounded-t-lg overflow-hidden">
+        <div className="absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-primary via-primary/50 to-transparent pointer-events-none z-0" />
+        <div className="relative z-10 space-y-3">
+          <div className="space-y-0.5 px-1">
+            <h3 className="text-lg font-black text-white">Atur Cepat ⚡</h3>
+            <p className="text-xs text-white/80 font-medium">
+              Biar gak input satu-satu, atur semua item sekaligus di sini.
+            </p>
+          </div>
+          <QuickAssignHeader />
+        </div>
+      </div>
 
       <div className="space-y-4">
         <div className="flex items-center justify-between px-1">
@@ -70,7 +81,45 @@ export const ExpenseList = () => {
                 </div>
 
                 <div className="mt-3 flex flex-col gap-2.5 pt-3 border-t border-dashed border-primary/10">
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col gap-2">
+                    <span className="text-[9px] text-muted-foreground/60 uppercase font-bold tracking-wider">
+                      Dibayar oleh
+                    </span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {people.map((name) => {
+                        const isPayer = expense.paidBy === name;
+                        return (
+                          <button
+                            key={name}
+                            onClick={() => {
+                              updateExpense(expense.id, {
+                                paidBy: isPayer ? "" : name,
+                              });
+                            }}
+                            className={cn(
+                              "flex items-center gap-1.5 rounded-full pl-1 pr-2.5 py-1 border transition-all cursor-pointer text-[10px] font-bold",
+                              isPayer
+                                ? "bg-emerald-50 border-emerald-300 text-emerald-700 shadow-xs"
+                                : "bg-muted/30 border-muted text-muted-foreground hover:bg-muted/60"
+                            )}
+                            title={name}
+                          >
+                            <img
+                              src={`${AVATAR_SM_URL}${encodeURIComponent(name)}`}
+                              alt={name}
+                              className={cn(
+                                "w-5 h-5 rounded-full transition-transform duration-200",
+                                isPayer ? "scale-105" : "opacity-60"
+                              )}
+                            />
+                            <span className="truncate max-w-[60px]">{name}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between mt-1">
                     <span className="text-[9px] text-muted-foreground/60 uppercase font-bold tracking-wider">
                       Split dengan
                     </span>
@@ -129,44 +178,6 @@ export const ExpenseList = () => {
                         Belum ada anggota. Tambahkan teman di atas terlebih dahulu.
                       </p>
                     )}
-                  </div>
-
-                  <div className="flex flex-col gap-2 mt-1">
-                    <span className="text-[9px] text-muted-foreground/60 uppercase font-bold tracking-wider">
-                      Dibayar oleh
-                    </span>
-                    <div className="flex flex-wrap gap-1.5">
-                      {people.map((name) => {
-                        const isPayer = expense.paidBy === name;
-                        return (
-                          <button
-                            key={name}
-                            onClick={() => {
-                              updateExpense(expense.id, {
-                                paidBy: isPayer ? "" : name,
-                              });
-                            }}
-                            className={cn(
-                              "flex items-center gap-1.5 rounded-full pl-1 pr-2.5 py-1 border transition-all cursor-pointer text-[10px] font-bold",
-                              isPayer
-                                ? "bg-emerald-50 border-emerald-300 text-emerald-700 shadow-xs"
-                                : "bg-muted/30 border-muted text-muted-foreground hover:bg-muted/60"
-                            )}
-                            title={name}
-                          >
-                            <img
-                              src={`${AVATAR_SM_URL}${encodeURIComponent(name)}`}
-                              alt={name}
-                              className={cn(
-                                "w-5 h-5 rounded-full transition-transform duration-200",
-                                isPayer ? "scale-105" : "opacity-60"
-                              )}
-                            />
-                            <span className="truncate max-w-[60px]">{name}</span>
-                          </button>
-                        );
-                      })}
-                    </div>
                   </div>
                 </div>
               </CardContent>

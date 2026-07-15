@@ -139,7 +139,7 @@ export function SummaryCard() {
                         {instr.from}
                       </p>
                       <p className="text-[10px] text-muted-foreground">
-                        bayar ke{" "}
+                        Transfer ke{" "}
                         <span className="font-bold text-foreground">
                           {instr.to}
                         </span>
@@ -212,7 +212,7 @@ export function SummaryCard() {
                         : "Imbang"}
                   </p>
                   <p className="text-[9px] text-muted-foreground">
-                    Bayar {formatToIDR(b.paid)} · Habis {formatToIDR(b.spent)}
+                    Sudah Bayar {formatToIDR(b.paid)} · Porsi {formatToIDR(b.spent)}
                   </p>
                 </div>
               );

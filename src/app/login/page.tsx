@@ -17,6 +17,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { LoadingIndicator } from "@/components/ui/LoadingIndicator";
 import { motion } from "framer-motion";
 
 const avatarSeeds = ["Aria", "Bobi", "Cika"];
@@ -391,7 +392,7 @@ export default function LoginPage() {
     <Suspense
       fallback={
         <div className="min-h-screen flex items-center justify-center bg-[#f8f9fd]">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <LoadingIndicator />
         </div>
       }
     >

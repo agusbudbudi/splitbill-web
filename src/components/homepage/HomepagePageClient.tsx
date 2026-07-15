@@ -11,31 +11,41 @@ import { ShareEncouragement } from "../home/ShareEncouragement";
 import { Banner } from "../home/Banner";
 import { HomepageFooter } from "./HomepageFooter";
 import { useAuthStore } from "@/lib/stores/authStore";
+import { LazyMount } from "@/components/ui/LazyMount";
+import { Skeleton } from "@/components/ui/Skeleton";
+
+// Local skeleton fallback so the lazy chunk's own <Suspense> resolves in place —
+// without a `loading` option, next/dynamic suspends to the nearest Suspense
+// boundary, which is the root app/loading.tsx, blanking the whole page instead
+// of just this section.
+const sectionSkeleton = (height: number) => () => (
+  <Skeleton className="w-full" style={{ height }} />
+);
 
 // Dynamically import below-the-fold and heavy components
 const TestimonialsSection = dynamic(
   () => import("./TestimonialsSection").then((mod) => mod.TestimonialsSection),
-  { ssr: true }
+  { ssr: true, loading: sectionSkeleton(500) }
 );
 const ComparisonSection = dynamic(
   () => import("./ComparisonSection").then((mod) => mod.ComparisonSection),
-  { ssr: true }
+  { ssr: true, loading: sectionSkeleton(500) }
 );
 const PricingSection = dynamic(
   () => import("./PricingSection").then((mod) => mod.PricingSection),
-  { ssr: true }
+  { ssr: true, loading: sectionSkeleton(500) }
 );
 const FAQSectionHomepage = dynamic(
   () => import("./FAQSectionHomepage").then((mod) => mod.FAQSectionHomepage),
-  { ssr: true }
+  { ssr: true, loading: sectionSkeleton(400) }
 );
 const BlogSectionHomepage = dynamic(
   () => import("./BlogSectionHomepage").then((mod) => mod.BlogSectionHomepage),
-  { ssr: true }
+  { ssr: true, loading: sectionSkeleton(400) }
 );
 const CTABannerSection = dynamic(
   () => import("./CTABannerSection").then((mod) => mod.CTABannerSection),
-  { ssr: true }
+  { ssr: true, loading: sectionSkeleton(200) }
 );
 const HomepagePromoSlider = dynamic(
   () => import("./HomepagePromoSlider").then((mod) => mod.HomepagePromoSlider),
@@ -129,28 +139,40 @@ export const HomepagePageClient = () => {
         {/* Marketing Banner */}
         <section className="bg-white pt-2 sm:pt-6">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <Banner />
+            <LazyMount minHeight={0}>
+              <Banner />
+            </LazyMount>
           </div>
         </section>
 
         {/* Comparison Section */}
         <br className="hidden" />
-        <ComparisonSection />
+        <LazyMount minHeight={500}>
+          <ComparisonSection />
+        </LazyMount>
 
         {/* Testimonials Masonry */}
-        <TestimonialsSection />
+        <LazyMount minHeight={500}>
+          <TestimonialsSection />
+        </LazyMount>
 
         {/* Pricing/Membership Tiers */}
-        <PricingSection />
+        <LazyMount minHeight={500}>
+          <PricingSection />
+        </LazyMount>
 
         {/* Blog Section */}
-        <BlogSectionHomepage />
+        <LazyMount minHeight={400}>
+          <BlogSectionHomepage />
+        </LazyMount>
 
-        {/* FAQ Section */}
+        {/* FAQ Section — kept eager (not lazy-mounted) so schema/rich snippet content is in the initial SSR HTML */}
         <FAQSectionHomepage />
 
         {/* Final CTA Banner */}
-        <CTABannerSection />
+        <LazyMount minHeight={200}>
+          <CTABannerSection />
+        </LazyMount>
       </main>
 
       {/* Site Footer */}

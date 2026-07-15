@@ -26,6 +26,7 @@ import Image from "next/image";
 import { X } from "lucide-react";
 import { ChatAgentFAB } from "@/components/splitbill/chat/ChatAgentFAB";
 import { ChatRoom } from "@/components/splitbill/chat/ChatRoom";
+import { LoadingIndicator } from "@/components/ui/LoadingIndicator";
 
 export default function MemberPage() {
   const router = useRouter();
@@ -96,7 +97,7 @@ export default function MemberPage() {
   if (!isMounted || !isInitialized || !isAuthenticated) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+        <LoadingIndicator />
       </div>
     );
   }

@@ -169,22 +169,6 @@ export const EditExpenseBottomSheet = ({
 
                 <div className="space-y-3">
                   <label className="text-sm font-bold text-foreground">
-                    Split dengan Siapa
-                  </label>
-                  <div className="flex flex-wrap gap-3">
-                    {people.map((name) => (
-                      <PersonSelector
-                        key={name}
-                        name={name}
-                        isSelected={selectedWho.includes(name)}
-                        onClick={handleToggleWho}
-                      />
-                    ))}
-                  </div>
-                </div>
-
-                <div className="space-y-3">
-                  <label className="text-sm font-bold text-foreground">
                     Dibayar oleh
                   </label>
                   <div className="flex flex-wrap gap-3">
@@ -194,6 +178,22 @@ export const EditExpenseBottomSheet = ({
                         name={name}
                         isSelected={paidBy === name}
                         onClick={setPaidBy}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <label className="text-sm font-bold text-foreground">
+                    Split dengan Siapa
+                  </label>
+                  <div className="flex flex-wrap gap-3">
+                    {people.map((name) => (
+                      <PersonSelector
+                        key={name}
+                        name={name}
+                        isSelected={selectedWho.includes(name)}
+                        onClick={handleToggleWho}
                       />
                     ))}
                   </div>

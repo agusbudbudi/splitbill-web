@@ -327,24 +327,8 @@ export const EditAdditionalExpenseBottomSheet = ({
                 </div>
               </div>
 
-              <div className="space-y-3">
-                <label className="text-sm font-bold text-foreground">
-                  Split dengan Siapa
-                </label>
-                <div className="flex flex-wrap gap-3">
-                  {people.map((name) => (
-                    <PersonSelector
-                      key={name}
-                      name={name}
-                      isSelected={selectedWho.includes(name)}
-                      onClick={handleToggleWho}
-                    />
-                  ))}
-                </div>
-              </div>
-
               {isInputNegative() ? (
-                <div className="space-y-3 pt-2">
+                <div className="space-y-3">
                   <label className="text-sm font-bold text-foreground">Dibayar oleh</label>
                   <div className="p-3 bg-emerald-500/5 rounded-md border border-emerald-500/10 text-emerald-600 flex items-center gap-2">
                     <span className="text-[11px] font-semibold leading-relaxed">
@@ -369,6 +353,22 @@ export const EditAdditionalExpenseBottomSheet = ({
                   </div>
                 </div>
               )}
+
+              <div className="space-y-3">
+                <label className="text-sm font-bold text-foreground">
+                  Split dengan Siapa
+                </label>
+                <div className="flex flex-wrap gap-3">
+                  {people.map((name) => (
+                    <PersonSelector
+                      key={name}
+                      name={name}
+                      isSelected={selectedWho.includes(name)}
+                      onClick={handleToggleWho}
+                    />
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
 

@@ -214,7 +214,53 @@ export const AdditionalExpenses = () => {
                 </div>
               </div>
               <div className="flex flex-col gap-2 pt-2 border-t border-dashed border-primary/10">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col gap-2">
+                  <span className="text-[10px] text-muted-foreground/60 uppercase font-bold tracking-tight">
+                    Dibayar oleh
+                  </span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {adx.amount < 0 ? (
+                      <div className="flex items-center gap-1.5 bg-emerald-500/10 rounded-full px-2.5 py-1 border border-emerald-500/20 text-emerald-600">
+                        <span className="text-[10px] font-bold">
+                          🏷️ Merchant (Potongan Toko)
+                        </span>
+                      </div>
+                    ) : (
+                      people.map((name) => {
+                        const isPayer = adx.paidBy === name;
+                        return (
+                          <button
+                            key={name}
+                            onClick={() => {
+                              useSplitBillStore.getState().updateAdditionalExpense(adx.id, {
+                                paidBy: isPayer ? "" : name,
+                              });
+                            }}
+                            className={cn(
+                              "flex items-center gap-1.5 rounded-full pl-1 pr-2.5 py-1 border transition-all cursor-pointer text-[10px] font-bold",
+                              isPayer
+                                ? "bg-emerald-50 border-emerald-300 text-emerald-700 shadow-xs"
+                                : "bg-muted/30 border-muted text-muted-foreground hover:bg-muted/60"
+                            )}
+                            title={name}
+                          >
+                            <img
+                              src={`${AVATAR_SM_URL}${encodeURIComponent(name)}`}
+                              alt={name}
+                              className={cn(
+                                "w-5 h-5 rounded-full transition-transform duration-200",
+                                isPayer ? "scale-105" : "opacity-60"
+                              )}
+                            />
+                            <span className="truncate max-w-[60px]">{name}</span>
+                          </button>
+                        );
+                      })
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between mt-1">
                   <span className="text-[10px] text-muted-foreground/60 uppercase font-bold tracking-tight">
                     Split dengan
                   </span>
@@ -265,54 +311,8 @@ export const AdditionalExpenses = () => {
                       );
                     })}
                   </div>
-                </div>
-
-                <div className="flex flex-col gap-2 mt-1">
-                  <span className="text-[10px] text-muted-foreground/60 uppercase font-bold tracking-tight">
-                    Dibayar oleh
-                  </span>
-                  <div className="flex flex-wrap gap-1.5">
-                    {adx.amount < 0 ? (
-                      <div className="flex items-center gap-1.5 bg-emerald-500/10 rounded-full px-2.5 py-1 border border-emerald-500/20 text-emerald-600">
-                        <span className="text-[10px] font-bold">
-                          🏷️ Merchant (Potongan Toko)
-                        </span>
-                      </div>
-                    ) : (
-                      people.map((name) => {
-                        const isPayer = adx.paidBy === name;
-                        return (
-                          <button
-                            key={name}
-                            onClick={() => {
-                              useSplitBillStore.getState().updateAdditionalExpense(adx.id, {
-                                paidBy: isPayer ? "" : name,
-                              });
-                            }}
-                            className={cn(
-                              "flex items-center gap-1.5 rounded-full pl-1 pr-2.5 py-1 border transition-all cursor-pointer text-[10px] font-bold",
-                              isPayer
-                                ? "bg-emerald-50 border-emerald-300 text-emerald-700 shadow-xs"
-                                : "bg-muted/30 border-muted text-muted-foreground hover:bg-muted/60"
-                            )}
-                            title={name}
-                          >
-                            <img
-                              src={`${AVATAR_SM_URL}${encodeURIComponent(name)}`}
-                              alt={name}
-                              className={cn(
-                                "w-5 h-5 rounded-full transition-transform duration-200",
-                                isPayer ? "scale-105" : "opacity-60"
-                              )}
-                            />
-                            <span className="truncate max-w-[60px]">{name}</span>
-                          </button>
-                        );
-                      })
-                    )}
-                  </div>
-                </div>
               </div>
+            </div>
           ))}
         </div>
 
@@ -488,24 +488,6 @@ export const AdditionalExpenses = () => {
               </p>
             </div>
 
-            {/* Split With Section */}
-            <div className="space-y-3 border-t border-primary/10 pt-4">
-              <label className="text-sm font-bold px-1">
-                Split dengan Siapa
-              </label>
-              <div className="flex flex-wrap gap-4">
-                {people.map((name) => (
-                  <PersonSelector
-                    key={name}
-                    name={name}
-                    isSelected={selectedWho.includes(name)}
-                    onClick={handleToggleWho}
-                    size="md"
-                  />
-                ))}
-              </div>
-            </div>
-
             {/* Paid By Section */}
             {isInputNegative() ? (
               <div className="space-y-3 border-t border-primary/10 pt-4 px-1">
@@ -532,6 +514,24 @@ export const AdditionalExpenses = () => {
                 </div>
               </div>
             )}
+
+            {/* Split With Section */}
+            <div className="space-y-3 border-t border-primary/10 pt-4">
+              <label className="text-sm font-bold px-1">
+                Split dengan Siapa
+              </label>
+              <div className="flex flex-wrap gap-4">
+                {people.map((name) => (
+                  <PersonSelector
+                    key={name}
+                    name={name}
+                    isSelected={selectedWho.includes(name)}
+                    onClick={handleToggleWho}
+                    size="md"
+                  />
+                ))}
+              </div>
+            </div>
 
             <Button
               onClick={handleAdd}

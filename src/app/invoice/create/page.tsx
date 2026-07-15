@@ -14,6 +14,7 @@ import {
   FileCheck,
   Eye,
 } from "lucide-react";
+import { LoadingIndicator } from "@/components/ui/LoadingIndicator";
 import { InvoiceProgress } from "../components/InvoiceProgress";
 import { Step1Details } from "../components/Step1Details";
 import { Step2Billed } from "../components/Step2Billed";
@@ -284,7 +285,7 @@ export default function InvoicePage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+        <LoadingIndicator />
       </div>
     }>
       <InvoiceCreateContent />

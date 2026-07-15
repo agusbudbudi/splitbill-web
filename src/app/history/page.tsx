@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { Footer } from "@/components/layout/Footer";
 import { HistoryTab } from "@/components/wallet/HistoryTab";
 import { trackGeneral } from "@/lib/gtag";
+import { LoadingIndicator } from "@/components/ui/LoadingIndicator";
 
 export default function HistoryPage() {
   const router = useRouter();
@@ -27,7 +28,7 @@ export default function HistoryPage() {
           <React.Suspense
             fallback={
               <div className="h-40 flex items-center justify-center">
-                Loading...
+                <LoadingIndicator text="Memuat..." />
               </div>
             }
           >

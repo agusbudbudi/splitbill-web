@@ -5,10 +5,11 @@ import { useParams, useRouter } from "next/navigation";
 import WalletButtons from "@/components/payment/WalletButtons";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { Loader2, AlertCircle, CheckCircle2, Clock } from "lucide-react";
+import { AlertCircle, CheckCircle2, Clock } from "lucide-react";
 import { formatToIDR, cn } from "@/lib/utils";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { LoadingIndicator } from "@/components/ui/LoadingIndicator";
 
 interface PaymentDetails {
   name: string;
@@ -81,10 +82,7 @@ export default function PaymentDetailPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="flex flex-col items-center gap-4">
-          <Loader2 className="h-10 w-10 animate-spin text-primary" />
-          <p className="text-slate-500 font-medium animate-pulse">Memuat pembayaran...</p>
-        </div>
+        <LoadingIndicator text="Memuat pembayaran..." />
       </div>
     );
   }

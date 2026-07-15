@@ -8,7 +8,6 @@ import {
   QrCode,
   AlertCircle,
   ArrowLeft,
-  Loader2,
   Copy,
   Check,
   Download,
@@ -27,6 +26,7 @@ import { SuccessSection } from "@/components/ui/SuccessSection";
 import { useOrderStore } from "@/store/useOrderStore";
 import { trackSubscription } from "@/lib/gtag";
 import { DynamicFinLogo } from "@/components/wallet/DynamicFinLogo";
+import { LoadingIndicator } from "@/components/ui/LoadingIndicator";
 
 export default function PaymentPage() {
   const { orderId } = useParams();
@@ -149,10 +149,7 @@ export default function PaymentPage() {
       <div className="min-h-screen bg-background flex flex-col items-center">
         <Header title="Pembayaran" showBackButton />
         <div className="flex-1 flex flex-col items-center justify-center p-4">
-          <Loader2 className="w-10 h-10 text-primary animate-spin" />
-          <p className="mt-4 text-muted-foreground animate-pulse">
-            Memuat detail pembayaran...
-          </p>
+          <LoadingIndicator text="Memuat detail pembayaran..." />
         </div>
       </div>
     );

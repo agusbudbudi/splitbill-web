@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import SplitLaterClientPage from "./SplitLaterClientPage";
+import { LoadingIndicator } from "@/components/ui/LoadingIndicator";
 
 export const metadata: Metadata = {
   title: "Split Later | Split Bill App",
@@ -15,7 +16,7 @@ export default function SplitLaterPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen bg-background flex flex-col items-center justify-center">
-        <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+        <LoadingIndicator />
       </div>
     }>
       <SplitLaterClientPage />

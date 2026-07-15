@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/lib/stores/authStore";
+import { LoadingIndicator } from "@/components/ui/LoadingIndicator";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -29,10 +30,7 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent"></div>
-          <p className="mt-4 text-sm text-muted-foreground">Memuat...</p>
-        </div>
+        <LoadingIndicator text="Memuat..." />
       </div>
     );
   }

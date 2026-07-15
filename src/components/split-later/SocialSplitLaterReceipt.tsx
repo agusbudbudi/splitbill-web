@@ -181,55 +181,6 @@ export const SocialSplitLaterReceipt = React.forwardRef<
           </div>
         </div>
 
-        {/* Badges Section */}
-        {Object.values(badges).some((b) => b.length > 0) && (
-          <div className="grid grid-cols-1 gap-6">
-            <h3 className="text-3xl font-black text-slate-800 flex items-center gap-4 mb-2">
-              <Sparkles className="w-8 h-8 text-primary" />
-              Hall of Fame ✨
-            </h3>
-            <div className="grid grid-cols-2 gap-6">
-              {balances.map((person) => {
-                const personBadges = badges[person.name] || [];
-                if (personBadges.length === 0) return null;
-
-                return (
-                  <div
-                    key={person.name}
-                    className="flex items-center gap-5 p-6 bg-slate-50 rounded-[30px] border border-slate-100 transition-all hover:scale-105"
-                  >
-                    <div className="w-20 h-20 rounded-full border-4 border-white overflow-hidden bg-white shrink-0">
-                      <img
-                        src={`${AVATAR_BASE_URL}${encodeURIComponent(person.name)}`}
-                        alt={person.name}
-                        crossOrigin="anonymous"
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div className="flex flex-col gap-2 min-w-0">
-                      <span className="text-2xl font-bold text-slate-800 truncate">
-                        {person.name}
-                      </span>
-                      <div className="flex flex-nowrap gap-2 overflow-hidden">
-                        {personBadges.map((badge) => (
-                          <span
-                            key={badge}
-                            className={cn(
-                              "text-lg font-black px-4 py-1.5 rounded-full border whitespace-nowrap shrink-0",
-                              getBadgeColor(badge),
-                            )}
-                          >
-                            {getBadgeIcon(badge)} {badge}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
       </div>
 
       {/* Siapa Bayar ke Siapa Section */}
@@ -272,7 +223,7 @@ export const SocialSplitLaterReceipt = React.forwardRef<
                       <span className="text-destructive font-black underline decoration-destructive/20 underline-offset-4">
                         {inst.from}
                       </span>
-                      {" bayar ke "}
+                      {" Transfer ke "}
                       <span className="text-emerald-600 font-black underline decoration-emerald-600/20 underline-offset-4">
                         {inst.to}
                       </span>
@@ -335,14 +286,14 @@ export const SocialSplitLaterReceipt = React.forwardRef<
                       </p>
                       <div className="flex items-center gap-6 text-2xl font-bold text-slate-400">
                         <p>
-                          Bayar:{" "}
+                          Sudah Bayar:{" "}
                           <span className="text-slate-600">
                             {formatToIDR(person.totalPaid)}
                           </span>
                         </p>
                         <div className="w-2 h-2 rounded-full bg-slate-200" />
                         <p>
-                          Beban:{" "}
+                          Porsi:{" "}
                           <span className="text-slate-600">
                             {formatToIDR(person.totalOwed)}
                           </span>
@@ -353,7 +304,7 @@ export const SocialSplitLaterReceipt = React.forwardRef<
                   <div className="text-right">
                     <p
                       className={cn(
-                        "text-[16px] font-black uppercase tracking-widest px-6 py-2 rounded-full inline-block mb-2 border",
+                        "text-[16px] font-black tracking-widest px-6 py-2 rounded-full inline-block mb-2 border whitespace-nowrap",
                         isLunas
                           ? "bg-slate-50 text-slate-400 border-slate-100"
                           : isOwed
@@ -361,7 +312,7 @@ export const SocialSplitLaterReceipt = React.forwardRef<
                             : "bg-destructive/5 text-destructive border-destructive/10",
                       )}
                     >
-                      {isLunas ? "Lunas" : isOwed ? "Terima" : "Bayar"}
+                      {isLunas ? "Lunas" : isOwed ? "Akan Menerima" : "Harus Bayar"}
                     </p>
                     <p
                       className={cn(
@@ -443,6 +394,58 @@ export const SocialSplitLaterReceipt = React.forwardRef<
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Badges Section */}
+      {Object.values(badges).some((b) => b.length > 0) && (
+        <div className="relative z-10 w-full mt-16 px-4">
+          <div className="grid grid-cols-1 gap-6">
+            <h3 className="text-3xl font-black text-slate-800 flex items-center gap-4 mb-2">
+              <Sparkles className="w-8 h-8 text-primary" />
+              Hall of Fame ✨
+            </h3>
+            <div className="grid grid-cols-2 gap-6">
+              {balances.map((person) => {
+                const personBadges = badges[person.name] || [];
+                if (personBadges.length === 0) return null;
+
+                return (
+                  <div
+                    key={person.name}
+                    className="flex items-center gap-5 p-6 bg-slate-50 rounded-[30px] border border-slate-100 transition-all hover:scale-105"
+                  >
+                    <div className="w-20 h-20 rounded-full border-4 border-white overflow-hidden bg-white shrink-0">
+                      <img
+                        src={`${AVATAR_BASE_URL}${encodeURIComponent(person.name)}`}
+                        alt={person.name}
+                        crossOrigin="anonymous"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-2 min-w-0">
+                      <span className="text-2xl font-bold text-slate-800 truncate">
+                        {person.name}
+                      </span>
+                      <div className="flex flex-nowrap gap-2 overflow-hidden">
+                        {personBadges.map((badge) => (
+                          <span
+                            key={badge}
+                            className={cn(
+                              "text-lg font-black px-4 py-1.5 rounded-full border whitespace-nowrap shrink-0",
+                              getBadgeColor(badge),
+                            )}
+                          >
+                            {getBadgeIcon(badge)} {badge}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>

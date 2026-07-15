@@ -15,16 +15,16 @@ export const HowToReadSummary = () => {
       </div>
       <div className="grid gap-2 relative z-10">
         <div className="flex items-center gap-3 text-[11px] bg-white/60 p-2 rounded-sm border border-primary/5">
-          <span className="text-destructive font-black uppercase text-[9px] min-w-[50px] text-center bg-destructive/10 py-0.5 rounded">
-            Bayar
+          <span className="text-destructive font-black text-[9px] whitespace-nowrap text-center bg-destructive/10 py-0.5 px-1.5 rounded">
+            Harus Bayar
           </span>
           <span className="text-muted-foreground font-medium">
             Uang yang harus kamu bayarkan ke teman.
           </span>
         </div>
         <div className="flex items-center gap-3 text-[11px] bg-white/60 p-2 rounded-sm border border-primary/5">
-          <span className="text-emerald-600 font-black uppercase text-[9px] min-w-[50px] text-center bg-emerald-500/10 py-0.5 rounded">
-            Terima
+          <span className="text-emerald-600 font-black text-[9px] whitespace-nowrap text-center bg-emerald-500/10 py-0.5 px-1.5 rounded">
+            Akan Menerima
           </span>
           <span className="text-muted-foreground font-medium">
             Uang yang bakal kamu terima dari teman.

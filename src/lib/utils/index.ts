@@ -57,6 +57,10 @@ export function formatDate(
   return date.toLocaleDateString("id-ID", options);
 }
 
+export function getDefaultActivityName(date: Date = new Date()) {
+  return `Split Bill ${date.toLocaleDateString("id-ID", { day: "numeric", month: "long" })}`;
+}
+
 export function getAvatarUrl(user?: { email?: string | null; image?: string | null } | null) {
   if (user?.image) {
     return user.image;

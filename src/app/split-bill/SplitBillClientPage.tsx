@@ -42,7 +42,7 @@ import {
   Share2,
 } from "lucide-react";
 import { SuccessSection } from "@/components/ui/SuccessSection";
-import { cn, formatToIDR } from "@/lib/utils";
+import { cn, formatToIDR, getDefaultActivityName } from "@/lib/utils";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 
 import { SegmentedControl } from "@/components/ui/SegmentedControl";
@@ -623,6 +623,9 @@ const SplitBillContent = () => {
         trackSplitBill.validationError(step, errorMsg);
         return;
       }
+      if (!activityName.trim()) {
+        setActivityName(getDefaultActivityName());
+      }
     }
 
     if (step === 3) {
@@ -765,7 +768,7 @@ const SplitBillContent = () => {
                       icon: Sparkles,
                       badge: "New",
                     },
-                    { id: "manual", label: "Manual", icon: ClipboardList },
+                    { id: "manual", label: "Input Manual", icon: ClipboardList },
                   ]}
                   activeId={activeTab}
                   onChange={(id) => {
@@ -795,7 +798,7 @@ const SplitBillContent = () => {
                   </div>
                 )}
 
-                <div className="px-4 pb-4">
+                <div className="px-3 pb-3">
                   {activeTab === "manual" ? (
                     <ManualInputForm />
                   ) : (
@@ -815,7 +818,7 @@ const SplitBillContent = () => {
             <div className="flex flex-col items-center text-center gap-2">
               <h2 className="text-2xl font-bold text-white">Langkah Terakhir!</h2>
               <p className="text-white/80 text-sm max-w-[360px]">
-                Nama kegiatannya apa & mau dibayar kemana?
+                Tambahkan nama split bill agar mudah dicari nanti.
               </p>
             </div>
 
@@ -851,7 +854,7 @@ const SplitBillContent = () => {
                 <div className="relative z-10 flex items-center justify-between">
                   <div className="space-y-1">
                     <p className="text-[10px] font-black uppercase text-primary/80 tracking-widest">
-                      Estimasi Tagihan
+                      Siap dihitung
                     </p>
                     <h3 className="text-3xl font-black text-primary/90 tracking-tighter">
                       {formatToIDR(totalSpent)}
@@ -859,7 +862,7 @@ const SplitBillContent = () => {
                     <div className="flex items-center gap-1.5 pt-0.5">
                       <div className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
                       <p className="text-[9px] font-bold text-amber-600/80 uppercase tracking-tight">
-                        Menunggu Detail Aktivitas...
+                        Lengkapi nama split bill (opsional)
                       </p>
                     </div>
                   </div>
@@ -899,14 +902,17 @@ const SplitBillContent = () => {
               <CardContent className="p-5 space-y-4">
                 <div className="flex items-center gap-2 px-1">
                   <PenLine className="w-4 h-4 text-primary" />
-                  <label className="text-sm font-bold text-foreground">
-                    BTW habis jalan kemana nih? ✈️
+                  <label className="text-sm font-bold text-foreground flex items-center gap-2">
+                    Nama Split Bill 📝
+                    <span className="text-[10px] font-medium text-muted-foreground">
+                      (Opsional)
+                    </span>
                   </label>
                 </div>
 
                 <div className="relative">
                   <Input
-                    placeholder="Contoh: Makan Ramen, Liburan Bali"
+                    placeholder="Contoh: Makan Siang Tim"
                     value={activityName}
                     onChange={(e) => {
                       const newValue = e.target.value;
@@ -924,6 +930,10 @@ const SplitBillContent = () => {
                     className="bg-white border-primary/10 h-12 text-sm font-bold px-4 focus-visible:ring-primary/20"
                   />
                 </div>
+
+                <p className="text-[11px] text-muted-foreground px-1 -mt-2">
+                  Dipakai untuk riwayat & saat dibagikan ke teman.
+                </p>
 
                 <div className="flex flex-wrap gap-2 pt-1">
                   {[
@@ -961,7 +971,10 @@ const SplitBillContent = () => {
               >
                 <div className="flex items-center justify-between px-1">
                   <label className="text-sm font-bold flex items-center gap-2">
-                    Bayar Kemana? 📥
+                    Dompet Penerima 📥
+                    <span className="text-[10px] font-medium text-muted-foreground">
+                      (Opsional)
+                    </span>
                   </label>
                   {selectedPaymentMethodIds.length > 0 && (
                     <span className="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
@@ -1229,11 +1242,16 @@ const SplitBillContent = () => {
                     </div>
                   ) : (
                     <>
-                      {expenses.length > 0 &&
-                        unassignedCount === 0 &&
-                        unassignedAdxCount === 0
-                        ? "Berhasil, Lanjutkan! ✅"
-                        : "Lanjutkan"}
+                      {(() => {
+                        const totalUnassigned = unassignedCount + unassignedAdxCount;
+                        if (expenses.length > 0 && totalUnassigned === 0) {
+                          return "Lengkap, Lanjutkan! ✅";
+                        }
+                        if (totalUnassigned > 0) {
+                          return `Lanjutkan (Atur ${totalUnassigned} item lagi)`;
+                        }
+                        return "Lanjutkan";
+                      })()}
                       <ChevronRight className="ml-2 w-5 h-5" />
                     </>
                   )}
@@ -1255,7 +1273,7 @@ const SplitBillContent = () => {
                     </div>
                   ) : (
                     <>
-                      <Rocket className="mr-1.5 w-4 h-4" /> Hitung Aja
+                      <Rocket className="mr-1.5 w-4 h-4" /> Preview Hasil
                     </>
                   )}
                 </Button>
@@ -1297,7 +1315,7 @@ const SplitBillContent = () => {
                     </div>
                   ) : (
                     <>
-                      <CheckCircle2 className="mr-1.5 w-4 h-4" /> Hitung & Simpan
+                      <CheckCircle2 className="mr-1.5 w-4 h-4" /> Simpan Split Bill
                     </>
                   )}
                 </Button>

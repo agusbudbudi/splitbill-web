@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { useFriendStore } from "@/lib/stores/friendStore";
-import { Plus, X, Users, ChevronRight, Check } from "lucide-react";
+import { X, Users, ChevronRight, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { trackChatBill } from "@/lib/gtag";
+import { FriendComboboxInput } from "@/components/splitbill/FriendComboboxInput";
 
 interface FriendPickerCardProps {
   participants: string[];
@@ -21,7 +22,6 @@ export function FriendPickerCard({
   onConfirm,
 }: FriendPickerCardProps) {
   const { friends, addFriend, trackFriendUsage } = useFriendStore();
-  const [inputValue, setInputValue] = useState("");
 
   // ── Frozen state (already completed) ──────────────────────────────────────
   if (isCompleted) {
@@ -52,49 +52,22 @@ export function FriendPickerCard({
     (a, b) => (b.useCount ?? 0) - (a.useCount ?? 0)
   );
 
-  const handleAddFriend = (text: string) => {
-    const names = text
-      .split(",")
-      .map((name) => name.trim())
-      .filter((name) => name.length > 0);
+  const handleAddName = (name: string) => {
+    setParticipants([...participants, name]);
+    toast.success(`${name} berhasil ditambahkan ✅`);
 
-    if (names.length === 0) return;
-
-    const newParticipants = [...participants];
-    let addedAny = false;
-
-    names.forEach((name) => {
-      if (newParticipants.includes(name)) {
-        toast.info(`${name} sudah ada dalam daftar`);
-      } else {
-        newParticipants.push(name);
-        addedAny = true;
-      }
-
-      const existingFriend = friends.find(
-        (f) => f.name.toLowerCase() === name.toLowerCase()
-      );
-      if (!existingFriend) {
-        addFriend({ name });
-      } else {
-        trackFriendUsage(existingFriend.id);
-      }
-    });
-    if (addedAny) {
-      setParticipants(newParticipants);
+    const existingFriend = friends.find(
+      (f) => f.name.toLowerCase() === name.toLowerCase()
+    );
+    if (!existingFriend) {
+      addFriend({ name });
+    } else {
+      trackFriendUsage(existingFriend.id);
     }
   };
 
   const handleRemove = (name: string) => {
     setParticipants(participants.filter((p) => p !== name));
-  };
-
-  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" || e.key === ",") {
-      e.preventDefault();
-      handleAddFriend(inputValue);
-      setInputValue("");
-    }
   };
 
   const handleConfirm = () => {
@@ -132,9 +105,7 @@ export function FriendPickerCard({
                   <button
                     key={f.id}
                     onClick={() =>
-                      isSelected
-                        ? handleRemove(f.name)
-                        : handleAddFriend(f.name)
+                      isSelected ? handleRemove(f.name) : handleAddName(f.name)
                     }
                     className={cn(
                       "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer",
@@ -152,26 +123,12 @@ export function FriendPickerCard({
           </div>
         )}
 
-        {/* Manual input */}
-        <div className="flex gap-2">
-          <input
-            type="text"
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            onKeyDown={handleInputKeyDown}
-            placeholder="Ketik nama lalu Enter..."
-            className="flex-1 h-9 px-3 rounded-sm border border-border text-sm bg-muted/30 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition"
-          />
-          <button
-            onClick={() => {
-              handleAddFriend(inputValue);
-              setInputValue("");
-            }}
-            className="w-9 h-9 rounded-sm bg-primary/10 text-primary flex items-center justify-center hover:bg-primary/20 transition cursor-pointer"
-          >
-            <Plus className="w-4 h-4" />
-          </button>
-        </div>
+        {/* Search / create input */}
+        <FriendComboboxInput
+          people={participants}
+          onAdd={handleAddName}
+          onDuplicate={() => toast.info("Teman sudah ditambahkan.")}
+        />
 
         {/* Selected chips */}
         {participants.length > 0 && (

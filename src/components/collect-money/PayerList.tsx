@@ -20,7 +20,7 @@ export const PayerList = ({
   if (payers.length === 0) {
     return (
       <div className="text-center py-8 text-muted-foreground text-sm border-2 border-dashed border-muted rounded-xl bg-muted/5">
-        Belum ada orang di list ini.
+        Belum ada teman di list ini.
       </div>
     );
   }

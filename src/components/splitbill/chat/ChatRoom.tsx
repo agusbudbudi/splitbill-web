@@ -8,6 +8,7 @@ import { useSplitBillChatStore, type ChatStep } from "@/store/useSplitBillChatSt
 import { useChatAgent } from "@/hooks/useChatAgent";
 import { ChatMessage, TypingIndicator } from "./ChatMessage";
 import { validateStepTransition } from "@/lib/chat/chatTransitionGuard";
+import { getDefaultActivityName } from "@/lib/utils";
 import { toast } from "sonner";
 import {
   GREETING_MESSAGES,
@@ -259,7 +260,7 @@ export function ChatRoom() {
 
       setExpenses(newExpenses);
       setAdditionalExpenses(newAdditional);
-      if (result.merchant_name) setActivityName(result.merchant_name);
+      setActivityName(result.merchant_name || getDefaultActivityName());
 
       await sendAgentMessages(
         receiptConfirmedMessages(result.items?.length ?? 0, result.merchant_name),

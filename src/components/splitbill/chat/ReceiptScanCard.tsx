@@ -232,7 +232,7 @@ export function ReceiptScanCard({
     try {
       const result = await scanReceipt(image);
       setScanResult(result);
-      toast.success("Scan berhasil! ✨", { duration: 2000 });
+      toast.success("Preview Hasil Scan ✨", { duration: 2000 });
 
       if (!isAuthenticated) {
         incrementGuestScanCount();
@@ -374,7 +374,7 @@ export function ReceiptScanCard({
           <>
             <div className="flex items-center gap-1.5 text-emerald-600">
               <CheckCircle2 className="w-4 h-4" />
-              <p className="text-xs font-bold">Scan Berhasil!</p>
+              <p className="text-xs font-bold">Preview Hasil Scan ✨</p>
             </div>
 
             {/* Compact result preview */}

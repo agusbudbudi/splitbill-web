@@ -13,6 +13,9 @@ import { QuickAssignHeader } from "./QuickAssignHeader";
 const AVATAR_SM_URL =
   "https://api.dicebear.com/9.x/personas/svg?backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf&size=24&scale=100&seed=";
 
+// Temporarily hidden for testing journey without Quick Assign — flip back to show.
+const SHOW_QUICK_ASSIGN = false;
+
 export const ExpenseList = () => {
   const { expenses, removeExpense, people, updateExpense } = useSplitBillStore();
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -22,18 +25,20 @@ export const ExpenseList = () => {
 
   return (
     <div id="expense-list-section" className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <div className="relative -mx-4 px-3 pt-4 space-y-4 rounded-t-lg overflow-hidden">
-        <div className="absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-primary via-primary/50 to-transparent pointer-events-none z-0" />
-        <div className="relative z-10 space-y-3">
-          <div className="space-y-0.5 px-1">
-            <h3 className="text-lg font-black text-white">Atur Cepat ⚡</h3>
-            <p className="text-xs text-white/80 font-medium">
-              Biar gak input satu-satu, atur semua item sekaligus di sini.
-            </p>
+      {SHOW_QUICK_ASSIGN && (
+        <div className="relative -mx-4 px-3 pt-4 space-y-4 rounded-t-lg overflow-hidden">
+          <div className="absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-primary via-primary/50 to-transparent pointer-events-none z-0" />
+          <div className="relative z-10 space-y-3">
+            <div className="space-y-0.5 px-1">
+              <h3 className="text-lg font-black text-white">Atur Cepat ⚡</h3>
+              <p className="text-xs text-white/80 font-medium">
+                Biar gak input satu-satu, atur semua item sekaligus di sini.
+              </p>
+            </div>
+            <QuickAssignHeader />
           </div>
-          <QuickAssignHeader />
         </div>
-      </div>
+      )}
 
       <div className="space-y-4">
         <div className="flex items-center justify-between px-1">

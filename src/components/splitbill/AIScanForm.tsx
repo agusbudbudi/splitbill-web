@@ -9,6 +9,7 @@ import {
   History,
   Gift,
   ShieldCheck,
+  Camera,
 } from "lucide-react";
 import { useSplitBillStore } from "@/store/useSplitBillStore";
 import { scanReceipt, ReceiptScanResult, ReceiptItem } from "@/lib/AIService";
@@ -25,6 +26,7 @@ import { AuthModal } from "@/components/auth/AuthModal";
 
 import { AIScanBenefits } from "@/components/ui/AIScanBenefits";
 import { GUEST_LIMIT, getGuestScanQuota, incrementGuestScanCount } from "@/lib/utils/guestQuota";
+import { getDefaultActivityName } from "@/lib/utils";
 import { ReceiptImagePicker } from "@/components/splitbill/ReceiptImagePicker";
 
 export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
@@ -37,6 +39,7 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
     null,
   );
   const [showImportAuthModal, setShowImportAuthModal] = useState(false);
+  const [justImported, setJustImported] = useState<{ count: number } | null>(null);
   const scanStartTimeRef = useRef<number | null>(null);
 
   const { addExpense, setActivityName, addAdditionalExpense, pendingCapturedImage, clearPendingCapturedImage, addScannedReceiptImage } =
@@ -125,9 +128,7 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
     if (imgStr) {
       addScannedReceiptImage(imgStr);
     }
-    if (result.merchant_name) {
-      setActivityName(result.merchant_name);
-    }
+    setActivityName(result.merchant_name || getDefaultActivityName());
     if (result.items && Array.isArray(result.items)) {
       result.items.forEach((item: ReceiptItem) => {
         addExpense({
@@ -143,9 +144,11 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
       { key: "service_charge", label: "Service Charge" },
       { key: "discount", label: "Discount" },
     ];
+    let additionalCount = 0;
     addtionalFields.forEach(({ key, label }) => {
       const val = result[key];
       if (val !== null && val !== undefined && val !== 0) {
+        additionalCount += 1;
         addAdditionalExpense({
           name: label,
           amount: key === "discount" ? -Math.abs(val) : val,
@@ -158,6 +161,7 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
 
     setImage(null);
     setScanResult(null);
+    setJustImported({ count: (result.items?.length || 0) + additionalCount });
     toast.success("Berhasil import struk! 🧾✨", {
       description: "Data belanja kamu sudah masuk ke daftar.",
       duration: 3000,
@@ -282,9 +286,7 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
     }
 
     // 1. Map Merchant Name
-    if (scanResult.merchant_name) {
-      setActivityName(scanResult.merchant_name);
-    }
+    setActivityName(scanResult.merchant_name || getDefaultActivityName());
 
     // 2. Map Items
     if (scanResult.items && Array.isArray(scanResult.items)) {
@@ -305,9 +307,11 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
       { key: "discount", label: "Discount" },
     ];
 
+    let additionalCount = 0;
     addtionalFields.forEach(({ key, label }) => {
       const val = scanResult[key];
       if (val !== null && val !== undefined && val !== 0) {
+        additionalCount += 1;
         addAdditionalExpense({
           name: label,
           amount: key === "discount" ? -Math.abs(val) : val,
@@ -321,6 +325,7 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
     // Reset
     setImage(null);
     setScanResult(null);
+    setJustImported({ count: (scanResult.items?.length || 0) + additionalCount });
     // Show success toast
     toast.success("Berhasil import struk! 🧾✨", {
       description: "Data belanja kamu sudah masuk ke daftar.",
@@ -364,6 +369,33 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
             </div>
             <div className="w-full max-w-[200px] h-11 bg-primary/10 rounded-xl mt-2" />
           </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Success card — replaces the upload area/CTAs/benefits banner right after an import
+  if (justImported) {
+    return (
+      <div className="space-y-4 animate-in fade-in duration-500">
+        <div className="relative overflow-hidden rounded-md border border-emerald-200 bg-gradient-to-br from-emerald-50 to-white p-4 text-center space-y-4">
+          <div className="space-y-1">
+            <p className="text-sm font-bold text-foreground flex items-center justify-center gap-2">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+              {justImported.count} item berhasil ditambahkan
+            </p>
+            <p className="text-xs text-muted-foreground font-medium">
+              Scroll ke bawah untuk mengatur pembagian
+            </p>
+          </div>
+          <Button
+            onClick={() => setJustImported(null)}
+            variant="outline"
+            className="w-full max-w-[200px] mx-auto font-bold"
+          >
+            <Camera className="w-4 h-4 mr-2" />
+            Scan Lagi
+          </Button>
         </div>
       </div>
     );
@@ -491,7 +523,7 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
   return (
     <div className="space-y-4 animate-in fade-in duration-500">
       {!image ? (
-        <ReceiptImagePicker image={null} onFileSelect={handleFileSelect} onRemove={() => {}} />
+        <ReceiptImagePicker image={null} onFileSelect={handleFileSelect} onRemove={() => { }} />
       ) : (
         <div className="space-y-4">
           <ReceiptImagePicker
@@ -530,7 +562,7 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
             <div className="space-y-3">
               <div className="flex items-center gap-2 text-emerald-500 px-1">
                 <CheckCircle2 className="w-4 h-4" />
-                <p className="text-xs font-bold uppercase">Scan Berhasil! ✨</p>
+                <p className="text-xs font-bold uppercase">Preview Hasil Scan ✨</p>
               </div>
 
               <div className="bg-gradient-to-b from-card to-card/90 p-5 rounded-2xl border border-primary/20 relative overflow-hidden space-y-4">
@@ -646,7 +678,7 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
                       💡 Info Penting
                     </p>
                     <p className="text-xs leading-relaxed text-secondary-foreground font-medium">
-                      Jangan khawatir! Semua data bisa diedit setelah di-import
+                      Jangan khawatir! Semua data bisa diedit setelah ditambahkan
                       jika ada yang belum sesuai.
                     </p>
                   </div>
@@ -656,7 +688,7 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
               {/* Import button — hard-gated for guests */}
               {isAuthenticated ? (
                 <Button onClick={importItems} className="w-full font-bold">
-                  Import ke Daftar
+                  Gunakan Hasil Scan
                 </Button>
               ) : (
                 <>

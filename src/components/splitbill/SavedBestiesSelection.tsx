@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
+import React, { useState, useRef, useLayoutEffect } from "react";
 import { motion } from "framer-motion";
-import { ChevronDown, ChevronUp, Info, Check } from "lucide-react";
+import { ChevronDown, ChevronUp, Info, Check, Search, Plus } from "lucide-react";
 import { useFriendStore } from "@/lib/stores/friendStore";
 import { cn } from "@/lib/utils";
 
@@ -24,7 +24,8 @@ export const SavedBestiesSelection = ({
 
   const [isSavedExpanded, setIsSavedExpanded] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
-  const [itemsToShow, setItemsToShow] = useState(5);
+  const [search, setSearch] = useState("");
+  const itemsToShow = 6;
 
   const contentRef = useRef<HTMLDivElement>(null);
   const [contentHeight, setContentHeight] = useState(0);
@@ -39,15 +40,6 @@ export const SavedBestiesSelection = ({
     return () => resizeObserver.disconnect();
   }, []);
 
-  useEffect(() => {
-    const handleResize = () => {
-      setItemsToShow(window.innerWidth >= 640 ? 8 : 5);
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
   const sortedFriends = [...friends].sort((a, b) => {
     const countA = a.useCount ?? 0;
     const countB = b.useCount ?? 0;
@@ -57,9 +49,15 @@ export const SavedBestiesSelection = ({
     return dateB - dateA;
   });
 
+  const searchedFriends = search.trim()
+    ? sortedFriends.filter((f) =>
+        f.name.toLowerCase().includes(search.trim().toLowerCase()),
+      )
+    : sortedFriends;
+
   const displayedFriends = isExpanded
-    ? sortedFriends
-    : sortedFriends.slice(0, itemsToShow);
+    ? searchedFriends
+    : searchedFriends.slice(0, itemsToShow);
 
   const groupsWithMembers = groups.filter(
     (g) => getFriendsInGroup(g.id).length > 0,
@@ -90,9 +88,9 @@ export const SavedBestiesSelection = ({
             />
           </div>
           <div className="text-left">
-            <p className="text-sm font-bold">Pilih dari Besties Tersimpan</p>
+            <p className="text-sm font-bold">Teman Tersimpan</p>
             <p className="text-[10px] text-muted-foreground">
-              {friends.length} Besties & {groupsWithMembers.length} Circle
+              {friends.length} Teman & {groupsWithMembers.length} Circle
             </p>
           </div>
         </div>
@@ -117,8 +115,8 @@ export const SavedBestiesSelection = ({
                   <Info className="w-3.5 h-3.5 text-primary shrink-0" />
                 </div>
                 <p className="text-[10px] font-bold leading-tight text-foreground/70">
-                  Klik <span className="text-primary">Circle Gua</span> atau{" "}
-                  <span className="text-primary">Besties Gua</span> buat langsung
+                  Klik <span className="text-primary">Circle Gua</span> atau tombol{" "}
+                  <span className="text-primary">Tambah</span> buat langsung
                   ajak mereka!
                 </p>
               </div>
@@ -185,72 +183,88 @@ export const SavedBestiesSelection = ({
                 </div>
               )}
 
-              {/* Besties Section */}
+              {/* Teman Tersimpan Section */}
               {friends.length > 0 && (
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between px-1">
-                    <label className="text-xs font-bold text-foreground/50 uppercase tracking-wider block">
-                      Besties Gua ✨
-                    </label>
-                    {friends.length > itemsToShow && (
-                      <button
-                        type="button"
-                        onClick={() => setIsExpanded(!isExpanded)}
-                        className="flex items-center gap-1 text-[10px] font-bold text-primary cursor-pointer hover:underline underline-offset-2 transition-all"
-                      >
-                        {isExpanded ? (
-                          <>
-                            Sembunyikan <ChevronUp className="w-3 h-3" />
-                          </>
-                        ) : (
-                          <>
-                            Lihat Semua <ChevronDown className="w-3 h-3" />
-                          </>
-                        )}
-                      </button>
-                    )}
+                  <label className="text-xs font-bold text-foreground/50 uppercase tracking-wider block px-1">
+                    Teman Tersimpan ✨
+                  </label>
+
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground/50" />
+                    <input
+                      type="text"
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                      placeholder="Cari teman tersimpan..."
+                      className="w-full h-9 pl-9 pr-3 rounded-lg border border-primary/10 bg-white text-xs font-medium placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary/30 transition-all"
+                    />
                   </div>
-                  <div className="w-full grid grid-cols-5 sm:grid-cols-8 gap-y-6 gap-x-2 py-2">
-                    {displayedFriends.map((friend) => {
-                      const isSelected = selectedNames.includes(friend.name);
-                      return (
-                        <button
-                          key={friend.id}
-                          type="button"
-                          onClick={() => onToggleFriend(friend.name, friend.id)}
-                          className="flex flex-col items-center gap-2 shrink-0 w-full min-w-[56px] cursor-pointer"
-                        >
-                          <div
-                            className={cn(
-                              "w-12 h-12 rounded-full border-2 p-0.5 relative transition-all",
-                              isSelected
-                                ? "border-primary bg-primary/10 shadow-soft scale-110"
-                                : "border-primary/5 opacity-50 grayscale",
-                            )}
+
+                  <div className="divide-y divide-primary/5 rounded-lg border border-primary/5 overflow-hidden">
+                    {displayedFriends.length === 0 ? (
+                      <p className="px-3 py-3 text-xs text-muted-foreground text-center">
+                        Tidak ada teman ditemukan.
+                      </p>
+                    ) : (
+                      displayedFriends.map((friend) => {
+                        const isSelected = selectedNames.includes(friend.name);
+                        return (
+                          <button
+                            key={friend.id}
+                            type="button"
+                            onClick={() => onToggleFriend(friend.name, friend.id)}
+                            className="w-full flex items-center gap-3 px-3 py-2.5 bg-white hover:bg-primary/5 transition-all cursor-pointer"
                           >
                             <img
                               src={`${AVATAR_BASE_URL}${encodeURIComponent(friend.name)}`}
                               alt={friend.name}
-                              className="w-full h-full rounded-full bg-white"
+                              className="w-9 h-9 rounded-full bg-white shrink-0"
                             />
-                            {isSelected && (
-                              <div className="absolute -top-1 -right-1 bg-primary text-white rounded-full p-0.5 border-2 border-white shadow-sm">
-                                <Check className="w-2.5 h-2.5 stroke-[3]" />
-                              </div>
-                            )}
-                          </div>
-                          <span
-                            className={cn(
-                              "text-[10px] font-bold truncate w-full text-center",
-                              isSelected ? "text-primary" : "text-muted-foreground/60",
-                            )}
-                          >
-                            {friend.name}
-                          </span>
-                        </button>
-                      );
-                    })}
+                            <span className="flex-1 text-left text-xs font-bold text-foreground truncate">
+                              {friend.name}
+                            </span>
+                            <span
+                              className={cn(
+                                "flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold shrink-0 transition-all",
+                                isSelected
+                                  ? "bg-primary/10 text-primary"
+                                  : "bg-primary text-white",
+                              )}
+                            >
+                              {isSelected ? (
+                                <>
+                                  <Check className="w-3 h-3 stroke-[3]" /> Ditambahkan
+                                </>
+                              ) : (
+                                <>
+                                  <Plus className="w-3 h-3 stroke-[3]" /> Tambah
+                                </>
+                              )}
+                            </span>
+                          </button>
+                        );
+                      })
+                    )}
                   </div>
+
+                  {searchedFriends.length > itemsToShow && (
+                    <button
+                      type="button"
+                      onClick={() => setIsExpanded(!isExpanded)}
+                      className="flex items-center gap-1 text-[10px] font-bold text-primary cursor-pointer hover:underline underline-offset-2 transition-all px-1"
+                    >
+                      {isExpanded ? (
+                        <>
+                          Sembunyikan <ChevronUp className="w-3 h-3" />
+                        </>
+                      ) : (
+                        <>
+                          Lihat Semua <ChevronDown className="w-3 h-3" />
+                        </>
+                      )}
+                    </button>
+                  )}
                 </div>
               )}
             </div>

@@ -538,8 +538,8 @@ export const CollectionDashboard = ({
                 <Card className="border-none shadow-soft overflow-hidden">
                   <CardContent className="p-4">
                     <EmptyState
-                      message="Belum ada orang di list ini"
-                      subtitle="Yuk tambah orang untuk mulai patungan!"
+                      message="Belum ada teman di list ini"
+                      subtitle="Yuk tambah teman untuk mulai patungan!"
                       icon={Users}
                       className="bg-primary/5"
                     />

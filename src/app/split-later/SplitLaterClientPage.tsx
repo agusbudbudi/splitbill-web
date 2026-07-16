@@ -340,9 +340,9 @@ export default function SplitLaterClientPage() {
 
             <ParticipantsFormCard
               people={participants}
-              onAdd={(names) => {
-                setParticipants([...participants, ...names]);
-                names.forEach(syncFriendToStore);
+              onAdd={(name) => {
+                setParticipants([...participants, name]);
+                syncFriendToStore(name);
               }}
               onDuplicate={(name) =>
                 setParticipantsError(`"${name}" sudah ditambahkan.`)
@@ -352,7 +352,6 @@ export default function SplitLaterClientPage() {
               }
               addLabel="Daftar Peserta 👥"
               participantsLabel="Peserta Split Later 👥"
-              inputPlaceholder="Nama peserta (bisa lebih dari 1, pisah koma)"
             />
 
             {participantsError && (

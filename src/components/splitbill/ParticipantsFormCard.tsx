@@ -1,12 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
-import { Plus, X, Users2, Check } from "lucide-react";
+import React from "react";
+import { X, Users2, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/Card";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { Input } from "@/components/ui/Input";
-import { Button } from "@/components/ui/Button";
+import { FriendComboboxInput } from "./FriendComboboxInput";
 
 const AVATAR_BASE_URL =
   "https://api.dicebear.com/9.x/personas/svg?backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf&size=64&scale=100&seed=";
@@ -14,8 +13,8 @@ const AVATAR_BASE_URL =
 interface ParticipantsFormCardProps {
   /** Currently selected participant names */
   people: string[];
-  /** Called with the deduped, not-yet-added names parsed from the input */
-  onAdd: (names: string[]) => void;
+  /** Called with the resolved name (existing friend or brand new) to add */
+  onAdd: (name: string) => void;
   /** Called when a submitted name is already in `people` */
   onDuplicate?: (name: string) => void;
   onRemove: (name: string) => void;
@@ -32,52 +31,24 @@ export const ParticipantsFormCard = ({
   onDuplicate,
   onRemove,
   minCount = 2,
-  addLabel = "Tambah Orang 👥",
-  participantsLabel = "Peserta Split Bill 👥",
+  addLabel = "Tambah Teman",
+  participantsLabel = "Peserta Split Bill",
   suggestions = ["Gua", "Temen 1", "Temen 2"],
-  inputPlaceholder = "Nama teman (bisa lebih dari 1, pisah koma)",
+  inputPlaceholder = "Cari teman atau tambah teman baru...",
 }: ParticipantsFormCardProps) => {
-  const [newName, setNewName] = useState("");
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newName.trim()) return;
-
-    const names = [...new Set(newName.split(",").map((n) => n.trim()).filter(Boolean))];
-    const dupes = names.filter((n) => people.includes(n));
-    const toAdd = names.filter((n) => !people.includes(n));
-
-    dupes.forEach((n) => onDuplicate?.(n));
-    if (toAdd.length > 0) {
-      onAdd(toAdd);
-    }
-    setNewName("");
-  };
-
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2">
-      {/* 1. Tambah Orang (Primary Action) */}
+      {/* 1. Tambah teman (Primary Action) */}
       <Card id="onboarding-people-list" className="border-primary/20 shadow-md">
         <CardContent className="p-4 space-y-4">
           <div className="space-y-3">
             <label className="text-sm font-bold text-foreground px-1">{addLabel}</label>
-            <form onSubmit={handleSubmit} className="flex items-center gap-2">
-              <Input
-                type="text"
-                placeholder={inputPlaceholder}
-                value={newName}
-                onChange={(e) => setNewName(e.target.value)}
-                className="flex-1 h-12"
-              />
-              <Button
-                type="submit"
-                disabled={!newName.trim()}
-                size="icon"
-                className="shrink-0 h-12 w-12"
-              >
-                <Plus className="w-6 h-6" />
-              </Button>
-            </form>
+            <FriendComboboxInput
+              people={people}
+              onAdd={onAdd}
+              onDuplicate={onDuplicate}
+              placeholder={inputPlaceholder}
+            />
           </div>
 
           {people.length < minCount && (
@@ -87,7 +58,7 @@ export const ParticipantsFormCard = ({
                 .map((suggest) => (
                   <button
                     key={suggest}
-                    onClick={() => onAdd([suggest])}
+                    onClick={() => onAdd(suggest)}
                     className="flex items-center gap-1.5 pl-1.5 pr-3 py-1 rounded-full text-xs font-bold bg-primary/5 text-primary/80 hover:bg-primary/10 border border-primary/10 transition-all active:scale-95 shadow-soft-sm cursor-pointer"
                   >
                     <img
@@ -132,15 +103,18 @@ export const ParticipantsFormCard = ({
           {people.length === 0 ? (
             <EmptyState
               icon={Users2}
-              message="Belum ada orang"
-              subtitle="Yuk tambah minimal 2 orang!"
+              message="Belum ada teman"
+              subtitle="Yuk tambah minimal 2 teman!"
               className="bg-transparent border-none py-2"
             />
           ) : (
             <>
               <div className="grid grid-cols-5 sm:grid-cols-8 gap-y-6 gap-x-2 w-full">
                 {people.map((name) => (
-                  <div key={name} className="relative flex flex-col items-center gap-2 group">
+                  <div
+                    key={name}
+                    className="relative flex flex-col items-center gap-2 group animate-in zoom-in-50 fade-in duration-300"
+                  >
                     <button
                       onClick={() => onRemove(name)}
                       className="absolute -top-1 -right-1 z-10 bg-destructive text-white rounded-full p-1 hover:scale-110 active:scale-90 transition-all border-2 border-white shadow-sm cursor-pointer"

@@ -186,7 +186,7 @@ const SplitBillContent = () => {
     {
       id: "step-people",
       targetId: "onboarding-people-list",
-      title: "Tambah Teman 👥",
+      title: "Tambah Teman",
       content:
         "Pertama, tambahin dulu temen-temen yang mau diajak patungan. Bisa ketik manual atau pilih dari Besties Gua!",
       position: "bottom",
@@ -706,7 +706,7 @@ const SplitBillContent = () => {
             <div className="flex flex-col items-center text-center gap-2">
               <h2 className="text-2xl font-bold text-white">Siapa aja nih?</h2>
               <p className="text-white/80 text-sm max-w-[360px]">
-                Tambahkan minimal 2 orang untuk mulai split bill.
+                Tambahkan minimal 2 teman untuk mulai split bill.
               </p>
             </div>
 

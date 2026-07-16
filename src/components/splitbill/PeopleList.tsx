@@ -24,11 +24,10 @@ export const PeopleList = () => {
     }
   };
 
-  const handleAddNames = (names: string[]) => {
-    names.forEach((name) => {
-      addPerson(name);
-      syncFriend(name);
-    });
+  const handleAddName = (name: string) => {
+    addPerson(name);
+    syncFriend(name);
+    toast.success(`${name} berhasil ditambahkan ✅`);
   };
 
   const toggleFriendFromSaved = (friend: Friend) => {
@@ -68,8 +67,8 @@ export const PeopleList = () => {
     <div className="space-y-6">
       <ParticipantsFormCard
         people={people}
-        onAdd={handleAddNames}
-        onDuplicate={(name) => toast.info(`${name} udah ada di list kamu! ✅`)}
+        onAdd={handleAddName}
+        onDuplicate={() => toast.info("Teman sudah ditambahkan.")}
         onRemove={removePerson}
       />
 

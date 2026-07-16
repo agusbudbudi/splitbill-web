@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { HomepageNavbar } from "@/components/homepage/HomepageNavbar";
 import { HomepageFooter } from "@/components/homepage/HomepageFooter";
-import { LoadingIndicator } from "@/components/ui/LoadingIndicator";
 
 export const metadata: Metadata = {
   title: "404 - Halaman Tidak Ditemukan | Split Bill",
@@ -76,8 +75,6 @@ export default function NotFound() {
               <path d="M275 115 Q250 130 240 145" stroke="#479fea" strokeWidth="1.5" strokeDasharray="4 4" strokeLinecap="round" fillOpacity="0.4" />
             </svg>
           </div>
-
-          <LoadingIndicator text="Halaman tidak ditemukan..." className="mb-6" />
 
           {/* Heading */}
           <h1 className="text-2xl sm:text-3xl font-extrabold text-[#2d2d3e] tracking-tight mb-3 leading-tight">

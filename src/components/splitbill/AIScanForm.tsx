@@ -358,16 +358,16 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
   if (!isMounted || !isInitialized) {
     return (
       <div className="space-y-4 py-2 animate-pulse">
-        <div className="relative overflow-hidden rounded-3xl p-6 bg-gradient-to-br from-primary/20 via-primary/10 to-violet-600/10 border border-primary/5">
+        <div className="relative overflow-hidden rounded-sm p-6 bg-gradient-to-br from-primary/20 via-primary/10 to-violet-600/10 border border-primary/5">
           <div className="relative z-10 flex flex-col items-center text-center gap-4">
-            <div className="w-16 h-16 rounded-3xl bg-primary/5 backdrop-blur-md flex items-center justify-center border border-primary/10">
-              <div className="w-8 h-8 rounded-lg bg-primary/20" />
+            <div className="w-16 h-16 rounded-sm bg-primary/5 backdrop-blur-md flex items-center justify-center border border-primary/10">
+              <div className="w-8 h-8 rounded-sm bg-primary/20" />
             </div>
             <div className="space-y-2 w-full flex flex-col items-center">
               <div className="h-6 w-32 bg-primary/20 rounded-full" />
               <div className="h-3 w-48 bg-primary/10 rounded-full" />
             </div>
-            <div className="w-full max-w-[200px] h-11 bg-primary/10 rounded-xl mt-2" />
+            <div className="w-full max-w-[200px] h-11 bg-primary/10 rounded-sm mt-2" />
           </div>
         </div>
       </div>
@@ -378,10 +378,10 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
   if (justImported) {
     return (
       <div className="space-y-4 animate-in fade-in duration-500">
-        <div className="relative overflow-hidden rounded-md border border-emerald-200 bg-gradient-to-br from-emerald-50 to-white p-4 text-center space-y-4">
+        <div className="relative overflow-hidden rounded-sm border border-success/20 bg-gradient-to-br from-success/10 to-white p-4 text-center space-y-4">
           <div className="space-y-1">
             <p className="text-sm font-bold text-foreground flex items-center justify-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+              <CheckCircle2 className="w-4 h-4 text-success shrink-0" />
               {justImported.count} item berhasil ditambahkan
             </p>
             <p className="text-xs text-muted-foreground font-medium">
@@ -405,8 +405,8 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
   if (!isAuthenticated && guestRemainingScans <= 0 && !scanResult) {
     return (
       <div className="space-y-4 animate-in fade-in duration-500 relative">
-        <div className="relative p-[1.5px] rounded-3xl bg-gradient-to-br from-violet-400 via-pink-400 to-primary/60 shadow-lg shadow-primary/5 overflow-hidden">
-          <div className="relative overflow-hidden bg-white rounded-[calc(1.5rem-1.5px)] p-6">
+        <div className="relative p-[1.5px] rounded-sm bg-gradient-to-br from-violet-400 via-pink-400 to-primary/60 shadow-lg shadow-primary/5 overflow-hidden">
+          <div className="relative overflow-hidden bg-white rounded-[10.5px] p-6">
             {/* Subtle background glow */}
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
             <div className="absolute bottom-0 left-0 w-24 h-24 bg-violet-500/5 rounded-full blur-2xl -ml-12 -mb-12 pointer-events-none" />
@@ -446,7 +446,7 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
                     );
                   }
                 }}
-                className="w-full max-w-[200px] h-10 bg-primary hover:bg-primary/90 text-white font-bold rounded-md shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] active:scale-[0.98] mt-1 text-sm"
+                className="w-full max-w-[200px] h-10 bg-primary hover:bg-primary/90 text-white font-bold shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] active:scale-[0.98] mt-1 text-sm"
               >
                 Login / Daftar Gratis
               </Button>
@@ -469,8 +469,8 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
   ) {
     return (
       <div className="space-y-4 animate-in fade-in duration-500 relative">
-        <div className="relative p-[1.5px] rounded-3xl bg-gradient-to-br from-violet-400 via-pink-400 to-primary/60 shadow-lg shadow-primary/5 overflow-hidden">
-          <div className="relative overflow-hidden bg-white rounded-[calc(1.5rem-1.5px)] p-6">
+        <div className="relative p-[1.5px] rounded-sm bg-gradient-to-br from-violet-400 via-pink-400 to-primary/60 shadow-lg shadow-primary/5 overflow-hidden">
+          <div className="relative overflow-hidden bg-white rounded-[10.5px] p-6">
             {/* Subtle background glow */}
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
             <div className="absolute bottom-0 left-0 w-24 h-24 bg-violet-500/5 rounded-full blur-2xl -ml-12 -mb-12 pointer-events-none" />
@@ -492,7 +492,7 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
                 </h3>
                 <p className="text-xs text-muted-foreground leading-relaxed font-medium">
                   Kuota gratis kamu sudah habis. Upgrade ke{" "}
-                  <span className="bg-gradient-to-r from-primary to-[#7c3aed] bg-clip-text text-transparent inline-block font-black">VIP</span> untuk{" "}
+                  <span className="bg-gradient-to-r from-primary to-premium bg-clip-text text-transparent inline-block font-black">VIP</span> untuk{" "}
                   <span className="text-foreground font-bold">
                     Scan Tanpa Batas
                   </span>{" "}
@@ -508,7 +508,7 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
                   trackSubscription.initiateCheckout("quota_barrier");
                   router.push("/subscription");
                 }}
-                className="w-full max-w-[200px] h-10 bg-primary hover:bg-primary/90 text-white font-bold rounded-md shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] active:scale-[0.98] mt-1 text-sm"
+                className="w-full max-w-[200px] h-10 bg-primary hover:bg-primary/90 text-white font-bold shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] active:scale-[0.98] mt-1 text-sm"
               >
                 Upgrade ke VIP
               </Button>
@@ -545,7 +545,7 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
           {!scanResult ? (
             <div className="space-y-3">
               {error && (
-                <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-md text-destructive text-[10px] font-bold text-center">
+                <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-sm text-destructive text-[10px] font-bold text-center">
                   {error}
                 </div>
               )}
@@ -560,12 +560,12 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
             </div>
           ) : (
             <div className="space-y-3">
-              <div className="flex items-center gap-2 text-emerald-500 px-1">
+              <div className="flex items-center gap-2 text-success px-1">
                 <CheckCircle2 className="w-4 h-4" />
                 <p className="text-xs font-bold uppercase">Preview Hasil Scan ✨</p>
               </div>
 
-              <div className="bg-gradient-to-b from-card to-card/90 p-5 rounded-2xl border border-primary/20 relative overflow-hidden space-y-4">
+              <div className="bg-gradient-to-b from-card to-card/90 p-5 rounded-sm border border-primary/20 relative overflow-hidden space-y-4">
                 <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full blur-2xl pointer-events-none" />
 
                 {/* Merchant Name Preview */}
@@ -634,10 +634,10 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
                       )}
                       {scanResult.discount && (
                         <div className="flex justify-between items-center text-[11px]">
-                          <span className="text-emerald-600 font-bold">
+                          <span className="text-success font-bold">
                             Discount
                           </span>
-                          <span className="font-bold text-emerald-600">
+                          <span className="font-bold text-success">
                             -{formatCurrency(Math.abs(scanResult.discount))}
                           </span>
                         </div>
@@ -648,7 +648,7 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
 
               {/* Post-scan nudge for guest: value prop before import gate */}
               {!isAuthenticated && (
-                <div className="rounded-md bg-primary/5 px-4 py-3.5">
+                <div className="rounded-sm bg-primary/5 px-4 py-3.5">
                   <p className="text-sm font-black text-primary mb-3">
                     Daftar gratis untuk import & simpan hasil scan!
                   </p>
@@ -669,8 +669,8 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
 
               {/* Info Banner: Editable After Import - V2 Design Style (only for authenticated) */}
               {isAuthenticated && (
-                <div className="flex gap-3 items-start p-4 bg-secondary/30 dark:bg-secondary/10 rounded-2xl border border-secondary/20">
-                  <div className="p-2 bg-white rounded-xl border border-primary/10 shrink-0 flex items-center justify-center">
+                <div className="flex gap-3 items-start p-4 bg-secondary/30 dark:bg-secondary/10 rounded-sm border border-secondary/20">
+                  <div className="p-2 bg-white rounded-sm border border-primary/10 shrink-0 flex items-center justify-center">
                     <Info className="w-4 h-4 text-primary" />
                   </div>
                   <div className="flex-1 min-w-0">
@@ -704,7 +704,7 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
                       trackSubscription.premiumFeatureClick("ai_scan_import_gate");
                       setShowImportAuthModal(true);
                     }}
-                    className="w-full h-12 font-bold bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20 rounded-md"
+                    className="w-full h-12 font-bold bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20"
                   >
                     <ShieldCheck className="w-4 h-4 mr-2" />
                     Daftar Gratis & Import Hasil Scan

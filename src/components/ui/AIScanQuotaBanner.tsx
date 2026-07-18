@@ -7,6 +7,7 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/lib/stores/authStore";
 import { getGuestScanQuota, GUEST_LIMIT } from "@/lib/utils/guestQuota";
+import { Button } from "@/components/ui/Button";
 
 interface AIScanQuotaBannerProps {
   className?: string;
@@ -54,14 +55,14 @@ const CardVariant = ({
   return (
     <div
       className={cn(
-        "relative px-[1.5px] pt-[1.5px] pb-[4px] bg-gradient-to-r from-violet-400 via-pink-400 to-primary/70 shadow-lg shadow-pink-500/5 transition-all duration-300 h-full w-full flex flex-col group/card overflow-hidden hover:scale-[1.01] active:scale-[0.99] rounded-2xl",
+        "relative px-[1.5px] pt-[1.5px] pb-[4px] bg-gradient-to-r from-violet-400 via-pink-400 to-primary/70 shadow-lg shadow-pink-500/5 transition-all duration-300 h-full w-full flex flex-col group/card overflow-hidden hover:scale-[1.01] active:scale-[0.99] rounded-sm",
         className
       )}
     >
       {/* Stick Badge */}
       <div
         className={cn(
-          "absolute top-0 right-0 flex items-center gap-1 font-black uppercase z-30 shadow-md transition-transform group-hover/card:scale-105 origin-top-right px-3 py-1.5 rounded-bl-xl text-[9px]",
+          "absolute top-0 right-0 flex items-center gap-1 font-black uppercase z-30 shadow-md transition-transform group-hover/card:scale-105 origin-top-right px-3 py-1.5 rounded-bl-sm text-[9px]",
           isSubscribed
             ? "bg-gradient-to-r from-amber-400 to-amber-500 text-white"
             : "bg-gradient-to-r from-primary to-violet-500 text-white"
@@ -71,7 +72,7 @@ const CardVariant = ({
         <span>{badgeLabel}</span>
       </div>
 
-      <div className="relative overflow-hidden bg-white z-10 flex-grow flex flex-col justify-between py-2 px-3 rounded-[calc(1rem-1.5px)]">
+      <div className="relative overflow-hidden bg-white z-10 flex-grow flex flex-col justify-between py-2 px-3 rounded-[10.5px]">
         {/* Subtle background glow */}
         <div className="absolute top-0 right-0 w-24 h-24 bg-pink-500/5 rounded-full blur-2xl -mr-6 -mt-6 pointer-events-none" />
 
@@ -105,10 +106,10 @@ const CardVariant = ({
         {showRedirect && (
           <div className="pt-4 mt-auto">
             <Link href="/split-bill?step=1" className="block w-full">
-              <button className="w-full flex items-center justify-center gap-2 h-10 bg-primary hover:bg-primary/95 text-white font-bold text-sm rounded-lg shadow-lg shadow-primary/10 hover:shadow-primary/20 active:scale-[0.98] transition-all cursor-pointer">
+              <Button className="w-full h-10 shadow-lg shadow-primary/10 hover:shadow-primary/20">
                 Bagi Tagihan Sekarang
-                <ChevronRight className="w-4 h-4 group-hover/card:translate-x-0.5 transition-transform" />
-              </button>
+                <ChevronRight className="w-4 h-4 ml-1 group-hover/card:translate-x-0.5 transition-transform" />
+              </Button>
             </Link>
           </div>
         )}

@@ -61,61 +61,52 @@ export const FeatureHighlights = ({ heroMode = false }: FeatureHighlightsProps) 
   // ── HERO MODE ────────────────────────────────────────────────────────────
   if (heroMode) {
     return (
-      <div className="w-[calc(100%+2rem)] -mx-4 -mt-4 pt-6 bg-gradient-to-b from-primary via-primary/50 to-transparent sm:w-full sm:mx-0 sm:mt-0 sm:pt-0 sm:pb-0 sm:bg-none">
-        <div className="bg-white rounded-2xl border border-slate-100/80 shadow-[0_8px_30px_rgba(0,0,0,0.04)] p-5 sm:p-6 mx-4 sm:mx-0 space-y-4">
-          {/* Greeting row */}
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <h2 className="text-slate-900 font-bold text-2xl sm:text-3xl leading-[1.2]">
-                Halo,{" "}
-                <span className="font-extrabold text-primary">
-                  {firstName}!
-                </span>{" "}
+      <div className="relative w-[calc(100%+2rem)] -mx-4 -mt-4 sm:w-full sm:mx-0 sm:mt-0">
+        <div className="absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-primary via-primary/80 to-transparent pointer-events-none z-0 sm:hidden" />
+        <div className="relative z-10 bg-transparent sm:bg-white mx-4 sm:mx-0 sm:rounded-sm sm:shadow-soft px-1 py-4 sm:p-5">
+          <div className="space-y-4">
+            {/* Greeting row */}
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 shrink-0 rounded-full bg-white/10 sm:bg-primary/10 flex items-center justify-center text-xl">
                 👋
-              </h2>
-              <p className="text-slate-500 text-xs sm:text-sm font-medium mt-1 leading-relaxed">
-                Yuk selesain patungan tanpa drama hari ini
-              </p>
-            </div>
-          </div>
-
-          {/* Storytelling text */}
-          <p className="text-slate-600 text-sm font-medium leading-relaxed">
-            Mantap!,{" "}
-            <span className="font-black text-slate-800">
-              {totalBills} split bill 🔥
-            </span>{" "}
-            selesai tanpa ribet dan kamu udah bantu{" "}
-            <span className="font-black text-slate-800">
-              {totalFriends} teman
-            </span>{" "}
-            biar tagihan gak drama. Keep it up! biar gak ada lagi &quot;eh gue transfer ke siapa?&quot; 😌
-          </p>
-
-          {/* Metric cards grid */}
-          <div className="grid grid-cols-3 gap-3 pt-1">
-            {metrics.map((m) => (
-              <div
-                key={m.label}
-                className="bg-slate-50/80 rounded-2xl p-3 sm:p-4 flex flex-col items-center justify-center text-center border border-slate-100/80 hover:shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:scale-[1.02] hover:bg-white transition-all duration-300 group/metric"
-              >
-                <div className="mb-2 transition-transform group-hover/metric:scale-110 shrink-0">
-                  <Image
-                    src={m.iconSrc}
-                    alt={m.label}
-                    width={28}
-                    height={28}
-                    className="object-contain"
-                  />
-                </div>
-                <span className="font-black text-slate-900 text-lg sm:text-xl leading-none">
-                  {m.value}
-                </span>
-                <span className="text-[9px] sm:text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-1 leading-none">
-                  {m.label}
-                </span>
               </div>
-            ))}
+              <div className="min-w-0">
+                <p className="text-[10px] font-bold text-white/80 sm:text-primary/70 uppercase tracking-widest leading-none">
+                  Halo, {firstName}
+                </p>
+                <h2 className="text-white sm:text-foreground text-base sm:text-lg font-bold leading-snug tracking-tight mt-1">
+                  Yuk selesain patungan tanpa drama hari ini
+                </h2>
+              </div>
+            </div>
+
+            {/* Stat row */}
+            <div className="flex items-center">
+              {metrics.map((m, i) => (
+                <div
+                  key={m.label}
+                  className={`flex-1 flex items-center gap-2 ${i > 0 ? "border-l border-white/25 sm:border-primary/10 pl-3 ml-3" : ""}`}
+                >
+                  <div className="w-8 h-8 rounded-full bg-white/20 sm:bg-primary/10 flex items-center justify-center shrink-0">
+                    <Image
+                      src={m.iconSrc}
+                      alt={m.label}
+                      width={16}
+                      height={16}
+                      className="object-contain"
+                    />
+                  </div>
+                  <div className="flex flex-col leading-none min-w-0">
+                    <span className="text-white sm:text-foreground font-black text-base">
+                      {m.value}
+                    </span>
+                    <span className="text-[8px] text-white/70 sm:text-muted-foreground font-bold uppercase tracking-tight mt-0.5 truncate">
+                      {m.label}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>

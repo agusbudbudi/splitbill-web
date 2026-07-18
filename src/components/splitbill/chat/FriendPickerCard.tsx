@@ -8,6 +8,9 @@ import { toast } from "sonner";
 import { trackChatBill } from "@/lib/gtag";
 import { FriendComboboxInput } from "@/components/splitbill/FriendComboboxInput";
 
+const AVATAR_BASE_URL =
+  "https://api.dicebear.com/9.x/personas/svg?backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf&size=64&scale=100&seed=";
+
 interface FriendPickerCardProps {
   participants: string[];
   isCompleted: boolean;
@@ -47,11 +50,6 @@ export function FriendPickerCard({
     );
   }
 
-  // ── Sorted friends by recency / usage ──────────────────────────────────────
-  const sortedFriends = [...friends].sort(
-    (a, b) => (b.useCount ?? 0) - (a.useCount ?? 0)
-  );
-
   const handleAddName = (name: string) => {
     setParticipants([...participants, name]);
     toast.success(`${name} berhasil ditambahkan ✅`);
@@ -72,7 +70,7 @@ export function FriendPickerCard({
 
   const handleConfirm = () => {
     if (participants.length < 2) {
-      toast.error("Minimal 2 orang untuk split bill ya! 👥");
+      toast.error("Minimal 2 teman untuk split bill ya! 👥");
       return;
     }
     trackChatBill.friendsConfirmed({ participant_count: participants.length });
@@ -92,37 +90,6 @@ export function FriendPickerCard({
       </div>
 
       <div className="p-4 space-y-4">
-        {/* Besties suggestion pills */}
-        {sortedFriends.length > 0 && (
-          <div>
-            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide mb-2">
-              Besties Kamu
-            </p>
-            <div className="flex flex-wrap gap-2">
-              {sortedFriends.slice(0, 8).map((f) => {
-                const isSelected = participants.includes(f.name);
-                return (
-                  <button
-                    key={f.id}
-                    onClick={() =>
-                      isSelected ? handleRemove(f.name) : handleAddName(f.name)
-                    }
-                    className={cn(
-                      "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer",
-                      isSelected
-                        ? "bg-primary text-white border-primary"
-                        : "bg-white text-foreground border-border hover:border-primary/50 hover:bg-primary/5"
-                    )}
-                  >
-                    {isSelected && <Check className="w-3 h-3" />}
-                    {f.name}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
         {/* Search / create input */}
         <FriendComboboxInput
           people={participants}
@@ -140,8 +107,13 @@ export function FriendPickerCard({
               {participants.map((name) => (
                 <span
                   key={name}
-                  className="inline-flex items-center gap-1 pl-3 pr-2 py-1 rounded-full bg-primary text-white text-xs font-bold"
+                  className="inline-flex items-center gap-1.5 pl-1 pr-2 py-1 rounded-full bg-primary text-white text-xs font-bold"
                 >
+                  <img
+                    src={`${AVATAR_BASE_URL}${encodeURIComponent(name)}`}
+                    alt={name}
+                    className="w-5 h-5 rounded-full bg-white shrink-0"
+                  />
                   {name}
                   <button
                     onClick={() => handleRemove(name)}
@@ -171,7 +143,7 @@ export function FriendPickerCard({
         </button>
         {participants.length < 2 && (
           <p className="text-center text-[10px] text-muted-foreground">
-            Minimal 2 orang untuk split bill
+            Minimal 2 teman untuk split bill
           </p>
         )}
       </div>

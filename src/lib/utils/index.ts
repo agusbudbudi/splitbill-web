@@ -57,10 +57,19 @@ export function formatDate(
   return date.toLocaleDateString("id-ID", options);
 }
 
+export function getDefaultActivityName(date: Date = new Date()) {
+  return `Split Bill ${date.toLocaleDateString("id-ID", { day: "numeric", month: "long" })}`;
+}
+
 export function getAvatarUrl(user?: { email?: string | null; image?: string | null } | null) {
   if (user?.image) {
     return user.image;
   }
   const seed = user?.email || "default";
   return `https://api.dicebear.com/9.x/personas/svg?backgroundColor=b6e3f4&scale=100&seed=${encodeURIComponent(seed)}`;
+}
+
+/** Dicebear avatar for a participant/friend name (split-bill people, chips, avatar grids). */
+export function getFriendAvatarUrl(name: string, size: number = 64) {
+  return `https://api.dicebear.com/9.x/personas/svg?backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf&size=${size}&scale=100&seed=${encodeURIComponent(name)}`;
 }

@@ -3,6 +3,7 @@
 import React, { useRef } from "react";
 import { Camera, ImagePlus, Upload, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/Button";
 
 interface ReceiptImagePickerProps {
   /** Preview URL to display (data URL or object URL) */
@@ -45,7 +46,7 @@ export const ReceiptImagePicker = ({
         <div
           onClick={() => !isLoading && cameraInputRef.current?.click()}
           className={cn(
-            "border-2 border-dashed border-primary/20 rounded-2xl pt-8 flex flex-col items-center justify-center gap-4 bg-primary/5 hover:bg-primary/10 transition-colors cursor-pointer group overflow-hidden",
+            "border-1 border-dashed border-primary/20 rounded-sm pt-8 flex flex-col items-center justify-center gap-4 bg-primary/5 hover:bg-primary/10 transition-colors cursor-pointer group overflow-hidden",
             isLoading && "opacity-60 pointer-events-none",
           )}
         >
@@ -78,20 +79,21 @@ export const ReceiptImagePicker = ({
         {/* Action buttons row: Upload dari Galeri & Foto Struk */}
         {!isLoading && (
           <div className="flex gap-2 w-full mb-0">
-            <button
+            <Button
               onClick={() => fileInputRef.current?.click()}
-              className="flex-1 flex items-center justify-center gap-2 h-12 rounded-md border border-primary/15 bg-transparent hover:bg-primary/5 transition-colors active:scale-[0.98] cursor-pointer"
+              variant="outline"
+              className="flex-1 h-12 border-primary/15 text-muted-foreground font-semibold text-xs"
             >
-              <ImagePlus className="w-4 h-4 text-muted-foreground" />
-              <span className="text-xs font-semibold text-muted-foreground">Upload dari Galeri</span>
-            </button>
-            <button
+              <ImagePlus className="w-4 h-4 mr-2 text-muted-foreground" />
+              Upload dari Galeri
+            </Button>
+            <Button
               onClick={() => cameraInputRef.current?.click()}
-              className="flex-1 flex items-center justify-center gap-2 h-12 rounded-md bg-primary hover:bg-primary/90 text-white transition-colors active:scale-[0.98] cursor-pointer shadow-md shadow-primary/10"
+              className="flex-1 h-12 shadow-md shadow-primary/10 text-xs"
             >
-              <Camera className="w-4 h-4 text-white" />
-              <span className="text-xs font-bold text-white">Foto Struk</span>
-            </button>
+              <Camera className="w-4 h-4 mr-2 text-white" />
+              Foto Struk
+            </Button>
           </div>
         )}
 
@@ -117,7 +119,7 @@ export const ReceiptImagePicker = ({
 
   return (
     <div className="space-y-4">
-      <div className="border border-primary/20 rounded-2xl bg-white overflow-hidden flex flex-col group">
+      <div className="border border-primary/20 rounded-sm bg-white overflow-hidden flex flex-col group">
         <div className="relative bg-muted w-full flex items-center justify-center overflow-hidden min-h-[80px]">
           <img
             src={image}

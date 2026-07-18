@@ -43,7 +43,7 @@ export const ProviderPickerGrid = ({
         type="button"
         onClick={() => onChange(provider.value)}
         className={cn(
-          "relative h-13 rounded-md border bg-white flex items-center justify-center p-2 transition-all active:scale-[0.98] cursor-pointer",
+          "relative h-13 rounded-sm border bg-white flex items-center justify-center p-2 transition-all active:scale-[0.98] cursor-pointer",
           isSelected
             ? "border-2"
             : "border-muted-foreground/15 hover:border-primary/30"

@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { Check, ChevronRight, PenLine } from "lucide-react";
 import { suggestEmoji } from "@/lib/emojiUtils";
-import { cn } from "@/lib/utils";
+import { cn, getDefaultActivityName } from "@/lib/utils";
 import { trackChatBill } from "@/lib/gtag";
 
 interface ActivityInputCardProps {
@@ -30,7 +30,7 @@ export function ActivityInputCard({
           <p className="text-xs font-bold text-emerald-700">Nama Kegiatan</p>
         </div>
         <div className="px-4 py-3 text-xs font-bold text-foreground">
-          {activityName || "Aktivitas Tanpa Nama"}
+          {activityName || getDefaultActivityName()}
         </div>
       </div>
     );
@@ -57,7 +57,7 @@ export function ActivityInputCard({
   };
 
   const handleSubmit = () => {
-    const finalName = value || "Aktivitas Tanpa Nama";
+    const finalName = value || getDefaultActivityName();
     trackChatBill.activityConfirmed({
       activity_name: finalName,
       used_quick_pick: !!selectedQuickPick,
@@ -78,7 +78,7 @@ export function ActivityInputCard({
       <div className="p-4 space-y-3">
         <input
           type="text"
-          placeholder="Contoh: Makan Ramen, Liburan Bali"
+          placeholder="Contoh: Makan Siang Tim"
           value={value}
           onChange={handleTextChange}
           className="w-full h-11 border border-border rounded-sm px-3 text-sm font-bold bg-white focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/20"

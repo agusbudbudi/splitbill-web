@@ -162,7 +162,11 @@ export default function MemberPage() {
                 <FeatureHighlights heroMode />
               </section>
             ) : (
-              <div className="w-[calc(100%+2rem)] -mx-4 -mt-4 pt-6 bg-gradient-to-b from-primary via-primary/50 to-transparent sm:w-full sm:mx-0 sm:mt-0 sm:pt-0 sm:pb-0 sm:bg-none">
+              <div
+                className={`w-[calc(100%+2rem)] -mx-4 -mt-4 bg-gradient-to-b from-primary via-primary/50 to-transparent sm:w-full sm:mx-0 sm:mt-0 sm:pt-0 sm:pb-0 sm:bg-none ${
+                  showPwaBanner ? "pt-6" : "pt-0"
+                }`}
+              >
                 <section className="space-y-4 mx-4 sm:mx-0">
                   <SplitBillHeroCard />
                 </section>
@@ -170,8 +174,8 @@ export default function MemberPage() {
             )}
 
             {hasActiveBill ? (
-              <section className="space-y-4">
-                <div className="flex flex-col items-start px-1">
+              <section className="space-y-4 -mt-3 sm:mt-0">
+                <div className="hidden sm:flex flex-col items-start px-1">
                   <div className="space-y-1">
                     <h2 className="text-xl font-extrabold text-foreground tracking-tight">
                       Tagihan On-Going 🔥
@@ -184,7 +188,7 @@ export default function MemberPage() {
                 <OngoingSplitBillCard />
               </section>
             ) : (
-              <section className="space-y-4">
+              <section className="space-y-4 -mt-3 sm:mt-0">
                 <AIScanEncourageBanner />
               </section>
             )}

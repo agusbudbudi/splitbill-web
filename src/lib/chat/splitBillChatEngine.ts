@@ -97,7 +97,7 @@ export function noTaxActivityPromptMessages(): MessagePayload[] {
   return [
     agentText("Sip, pembagian item udah selesai semua! ✅"),
     agentCard(
-      "Biar gampang diingat nanti, **apa nama kegiatannya?** (Misal: Makan Ramen, Liburan Bali, dll.) 👇",
+      "Biar gampang diingat nanti, **apa nama kegiatannya?** (Misal: Makan Siang Tim, dll.) 👇",
       "activity_input"
     ),
   ];
@@ -108,7 +108,7 @@ export function activityPromptMessages(): MessagePayload[] {
   return [
     agentText("Oke, biaya tambahan udah Billy catat! 👌"),
     agentCard(
-      "Biar gampang diingat nanti, **apa nama kegiatannya?** (Misal: Makan Ramen, Liburan Bali, dll.) 👇",
+      "Biar gampang diingat nanti, **apa nama kegiatannya?** (Misal: Makan Siang Tim, dll.) 👇",
       "activity_input"
     ),
   ];

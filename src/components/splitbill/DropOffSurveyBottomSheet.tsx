@@ -94,7 +94,11 @@ export function DropOffSurveyBottomSheet({
 
       const parts = [];
       if (selectedText) parts.push(selectedText);
-      if (hasOther) parts.push(`Lainnya: ${otherReason.trim()}`);
+      if (otherReason.trim()) {
+        parts.push(
+          `${hasOther ? "Lainnya" : "Detail tambahan"}: ${otherReason.trim()}`
+        );
+      }
 
       const reviewText = `[Drop-off Survey Step ${step}] ${parts.join(" | ")}`;
 
@@ -173,13 +177,15 @@ export function DropOffSurveyBottomSheet({
           ))}
         </div>
 
-        {selectedReasons.includes("Lainnya") && (
+        {selectedReasons.length > 0 && (
           <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
             <label className="text-xs font-bold text-muted-foreground px-1">
-              Tulis alasan kamu di sini:
+              {selectedReasons.includes("Lainnya")
+                ? "Tulis alasan kamu di sini:"
+                : "Ada detail tambahan? (opsional)"}
             </label>
             <textarea
-              className="w-full min-h-[100px] rounded-2xl border border-foreground/10 bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all resize-none"
+              className="w-full min-h-[100px] rounded-sm border border-foreground/10 bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all resize-none"
               placeholder="Masukan kamu sangat berharga..."
               value={otherReason}
               onChange={(e) => setOtherReason(e.target.value)}
@@ -190,14 +196,14 @@ export function DropOffSurveyBottomSheet({
         <div className="pt-2 flex gap-3">
           <Button
             variant="outline"
-            className="flex-1 h-12 rounded-md text-sm font-bold border-primary/10 text-muted-foreground"
+            className="flex-1 h-12 text-sm font-bold border-primary/10 text-muted-foreground"
             onClick={handleDismiss}
             disabled={isSubmitting}
           >
             Lewati
           </Button>
           <Button
-            className="flex-1 h-12 rounded-md text-sm font-bold bg-primary text-white"
+            className="flex-1 h-12 text-sm font-bold bg-primary text-white"
             onClick={handleSubmit}
             disabled={isSubmitting || selectedReasons.length === 0}
             loading={isSubmitting}

@@ -3,12 +3,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Plus } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, getFriendAvatarUrl } from "@/lib/utils";
 import { Input } from "@/components/ui/Input";
 import { useFriendStore } from "@/lib/stores/friendStore";
-
-const AVATAR_BASE_URL =
-  "https://api.dicebear.com/9.x/personas/svg?backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf&size=64&scale=100&seed=";
 
 interface FriendComboboxInputProps {
   /** Names already added to the current list (used for dedupe + hiding from suggestions) */
@@ -151,7 +148,7 @@ export const FriendComboboxInput = ({
         <div
           onMouseDown={(e) => e.preventDefault()}
           style={{ top: dropdownRect.top, left: dropdownRect.left, width: dropdownRect.width }}
-          className="fixed z-50 bg-white border border-primary/15 rounded-sm shadow-lg overflow-hidden max-h-64 overflow-y-auto"
+          className="fixed z-[60] bg-white border border-primary/10 rounded-sm shadow-lg overflow-hidden max-h-[200px] overflow-y-auto"
         >
           {matches.length === 0 && (
             <p className="px-3 py-2.5 text-xs text-muted-foreground">
@@ -169,7 +166,7 @@ export const FriendComboboxInput = ({
               )}
             >
               <img
-                src={`${AVATAR_BASE_URL}${encodeURIComponent(f.name)}`}
+                src={getFriendAvatarUrl(f.name)}
                 alt={f.name}
                 className="w-6 h-6 rounded-full bg-white shrink-0"
               />

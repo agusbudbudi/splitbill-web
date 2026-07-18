@@ -33,6 +33,10 @@
   --warning: #f59e0b;
   --warning-foreground: #ffffff;
 
+  /* Premium / VIP accent */
+  --premium: #7c3aed;
+  --premium-foreground: #ffffff;
+
   --border: #e2e8f0;
   --input: #f1f5f9;
   --ring: #479fea; /* Blue */
@@ -100,6 +104,9 @@
 
   --color-warning: var(--warning);
   --color-warning-foreground: var(--warning-foreground);
+
+  --color-premium: var(--premium);
+  --color-premium-foreground: var(--premium-foreground);
 
   --color-border: var(--border);
   --color-input: var(--input);

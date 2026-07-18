@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
+import { Card, CardContent } from "@/components/ui/Card";
 import { useSplitBillStore } from "@/store/useSplitBillStore";
 import { Badge } from "@/components/ui/Badge";
 import { Plus, Info, Check } from "lucide-react";
@@ -105,66 +106,68 @@ export const ManualInputForm = () => {
         </div>
       </div>
 
-      <div className="space-y-5 bg-white p-4 rounded-2xl border border-primary/10">
-        <div className="space-y-3">
-          <div className="flex items-center justify-between px-1">
-            <label className="text-sm font-bold">Split dengan Siapa</label>
-            <button
-              onClick={() =>
-                setSelectedWho(
-                  selectedWho.length === people.length ? [] : [...people],
-                )
-              }
-              className="text-[10px] font-bold text-primary hover:underline flex items-center gap-1 cursor-pointer"
-            >
-              {selectedWho.length === people.length ? (
-                "Batal Pilih Semua"
-              ) : (
-                <>
-                  <Check className="w-3 h-3" />
-                  Pilih Semua
-                </>
+      <Card className="border-primary/10 shadow-soft">
+        <CardContent className="p-4 space-y-5">
+          <div className="space-y-3">
+            <div className="flex items-center justify-between px-1">
+              <label className="text-sm font-bold">Split dengan Siapa</label>
+              <button
+                onClick={() =>
+                  setSelectedWho(
+                    selectedWho.length === people.length ? [] : [...people],
+                  )
+                }
+                className="text-[10px] font-bold text-primary hover:underline flex items-center gap-1 cursor-pointer"
+              >
+                {selectedWho.length === people.length ? (
+                  "Batal Pilih Semua"
+                ) : (
+                  <>
+                    <Check className="w-3 h-3" />
+                    Pilih Semua
+                  </>
+                )}
+              </button>
+            </div>
+            <div className="flex flex-wrap gap-4">
+              {people.map((name) => (
+                <PersonSelector
+                  key={name}
+                  name={name}
+                  isSelected={selectedWho.includes(name)}
+                  onClick={handleToggleWho}
+                  size="md"
+                />
+              ))}
+              {people.length === 0 && (
+                <p className="text-xs text-muted-foreground italic">
+                  Tambahkan teman dulu di step sebelumnya!
+                </p>
               )}
-            </button>
+            </div>
           </div>
-          <div className="flex flex-wrap gap-4">
-            {people.map((name) => (
-              <PersonSelector
-                key={name}
-                name={name}
-                isSelected={selectedWho.includes(name)}
-                onClick={handleToggleWho}
-                size="md"
-              />
-            ))}
-            {people.length === 0 && (
-              <p className="text-xs text-muted-foreground italic">
-                Tambahkan teman dulu di step sebelumnya!
-              </p>
-            )}
-          </div>
-        </div>
 
-        <div className="space-y-3 border-t border-primary/10 pt-4">
-          <label className="text-sm font-bold px-1">Dibayar oleh</label>
-          <div className="flex flex-wrap gap-4">
-            {people.map((name) => (
-              <PersonSelector
-                key={name}
-                name={name}
-                isSelected={paidBy === name}
-                onClick={setPaidBy}
-                size="md"
-              />
-            ))}
+          <div className="space-y-3 border-t border-primary/10 pt-4">
+            <label className="text-sm font-bold px-1">Dibayar oleh</label>
+            <div className="flex flex-wrap gap-4">
+              {people.map((name) => (
+                <PersonSelector
+                  key={name}
+                  name={name}
+                  isSelected={paidBy === name}
+                  onClick={setPaidBy}
+                  size="md"
+                />
+              ))}
+            </div>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
 
       <Button
         onClick={handleAddExpense}
         variant="default"
-        className="w-full h-12 rounded-2xl font-bold text-sm shadow-lg shadow-primary/20 transition-all active:scale-95"
+        className="w-full h-12 font-bold text-sm shadow-lg shadow-primary/20 transition-all active:scale-95"
       >
         <Plus className="w-5 h-5 mr-2" />
         Tambah Item ke Daftar

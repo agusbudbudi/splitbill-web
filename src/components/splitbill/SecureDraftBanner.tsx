@@ -16,7 +16,7 @@ export const SecureDraftBanner = ({
   return (
     <div
       className={cn(
-        "flex items-center gap-1.5 px-3 py-2 bg-amber-500/10 rounded-t-lg",
+        "flex items-center gap-1.5 px-3 py-2 bg-amber-500/10 rounded-t-sm",
         className,
       )}
     >

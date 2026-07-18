@@ -40,12 +40,12 @@ export const AIScanPromoBanner = ({
         style={{
           borderLeft: "7px solid transparent",
           borderRight: "7px solid transparent",
-          borderBottom: "7px solid #2563eb", // matches blue-600
+          borderBottom: "7px solid var(--primary)",
         }}
       />
 
       {/* Banner body - Simple 1-line text bar with blue primary gradient */}
-      <div className="relative rounded-[6px] bg-gradient-to-r from-blue-600 to-blue-500 shadow-md shadow-blue-500/10 text-white">
+      <div className="relative rounded-[8px] bg-gradient-to-r from-primary to-primary/80 shadow-md shadow-primary/10 text-white">
         <div className="flex items-center justify-between px-3 py-1.5 gap-2">
           <div className="flex items-center min-w-0 text-[11px] font-semibold">
             <span className="truncate">

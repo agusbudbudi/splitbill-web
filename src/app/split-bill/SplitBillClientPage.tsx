@@ -42,7 +42,7 @@ import {
   Share2,
 } from "lucide-react";
 import { SuccessSection } from "@/components/ui/SuccessSection";
-import { cn, formatToIDR } from "@/lib/utils";
+import { cn, formatToIDR, getDefaultActivityName, getFriendAvatarUrl } from "@/lib/utils";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 
 import { SegmentedControl } from "@/components/ui/SegmentedControl";
@@ -623,6 +623,9 @@ const SplitBillContent = () => {
         trackSplitBill.validationError(step, errorMsg);
         return;
       }
+      if (!activityName.trim()) {
+        setActivityName(getDefaultActivityName());
+      }
     }
 
     if (step === 3) {
@@ -702,8 +705,8 @@ const SplitBillContent = () => {
     switch (step) {
       case 1:
         return (
-          <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
-            <div className="flex flex-col items-center text-center gap-2">
+          <div className="animate-in fade-in slide-in-from-right-4 duration-500">
+            <div className="flex flex-col items-center text-center gap-2 mb-4">
               <h2 className="text-2xl font-bold text-white">Siapa aja nih?</h2>
               <p className="text-white/80 text-sm max-w-[360px]">
                 Tambahkan minimal 2 teman untuk mulai split bill.
@@ -716,108 +719,112 @@ const SplitBillContent = () => {
       case 2:
         const subtotal = expenses.reduce((acc, curr) => acc + curr.amount, 0);
         return (
-          <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
-            <div className="flex flex-col items-center text-center gap-2">
+          <div className="animate-in fade-in slide-in-from-right-4 duration-500">
+            <div className="flex flex-col items-center text-center gap-2 mb-4">
               <h2 className="text-2xl font-bold text-white">Input Pengeluaran</h2>
               <p className="text-white/80 text-sm max-w-[360px]">
                 Scan struk pake AI biar cepet, atau input manual
               </p>
             </div>
 
-            {people.length < 2 && (
-              <Card
-                onClick={prevStep}
-                className="border border-amber-500/10 bg-amber-50/50 cursor-pointer hover:bg-amber-100/50 transition-colors animate-in fade-in zoom-in-95 duration-300"
-              >
-                <CardContent className="px-4 py-3 flex items-center gap-3">
-                  <div className="w-11 h-11 rounded-full bg-amber-500/10 flex items-center justify-center shrink-0">
-                    <Users className="w-5 h-5 text-amber-600" />
-                  </div>
+            <div className="space-y-6">
+              {people.length < 2 && (
+                <Card
+                  onClick={prevStep}
+                  className="border border-amber-500/10 bg-amber-50/50 cursor-pointer hover:bg-amber-100/50 transition-colors animate-in fade-in zoom-in-95 duration-300"
+                >
+                  <CardContent className="px-4 py-3 flex items-center gap-3">
+                    <div className="w-11 h-11 rounded-full bg-amber-500/10 flex items-center justify-center shrink-0">
+                      <Users className="w-5 h-5 text-amber-600" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-amber-800 text-sm">
+                        Waduh, belum ada teman nih!
+                      </h4>
+                      <p className="text-xs text-amber-700/70 mt-0.5">
+                        Tap di sini buat tambahin teman dulu ya.
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              <AgentBillyEntryCard />
+
+              <Card>
+                {/* Quota card — attached directly below Scan AI tab */}
+                {activeTab === "ai" && (
                   <div>
-                    <h4 className="font-bold text-amber-800 text-sm">
-                      Waduh, belum ada teman nih!
-                    </h4>
-                    <p className="text-xs text-amber-700/70 mt-0.5">
-                      Tap di sini buat tambahin teman dulu ya.
-                    </p>
+                    <AIScanQuotaBanner className="rounded-t-sm" variant="strip" />
+                  </div>
+                )}
+                <CardContent className="p-0 sm:p-0">
+
+                  <SegmentedControl
+                    id="onboarding-input-method"
+                    options={[
+                      {
+                        id: "ai",
+                        label: "Scan AI",
+                        icon: Sparkles,
+                        badge: "New",
+                      },
+                      { id: "manual", label: "Input Manual", icon: ClipboardList },
+                    ]}
+                    activeId={activeTab}
+                    onChange={(id) => {
+                      const method = id as "ai" | "manual";
+                      setActiveTab(method);
+                      if (method === "ai") {
+                        setIsAIBannerDismissed(true);
+                      }
+                      trackSplitBill.inputMethod(method);
+                    }}
+                    className="mb-0"
+                  />
+
+                  {/* Quota card — attached directly below Scan AI tab
+                  {activeTab === "ai" && (
+                    <div className="mb-3">
+                      <AIScanQuotaBanner />
+                    </div>
+                  )} */}
+
+                  {activeTab === "manual" && !isAuthenticated && !isAIBannerDismissed && (
+                    <div className="px-4 pb-4">
+                      <AIScanPromoBanner
+                        onDismiss={() => setIsAIBannerDismissed(true)}
+                        onLoginClick={() => setShowAIScanAuthModal(true)}
+                      />
+                    </div>
+                  )}
+
+                  <div className="px-3 pb-3">
+                    {activeTab === "manual" ? (
+                      <ManualInputForm />
+                    ) : (
+                      <AIScanForm onLoginClick={() => setShowAIScanAuthModal(true)} />
+                    )}
                   </div>
                 </CardContent>
               </Card>
-            )}
 
-            <AgentBillyEntryCard />
-
-            <Card className="rounded-lg bg-white backdrop-blur-xs shadow-soft text-card-foreground shadow-soft">
-              {/* Quota card — attached directly below Scan AI tab */}
-              {activeTab === "ai" && (
-                <div>
-                  <AIScanQuotaBanner className="rounded-t-lg" variant="strip" />
-                </div>
-              )}
-              <CardContent className="p-0 sm:p-0">
-
-                <SegmentedControl
-                  id="onboarding-input-method"
-                  options={[
-                    {
-                      id: "ai",
-                      label: "Scan AI",
-                      icon: Sparkles,
-                      badge: "New",
-                    },
-                    { id: "manual", label: "Manual", icon: ClipboardList },
-                  ]}
-                  activeId={activeTab}
-                  onChange={(id) => {
-                    const method = id as "ai" | "manual";
-                    setActiveTab(method);
-                    if (method === "ai") {
-                      setIsAIBannerDismissed(true);
-                    }
-                    trackSplitBill.inputMethod(method);
-                  }}
-                  className="mb-0"
-                />
-
-                {/* Quota card — attached directly below Scan AI tab
-                {activeTab === "ai" && (
-                  <div className="mb-3">
-                    <AIScanQuotaBanner />
-                  </div>
-                )} */}
-
-                {activeTab === "manual" && !isAuthenticated && !isAIBannerDismissed && (
-                  <div className="px-4 pb-4">
-                    <AIScanPromoBanner
-                      onDismiss={() => setIsAIBannerDismissed(true)}
-                      onLoginClick={() => setShowAIScanAuthModal(true)}
-                    />
-                  </div>
-                )}
-
-                <div className="px-4 pb-4">
-                  {activeTab === "manual" ? (
-                    <ManualInputForm />
-                  ) : (
-                    <AIScanForm onLoginClick={() => setShowAIScanAuthModal(true)} />
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-
-            <ExpenseList />
-            <AdditionalExpenses />
+              <ExpenseList />
+              <AdditionalExpenses />
+            </div>
           </div>
         );
       case 3:
         return (
-          <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
-            <div className="flex flex-col items-center text-center gap-2">
+          <div className="animate-in fade-in slide-in-from-right-4 duration-500">
+            <div className="flex flex-col items-center text-center gap-2 mb-4">
               <h2 className="text-2xl font-bold text-white">Langkah Terakhir!</h2>
               <p className="text-white/80 text-sm max-w-[360px]">
-                Nama kegiatannya apa & mau dibayar kemana?
+                Tambahkan nama split bill agar mudah dicari nanti.
               </p>
             </div>
+
+            <div className="space-y-6">
 
             {/* Bill Quick View - Realistic Ticket Style */}
             <div className="relative group mb-4">
@@ -851,7 +858,7 @@ const SplitBillContent = () => {
                 <div className="relative z-10 flex items-center justify-between">
                   <div className="space-y-1">
                     <p className="text-[10px] font-black uppercase text-primary/80 tracking-widest">
-                      Estimasi Tagihan
+                      Siap dihitung
                     </p>
                     <h3 className="text-3xl font-black text-primary/90 tracking-tighter">
                       {formatToIDR(totalSpent)}
@@ -859,7 +866,7 @@ const SplitBillContent = () => {
                     <div className="flex items-center gap-1.5 pt-0.5">
                       <div className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
                       <p className="text-[9px] font-bold text-amber-600/80 uppercase tracking-tight">
-                        Menunggu Detail Aktivitas...
+                        Lengkapi nama split bill (opsional)
                       </p>
                     </div>
                   </div>
@@ -871,7 +878,7 @@ const SplitBillContent = () => {
                         className="w-8 h-8 rounded-full border-2 border-white overflow-hidden bg-white shadow-md ring-1 ring-primary/5"
                       >
                         <img
-                          src={`https://api.dicebear.com/9.x/personas/png?backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf&seed=${encodeURIComponent(name)}&size=120`}
+                          src={getFriendAvatarUrl(name, 120)}
                           alt={name}
                         />
                       </div>
@@ -899,14 +906,17 @@ const SplitBillContent = () => {
               <CardContent className="p-5 space-y-4">
                 <div className="flex items-center gap-2 px-1">
                   <PenLine className="w-4 h-4 text-primary" />
-                  <label className="text-sm font-bold text-foreground">
-                    BTW habis jalan kemana nih? ✈️
+                  <label className="text-sm font-bold text-foreground flex items-center gap-2">
+                    Nama Split Bill 📝
+                    <span className="text-[10px] font-medium text-muted-foreground">
+                      (Opsional)
+                    </span>
                   </label>
                 </div>
 
                 <div className="relative">
                   <Input
-                    placeholder="Contoh: Makan Ramen, Liburan Bali"
+                    placeholder="Contoh: Makan Siang Tim"
                     value={activityName}
                     onChange={(e) => {
                       const newValue = e.target.value;
@@ -924,6 +934,10 @@ const SplitBillContent = () => {
                     className="bg-white border-primary/10 h-12 text-sm font-bold px-4 focus-visible:ring-primary/20"
                   />
                 </div>
+
+                <p className="text-[11px] text-muted-foreground px-1 -mt-2">
+                  Dipakai untuk riwayat & saat dibagikan ke teman.
+                </p>
 
                 <div className="flex flex-wrap gap-2 pt-1">
                   {[
@@ -961,7 +975,10 @@ const SplitBillContent = () => {
               >
                 <div className="flex items-center justify-between px-1">
                   <label className="text-sm font-bold flex items-center gap-2">
-                    Bayar Kemana? 📥
+                    Dompet Penerima 📥
+                    <span className="text-[10px] font-medium text-muted-foreground">
+                      (Opsional)
+                    </span>
                   </label>
                   {selectedPaymentMethodIds.length > 0 && (
                     <span className="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
@@ -980,7 +997,7 @@ const SplitBillContent = () => {
                       setIsAddWalletOpen(true);
                       trackWallet.addMethodInitiate();
                     }}
-                    className="relative h-[30vw] sm:h-[157px] shrink-0 aspect-square rounded-2xl border border-dashed border-primary/20 flex flex-col items-center justify-center gap-1.5 text-primary/40 hover:text-primary hover:border-primary/40 hover:bg-primary/5 transition-all active:scale-95 cursor-pointer bg-white shadow-none"
+                    className="relative h-[30vw] sm:h-[157px] shrink-0 aspect-square rounded-sm border border-dashed border-primary/20 flex flex-col items-center justify-center gap-1.5 text-primary/40 hover:text-primary hover:border-primary/40 hover:bg-primary/5 transition-all active:scale-95 cursor-pointer bg-white shadow-none"
                   >
                     <Plus className="w-5 h-5" />
                     <span className="text-[11px] font-bold">Tambah</span>
@@ -1007,7 +1024,7 @@ const SplitBillContent = () => {
                       />
                     ))
                   ) : (
-                    <Card className="flex-1 flex items-center justify-center h-[30vw] sm:h-[157px] rounded-2xl bg-muted/5 border border-dashed border-muted-foreground/10 px-4 text-center shadow-none">
+                    <Card className="flex-1 flex items-center justify-center h-[30vw] sm:h-[157px] rounded-sm bg-muted/5 border border-dashed border-muted-foreground/10 px-4 text-center shadow-none">
                       <p className="text-[11px] text-muted-foreground leading-tight">
                         Belum ada dompet tersimpan. <br />
                         <span
@@ -1038,6 +1055,7 @@ const SplitBillContent = () => {
                 }
               }}
             />
+            </div>
           </div>
         );
       case 4:
@@ -1066,60 +1084,62 @@ const SplitBillContent = () => {
           );
         }
         return (
-          <div className="space-y-6 animate-in fade-in zoom-in duration-500">
-            <div className="text-center space-y-2">
+          <div className="animate-in fade-in zoom-in duration-500">
+            <div className="text-center space-y-2 mb-4">
               <h2 className="text-2xl text-white font-bold">Beres!</h2>
               <p className="text-muted-foreground text-sm text-white">
                 Ini rincian siapa bayar ke siapa.
               </p>
             </div>
 
-            {expenses.length === 0 ? (
-              <EmptyState
-                icon={ReceiptText}
-                message="Belum Ada Item 📝"
-                subtitle="Wah, item belanjanya masih kosong nih. Yuk isi dulu biar bisa di-split!"
-                action={
-                  <Button
-                    onClick={() => router.push("/split-bill?step=1")}
-                    variant="outline"
-                    className="h-12 px-8 font-bold rounded-md border-primary/20 text-primary shadow-none hover:shadow-none hover:bg-primary/5 transition-all"
-                  >
-                    Tambah Item & Teman
-                  </Button>
-                }
-              />
-            ) : (
-              <>
-                {!isSaved && (
-                  <SaveBillNudge
-                    onSave={() => {
-                      handleFinalize();
-                    }}
-                    className="animate-in slide-in-from-top-4 duration-700"
-                  />
-                )}
-
-                <BillSummary
-                  showDownload={false}
-                  onLoginClick={() => setShowAuthModal(true)}
+            <div className="space-y-6">
+              {expenses.length === 0 ? (
+                <EmptyState
+                  icon={ReceiptText}
+                  message="Belum Ada Item 📝"
+                  subtitle="Wah, item belanjanya masih kosong nih. Yuk isi dulu biar bisa di-split!"
+                  action={
+                    <Button
+                      onClick={() => router.push("/split-bill?step=1")}
+                      variant="outline"
+                      className="h-12 px-8 font-bold border-primary/20 text-primary shadow-none hover:shadow-none hover:bg-primary/5 transition-all"
+                    >
+                      Tambah Item & Teman
+                    </Button>
+                  }
                 />
+              ) : (
+                <>
+                  {!isSaved && (
+                    <SaveBillNudge
+                      onSave={() => {
+                        handleFinalize();
+                      }}
+                      className="animate-in slide-in-from-top-4 duration-700"
+                    />
+                  )}
 
-                <div className="flex flex-col items-center gap-3 pt-4">
-                  <Button
-                    onClick={() => {
-                      trackSplitBill.restart();
-                      router.push("/split-bill?step=1");
-                    }}
-                    variant="ghost"
-                    className="text-muted-foreground hover:text-primary font-bold text-xs transition-colors"
-                  >
-                    <RotateCcw className="w-3.5 h-3.5 mr-2" />
-                    Mulai Ulang Split Bill
-                  </Button>
-                </div>
-              </>
-            )}
+                  <BillSummary
+                    showDownload={false}
+                    onLoginClick={() => setShowAuthModal(true)}
+                  />
+
+                  <div className="flex flex-col items-center gap-3 pt-4">
+                    <Button
+                      onClick={() => {
+                        trackSplitBill.restart();
+                        router.push("/split-bill?step=1");
+                      }}
+                      variant="ghost"
+                      className="text-muted-foreground hover:text-primary font-bold text-xs transition-colors"
+                    >
+                      <RotateCcw className="w-3.5 h-3.5 mr-2" />
+                      Mulai Ulang Split Bill
+                    </Button>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         );
       default:
@@ -1178,7 +1198,7 @@ const SplitBillContent = () => {
                 onClick={nextStep}
                 disabled={isSavingDraft}
                 className={cn(
-                  "w-full h-14 text-lg font-bold rounded-2xl shadow-xl transition-all duration-300 active:scale-95 flex items-center justify-center",
+                  "w-full h-14 text-lg font-bold shadow-xl transition-all duration-300 active:scale-95 flex items-center justify-center",
                   people.length >= 2
                     ? "bg-primary text-white shadow-primary/20"
                     : "bg-primary/10 text-primary shadow-none opacity-80",
@@ -1209,14 +1229,14 @@ const SplitBillContent = () => {
                   onClick={nextStep}
                   disabled={expenses.length === 0 || isSavingDraft}
                   className={cn(
-                    "w-full h-14 text-lg font-bold rounded-2xl shadow-xl transition-all duration-300 flex items-center justify-center",
+                    "w-full h-14 text-lg font-bold shadow-xl transition-all duration-300 flex items-center justify-center",
                     expenses.length > 0 &&
                       unassignedCount === 0 &&
                       unassignedAdxCount === 0
-                      ? "bg-emerald-600 text-white shadow-emerald-200"
+                      ? "bg-success text-success-foreground shadow-success/20"
                       : "bg-primary text-white shadow-primary/20",
                     expenses.length === 0 &&
-                    "opacity-100 bg-[#ede9fe] text-primary/40 shadow-none",
+                    "opacity-100 bg-primary/10 text-primary/40 shadow-none",
                   )}
                 >
                   {isSavingDraft ? (
@@ -1229,11 +1249,16 @@ const SplitBillContent = () => {
                     </div>
                   ) : (
                     <>
-                      {expenses.length > 0 &&
-                        unassignedCount === 0 &&
-                        unassignedAdxCount === 0
-                        ? "Berhasil, Lanjutkan! ✅"
-                        : "Lanjutkan"}
+                      {(() => {
+                        const totalUnassigned = unassignedCount + unassignedAdxCount;
+                        if (expenses.length > 0 && totalUnassigned === 0) {
+                          return "Lengkap, Lanjutkan! ✅";
+                        }
+                        if (totalUnassigned > 0) {
+                          return `Lanjutkan (Atur ${totalUnassigned} item lagi)`;
+                        }
+                        return "Lanjutkan";
+                      })()}
                       <ChevronRight className="ml-2 w-5 h-5" />
                     </>
                   )}
@@ -1247,7 +1272,7 @@ const SplitBillContent = () => {
                   onClick={nextStep}
                   disabled={isCalculating}
                   variant="outline"
-                  className="h-14 text-base font-bold rounded-2xl border-primary/20 text-primary hover:bg-primary/5 active:scale-95 transition-all flex items-center justify-center"
+                  className="h-14 text-base font-bold border-primary/20 text-primary hover:bg-primary/5 active:scale-95 transition-all flex items-center justify-center"
                 >
                   {isCalculating ? (
                     <div className="flex items-center justify-center gap-2">
@@ -1255,7 +1280,7 @@ const SplitBillContent = () => {
                     </div>
                   ) : (
                     <>
-                      <Rocket className="mr-1.5 w-4 h-4" /> Hitung Aja
+                      <Rocket className="mr-1.5 w-4 h-4" /> Preview Hasil
                     </>
                   )}
                 </Button>
@@ -1285,7 +1310,7 @@ const SplitBillContent = () => {
                     action();
                   }}
                   disabled={isCalculating || isFinalizing}
-                  className="h-14 text-base font-bold rounded-2xl bg-primary text-white shadow-xl shadow-primary/30 active:scale-95 transition-all flex items-center justify-center"
+                  className="h-14 text-base font-bold bg-primary text-white shadow-xl shadow-primary/30 active:scale-95 transition-all flex items-center justify-center"
                 >
                   {isCalculating || isFinalizing ? (
                     <div className="flex items-center justify-center gap-2">
@@ -1297,7 +1322,7 @@ const SplitBillContent = () => {
                     </div>
                   ) : (
                     <>
-                      <CheckCircle2 className="mr-1.5 w-4 h-4" /> Hitung & Simpan
+                      <CheckCircle2 className="mr-1.5 w-4 h-4" /> Simpan Split Bill
                     </>
                   )}
                 </Button>
@@ -1330,7 +1355,7 @@ const SplitBillContent = () => {
                       });
                     }
                   }}
-                  className="w-full h-14 text-lg font-bold rounded-2xl bg-primary text-white shadow-xl shadow-primary/30 active:scale-95 transition-all flex items-center justify-center"
+                  className="w-full h-14 text-lg font-bold bg-primary text-white shadow-xl shadow-primary/30 active:scale-95 transition-all flex items-center justify-center"
                 >
                   <Share2 className="mr-2 w-5 h-5" /> Bagikan Hasil Split Bill 🚀
                 </Button>
@@ -1362,7 +1387,7 @@ const SplitBillContent = () => {
                     handleFinalize();
                   }}
                   disabled={isFinalizing}
-                  className="w-full h-14 text-lg font-bold rounded-2xl bg-primary text-white shadow-xl shadow-primary/30 active:scale-95 transition-all !disabled:opacity-70 flex items-center justify-center"
+                  className="w-full h-14 text-lg font-bold bg-primary text-white shadow-xl shadow-primary/30 active:scale-95 transition-all !disabled:opacity-70 flex items-center justify-center"
                 >
                   {isFinalizing ? (
                     <div className="flex items-center justify-center gap-2.5">

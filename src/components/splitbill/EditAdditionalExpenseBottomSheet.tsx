@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { PersonSelector } from "@/components/splitbill/PersonSelector";
+import { SplitTypeToggle } from "@/components/splitbill/SplitTypeToggle";
 import {
   useSplitBillStore,
   AdditionalExpense,
@@ -152,7 +153,7 @@ export const EditAdditionalExpenseBottomSheet = ({
         {/* Sheet Content */}
         <div
           className={cn(
-            "absolute bottom-0 w-full max-w-[600px] bg-white rounded-t-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]",
+            "absolute bottom-0 w-full max-w-[600px] bg-white rounded-t-sm shadow-2xl overflow-hidden flex flex-col max-h-[90vh]",
             "animate-in slide-in-from-bottom-full duration-300 ease-out",
           )}
         >
@@ -273,7 +274,7 @@ export const EditAdditionalExpenseBottomSheet = ({
                           key={p}
                           onClick={() => setPercentageStr(p.toString())}
                           className={cn(
-                            "flex-1 py-1 rounded-md text-[10px] font-black border transition-all cursor-pointer",
+                            "flex-1 py-1 rounded-sm text-[10px] font-black border transition-all cursor-pointer",
                             percentageStr === p.toString()
                               ? "bg-primary/10 border-primary text-primary"
                               : "bg-white border-primary/10 text-muted-foreground hover:border-primary/30",
@@ -301,36 +302,13 @@ export const EditAdditionalExpenseBottomSheet = ({
                 <label className="text-[10px] font-bold uppercase text-muted-foreground">
                   Metode Bagi (Split)
                 </label>
-                <div className="flex p-1 bg-white/50 rounded-lg border border-primary/10">
-                  <button
-                    onClick={() => setSplitType("proportionally")}
-                    className={cn(
-                      "flex-1 py-1.5 rounded-md text-[10px] font-bold transition-all cursor-pointer",
-                      splitType === "proportionally"
-                        ? "bg-primary text-white shadow-sm"
-                        : "text-muted-foreground hover:bg-white/80",
-                    )}
-                  >
-                    PROPORSIONAL (%)
-                  </button>
-                  <button
-                    onClick={() => setSplitType("equally")}
-                    className={cn(
-                      "flex-1 py-1.5 rounded-md text-[10px] font-bold transition-all cursor-pointer",
-                      splitType === "equally"
-                        ? "bg-primary text-white shadow-sm"
-                        : "text-muted-foreground hover:bg-white/80",
-                    )}
-                  >
-                    BAGI RATA (=)
-                  </button>
-                </div>
+                <SplitTypeToggle value={splitType} onChange={setSplitType} />
               </div>
 
               {isInputNegative() ? (
                 <div className="space-y-3">
                   <label className="text-sm font-bold text-foreground">Dibayar oleh</label>
-                  <div className="p-3 bg-emerald-500/5 rounded-md border border-emerald-500/10 text-emerald-600 flex items-center gap-2">
+                  <div className="p-3 bg-success/5 rounded-sm border border-success/10 text-success flex items-center gap-2">
                     <span className="text-[11px] font-semibold leading-relaxed">
                       🏷️ Diskon dari <strong>Merchant</strong> - otomatis ngurangin tagihan tiap orang yang terlibat. No worries! 🙌
                     </span>

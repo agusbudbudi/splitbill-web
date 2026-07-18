@@ -21,9 +21,8 @@ import { EditAdditionalExpenseBottomSheet } from "./EditAdditionalExpenseBottomS
 import { Edit2 } from "lucide-react";
 import { SplitBadge } from "./SplitBadge";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
-
-const AVATAR_SM_URL =
-  "https://api.dicebear.com/9.x/personas/svg?backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf&size=24&scale=100&seed=";
+import { PersonChip } from "./PersonChip";
+import { SplitTypeToggle } from "./SplitTypeToggle";
 
 const PREDEFINED_TYPES = [
   { id: "tax", label: "Pajak (Tax)", icon: ReceiptText, defaultRate: 10 },
@@ -164,10 +163,10 @@ export const AdditionalExpenses = () => {
         </div>
 
         {/* Highlighted Banner */}
-        <div className="bg-emerald-500/5 border border-emerald-500/10 rounded-md p-3 flex items-start gap-2.5 animate-in fade-in duration-300">
+        <div className="bg-success/5 border border-success/10 rounded-sm p-3 flex items-start gap-2.5 animate-in fade-in duration-300">
           <span className="text-base leading-none">💡</span>
-          <p className="text-[11px] text-emerald-800 font-medium leading-relaxed">
-            <span className="font-bold text-emerald-950">Diskon / Cashback?</span> Input aja nominalnya pake tanda <span className="font-black underline decoration-emerald-500/30 decoration-2 text-emerald-950">minus (–)</span> (contoh: <span className="font-mono font-bold bg-emerald-500/10 px-1 py-0.5 rounded text-[10px] text-emerald-900">-Rp5.000</span> atau <span className="font-mono font-bold bg-emerald-500/10 px-1 py-0.5 rounded text-[10px] text-emerald-900">-10%</span>), otomatis ngurangin tagihan semua yang terlibat. Ez! 🎉
+          <p className="text-[11px] text-success font-medium leading-relaxed">
+            <span className="font-bold text-success">Diskon / Cashback?</span> Input aja nominalnya pake tanda <span className="font-black underline decoration-success/30 decoration-2 text-success">minus (–)</span> (contoh: <span className="font-mono font-bold bg-success/10 px-1 py-0.5 rounded text-[10px] text-success">-Rp5.000</span> atau <span className="font-mono font-bold bg-success/10 px-1 py-0.5 rounded text-[10px] text-success">-10%</span>), otomatis ngurangin tagihan semua yang terlibat. Ez! 🎉
           </p>
         </div>
 
@@ -176,7 +175,7 @@ export const AdditionalExpenses = () => {
           {additionalExpenses.map((adx) => (
             <div
               key={adx.id}
-              className="flex flex-col bg-muted/20 p-3 rounded-lg border border-dashed border-primary/20 gap-3"
+              className="flex flex-col bg-muted/20 p-3 rounded-sm border border-dashed border-primary/20 gap-3"
             >
               <div className="flex justify-between items-start">
                 <div className="flex items-start gap-2">
@@ -192,7 +191,7 @@ export const AdditionalExpenses = () => {
                     </div>
                     <span className={cn(
                       "text-sm font-bold block leading-tight",
-                      adx.amount < 0 ? "text-emerald-600" : "text-primary"
+                      adx.amount < 0 ? "text-success" : "text-primary"
                     )}>
                       {formatToIDR(adx.amount)}
                     </span>
@@ -220,42 +219,25 @@ export const AdditionalExpenses = () => {
                   </span>
                   <div className="flex flex-wrap gap-1.5">
                     {adx.amount < 0 ? (
-                      <div className="flex items-center gap-1.5 bg-emerald-500/10 rounded-full px-2.5 py-1 border border-emerald-500/20 text-emerald-600">
+                      <div className="flex items-center gap-1.5 bg-success/10 rounded-full px-2.5 py-1 border border-success/20 text-success">
                         <span className="text-[10px] font-bold">
                           🏷️ Merchant (Potongan Toko)
                         </span>
                       </div>
                     ) : (
-                      people.map((name) => {
-                        const isPayer = adx.paidBy === name;
-                        return (
-                          <button
-                            key={name}
-                            onClick={() => {
-                              useSplitBillStore.getState().updateAdditionalExpense(adx.id, {
-                                paidBy: isPayer ? "" : name,
-                              });
-                            }}
-                            className={cn(
-                              "flex items-center gap-1.5 rounded-full pl-1 pr-2.5 py-1 border transition-all cursor-pointer text-[10px] font-bold",
-                              isPayer
-                                ? "bg-emerald-50 border-emerald-300 text-emerald-700 shadow-xs"
-                                : "bg-muted/30 border-muted text-muted-foreground hover:bg-muted/60"
-                            )}
-                            title={name}
-                          >
-                            <img
-                              src={`${AVATAR_SM_URL}${encodeURIComponent(name)}`}
-                              alt={name}
-                              className={cn(
-                                "w-5 h-5 rounded-full transition-transform duration-200",
-                                isPayer ? "scale-105" : "opacity-60"
-                              )}
-                            />
-                            <span className="truncate max-w-[60px]">{name}</span>
-                          </button>
-                        );
-                      })
+                      people.map((name) => (
+                        <PersonChip
+                          key={name}
+                          name={name}
+                          variant="payer"
+                          selected={adx.paidBy === name}
+                          onClick={(clicked) =>
+                            useSplitBillStore.getState().updateAdditionalExpense(adx.id, {
+                              paidBy: adx.paidBy === clicked ? "" : clicked,
+                            })
+                          }
+                        />
+                      ))
                     )}
                   </div>
                 </div>
@@ -279,38 +261,24 @@ export const AdditionalExpenses = () => {
                   )}
                 </div>
                 <div className="flex flex-wrap gap-1.5">
-                    {people.map((name) => {
-                      const isSelected = adx.who.includes(name);
-                      return (
-                        <button
-                          key={name}
-                          onClick={() => {
-                            const newWho = isSelected
-                              ? adx.who.filter((w) => w !== name)
-                              : [...adx.who, name];
-                            useSplitBillStore.getState().updateAdditionalExpense(adx.id, { who: newWho });
-                          }}
-                          className={cn(
-                            "flex items-center gap-1.5 rounded-full pl-1 pr-2.5 py-1 border transition-all cursor-pointer text-[10px] font-bold",
-                            isSelected
-                              ? "bg-primary/10 border-primary/30 text-primary shadow-xs"
-                              : "bg-muted/30 border-muted text-muted-foreground hover:bg-muted/60"
-                          )}
-                          title={name}
-                        >
-                          <img
-                            src={`${AVATAR_SM_URL}${encodeURIComponent(name)}`}
-                            alt={name}
-                            className={cn(
-                              "w-5 h-5 rounded-full transition-transform duration-200",
-                              isSelected ? "scale-105" : "opacity-60"
-                            )}
-                          />
-                          <span className="truncate max-w-[60px]">{name}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
+                  {people.map((name) => {
+                    const isSelected = adx.who.includes(name);
+                    return (
+                      <PersonChip
+                        key={name}
+                        name={name}
+                        variant="who"
+                        selected={isSelected}
+                        onClick={() => {
+                          const newWho = isSelected
+                            ? adx.who.filter((w) => w !== name)
+                            : [...adx.who, name];
+                          useSplitBillStore.getState().updateAdditionalExpense(adx.id, { who: newWho });
+                        }}
+                      />
+                    );
+                  })}
+                </div>
               </div>
             </div>
           ))}
@@ -333,7 +301,7 @@ export const AdditionalExpenses = () => {
             ))}
           </div>
         ) : (
-          <div className="bg-white p-4 rounded-2xl border border-primary/10 space-y-4 animate-in slide-in-from-top-2">
+          <div className="bg-white p-4 rounded-sm border border-primary/10 space-y-4 animate-in slide-in-from-top-2">
             <div className="flex items-center justify-between px-1">
               <span className="text-sm font-bold flex items-center gap-2 text-primary">
                 <selectedType.icon className="w-4 h-4" />
@@ -430,7 +398,7 @@ export const AdditionalExpenses = () => {
                       key={p}
                       onClick={() => setPercentageStr(p.toString())}
                       className={cn(
-                        "flex-1 py-1 rounded-md text-[10px] font-black border transition-all cursor-pointer",
+                        "flex-1 py-1 rounded-sm text-[10px] font-black border transition-all cursor-pointer",
                         percentageStr === p.toString()
                           ? "bg-primary/10 border-primary text-primary"
                           : "bg-white border-primary/10 text-muted-foreground hover:border-primary/30",
@@ -457,30 +425,7 @@ export const AdditionalExpenses = () => {
               <label className="text-sm font-bold px-1">
                 Metode Bagi (Split)
               </label>
-              <div className="flex p-1 bg-primary/5 rounded-xl border border-primary/10">
-                <button
-                  onClick={() => setSplitType("proportionally")}
-                  className={cn(
-                    "flex-1 py-2 rounded-lg text-[10px] font-bold transition-all cursor-pointer",
-                    splitType === "proportionally"
-                      ? "bg-primary text-white shadow-sm"
-                      : "text-primary/60 hover:bg-white/80",
-                  )}
-                >
-                  PROPORSIONAL (%)
-                </button>
-                <button
-                  onClick={() => setSplitType("equally")}
-                  className={cn(
-                    "flex-1 py-2 rounded-lg text-[10px] font-bold transition-all cursor-pointer",
-                    splitType === "equally"
-                      ? "bg-primary text-white shadow-sm"
-                      : "text-primary/60 hover:bg-white/80",
-                  )}
-                >
-                  BAGI RATA (=)
-                </button>
-              </div>
+              <SplitTypeToggle value={splitType} onChange={setSplitType} />
               <p className="text-[10px] text-muted-foreground/60 italic px-1 leading-tight">
                 {splitType === "proportionally"
                   ? "*Tagihan dibagi berdasarkan jumlah belanja masing-masing orang."
@@ -492,7 +437,7 @@ export const AdditionalExpenses = () => {
             {isInputNegative() ? (
               <div className="space-y-3 border-t border-primary/10 pt-4 px-1">
                 <label className="text-sm font-bold text-foreground">Dibayar oleh</label>
-                <div className="p-3 bg-emerald-500/5 rounded-md border border-emerald-500/10 text-emerald-600 flex items-center gap-2">
+                <div className="p-3 bg-success/5 rounded-sm border border-success/10 text-success flex items-center gap-2">
                   <span className="text-[11px] font-semibold leading-relaxed">
                     🏷️ Diskon dari <strong>Merchant</strong> - otomatis ngurangin tagihan tiap orang yang terlibat. No worries! 🙌
                   </span>

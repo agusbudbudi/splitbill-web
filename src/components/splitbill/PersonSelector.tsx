@@ -2,10 +2,7 @@
 
 import React from "react";
 import { CheckCircle2 } from "lucide-react";
-import { cn } from "@/lib/utils";
-
-const AVATAR_BASE_URL =
-  "https://api.dicebear.com/9.x/personas/svg?backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf&size=48&scale=100&seed=";
+import { cn, getFriendAvatarUrl } from "@/lib/utils";
 
 interface PersonSelectorProps {
   name: string;
@@ -38,7 +35,7 @@ export const PersonSelector = ({
         )}
       >
         <img
-          src={`${AVATAR_BASE_URL}${encodeURIComponent(name)}`}
+          src={getFriendAvatarUrl(name, 48)}
           alt={name}
           className="w-full h-full rounded-full"
         />

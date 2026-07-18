@@ -2,13 +2,10 @@
 
 import React from "react";
 import { X, Users2, Check } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, getFriendAvatarUrl } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/Card";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { FriendComboboxInput } from "./FriendComboboxInput";
-
-const AVATAR_BASE_URL =
-  "https://api.dicebear.com/9.x/personas/svg?backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf&size=64&scale=100&seed=";
 
 interface ParticipantsFormCardProps {
   /** Currently selected participant names */
@@ -59,10 +56,10 @@ export const ParticipantsFormCard = ({
                   <button
                     key={suggest}
                     onClick={() => onAdd(suggest)}
-                    className="flex items-center gap-1.5 pl-1.5 pr-3 py-1 rounded-full text-xs font-bold bg-primary/5 text-primary/80 hover:bg-primary/10 border border-primary/10 transition-all active:scale-95 shadow-soft-sm cursor-pointer"
+                    className="flex items-center gap-1.5 pl-1.5 pr-3 py-1 rounded-full text-xs font-bold bg-primary/5 text-primary/80 hover:bg-primary/10 border border-primary/10 transition-all active:scale-95 shadow-soft cursor-pointer"
                   >
                     <img
-                      src={`${AVATAR_BASE_URL}${encodeURIComponent(suggest)}`}
+                      src={getFriendAvatarUrl(suggest)}
                       alt={suggest}
                       className="w-6 h-6 rounded-full border-1 border-white bg-white shadow-sm"
                     />
@@ -92,12 +89,12 @@ export const ParticipantsFormCard = ({
 
         <div
           className={cn(
-            "p-4 rounded-2xl border-1 border-dashed transition-all duration-500 min-h-[140px] flex flex-col items-center justify-center gap-4",
+            "p-4 rounded-sm border-1 border-dashed transition-all duration-500 min-h-[140px] flex flex-col items-center justify-center gap-4",
             people.length === 0
               ? "bg-muted/5 border-muted-foreground/10"
               : people.length === 1
                 ? "bg-amber-50/30 border-amber-200"
-                : "bg-primary/5 border-primary/20 shadow-soft-sm",
+                : "bg-primary/5 border-primary/20 shadow-soft",
           )}
         >
           {people.length === 0 ? (
@@ -123,7 +120,7 @@ export const ParticipantsFormCard = ({
                     </button>
                     <div className="w-14 h-14 rounded-full border-2 border-white shadow-soft overflow-hidden bg-white ring-2 ring-primary/5 transition-all">
                       <img
-                        src={`${AVATAR_BASE_URL}${encodeURIComponent(name)}`}
+                        src={getFriendAvatarUrl(name)}
                         alt={name}
                         className="w-full h-full object-cover"
                       />

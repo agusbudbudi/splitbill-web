@@ -4,7 +4,7 @@ import React, { useImperativeHandle, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSplitBillStore } from "@/store/useSplitBillStore";
 import { Card, CardContent } from "@/components/ui/Card";
-import { formatToIDR, cn } from "@/lib/utils";
+import { formatToIDR, cn, getFriendAvatarUrl } from "@/lib/utils";
 import {
   ReceiptText,
   ArrowRight,
@@ -293,9 +293,6 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
       return null;
     }
 
-    const AVATAR_BASE_URL =
-      "https://api.dicebear.com/9.x/personas/png?backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf&size=48&scale=100&seed=";
-
     const dateToDisplay = billData ? new Date(billData.date) : new Date();
     const currentDate = dateToDisplay.toLocaleDateString("id-ID", {
       day: "2-digit",
@@ -352,6 +349,14 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
                   <p className="text-[11px] text-muted-foreground font-medium flex items-center gap-1.5">
                     <Calendar className="w-3 h-3 text-primary/60" />
                     Dibuat pada {currentDate}
+                    {typeof window !== "undefined" &&
+                      new URLSearchParams(window.location.search).get(
+                        "new"
+                      ) === "true" && (
+                        <span className="text-[8px] font-black bg-primary text-white px-1.5 py-0.5 rounded-full shadow-sm shadow-primary/20">
+                          BARU
+                        </span>
+                      )}
                   </p>
                 </div>
                 <div className="shrink-0 flex flex-col items-end gap-1.5">
@@ -360,13 +365,6 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
                     alt="Split Bill"
                     className="w-8 h-8 object-contain"
                   />
-                  {typeof window !== "undefined" &&
-                    new URLSearchParams(window.location.search).get("new") ===
-                    "true" && (
-                      <span className="text-[8px] font-black bg-primary text-white px-1.5 py-0.5 rounded-full shadow-sm shadow-primary/20">
-                        BARU
-                      </span>
-                    )}
                 </div>
               </div>
 
@@ -420,7 +418,7 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
                       <div className="flex items-center gap-2.5">
                         <div className="relative">
                           <img
-                            src={`${AVATAR_BASE_URL}${encodeURIComponent(inst.from)}`}
+                            src={getFriendAvatarUrl(inst.from, 48)}
                             className="w-7 h-7 rounded-full bg-white border border-primary/20"
                             alt={inst.from}
                           />
@@ -469,7 +467,7 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
                     return (
                       <div
                         key={name}
-                        className="overflow-hidden rounded-lg border border-primary/10 bg-muted/5 transition-all hover:border-primary/20"
+                        className="overflow-hidden rounded-sm border border-primary/10 bg-muted/5 transition-all hover:border-primary/20"
                       >
                         {/* Person Header */}
                         <div className="bg-primary/5 border-b border-primary/10 hover:bg-primary/10 transition-colors">
@@ -491,7 +489,7 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
                             <div className="flex items-center gap-2.5">
                               <div className="w-7 h-7 rounded-full border border-primary/10 overflow-hidden bg-white">
                                 <img
-                                  src={`${AVATAR_BASE_URL}${encodeURIComponent(name)}`}
+                                  src={getFriendAvatarUrl(name, 48)}
                                   alt={name}
                                   className="w-full h-full"
                                 />
@@ -637,9 +635,9 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
                             method.providerName,
                           )
                         }
-                        className="p-3 bg-primary/5 border border-primary/10 rounded-lg flex items-center gap-3 cursor-pointer hover:bg-primary/10 transition-all active:scale-[0.98] group/copy"
+                        className="p-3 bg-primary/5 border border-primary/10 rounded-sm flex items-center gap-3 cursor-pointer hover:bg-primary/10 transition-all active:scale-[0.98] group/copy"
                       >
-                        <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center flex-shrink-0 shadow-sm border border-primary/5 p-1.5 overflow-hidden">
+                        <div className="w-12 h-12 rounded-sm bg-white flex items-center justify-center flex-shrink-0 shadow-sm border border-primary/5 p-1.5 overflow-hidden">
                           {logoInfo.slug ? (
                             <DynamicFinLogo
                               slug={logoInfo.slug}
@@ -791,7 +789,7 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
                 }}
                 disabled={isSharing || !showDownload}
                 className={cn(
-                  "h-12 rounded-lg font-bold gap-2 text-sm transition-all active:scale-[0.98] bg-primary text-white shadow-lg shadow-primary/20 flex items-center justify-center group cursor-pointer",
+                  "h-12 rounded-sm font-bold gap-2 text-sm transition-all active:scale-[0.98] bg-primary text-white shadow-lg shadow-primary/20 flex items-center justify-center group cursor-pointer",
                   (isSharing || !showDownload) && "opacity-70 cursor-not-allowed",
                 )}
               >
@@ -808,7 +806,7 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
                 onClick={handleCopyLink}
                 disabled={!showDownload}
                 className={cn(
-                  "h-12 rounded-lg font-bold gap-2 text-sm transition-all active:scale-[0.98] bg-white border border-primary/20 text-primary hover:bg-primary/5 flex items-center justify-center group cursor-pointer",
+                  "h-12 rounded-sm font-bold gap-2 text-sm transition-all active:scale-[0.98] bg-white border border-primary/20 text-primary hover:bg-primary/5 flex items-center justify-center group cursor-pointer",
                   !showDownload && "opacity-70 cursor-not-allowed",
                 )}
               >

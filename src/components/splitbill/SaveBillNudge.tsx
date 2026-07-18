@@ -53,7 +53,7 @@ export const SaveBillNudge = ({ onSave, className }: SaveBillNudgeProps) => {
     >
       <CardContent className="p-5 space-y-4">
         <div className="flex items-start gap-4">
-          <div className="w-10 h-10 rounded-xl relative overflow-hidden shrink-0">
+          <div className="w-10 h-10 rounded-sm relative overflow-hidden shrink-0">
             <Image
               src="/img/save-bill-icon.png"
               alt="Save Bill Icon"

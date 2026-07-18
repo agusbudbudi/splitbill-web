@@ -2,7 +2,7 @@ import React from "react";
 import Image from "next/image";
 
 export const AIScanBenefits = () => (
-  <div className="flex gap-3 items-start p-4 bg-primary/5 rounded-lg transition-all hover:bg-primary/[0.07] mt-4">
+  <div className="flex gap-3 items-start p-4 bg-primary/5 rounded-sm transition-all hover:bg-primary/[0.07] mt-4">
     <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0">
       <Image
         src="/img/icon-ai-info.png"

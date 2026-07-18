@@ -31,7 +31,7 @@ export const WalletSelectionCard = ({
     <Card
       onClick={onClick}
       className={cn(
-        "relative w-[42vw] sm:w-[220px] shrink-0 aspect-[1.4/1] rounded-2xl border p-3.5 flex flex-col justify-between transition-all active:scale-95 text-left overflow-hidden select-none cursor-pointer",
+        "relative w-[42vw] sm:w-[220px] shrink-0 aspect-[1.4/1] rounded-sm border p-3.5 flex flex-col justify-between transition-all active:scale-95 text-left overflow-hidden select-none cursor-pointer",
         isSelected
           ? "border-primary bg-primary text-white shadow-md shadow-primary/10"
           : "border-slate-200 bg-white text-slate-800 hover:border-slate-300",

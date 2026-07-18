@@ -54,7 +54,7 @@ export function InfoModal({
           <div className="pt-2">
             <Button
               onClick={onClose}
-              className="w-full h-11 rounded-lg font-bold bg-primary text-white shadow-lg shadow-primary/20 cursor-pointer"
+              className="w-full h-11 font-bold bg-primary text-white shadow-lg shadow-primary/20 cursor-pointer"
             >
               Tutup
             </Button>

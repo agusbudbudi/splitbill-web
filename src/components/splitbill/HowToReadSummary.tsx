@@ -5,7 +5,7 @@ import { AlertCircle } from "lucide-react";
 
 export const HowToReadSummary = () => {
   return (
-    <div className="p-4 bg-muted/20 border border-primary/5 rounded-lg space-y-3 relative overflow-hidden">
+    <div className="p-4 bg-muted/20 border border-primary/5 rounded-sm space-y-3 relative overflow-hidden">
       <div className="absolute -right-4 -bottom-4 opacity-5">
         <AlertCircle className="w-20 h-20 text-primary" />
       </div>

@@ -57,7 +57,7 @@ export function ConfirmationModal({
               variant="outline"
               onClick={onClose}
               disabled={isLoading}
-              className="flex-1 h-12 rounded-lg font-bold cursor-pointer"
+              className="flex-1 h-12 font-bold cursor-pointer"
             >
               {cancelText}
             </Button>
@@ -65,7 +65,7 @@ export function ConfirmationModal({
               onClick={onConfirm}
               loading={isLoading}
               className={cn(
-                "flex-1 h-12 rounded-lg font-bold shadow-lg cursor-pointer",
+                "flex-1 h-12 font-bold shadow-lg cursor-pointer",
                 confirmButtonClassName ||
                   "bg-primary text-white shadow-primary/20",
               )}

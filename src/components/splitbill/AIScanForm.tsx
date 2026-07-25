@@ -158,6 +158,16 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
         });
       }
     });
+    (result.additional_charges ?? []).forEach((charge) => {
+      additionalCount += 1;
+      addAdditionalExpense({
+        name: charge.label,
+        amount: charge.amount,
+        who: [],
+        paidBy: "",
+        splitType: "proportionally",
+      });
+    });
 
     setImage(null);
     setScanResult(null);
@@ -320,6 +330,16 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
           splitType: "proportionally",
         });
       }
+    });
+    (scanResult.additional_charges ?? []).forEach((charge) => {
+      additionalCount += 1;
+      addAdditionalExpense({
+        name: charge.label,
+        amount: charge.amount,
+        who: [],
+        paidBy: "",
+        splitType: "proportionally",
+      });
     });
 
     // Reset
@@ -610,7 +630,8 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
                 {/* Summary / Tax Preview */}
                 {(scanResult.tax ||
                   scanResult.service_charge ||
-                  scanResult.discount) && (
+                  scanResult.discount ||
+                  scanResult.additional_charges?.length) && (
                     <div className="pt-3 border-t border-border/80 space-y-2">
                       {scanResult.tax && (
                         <div className="flex justify-between items-center text-[11px]">
@@ -642,6 +663,16 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
                           </span>
                         </div>
                       )}
+                      {scanResult.additional_charges?.map((charge, idx) => (
+                        <div key={idx} className="flex justify-between items-center text-[11px]">
+                          <span className="text-muted-foreground font-bold">
+                            {charge.label}
+                          </span>
+                          <span className="font-bold text-foreground">
+                            {formatCurrency(charge.amount)}
+                          </span>
+                        </div>
+                      ))}
                     </div>
                   )}
               </div>

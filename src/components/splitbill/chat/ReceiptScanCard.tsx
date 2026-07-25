@@ -69,7 +69,7 @@ export function ReceiptScanCard({
   // ── Guest Limit Barrier ───────────────────────────────────────────────────
   if (!isAuthenticated && guestRemainingScans <= 0 && !isCompleted && !scanResult) {
     return (
-      <div className="rounded-2xl border border-primary/20 bg-white overflow-hidden shadow-sm">
+      <div className="rounded-2xl border border-primary/20 bg-white overflow-hidden">
         <div className="px-4 py-3 bg-gradient-to-r from-primary/5 to-violet-500/5 border-b border-primary/10 flex items-center gap-2">
           <Sparkles className="w-4 h-4 text-primary" />
           <p className="text-xs font-bold text-primary uppercase tracking-wide">
@@ -122,7 +122,7 @@ export function ReceiptScanCard({
     !scanResult
   ) {
     return (
-      <div className="rounded-2xl border border-primary/20 bg-white overflow-hidden shadow-sm">
+      <div className="rounded-2xl border border-primary/20 bg-white overflow-hidden">
         <div className="px-4 py-3 bg-gradient-to-r from-primary/5 to-violet-500/5 border-b border-primary/10 flex items-center gap-2">
           <Sparkles className="w-4 h-4 text-primary" />
           <p className="text-xs font-bold text-primary uppercase tracking-wide">
@@ -161,7 +161,7 @@ export function ReceiptScanCard({
   // ── Frozen state ────────────────────────────────────────────────────────────
   if (isCompleted && scannedResult) {
     return (
-      <div className="rounded-2xl border border-emerald-200 bg-white overflow-hidden shadow-sm">
+      <div className="rounded-2xl border border-emerald-200 bg-white overflow-hidden">
         <div className="flex items-center gap-2 px-4 py-3 bg-emerald-50 border-b border-emerald-100">
           <div className="w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center">
             <Check className="w-3 h-3 text-white" />
@@ -195,6 +195,11 @@ export function ReceiptScanCard({
               - Diskon {formatToIDR(Math.abs(scannedResult.discount))}
             </span>
           ) : null}
+          {scannedResult.additional_charges?.map((charge, idx) => (
+            <span key={idx} className="text-amber-600 font-semibold">
+              + {charge.label} {formatToIDR(charge.amount)}
+            </span>
+          ))}
         </div>
       </div>
     );
@@ -269,7 +274,7 @@ export function ReceiptScanCard({
       scanResult.tax,
       scanResult.service_charge,
       scanResult.discount,
-    ].filter(Boolean).length;
+    ].filter(Boolean).length + (scanResult.additional_charges?.length ?? 0);
     trackChatBill.scanAccepted({
       item_count: scanResult.items?.length ?? 0,
       additional_item_count: additionalCount,
@@ -279,7 +284,7 @@ export function ReceiptScanCard({
   };
 
   return (
-    <div className="rounded-2xl border border-primary/20 bg-white overflow-hidden shadow-sm">
+    <div className="rounded-2xl border border-primary/20 bg-white overflow-hidden">
       {/* Header */}
       <div className="px-4 py-3 bg-gradient-to-r from-primary/5 to-violet-500/5 border-b border-primary/10 flex items-center gap-2">
         <p className="text-xs font-bold text-primary uppercase tracking-wide">
@@ -404,7 +409,7 @@ export function ReceiptScanCard({
                   </div>
                 ))}
               </div>
-              {(scanResult.tax || scanResult.service_charge || scanResult.discount) && (
+              {(scanResult.tax || scanResult.service_charge || scanResult.discount || scanResult.additional_charges?.length) && (
                 <div className="pt-2 border-t border-border space-y-1">
                   {scanResult.tax && (
                     <div className="flex justify-between text-xs text-muted-foreground">
@@ -430,6 +435,14 @@ export function ReceiptScanCard({
                       </span>
                     </div>
                   )}
+                  {scanResult.additional_charges?.map((charge, i) => (
+                    <div key={i} className="flex justify-between text-xs text-muted-foreground">
+                      <span>{charge.label}</span>
+                      <span className="font-bold">
+                        {formatToIDR(charge.amount)}
+                      </span>
+                    </div>
+                  ))}
                 </div>
               )}
             </div>

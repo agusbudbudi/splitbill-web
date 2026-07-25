@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     "scan struk unlimited",
   ],
   alternates: {
-    canonical: "https://splitbill.my.id/membership",
+    canonical: "https://www.splitbill.my.id/membership",
   },
 };
 

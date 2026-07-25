@@ -62,7 +62,7 @@ export const Sidebar = () => {
   const shareData = {
     title: "SplitBill Online - Bagi Tagihan Jadi Gampang! ✨",
     text: "Guys, cobain deh SplitBill Online. Bisa scan struk otomatis pakai AI, hitung fair share, dan langsung dapet ringkasan pembayarannya. Praktis banget buat patungan! 🍱✈️",
-    url: "https://splitbill.my.id",
+    url: "https://www.splitbill.my.id",
   };
 
   const handleShare = async () => {

@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     "split bill app review",
   ],
   alternates: {
-    canonical: "https://splitbill.my.id/review",
+    canonical: "https://www.splitbill.my.id/review",
   },
 };
 

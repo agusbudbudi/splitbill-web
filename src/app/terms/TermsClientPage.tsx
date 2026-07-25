@@ -104,7 +104,7 @@ export default function TermsClientPage() {
               </h1>
               <div className="text-md text-[#4b5563] space-y-1">
                 <p className="font-bold">Split Bill Online</p>
-                <p>https://splitbill.my.id</p>
+                <p>https://www.splitbill.my.id</p>
                 <p className="text-sm italic">Berlaku sejak: 16 Mei 2026</p>
               </div>
             </div>
@@ -191,7 +191,7 @@ export default function TermsClientPage() {
                     href="/"
                     className="text-primary hover:underline font-medium"
                   >
-                    https://splitbill.my.id
+                    https://www.splitbill.my.id
                   </Link>
                   . Pengelola dapat dihubungi melalui surel resmi:{" "}
                   <a
@@ -220,7 +220,7 @@ export default function TermsClientPage() {
                   {[
                     {
                       k: "Platform",
-                      v: "Situs web https://splitbill.my.id beserta seluruh fitur dan layanan di dalamnya.",
+                      v: "Situs web https://www.splitbill.my.id beserta seluruh fitur dan layanan di dalamnya.",
                     },
                     {
                       k: "Pengguna",
@@ -630,7 +630,7 @@ export default function TermsClientPage() {
                   Bill Online
                   <br />
                   <strong className="text-[#111827]">Situs Web:</strong>{" "}
-                  https://splitbill.my.id
+                  https://www.splitbill.my.id
                   <br />
                   <strong className="text-[#111827]">Surel:</strong>{" "}
                   <a

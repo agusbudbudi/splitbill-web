@@ -36,7 +36,7 @@ export const ParticipantsFormCard = ({
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2">
       {/* 1. Tambah teman (Primary Action) */}
-      <Card id="onboarding-people-list" className="border-primary/20 shadow-md">
+      <Card id="onboarding-people-list" className="shadow-md">
         <CardContent className="p-4 space-y-4">
           <div className="space-y-3">
             <label className="text-sm font-bold text-foreground px-1">{addLabel}</label>

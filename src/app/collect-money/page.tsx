@@ -13,12 +13,12 @@ export const metadata: Metadata = {
     "atur uang kas grup",
   ],
   alternates: {
-    canonical: "https://splitbill.my.id/collect-money",
+    canonical: "https://www.splitbill.my.id/collect-money",
   },
   openGraph: {
     title: "Collect Money - Kumpulkan Iuran Online | SplitBill.my.id",
     description: "Kumpulkan uang iuran kas atau dana sosial dengan praktis. Transparan dan otomatis!",
-    url: "https://splitbill.my.id/collect-money",
+    url: "https://www.splitbill.my.id/collect-money",
     siteName: "Split Bill App",
     images: [
       {
@@ -43,13 +43,13 @@ export default function CollectMoneyPage() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://splitbill.my.id",
+        item: "https://www.splitbill.my.id",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Collect Money",
-        item: "https://splitbill.my.id/collect-money",
+        item: "https://www.splitbill.my.id/collect-money",
       },
     ],
   };

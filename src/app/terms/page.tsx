@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     "uu ite indonesia",
   ],
   alternates: {
-    canonical: "https://splitbill.my.id/terms",
+    canonical: "https://www.splitbill.my.id/terms",
   },
 };
 

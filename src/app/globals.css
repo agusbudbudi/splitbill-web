@@ -2,8 +2,10 @@
 
 :root {
   /* Brand Colors from Reference Image */
-  --background: #f8f9fd; /* Light gray-blue background */
-  --foreground: #2d2d3e; /* Dark slate for text */
+  --background: #f8f9fd;
+  /* Light gray-blue background */
+  --foreground: #2d2d3e;
+  /* Dark slate for text */
 
   --card: #ffffff;
   --card-foreground: #2d2d3e;
@@ -16,11 +18,14 @@
   --primary-foreground: #ffffff;
 
   /* Secondary / Accents */
-  --secondary: #e0f2fe; /* Sky 100 */
-  --secondary-foreground: #0369a1; /* Sky 700 */
+  --secondary: #e0f2fe;
+  /* Sky 100 */
+  --secondary-foreground: #0369a1;
+  /* Sky 700 */
 
   --muted: #f1f5f9;
-  --muted-foreground: #64748b; /* Slate 500 */
+  --muted-foreground: #64748b;
+  /* Slate 500 */
 
   --accent: #f8faff;
   --accent-foreground: #0284c7;
@@ -37,11 +42,13 @@
   --premium: #7c3aed;
   --premium-foreground: #ffffff;
 
-  --border: #e2e8f0;
+  --border: #dceafc;
   --input: #f1f5f9;
-  --ring: #479fea; /* Blue */
+  --ring: #479fea;
+  /* Blue */
 
-  --radius: 1rem; /* 16px for softer look */
+  --radius: 1rem;
+  /* 16px for softer look */
 }
 
 .dark {
@@ -112,10 +119,12 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
 
-  --radius-xl: 1.5rem; /* 24px */
+  --radius-xl: 1.5rem;
+  /* 24px */
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
+  --radius-xs: calc(var(--radius) - 6px);
 
   --font-sans: var(--font-inter);
   --font-mono: monospace;
@@ -125,19 +134,20 @@
   --image-gradient-accent: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
 
   --background-image-brand: linear-gradient(135deg, #7dd3fc 0%, #479fea 100%);
-  --background-image-brand-reversed: linear-gradient(
-    135deg,
-    #479fea 0%,
-    #7dd3fc 100%
-  );
+  --background-image-brand-reversed: linear-gradient(135deg,
+      #479fea 0%,
+      #7dd3fc 100%);
 
   --shadow-soft: 0 4px 20px -5px rgba(71, 159, 234, 0.02);
   --shadow-glow: 0 0 20px rgba(71, 159, 234, 0.3);
 
   @keyframes bounce-subtle {
-    0%, 100% {
+
+    0%,
+    100% {
       transform: translateY(0);
     }
+
     50% {
       transform: translateY(-6px);
     }
@@ -169,10 +179,14 @@
 }
 
 @utility scrollbar-hide {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+
+  /* Firefox */
   &::-webkit-scrollbar {
-    display: none; /* Chrome, Safari and Opera */
+    display: none;
+    /* Chrome, Safari and Opera */
   }
 }
 
@@ -180,6 +194,7 @@
 .pb-safe {
   padding-bottom: calc(1.25rem + env(safe-area-inset-bottom));
 }
+
 @media (min-width: 768px) {
   .pb-safe {
     padding-bottom: 2rem;
@@ -227,21 +242,25 @@ body {
 }
 
 [data-sonner-toast] {
-  padding-right: 40px !important; /* Make space for the close button */
+  padding-right: 40px !important;
+  /* Make space for the close button */
 }
 
 /* Prevent auto-zoom on mobile inputs */
 @media screen and (max-width: 768px) {
+
   input,
   select,
   textarea {
     font-size: 16px !important;
   }
 }
+
 @keyframes shimmer {
   0% {
     transform: translateX(-100%);
   }
+
   100% {
     transform: translateX(100%);
   }
@@ -268,17 +287,30 @@ body {
   line-height: 1.35;
 }
 
-.blog-content-container h1 { font-size: 1.75rem; }
-.blog-content-container h2 { font-size: 1.4rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
-.blog-content-container h3 { font-size: 1.2rem; }
-.blog-content-container h4 { font-size: 1.05rem; }
+.blog-content-container h1 {
+  font-size: 1.75rem;
+}
+
+.blog-content-container h2 {
+  font-size: 1.4rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.5rem;
+}
+
+.blog-content-container h3 {
+  font-size: 1.2rem;
+}
+
+.blog-content-container h4 {
+  font-size: 1.05rem;
+}
 
 .blog-content-container p {
   margin-bottom: 1.25rem;
   font-size: 0.975rem;
 }
 
-.blog-content-container ul, 
+.blog-content-container ul,
 .blog-content-container ol {
   margin-bottom: 1.5rem;
   padding-left: 1.5rem;
@@ -288,15 +320,20 @@ body {
   margin-bottom: 0.5rem;
 }
 
-.blog-content-container ul { list-style-type: disc; }
-.blog-content-container ol { list-style-type: decimal; }
+.blog-content-container ul {
+  list-style-type: disc;
+}
+
+.blog-content-container ol {
+  list-style-type: decimal;
+}
 
 .blog-content-container img {
   border-radius: 1rem;
   margin: 2.5rem 0;
   max-width: 100%;
   height: auto;
-  box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
 }
 
 .blog-content-container hr {

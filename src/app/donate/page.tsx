@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     "traktir kopi developer",
   ],
   alternates: {
-    canonical: "https://splitbill.my.id/donate",
+    canonical: "https://www.splitbill.my.id/donate",
   },
 };
 

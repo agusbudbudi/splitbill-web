@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     "biaya upgrade splitbill",
   ],
   alternates: {
-    canonical: "https://splitbill.my.id/subscription",
+    canonical: "https://www.splitbill.my.id/subscription",
   },
 };
 

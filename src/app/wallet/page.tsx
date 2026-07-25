@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     "split bill wallet",
   ],
   alternates: {
-    canonical: "https://splitbill.my.id/wallet",
+    canonical: "https://www.splitbill.my.id/wallet",
   },
 };
 
@@ -26,13 +26,13 @@ export default function WalletPage() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://splitbill.my.id",
+        item: "https://www.splitbill.my.id",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Wallet",
-        item: "https://splitbill.my.id/wallet",
+        item: "https://www.splitbill.my.id/wallet",
       },
     ],
   };

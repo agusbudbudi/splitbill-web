@@ -4,11 +4,12 @@ import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { useFriendStore, Friend } from "@/lib/stores/friendStore";
-import { ArrowLeft, Save, UserPlus, X } from "lucide-react";
+import { ArrowLeft, Contact, Save, UserPlus, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { BottomSheet } from "@/components/ui/BottomSheet";
 import { trackSocial } from "@/lib/gtag";
+import { isContactPickerSupported, pickContact } from "@/lib/utils/contactPicker";
 
 interface FriendFormProps {
   isOpen: boolean;
@@ -25,6 +26,18 @@ export const FriendForm = ({
 
   const [name, setName] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
+  const [contactPickerSupported, setContactPickerSupported] = useState(false);
+
+  useEffect(() => {
+    setContactPickerSupported(isContactPickerSupported());
+  }, []);
+
+  const handlePickContact = async () => {
+    const contact = await pickContact();
+    if (!contact) return;
+    if (contact.name) setName(contact.name);
+    if (contact.tel) setWhatsapp(contact.tel);
+  };
 
   useEffect(() => {
     if (editFriendId && isOpen) {
@@ -91,9 +104,21 @@ export const FriendForm = ({
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-semibold text-foreground px-1">
-            Nama Lengkap
-          </label>
+          <div className="flex items-center justify-between px-1">
+            <label className="text-sm font-semibold text-foreground">
+              Nama Lengkap
+            </label>
+            {contactPickerSupported && (
+              <button
+                type="button"
+                onClick={handlePickContact}
+                className="flex items-center gap-1 text-xs font-semibold text-primary"
+              >
+                <Contact className="w-3.5 h-3.5" />
+                Pilih dari Kontak
+              </button>
+            )}
+          </div>
           <Input
             placeholder="Ex: Budi Santoso"
             value={name}

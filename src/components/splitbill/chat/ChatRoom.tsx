@@ -257,6 +257,16 @@ export function ChatRoom() {
           splitType: "equally",
         });
       }
+      (result.additional_charges ?? []).forEach((charge) => {
+        newAdditional.push({
+          id: uuidv4(),
+          name: charge.label,
+          amount: charge.amount,
+          who: [],
+          paidBy: payerName,
+          splitType: "proportionally",
+        });
+      });
 
       setExpenses(newExpenses);
       setAdditionalExpenses(newAdditional);
@@ -370,7 +380,7 @@ export function ChatRoom() {
               }}
             >
               {/* ── Header ─────────────────────────────────────────────────── */}
-              <div className="shrink-0 bg-gradient-to-r from-primary to-blue-600 text-white shadow-md z-10">
+              <div className="shrink-0 bg-gradient-to-r from-primary to-blue-600 text-white shadow-sm z-10">
 
                 {/* Title row */}
                 <div
@@ -432,7 +442,7 @@ export function ChatRoom() {
               {/* ── Message feed ───────────────────────────────────────────── */}
               <div
                 ref={feedRef}
-                className="flex-1 overflow-y-auto px-4 py-5 space-y-4 scroll-smooth"
+                className="flex-1 overflow-y-auto px-3 py-5 space-y-4 scroll-smooth"
               >
                 {messages.map((msg) => (
                   <motion.div

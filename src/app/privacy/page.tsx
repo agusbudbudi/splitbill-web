@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     "keamanan data splitbill",
   ],
   alternates: {
-    canonical: "https://splitbill.my.id/privacy",
+    canonical: "https://www.splitbill.my.id/privacy",
   },
 };
 

@@ -12,12 +12,12 @@ export const metadata: Metadata = {
     "invoice freelancer indonesia",
   ],
   alternates: {
-    canonical: "https://splitbill.my.id/invoice",
+    canonical: "https://www.splitbill.my.id/invoice",
   },
   openGraph: {
     title: "Buat Invoice Online Gratis - SplitBill.my.id",
     description: "Buat invoice profesional secara online dan gratis. Cepat, mudah, dan bisa langsung download PDF.",
-    url: "https://splitbill.my.id/invoice",
+    url: "https://www.splitbill.my.id/invoice",
     siteName: "Split Bill App",
     locale: "id_ID",
     type: "website",
@@ -34,13 +34,13 @@ export default function InvoicePage() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://splitbill.my.id",
+        item: "https://www.splitbill.my.id",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Invoice",
-        item: "https://splitbill.my.id/invoice",
+        item: "https://www.splitbill.my.id/invoice",
       },
     ],
   };

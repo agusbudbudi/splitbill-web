@@ -1,7 +1,7 @@
 import { MetadataRoute } from "next";
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = "https://splitbill.my.id";
+  const baseUrl = "https://www.splitbill.my.id";
   
   return {
     rules: {

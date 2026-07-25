@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   description:
     "Kumpulkan foto struk saat liburan atau acara, lalu split belakangan dengan mudah. Fitur Split Later dari Split Bill App.",
   alternates: {
-    canonical: "https://splitbill.my.id/split-later",
+    canonical: "https://www.splitbill.my.id/split-later",
   },
 };
 

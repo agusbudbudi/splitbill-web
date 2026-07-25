@@ -47,7 +47,7 @@ export const SaveBillNudge = ({ onSave, className }: SaveBillNudgeProps) => {
   return (
     <Card
       className={cn(
-        "border-primary/20 shadow-soft bg-white overflow-hidden",
+        "shadow-soft bg-white overflow-hidden",
         className,
       )}
     >

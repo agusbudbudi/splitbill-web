@@ -54,7 +54,7 @@ export const ExpenseList = () => {
                 "overflow-hidden transition-all duration-300 border",
                 expense.who.length === 0 || !expense.paidBy
                   ? "border-amber-200 bg-amber-50/20 backdrop-blur-xs shadow-soft text-card-foreground"
-                  : "border-primary/0 bg-white shadow-sm",
+                  : "border-border bg-white shadow-sm",
               )}
             >
               <CardContent className="p-3 sm:p-4">

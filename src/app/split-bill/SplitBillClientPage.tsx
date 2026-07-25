@@ -706,9 +706,9 @@ const SplitBillContent = () => {
       case 1:
         return (
           <div className="animate-in fade-in slide-in-from-right-4 duration-500">
-            <div className="flex flex-col items-center text-center gap-2 mb-4">
-              <h2 className="text-2xl font-bold text-white">Siapa aja nih?</h2>
-              <p className="text-white/80 text-sm max-w-[360px]">
+            <div className="flex flex-col items-start text-left gap-1 mb-3">
+              <h2 className="text-lg font-bold text-foreground">Siapa aja nih?</h2>
+              <p className="text-muted-foreground text-xs max-w-[360px]">
                 Tambahkan minimal 2 teman untuk mulai split bill.
               </p>
             </div>
@@ -720,9 +720,9 @@ const SplitBillContent = () => {
         const subtotal = expenses.reduce((acc, curr) => acc + curr.amount, 0);
         return (
           <div className="animate-in fade-in slide-in-from-right-4 duration-500">
-            <div className="flex flex-col items-center text-center gap-2 mb-4">
-              <h2 className="text-2xl font-bold text-white">Input Pengeluaran</h2>
-              <p className="text-white/80 text-sm max-w-[360px]">
+            <div className="flex flex-col items-start text-left gap-1 mb-3">
+              <h2 className="text-lg font-bold text-foreground">Input Pengeluaran</h2>
+              <p className="text-muted-foreground text-xs max-w-[360px]">
                 Scan struk pake AI biar cepet, atau input manual
               </p>
             </div>
@@ -817,9 +817,9 @@ const SplitBillContent = () => {
       case 3:
         return (
           <div className="animate-in fade-in slide-in-from-right-4 duration-500">
-            <div className="flex flex-col items-center text-center gap-2 mb-4">
-              <h2 className="text-2xl font-bold text-white">Langkah Terakhir!</h2>
-              <p className="text-white/80 text-sm max-w-[360px]">
+            <div className="flex flex-col items-start text-left gap-1 mb-3">
+              <h2 className="text-lg font-bold text-foreground">Langkah Terakhir!</h2>
+              <p className="text-muted-foreground text-xs max-w-[360px]">
                 Tambahkan nama split bill agar mudah dicari nanti.
               </p>
             </div>
@@ -1085,9 +1085,9 @@ const SplitBillContent = () => {
         }
         return (
           <div className="animate-in fade-in zoom-in duration-500">
-            <div className="text-center space-y-2 mb-4">
-              <h2 className="text-2xl text-white font-bold">Beres!</h2>
-              <p className="text-muted-foreground text-sm text-white">
+            <div className="text-left space-y-1 mb-3">
+              <h2 className="text-lg text-foreground font-bold">Beres!</h2>
+              <p className="text-muted-foreground text-xs">
                 Ini rincian siapa bayar ke siapa.
               </p>
             </div>
@@ -1173,9 +1173,6 @@ const SplitBillContent = () => {
       />
 
       <div className="relative w-full max-w-[600px] flex-1 flex flex-col">
-        {/* Gradient background, connecting seamlessly from the header down */}
-        <div className="absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-primary via-primary/80 to-transparent pointer-events-none z-0" />
-
         {/* Stepper Row */}
         {!isSaved && (
           <div className="relative z-20">

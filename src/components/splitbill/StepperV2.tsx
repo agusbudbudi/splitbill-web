@@ -44,17 +44,17 @@ export function StepperV2({ steps, currentStep }: StepperV2Props) {
   const rightLine = next && colWidth > 0 ? { left: colWidth * 2 + GAP, width: GAP } : null;
 
   return (
-    <div className="w-full flex justify-center px-2">
+    <div className="w-full flex justify-center px-2 py-2 bg-primary/5">
       <div ref={containerRef} className="relative w-full max-w-[360px] h-6">
         {leftLine && (
           <div
-            className="absolute top-1/2 h-0.5 -translate-y-1/2 rounded-full bg-white/20"
+            className="absolute top-1/2 h-0.5 -translate-y-1/2 rounded-full bg-primary/15"
             style={{ left: leftLine.left, width: leftLine.width }}
           />
         )}
         {rightLine && (
           <div
-            className="absolute top-1/2 h-0.5 -translate-y-1/2 rounded-full bg-white/20"
+            className="absolute top-1/2 h-0.5 -translate-y-1/2 rounded-full bg-primary/15"
             style={{ left: rightLine.left, width: rightLine.width }}
           />
         )}
@@ -82,8 +82,8 @@ export function StepperV2({ steps, currentStep }: StepperV2Props) {
                       "rounded-full flex items-center justify-center border-2 shrink-0 transition-all duration-300",
                       isActive ? "w-5 h-5" : "w-4 h-4",
                       isActive
-                        ? "bg-white border-none text-primary"
-                        : "bg-white/50 border-none text-primary",
+                        ? "bg-primary border-none text-white"
+                        : "bg-primary/10 border-none text-primary",
                     )}
                   >
                     {isDone ? (
@@ -98,7 +98,7 @@ export function StepperV2({ steps, currentStep }: StepperV2Props) {
                     className={cn(
                       "font-semibold whitespace-nowrap transition-colors duration-300",
                       isActive ? "text-[13px]" : "text-[12px]",
-                      isActive ? "text-white opacity-100" : "text-white/40",
+                      isActive ? "text-primary opacity-100" : "text-muted-foreground/60",
                     )}
                   >
                     {s.label}

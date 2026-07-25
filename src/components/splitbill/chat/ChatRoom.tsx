@@ -257,6 +257,16 @@ export function ChatRoom() {
           splitType: "equally",
         });
       }
+      (result.additional_charges ?? []).forEach((charge) => {
+        newAdditional.push({
+          id: uuidv4(),
+          name: charge.label,
+          amount: charge.amount,
+          who: [],
+          paidBy: payerName,
+          splitType: "proportionally",
+        });
+      });
 
       setExpenses(newExpenses);
       setAdditionalExpenses(newAdditional);

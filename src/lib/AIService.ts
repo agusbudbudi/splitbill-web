@@ -7,12 +7,18 @@ export interface ReceiptItem {
   quantity: number;
 }
 
+export interface AdditionalCharge {
+  label: string;
+  amount: number;
+}
+
 export interface ReceiptScanResult {
   merchant_name: string | null;
   items: ReceiptItem[];
   tax: number | null;
   service_charge: number | null;
   discount: number | null;
+  additional_charges: AdditionalCharge[];
   [key: string]: any; // Allow for extra fields from API
 }
 
@@ -91,6 +97,7 @@ export const scanReceipt = async (
         tax: null,
         service_charge: null,
         discount: null,
+        additional_charges: [],
       };
     }
 
@@ -124,6 +131,16 @@ export const scanReceipt = async (
     rawTaxonomy.tax = parseNumericField(rawTaxonomy.tax);
     rawTaxonomy.service_charge = parseNumericField(rawTaxonomy.service_charge);
     rawTaxonomy.discount = parseNumericField(rawTaxonomy.discount);
+
+    // Normalize additional_charges (e.g. "pembulatan", "biaya parkir", "PB1")
+    rawTaxonomy.additional_charges = Array.isArray(rawTaxonomy.additional_charges)
+      ? rawTaxonomy.additional_charges
+          .map((c: any) => ({
+            label: (c?.label || c?.name || "Biaya Lain").toString(),
+            amount: parseNumericField(c?.amount),
+          }))
+          .filter((c: AdditionalCharge) => c.amount !== null && c.amount !== 0)
+      : [];
 
     return rawTaxonomy as ReceiptScanResult;
   } catch (error: any) {

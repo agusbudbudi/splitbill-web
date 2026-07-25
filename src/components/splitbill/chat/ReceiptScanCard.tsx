@@ -195,6 +195,11 @@ export function ReceiptScanCard({
               - Diskon {formatToIDR(Math.abs(scannedResult.discount))}
             </span>
           ) : null}
+          {scannedResult.additional_charges?.map((charge, idx) => (
+            <span key={idx} className="text-amber-600 font-semibold">
+              + {charge.label} {formatToIDR(charge.amount)}
+            </span>
+          ))}
         </div>
       </div>
     );
@@ -269,7 +274,7 @@ export function ReceiptScanCard({
       scanResult.tax,
       scanResult.service_charge,
       scanResult.discount,
-    ].filter(Boolean).length;
+    ].filter(Boolean).length + (scanResult.additional_charges?.length ?? 0);
     trackChatBill.scanAccepted({
       item_count: scanResult.items?.length ?? 0,
       additional_item_count: additionalCount,
@@ -404,7 +409,7 @@ export function ReceiptScanCard({
                   </div>
                 ))}
               </div>
-              {(scanResult.tax || scanResult.service_charge || scanResult.discount) && (
+              {(scanResult.tax || scanResult.service_charge || scanResult.discount || scanResult.additional_charges?.length) && (
                 <div className="pt-2 border-t border-border space-y-1">
                   {scanResult.tax && (
                     <div className="flex justify-between text-xs text-muted-foreground">
@@ -430,6 +435,14 @@ export function ReceiptScanCard({
                       </span>
                     </div>
                   )}
+                  {scanResult.additional_charges?.map((charge, i) => (
+                    <div key={i} className="flex justify-between text-xs text-muted-foreground">
+                      <span>{charge.label}</span>
+                      <span className="font-bold">
+                        {formatToIDR(charge.amount)}
+                      </span>
+                    </div>
+                  ))}
                 </div>
               )}
             </div>

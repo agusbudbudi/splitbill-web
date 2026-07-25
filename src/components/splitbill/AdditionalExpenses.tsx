@@ -148,7 +148,7 @@ export const AdditionalExpenses = () => {
   if (!expenses.length && !additionalExpenses.length) return null;
 
   return (
-    <Card className="border-primary/20 shadow-md">
+    <Card className="shadow-md">
       <CardContent className="p-4 space-y-4">
         <div className="flex items-center justify-between px-1">
           <label className="text-sm font-bold flex items-center gap-2">

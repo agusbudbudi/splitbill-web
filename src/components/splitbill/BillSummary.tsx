@@ -328,7 +328,7 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
 
     return (
       <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
-        <Card className="border-primary/20 shadow-md overflow-hidden relative">
+        <Card className="shadow-md overflow-hidden relative">
           {!isAuthenticated && !isPublic && !billData && (
             <SecureDraftBanner
               onLoginClick={onLoginClick ?? (() => setShowAuthModal(true))}
@@ -445,7 +445,7 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
         </Card>
 
         {/* Detailed Expenses & Costs Card */}
-        <Card className="p-3 border-primary/20 shadow-md overflow-hidden relative">
+        <Card className="p-3 shadow-md overflow-hidden relative">
           <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 blur-3xl pointer-events-none" />
           <div className="space-y-4 relative z-10">
             {/* Person Breakdown */}
@@ -677,7 +677,7 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
 
         {/* Expenses Detail Card */}
         {((expenses && expenses.length > 0) || (additionalExpenses && additionalExpenses.length > 0)) && (
-          <Card className="p-3 border-primary/20 shadow-md overflow-hidden relative">
+          <Card className="p-3 shadow-md overflow-hidden relative">
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 blur-3xl pointer-events-none" />
             <div className="space-y-4 relative z-10">
               {/* Item Pengeluaran */}

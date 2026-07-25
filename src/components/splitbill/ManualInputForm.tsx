@@ -106,7 +106,7 @@ export const ManualInputForm = () => {
         </div>
       </div>
 
-      <Card className="border-primary/10 shadow-soft">
+      <Card className="shadow-soft">
         <CardContent className="p-4 space-y-5">
           <div className="space-y-3">
             <div className="flex items-center justify-between px-1">

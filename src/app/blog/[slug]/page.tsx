@@ -24,12 +24,12 @@ export async function generateMetadata(
       description: blog.metaDescription || blog.excerpt,
       keywords: blog.tags,
       alternates: {
-        canonical: blog.canonicalUrl || `https://splitbill.my.id/blog/${blog.slug}`,
+        canonical: blog.canonicalUrl || `https://www.splitbill.my.id/blog/${blog.slug}`,
       },
       openGraph: {
         title: blog.title,
         description: blog.excerpt,
-        url: `https://splitbill.my.id/blog/${blog.slug}`,
+        url: `https://www.splitbill.my.id/blog/${blog.slug}`,
         siteName: "Split Bill App",
         locale: "id_ID",
         type: "article",
@@ -78,14 +78,14 @@ export default async function BlogDetailPage({ params }: Props) {
       "@context": "https://schema.org",
       "@type": "BlogPosting",
       headline: blog.title,
-      image: blog.thumbnail || "https://splitbill.my.id/img/pwa-banner.png",
+      image: blog.thumbnail || "https://www.splitbill.my.id/img/pwa-banner.png",
       datePublished: blog.publishedAt || blog.createdAt,
       dateModified: blog.updatedAt || blog.publishedAt || blog.createdAt,
       author: [
         {
           "@type": "Person",
           name: blog.author || "Tim SplitBill",
-          url: "https://splitbill.my.id",
+          url: "https://www.splitbill.my.id",
         },
       ],
       publisher: {
@@ -93,13 +93,13 @@ export default async function BlogDetailPage({ params }: Props) {
         name: "SplitBill Online",
         logo: {
           "@type": "ImageObject",
-          url: "https://splitbill.my.id/img/footer-icon.png",
+          url: "https://www.splitbill.my.id/img/footer-icon.png",
         },
       },
       description: blog.excerpt,
       mainEntityOfPage: {
         "@type": "WebPage",
-        "@id": `https://splitbill.my.id/blog/${blog.slug}`,
+        "@id": `https://www.splitbill.my.id/blog/${blog.slug}`,
       },
     };
 

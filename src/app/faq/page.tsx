@@ -15,13 +15,13 @@ export const metadata: Metadata = {
     "split bill itu apa",
   ],
   alternates: {
-    canonical: "https://splitbill.my.id/faq",
+    canonical: "https://www.splitbill.my.id/faq",
   },
   openGraph: {
     title: "FAQ & Bantuan Split Bill — SplitBill.my.id",
     description:
       "Temukan jawaban atas pertanyaan seputar cara split bill, scan struk dengan AI, dan fitur patungan online lainnya.",
-    url: "https://splitbill.my.id/faq",
+    url: "https://www.splitbill.my.id/faq",
     siteName: "Split Bill App",
     locale: "id_ID",
     type: "website",
@@ -52,13 +52,13 @@ export default function FAQPage() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://splitbill.my.id",
+        item: "https://www.splitbill.my.id",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "FAQ",
-        item: "https://splitbill.my.id/faq",
+        item: "https://www.splitbill.my.id/faq",
       },
     ],
   };

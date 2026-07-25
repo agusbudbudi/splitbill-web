@@ -26,7 +26,7 @@ export default function BlogDetailClient({
   blog,
   recentBlogs = [],
 }: BlogDetailClientProps) {
-  const shareUrl = `https://splitbill.my.id/blog/${blog.slug}`;
+  const shareUrl = `https://www.splitbill.my.id/blog/${blog.slug}`;
 
   const handleShare = () => {
     if (navigator.share) {

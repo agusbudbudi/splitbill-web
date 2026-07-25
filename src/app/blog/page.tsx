@@ -15,13 +15,13 @@ export const metadata: Metadata = {
     "tips hemat nongkrong",
   ],
   alternates: {
-    canonical: "https://splitbill.my.id/blog",
+    canonical: "https://www.splitbill.my.id/blog",
   },
   openGraph: {
     title: "Blog & Tips Split Bill — SplitBill.my.id",
     description:
       "Tips cerdas bagi tagihan dan update fitur terbaru SplitBill untuk pengalaman patungan yang lebih mudah.",
-    url: "https://splitbill.my.id/blog",
+    url: "https://www.splitbill.my.id/blog",
     siteName: "Split Bill App",
     images: [
       {
@@ -48,13 +48,13 @@ export default function BlogPage() {
     "@type": "Blog",
     "name": "Blog SplitBill Online",
     "description": "Tips cerdas pengelolaan keuangan dan panduan bagi tagihan adil.",
-    "url": "https://splitbill.my.id/blog",
+    "url": "https://www.splitbill.my.id/blog",
     "publisher": {
       "@type": "Organization",
       "name": "SplitBill",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://splitbill.my.id/img/footer-icon.png"
+        "url": "https://www.splitbill.my.id/img/footer-icon.png"
       }
     }
   };

@@ -146,7 +146,7 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
         const fileName = `SplitBill-${activityName?.replace(/\s+/g, "-") || "Summary"}-${new Date().getTime()}.png`;
         const currentUrl =
           typeof window !== "undefined" ? window.location.href.split("?")[0] : "";
-        const origin = typeof window !== "undefined" ? window.location.origin : "https://splitbill.my.id";
+        const origin = typeof window !== "undefined" ? window.location.origin : "https://www.splitbill.my.id";
         const shareUrl = billData?.id ? `${origin}/history/split-bill/${billData.id}` : currentUrl;
 
         const instructionsText = settlementInstructions.length > 0
@@ -216,7 +216,7 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
     const handleShareText = async () => {
       const currentUrl =
         typeof window !== "undefined" ? window.location.href.split("?")[0] : "";
-      const origin = typeof window !== "undefined" ? window.location.origin : "https://splitbill.my.id";
+      const origin = typeof window !== "undefined" ? window.location.origin : "https://www.splitbill.my.id";
       const shareUrl = billData?.id ? `${origin}/history/split-bill/${billData.id}` : currentUrl;
 
       const instructionsText = settlementInstructions.length > 0

@@ -23,7 +23,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://splitbill.my.id"),
+  metadataBase: new URL("https://www.splitbill.my.id"),
   title: "Split Bill Online - Aplikasi Bagi Tagihan & Patungan Gratis",
   description:
     "Split bill online gratis! Scan struk, hitung pajak otomatis, dan bagi tagihan praktis bareng teman. Aplikasi patungan terbaik yang 100% free, cepat & akurat.",
@@ -61,7 +61,7 @@ export const metadata: Metadata = {
     title: "Split Bill App - Bagi Tagihan Lebih Mudah",
     description:
       "Split bill online gratis! Scan struk, hitung pajak otomatis, dan bagi tagihan praktis bareng teman. 100% free!",
-    url: "https://splitbill.my.id",
+    url: "https://www.splitbill.my.id",
     siteName: "Split Bill Online",
     images: [
       {
@@ -95,7 +95,7 @@ export const metadata: Metadata = {
     apple: "/img/footer-icon.png",
   },
   alternates: {
-    canonical: "https://splitbill.my.id",
+    canonical: "https://www.splitbill.my.id",
   },
 };
 

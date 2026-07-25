@@ -13,12 +13,12 @@ export const metadata: Metadata = {
     "budgeting kelompok",
   ],
   alternates: {
-    canonical: "https://splitbill.my.id/shared-goals",
+    canonical: "https://www.splitbill.my.id/shared-goals",
   },
   openGraph: {
     title: "Shared Goals - Patungan & Nabung Bareng Teman | SplitBill.my.id",
     description: "Wujudkan impian bareng teman! Nabung bareng untuk liburan, kado, atau goals lainnya dengan transparan.",
-    url: "https://splitbill.my.id/shared-goals",
+    url: "https://www.splitbill.my.id/shared-goals",
     siteName: "Split Bill App",
     images: [
       {
@@ -43,13 +43,13 @@ export default function SharedGoalsPage() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://splitbill.my.id",
+        item: "https://www.splitbill.my.id",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Shared Goals",
-        item: "https://splitbill.my.id/shared-goals",
+        item: "https://www.splitbill.my.id/shared-goals",
       },
     ],
   };

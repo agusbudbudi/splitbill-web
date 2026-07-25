@@ -25,13 +25,13 @@ export const metadata: Metadata = {
     "split bill dengan AI",
   ],
   alternates: {
-    canonical: "https://splitbill.my.id/split-bill",
+    canonical: "https://www.splitbill.my.id/split-bill",
   },
   openGraph: {
     title: "Split Bill Online — Bagi Tagihan Otomatis dengan AI Scan",
     description:
       "Mulai split bill online gratis! Scan struk, input pengeluaran, dan dapatkan rincian pembayaran otomatis. Cepat & 100% free.",
-    url: "https://splitbill.my.id/split-bill",
+    url: "https://www.splitbill.my.id/split-bill",
     siteName: "Split Bill App",
     images: [
       {
@@ -56,13 +56,13 @@ export default function SplitBillPage() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://splitbill.my.id",
+        item: "https://www.splitbill.my.id",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Split Bill",
-        item: "https://splitbill.my.id/split-bill",
+        item: "https://www.splitbill.my.id/split-bill",
       },
     ],
   };

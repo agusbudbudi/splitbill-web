@@ -1333,7 +1333,7 @@ const SplitBillContent = () => {
               isSaved ? (
                 <Button
                   onClick={() => {
-                    const origin = typeof window !== "undefined" ? window.location.origin : "https://splitbill.my.id";
+                    const origin = typeof window !== "undefined" ? window.location.origin : "https://www.splitbill.my.id";
                     const shareUrl = lastSavedId ? `${origin}/history/split-bill/${lastSavedId}` : window.location.href.split("?")[0];
                     const instructionsText = calculationResult.settlementInstructions.length > 0
                       ? "\n\nRincian Transfer:\n" + calculationResult.settlementInstructions.map(inst => `• ${inst.from} ➡️ ${inst.to}: ${formatCurrency(inst.amount)}`).join("\n")

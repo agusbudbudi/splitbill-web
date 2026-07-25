@@ -28,7 +28,7 @@ const routeConfigs: RouteConfig[] = [
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = "https://splitbill.my.id";
+  const baseUrl = "https://www.splitbill.my.id";
   const now = new Date();
   const todayStr = now.toISOString().split("T")[0];
 

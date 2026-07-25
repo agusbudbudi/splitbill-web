@@ -2,17 +2,12 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  ArrowRight,
-  RotateCcw,
-  TrendingUp,
-  TrendingDown,
-  Minus,
-} from "lucide-react";
+import { ArrowRight, RotateCcw, Users } from "lucide-react";
 import { useSplitBillChatStore } from "@/store/useSplitBillChatStore";
 import { useSplitBillStore } from "@/store/useSplitBillStore";
 import { useBillCalculations } from "@/hooks/useBillCalculations";
-import { formatToIDR, cn } from "@/lib/utils";
+import { formatToIDR, cn, getFriendAvatarUrl } from "@/lib/utils";
+import { Card } from "@/components/ui/Card";
 import { useAuthStore } from "@/lib/stores/authStore";
 import { AuthModal } from "@/components/auth/AuthModal";
 import { useSaveChatBill } from "@/hooks/useSaveChatBill";
@@ -87,28 +82,52 @@ export function SummaryCard() {
   };
 
   return (
-    <div className="rounded-2xl border border-primary/20 bg-white overflow-hidden shadow-sm">
-      {/* Header */}
-      <div className="px-4 py-3 bg-gradient-to-r from-primary/10 to-violet-500/10 border-b border-primary/15">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-xs font-bold text-primary uppercase tracking-wide">
+    <Card className="overflow-hidden relative shadow-none rounded-2xl">
+      {/* Decorative background element */}
+      <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 blur-3xl pointer-events-none" />
+
+      <div className="p-4 space-y-4 relative z-10">
+        {/* Header */}
+        <div className="flex items-start justify-between gap-3">
+          <div className="space-y-0.5 flex-1 min-w-0">
+            <p className="text-[10px] font-black text-primary uppercase tracking-wide">
               Ringkasan Pembayaran
             </p>
-            {activityName && (
-              <p className="text-[10px] text-muted-foreground mt-0.5">
-                {activityName}
-              </p>
-            )}
+            <h2 className="text-base font-black text-foreground truncate">
+              {activityName || "Aktivitas Tanpa Nama"}
+            </h2>
           </div>
-          <p className="text-base font-black text-primary">
-            {formatToIDR(totalSpent)}
-          </p>
+          <img
+            src="/img/icon-splitbill.png"
+            alt="Split Bill"
+            className="w-8 h-8 object-contain shrink-0"
+          />
         </div>
-      </div>
 
-      {/* Settlement instructions */}
-      <div className="p-4 space-y-3">
+        {/* Consolidated Stats Display */}
+        <div className="flex flex-row items-center justify-between border-t border-primary/10 pt-3">
+          <div className="flex flex-col gap-1">
+            <p className="text-[10px] uppercase font-black text-primary/60 tracking-wider">
+              Total Tagihan
+            </p>
+            <p className="text-2xl font-black text-primary tracking-tighter">
+              {formatToIDR(totalSpent)}
+            </p>
+          </div>
+          <div className="flex flex-col items-end gap-1">
+            <p className="text-[10px] uppercase font-black text-muted-foreground tracking-wider">
+              Total Orang
+            </p>
+            <div className="flex items-center gap-2">
+              <Users className="w-4 h-4 text-primary" />
+              <span className="text-xl font-black text-foreground tracking-tight">
+                {participants.length}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Settlement Instructions */}
         {settlementInstructions.length === 0 ? (
           <div className="text-center py-4">
             <p className="text-2xl mb-1">🎉</p>
@@ -120,100 +139,128 @@ export function SummaryCard() {
             </p>
           </div>
         ) : (
-          <>
-            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-wider">
-              Transfer yang Perlu Dilakukan
-            </p>
-            <div className="space-y-2">
+          <div className="p-3 bg-primary rounded-sm space-y-3">
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 bg-white/20 rounded-full flex items-center justify-center">
+                <ArrowRight className="w-4 h-4 text-white" />
+              </div>
+              <p className="text-sm font-black text-white tracking-tight">
+                Instruksi Transfer
+              </p>
+            </div>
+            <div className="grid gap-2">
               {settlementInstructions.map((instr, i) => (
                 <div
                   key={i}
-                  className="flex items-center justify-between p-3 rounded-sm bg-gradient-to-r from-primary/5 to-violet-500/5 border border-primary/10"
+                  className="flex items-center justify-between p-3 bg-white border border-primary/10 rounded-sm"
                 >
-                  <div className="flex items-center gap-2 flex-1 min-w-0">
-                    <div className="w-7 h-7 rounded-full bg-rose-100 flex items-center justify-center shrink-0">
-                      <TrendingDown className="w-3.5 h-3.5 text-rose-500" />
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-xs font-black text-foreground truncate">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <img
+                      src={getFriendAvatarUrl(instr.from, 48)}
+                      className="w-7 h-7 rounded-full bg-white border border-primary/20 shrink-0"
+                      alt={instr.from}
+                    />
+                    <p className="text-xs font-medium text-muted-foreground truncate">
+                      <span className="text-destructive font-bold">
                         {instr.from}
-                      </p>
-                      <p className="text-[10px] text-muted-foreground">
-                        Transfer ke{" "}
-                        <span className="font-bold text-foreground">
-                          {instr.to}
-                        </span>
-                      </p>
-                    </div>
+                      </span>{" "}
+                      Transfer ke{" "}
+                      <span className="text-emerald-600 font-bold">
+                        {instr.to}
+                      </span>
+                    </p>
                   </div>
-                  <p className="text-sm font-black text-primary shrink-0 ml-2">
+                  <span className="text-sm font-black text-primary shrink-0 ml-2">
                     {formatToIDR(instr.amount)}
-                  </p>
+                  </span>
                 </div>
               ))}
             </div>
-          </>
+          </div>
         )}
 
         {/* Per-person balance mini summary */}
-        <div className="pt-2 border-t border-border/60">
+        <div>
           <p className="text-[10px] font-black text-muted-foreground uppercase tracking-wider mb-2">
             Ringkasan Per Orang
           </p>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid gap-2">
             {participants.map((person) => {
               const b = balances[person];
               if (!b) return null;
-              const net = b.paid - b.spent;
+              const diff = b.spent - b.paid;
+              const isOwed = diff < 0;
               const badge = badges[person]?.[0];
               return (
                 <div
                   key={person}
-                  className={cn(
-                    "rounded-sm p-2.5 border",
-                    net > 0.01
-                      ? "border-emerald-100 bg-emerald-50/50"
-                      : net < -0.01
-                        ? "border-rose-100 bg-rose-50/50"
-                        : "border-border bg-muted/20"
-                  )}
+                  className="overflow-hidden rounded-sm border border-primary/10 bg-muted/5"
                 >
-                  <div className="flex items-center gap-1.5 mb-1">
-                    {net > 0.01 ? (
-                      <TrendingUp className="w-3 h-3 text-emerald-500 shrink-0" />
-                    ) : net < -0.01 ? (
-                      <TrendingDown className="w-3 h-3 text-rose-400 shrink-0" />
-                    ) : (
-                      <Minus className="w-3 h-3 text-muted-foreground shrink-0" />
-                    )}
-                    <p className="text-[11px] font-bold text-foreground truncate">
-                      {person}
-                    </p>
-                  </div>
                   {badge && (
-                    <p className="text-[9px] text-primary font-bold bg-primary/10 px-1.5 py-0.5 rounded-full inline-block mb-1">
+                    <div className="w-fit rounded-br-sm px-2 py-0.5 text-[8px] font-black bg-primary/10 text-primary">
                       {badge}
-                    </p>
+                    </div>
                   )}
-                  <p
-                    className={cn(
-                      "text-xs font-black",
-                      net > 0.01
-                        ? "text-emerald-600"
-                        : net < -0.01
-                          ? "text-rose-500"
-                          : "text-muted-foreground"
-                    )}
-                  >
-                    {net > 0.01
-                      ? `+${formatToIDR(net)}`
-                      : net < -0.01
-                        ? `-${formatToIDR(Math.abs(net))}`
-                        : "Imbang"}
-                  </p>
-                  <p className="text-[9px] text-muted-foreground">
-                    Sudah Bayar {formatToIDR(b.paid)} · Porsi {formatToIDR(b.spent)}
-                  </p>
+                  <div className="px-3 py-2 flex items-center justify-between">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <img
+                        src={getFriendAvatarUrl(person, 48)}
+                        className="w-6 h-6 rounded-full border border-primary/10 shrink-0"
+                        alt={person}
+                      />
+                      <p className="text-xs font-bold text-foreground truncate">
+                        {person}
+                      </p>
+                    </div>
+                    <div className="text-right shrink-0 ml-2">
+                      <div
+                        className={cn(
+                          "text-[8px] font-black tracking-tight px-2 py-0.5 rounded-full inline-block whitespace-nowrap",
+                          diff === 0
+                            ? "bg-muted text-muted-foreground"
+                            : isOwed
+                              ? "bg-emerald-500/10 text-emerald-600"
+                              : "bg-destructive/10 text-destructive",
+                        )}
+                      >
+                        {diff === 0
+                          ? "Lunas"
+                          : isOwed
+                            ? "Akan Menerima"
+                            : "Harus Bayar"}
+                      </div>
+                      <p
+                        className={cn(
+                          "text-xs font-black mt-0.5",
+                          diff === 0
+                            ? "text-muted-foreground"
+                            : isOwed
+                              ? "text-emerald-600"
+                              : "text-destructive",
+                        )}
+                      >
+                        {formatToIDR(Math.abs(diff))}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 divide-x divide-primary/5 border-t border-primary/5 bg-white/40">
+                    <div className="px-3 py-1.5">
+                      <p className="text-[9px] text-muted-foreground font-bold uppercase">
+                        Sudah Dibayar
+                      </p>
+                      <p className="text-xs font-bold text-foreground">
+                        {formatToIDR(b.paid)}
+                      </p>
+                    </div>
+                    <div className="px-3 py-1.5 text-right">
+                      <p className="text-[9px] text-muted-foreground font-bold uppercase">
+                        Tagihan Kamu
+                      </p>
+                      <p className="text-xs font-bold text-primary">
+                        {formatToIDR(b.spent)}
+                      </p>
+                    </div>
+                  </div>
                 </div>
               );
             })}
@@ -222,7 +269,7 @@ export function SummaryCard() {
       </div>
 
       {/* CTAs */}
-      <div className="px-4 pb-4 space-y-2">
+      <div className="px-4 pb-4 space-y-2 relative z-10">
         <button
           onClick={handleGoToSummary}
           className="w-full h-11 rounded-sm bg-primary text-white font-bold text-sm flex items-center justify-center gap-2 hover:bg-primary/90 active:scale-[0.98] transition-all shadow-lg shadow-primary/20 cursor-pointer"
@@ -252,6 +299,6 @@ export function SummaryCard() {
         ad={currentAd}
         onClose={handleAdClose}
       />
-    </div>
+    </Card>
   );
 }

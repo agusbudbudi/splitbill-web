@@ -27,9 +27,9 @@ export const AgentBillyEntryCard = () => {
     return (
         <button
             onClick={handleOpen}
-            className="relative px-[1.5px] pt-[1.5px] pb-[4px] rounded-2xl bg-gradient-to-r from-violet-400 via-pink-400 to-primary/70 shadow-lg shadow-pink-500/5 transition-all duration-300 overflow-hidden cursor-pointer h-full w-full group hover:scale-[1.01] active:scale-[0.99] focus:outline-hidden"
+            className="relative px-[1.5px] pt-[1.5px] pb-[4px] rounded-[10px] bg-gradient-to-r from-violet-400 via-pink-400 to-primary/70 shadow-lg shadow-pink-500/5 transition-all duration-300 overflow-hidden cursor-pointer h-full w-full group hover:scale-[1.01] active:scale-[0.99] focus:outline-hidden"
         >
-            <div className="flex items-center gap-3 w-full h-full px-4 py-3 bg-card rounded-[15px]">
+            <div className="flex items-center gap-3 w-full h-full px-4 py-3 bg-card rounded-[9px]">
                 {/* Avatar */}
                 <div className="w-11 h-11 rounded-full overflow-hidden shrink-0">
                     <Image

@@ -88,10 +88,10 @@ export function ChatMessage({
       return (
         <div className="flex items-end gap-2 max-w-[88%]">
           {/* Agent avatar */}
-          <div className="w-7 h-7 rounded-full overflow-hidden flex items-center justify-center shrink-0 shadow-sm bg-slate-100">
+          <div className="w-6 h-6 rounded-full overflow-hidden flex items-center justify-center shrink-0 bg-slate-100">
             <img src="/img/agent-billy.png" alt="Agent Billy" className="w-full h-full object-cover" />
           </div>
-          <div className="bg-white border border-slate-100 shadow-sm rounded-2xl rounded-bl-sm overflow-hidden max-w-full">
+          <div className="bg-slate-100 rounded-2xl rounded-bl-xs overflow-hidden max-w-full">
             {message.imageUrl && (
               <div className="w-full p-2 pb-0">
                 <img src={message.imageUrl} alt="Banner" className="w-full h-auto object-cover rounded-sm" />
@@ -113,7 +113,7 @@ export function ChatMessage({
     // User bubble
     return (
       <div className="flex justify-end">
-        <div className="bg-primary text-white rounded-2xl rounded-br-sm px-4 py-2.5 max-w-[80%] shadow-md shadow-primary/15">
+        <div className="bg-primary text-white rounded-2xl rounded-br-xs px-4 py-2.5 max-w-[80%]">
           <p className="text-sm leading-relaxed">{message.content}</p>
         </div>
       </div>
@@ -125,14 +125,14 @@ export function ChatMessage({
     return (
       <div className="flex items-start gap-2 w-full">
         {/* Agent avatar */}
-        <div className="w-7 h-7 rounded-full overflow-hidden flex items-center justify-center shrink-0 shadow-sm mt-0.5 bg-slate-100">
+        <div className="w-6 h-6 rounded-full overflow-hidden flex items-center justify-center shrink-0 mt-0.5 bg-slate-100">
           <img src="/img/agent-billy.png" alt="Agent Billy" className="w-full h-full object-cover" />
         </div>
 
         <div className="flex-1 space-y-2">
           {/* Optional text above the card */}
           {message.content && (
-            <div className="bg-white border border-slate-100 shadow-sm rounded-2xl overflow-hidden mr-6">
+            <div className="bg-slate-100 rounded-2xl rounded-tl-xs overflow-hidden mr-6">
               {message.imageUrl && (
                 <div className="w-full p-2 pb-0">
                   <img src={message.imageUrl} alt="Banner" className="w-full h-auto object-cover rounded-sm" />
@@ -228,10 +228,10 @@ export function ChatMessage({
 export function TypingIndicator() {
   return (
     <div className="flex items-center gap-2">
-      <div className="w-7 h-7 rounded-full overflow-hidden flex items-center justify-center shrink-0 shadow-sm bg-slate-100">
+      <div className="w-6 h-6 rounded-full overflow-hidden flex items-center justify-center shrink-0 bg-slate-100">
         <img src="/img/agent-billy.png" alt="Agent Billy" className="w-full h-full object-cover" />
       </div>
-      <div className="bg-white border border-slate-100 shadow-sm rounded-2xl rounded-bl-sm px-4 py-3 flex items-center gap-1">
+      <div className="bg-slate-100 rounded-2xl rounded-bl-sm px-4 py-3 flex items-center gap-1">
         <span className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce" style={{ animationDelay: "0ms" }} />
         <span className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce" style={{ animationDelay: "150ms" }} />
         <span className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce" style={{ animationDelay: "300ms" }} />

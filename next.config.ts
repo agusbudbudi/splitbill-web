@@ -7,6 +7,26 @@ const withPWA = require("@ducanh2912/next-pwa").default({
   disable: process.env.NODE_ENV === "development",
   workboxOptions: {
     disableDevLogs: true,
+    extendDefaultRuntimeCaching: true,
+    runtimeCaching: [
+      {
+        // Manifest must never be served stale/errored from cache — a bad
+        // response (e.g. transient 403) would otherwise get cached and
+        // keep breaking PWA install/update checks indefinitely.
+        urlPattern: /\/manifest\.webmanifest$/i,
+        handler: "NetworkFirst",
+        options: {
+          cacheName: "manifest",
+          cacheableResponse: {
+            statuses: [200],
+          },
+          expiration: {
+            maxEntries: 1,
+            maxAgeSeconds: 3600,
+          },
+        },
+      },
+    ],
   },
 });
 

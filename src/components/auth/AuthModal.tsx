@@ -32,10 +32,12 @@ export function AuthModal({
   const searchParams = useSearchParams();
   const currentRedirect = searchParams.get("redirect") || redirectPath;
 
-  // Build an absolute callback URL for NextAuth Google OAuth
-  const googleCallbackUrl = typeof window !== "undefined"
-    ? `${window.location.origin}${currentRedirect}`
-    : currentRedirect;
+  // Relative path only — NextAuth's default redirect callback prepends
+  // baseUrl itself for any url starting with "/", with no origin check
+  // to fail. An absolute origin+path URL was rejected whenever NextAuth's
+  // computed baseUrl didn't match window.location.origin exactly,
+  // silently bouncing users back to "/" after Google login.
+  const googleCallbackUrl = currentRedirect;
 
   const loginUrl = `/login?redirect=${encodeURIComponent(currentRedirect)}`;
   const registerUrl = `/register?redirect=${encodeURIComponent(currentRedirect)}`;

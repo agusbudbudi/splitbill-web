@@ -27,6 +27,7 @@ import { AuthModal } from "@/components/auth/AuthModal";
 import { AIScanBenefits } from "@/components/ui/AIScanBenefits";
 import { GUEST_LIMIT, getGuestScanQuota, incrementGuestScanCount } from "@/lib/utils/guestQuota";
 import { getDefaultActivityName } from "@/lib/utils";
+import { compressImageFile } from "@/lib/utils/imageCompress";
 import { ReceiptImagePicker } from "@/components/splitbill/ReceiptImagePicker";
 
 export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
@@ -200,14 +201,28 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
     setImageSource(source);
     trackSplitBill.selectImage(source);
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setImage(reader.result as string);
-      setScanResult(null);
-      setError(null);
-      setRetryCount(0);
-    };
-    reader.readAsDataURL(file);
+    // Compress client-side before it ever hits the scan API — camera photos
+    // can be several MB, and a smaller image means faster upload + fewer
+    // vision tokens on every provider. Falls back to the raw file if
+    // compression fails (e.g. unsupported format) so a scan is never blocked.
+    compressImageFile(file)
+      .then((dataUrl) => {
+        setImage(dataUrl);
+        setScanResult(null);
+        setError(null);
+        setRetryCount(0);
+      })
+      .catch((err) => {
+        console.warn("Image compression failed, using original file:", err);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setImage(reader.result as string);
+          setScanResult(null);
+          setError(null);
+          setRetryCount(0);
+        };
+        reader.readAsDataURL(file);
+      });
   }, []);
 
   const handleScan = async () => {
@@ -749,7 +764,7 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
 
       {/* Benefits info */}
       {!scanResult && <AIScanBenefits />}
-      <LoadingModal isOpen={isScanning} />
+      <LoadingModal isOpen={isScanning} image={image} />
 
       {/* Auth modal triggered when guest tries to import scan result */}
       <AuthModal

@@ -169,9 +169,9 @@ export const useSplitBillStore = create<SplitBillState>()(
       addAdditionalExpense: (expense) =>
         set((state) => {
           const nameLower = expense.name.toLowerCase();
-          const isDiscount = nameLower.includes("diskon") || nameLower.includes("discount");
-          const finalAmount = isDiscount ? -Math.abs(expense.amount) : expense.amount;
-          const finalPaidBy = isDiscount ? "merchant" : expense.paidBy;
+          const isNamedDiscount = nameLower.includes("diskon") || nameLower.includes("discount");
+          const finalAmount = isNamedDiscount ? -Math.abs(expense.amount) : expense.amount;
+          const finalPaidBy = finalAmount < 0 ? "merchant" : expense.paidBy;
           return {
             additionalExpenses: [
               ...state.additionalExpenses,
@@ -188,9 +188,9 @@ export const useSplitBillStore = create<SplitBillState>()(
             if (e.id === id) {
               const newFields = { ...e, ...updatedExpense };
               const nameLower = newFields.name.toLowerCase();
-              const isDiscount = nameLower.includes("diskon") || nameLower.includes("discount");
-              const finalAmount = isDiscount ? -Math.abs(newFields.amount) : newFields.amount;
-              const finalPaidBy = isDiscount ? "merchant" : newFields.paidBy;
+              const isNamedDiscount = nameLower.includes("diskon") || nameLower.includes("discount");
+              const finalAmount = isNamedDiscount ? -Math.abs(newFields.amount) : newFields.amount;
+              const finalPaidBy = finalAmount < 0 ? "merchant" : newFields.paidBy;
               return { ...newFields, amount: finalAmount, paidBy: finalPaidBy };
             }
             return e;
@@ -210,11 +210,12 @@ export const useSplitBillStore = create<SplitBillState>()(
         set({
           additionalExpenses: expenses.map((e) => {
             const nameLower = e.name.toLowerCase();
-            const isDiscount = nameLower.includes("diskon") || nameLower.includes("discount");
-            if (isDiscount) {
-              return { ...e, amount: -Math.abs(e.amount), paidBy: "merchant" };
+            const isNamedDiscount = nameLower.includes("diskon") || nameLower.includes("discount");
+            const amount = isNamedDiscount ? -Math.abs(e.amount) : e.amount;
+            if (amount < 0) {
+              return { ...e, amount, paidBy: "merchant" };
             }
-            return e;
+            return { ...e, amount };
           }),
         }),
 

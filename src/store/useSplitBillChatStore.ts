@@ -172,11 +172,12 @@ export const useSplitBillChatStore = create<SplitBillChatState>()(
         set({
           additionalExpenses: expenses.map((e) => {
             const nameLower = e.name.toLowerCase();
-            const isDiscount = nameLower.includes("diskon") || nameLower.includes("discount");
-            if (isDiscount) {
-              return { ...e, amount: -Math.abs(e.amount), paidBy: "merchant" };
+            const isNamedDiscount = nameLower.includes("diskon") || nameLower.includes("discount");
+            const amount = isNamedDiscount ? -Math.abs(e.amount) : e.amount;
+            if (amount < 0) {
+              return { ...e, amount, paidBy: "merchant" };
             }
-            return e;
+            return { ...e, amount };
           }),
         }),
 
@@ -186,9 +187,9 @@ export const useSplitBillChatStore = create<SplitBillChatState>()(
             if (e.id === id) {
               const newFields = { ...e, ...update };
               const nameLower = newFields.name.toLowerCase();
-              const isDiscount = nameLower.includes("diskon") || nameLower.includes("discount");
-              const finalAmount = isDiscount ? -Math.abs(newFields.amount) : newFields.amount;
-              const finalPaidBy = isDiscount ? "merchant" : newFields.paidBy;
+              const isNamedDiscount = nameLower.includes("diskon") || nameLower.includes("discount");
+              const finalAmount = isNamedDiscount ? -Math.abs(newFields.amount) : newFields.amount;
+              const finalPaidBy = finalAmount < 0 ? "merchant" : newFields.paidBy;
               return { ...newFields, amount: finalAmount, paidBy: finalPaidBy };
             }
             return e;

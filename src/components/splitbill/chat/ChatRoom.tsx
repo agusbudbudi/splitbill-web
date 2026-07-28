@@ -212,7 +212,7 @@ export function ChatRoom() {
       const newExpenses = (result.items ?? []).map((item) => ({
         id: uuidv4(),
         item: item.name,
-        amount: item.price * (item.quantity || 1),
+        amount: item.price,
         who: [] as string[],
         paidBy: payerName,
       }));

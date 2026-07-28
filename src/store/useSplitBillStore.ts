@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import type { BackendReceiptImage } from "@/lib/api/split-bills";
 
 export interface Expense {
   id: string;
@@ -41,6 +42,9 @@ interface SplitBillState {
   // Scanned receipt images for interactive preview
   scannedReceiptImages: string[];
 
+  // Receipt images already uploaded & linked to the current draft/record
+  uploadedReceiptImages: BackendReceiptImage[];
+
   // Actions
   setActivityName: (name: string) => void;
   setSelectedPaymentMethodIds: (ids: string[]) => void;
@@ -76,6 +80,8 @@ interface SplitBillState {
   clearPendingCapturedImage: () => void;
   addScannedReceiptImage: (image: string) => void;
   clearScannedReceiptImages: () => void;
+  addUploadedReceiptImages: (images: BackendReceiptImage[]) => void;
+  clearUploadedReceiptImages: () => void;
 }
 
 export const useSplitBillStore = create<SplitBillState>()(
@@ -93,6 +99,7 @@ export const useSplitBillStore = create<SplitBillState>()(
       sourceReceiptId: undefined,
       pendingCapturedImage: undefined,
       scannedReceiptImages: [],
+      uploadedReceiptImages: [],
 
       setActivityName: (activityName) => set({ activityName }),
       setSelectedPaymentMethodIds: (ids) =>
@@ -169,9 +176,9 @@ export const useSplitBillStore = create<SplitBillState>()(
       addAdditionalExpense: (expense) =>
         set((state) => {
           const nameLower = expense.name.toLowerCase();
-          const isDiscount = nameLower.includes("diskon") || nameLower.includes("discount");
-          const finalAmount = isDiscount ? -Math.abs(expense.amount) : expense.amount;
-          const finalPaidBy = isDiscount ? "merchant" : expense.paidBy;
+          const isNamedDiscount = nameLower.includes("diskon") || nameLower.includes("discount");
+          const finalAmount = isNamedDiscount ? -Math.abs(expense.amount) : expense.amount;
+          const finalPaidBy = finalAmount < 0 ? "merchant" : expense.paidBy;
           return {
             additionalExpenses: [
               ...state.additionalExpenses,
@@ -188,9 +195,9 @@ export const useSplitBillStore = create<SplitBillState>()(
             if (e.id === id) {
               const newFields = { ...e, ...updatedExpense };
               const nameLower = newFields.name.toLowerCase();
-              const isDiscount = nameLower.includes("diskon") || nameLower.includes("discount");
-              const finalAmount = isDiscount ? -Math.abs(newFields.amount) : newFields.amount;
-              const finalPaidBy = isDiscount ? "merchant" : newFields.paidBy;
+              const isNamedDiscount = nameLower.includes("diskon") || nameLower.includes("discount");
+              const finalAmount = isNamedDiscount ? -Math.abs(newFields.amount) : newFields.amount;
+              const finalPaidBy = finalAmount < 0 ? "merchant" : newFields.paidBy;
               return { ...newFields, amount: finalAmount, paidBy: finalPaidBy };
             }
             return e;
@@ -210,11 +217,12 @@ export const useSplitBillStore = create<SplitBillState>()(
         set({
           additionalExpenses: expenses.map((e) => {
             const nameLower = e.name.toLowerCase();
-            const isDiscount = nameLower.includes("diskon") || nameLower.includes("discount");
-            if (isDiscount) {
-              return { ...e, amount: -Math.abs(e.amount), paidBy: "merchant" };
+            const isNamedDiscount = nameLower.includes("diskon") || nameLower.includes("discount");
+            const amount = isNamedDiscount ? -Math.abs(e.amount) : e.amount;
+            if (amount < 0) {
+              return { ...e, amount, paidBy: "merchant" };
             }
-            return e;
+            return { ...e, amount };
           }),
         }),
 
@@ -268,6 +276,7 @@ export const useSplitBillStore = create<SplitBillState>()(
           sourceReceiptId: undefined,
           pendingCapturedImage: undefined,
           scannedReceiptImages: [],
+          uploadedReceiptImages: [],
         }),
 
       setPendingCapturedImage: (image) =>
@@ -283,6 +292,14 @@ export const useSplitBillStore = create<SplitBillState>()(
 
       clearScannedReceiptImages: () =>
         set({ scannedReceiptImages: [] }),
+
+      addUploadedReceiptImages: (images) =>
+        set((state) => ({
+          uploadedReceiptImages: [...state.uploadedReceiptImages, ...images],
+        })),
+
+      clearUploadedReceiptImages: () =>
+        set({ uploadedReceiptImages: [] }),
     }),
     {
       name: "split-bill-storage",

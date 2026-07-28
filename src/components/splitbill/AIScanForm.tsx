@@ -134,7 +134,7 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
       result.items.forEach((item: ReceiptItem) => {
         addExpense({
           item: item.name,
-          amount: item.price * (item.quantity || 1),
+          amount: item.price,
           who: [],
           paidBy: "",
         });
@@ -318,7 +318,7 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
       scanResult.items.forEach((item: ReceiptItem) => {
         addExpense({
           item: item.name,
-          amount: item.price * (item.quantity || 1),
+          amount: item.price,
           who: [],
           paidBy: "",
         });
@@ -635,7 +635,7 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
                           </span>
                         </div>
                         <span className="font-black text-foreground shrink-0">
-                          {formatCurrency(item.price * item.quantity)}
+                          {formatCurrency(item.price)}
                         </span>
                       </div>
                     ))}

@@ -404,7 +404,7 @@ export function ReceiptScanCard({
                       </span>
                     </span>
                     <span className="font-bold shrink-0">
-                      {formatToIDR(item.price * (item.quantity || 1))}
+                      {formatToIDR(item.price)}
                     </span>
                   </div>
                 ))}

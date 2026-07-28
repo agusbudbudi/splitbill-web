@@ -37,6 +37,8 @@ import { trackSplitBill, trackWallet } from "@/lib/gtag";
 import { useAuthStore } from "@/lib/stores/authStore";
 import { AuthModal } from "@/components/auth/AuthModal";
 import { SecureDraftBanner } from "./SecureDraftBanner";
+import { UploadedStrukSection } from "./UploadedStrukSection";
+import { BackendReceiptImage } from "@/lib/api/split-bills";
 
 export interface BillSummaryHandle {
   triggerShare: () => void;
@@ -51,6 +53,7 @@ interface BillSummaryProps {
     date: string;
     selectedPaymentMethodIds?: string[];
     paymentMethodSnapshots?: any[];
+    receiptImages?: BackendReceiptImage[];
   };
   showDownload?: boolean;
   isPublic?: boolean;
@@ -96,6 +99,9 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
       ? billData.additionalExpenses
       : store.additionalExpenses;
     const activityName = billData ? billData.activityName : store.activityName;
+    const receiptImages = billData
+      ? billData.receiptImages || []
+      : store.uploadedReceiptImages;
     const selectedPaymentMethodIds = billData
       ? billData.selectedPaymentMethodIds || []
       : store.selectedPaymentMethodIds;
@@ -758,6 +764,16 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
                   </div>
                 </div>
               )}
+            </div>
+          </Card>
+        )}
+
+        {/* Uploaded Struk Card */}
+        {receiptImages.length > 0 && (
+          <Card className="p-3 shadow-md overflow-hidden relative">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 blur-3xl pointer-events-none" />
+            <div className="relative z-10">
+              <UploadedStrukSection images={receiptImages} />
             </div>
           </Card>
         )}

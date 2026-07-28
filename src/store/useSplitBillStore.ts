@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import type { BackendReceiptImage } from "@/lib/api/split-bills";
 
 export interface Expense {
   id: string;
@@ -41,6 +42,9 @@ interface SplitBillState {
   // Scanned receipt images for interactive preview
   scannedReceiptImages: string[];
 
+  // Receipt images already uploaded & linked to the current draft/record
+  uploadedReceiptImages: BackendReceiptImage[];
+
   // Actions
   setActivityName: (name: string) => void;
   setSelectedPaymentMethodIds: (ids: string[]) => void;
@@ -76,6 +80,8 @@ interface SplitBillState {
   clearPendingCapturedImage: () => void;
   addScannedReceiptImage: (image: string) => void;
   clearScannedReceiptImages: () => void;
+  addUploadedReceiptImages: (images: BackendReceiptImage[]) => void;
+  clearUploadedReceiptImages: () => void;
 }
 
 export const useSplitBillStore = create<SplitBillState>()(
@@ -93,6 +99,7 @@ export const useSplitBillStore = create<SplitBillState>()(
       sourceReceiptId: undefined,
       pendingCapturedImage: undefined,
       scannedReceiptImages: [],
+      uploadedReceiptImages: [],
 
       setActivityName: (activityName) => set({ activityName }),
       setSelectedPaymentMethodIds: (ids) =>
@@ -269,6 +276,7 @@ export const useSplitBillStore = create<SplitBillState>()(
           sourceReceiptId: undefined,
           pendingCapturedImage: undefined,
           scannedReceiptImages: [],
+          uploadedReceiptImages: [],
         }),
 
       setPendingCapturedImage: (image) =>
@@ -284,6 +292,14 @@ export const useSplitBillStore = create<SplitBillState>()(
 
       clearScannedReceiptImages: () =>
         set({ scannedReceiptImages: [] }),
+
+      addUploadedReceiptImages: (images) =>
+        set((state) => ({
+          uploadedReceiptImages: [...state.uploadedReceiptImages, ...images],
+        })),
+
+      clearUploadedReceiptImages: () =>
+        set({ uploadedReceiptImages: [] }),
     }),
     {
       name: "split-bill-storage",

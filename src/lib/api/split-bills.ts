@@ -66,6 +66,7 @@ export interface BackendSplitBillRecord {
   summary: BackendSummary;
   status: "locked" | "editable";
   last_step?: "STEP_1" | "STEP_2" | "STEP_3" | "FINALIZED" | null;
+  receiptImages?: BackendReceiptImage[];
   createdAt: string;
   updatedAt: string;
 }
@@ -84,6 +85,7 @@ export interface BackendDraft {
   paymentMethodIds: string[];
   paymentMethodSnapshots: any[];
   summary: BackendSummary | null;
+  receiptImages?: BackendReceiptImage[];
   createdAt: string;
   updatedAt: string;
 }
@@ -190,6 +192,7 @@ export const mapBackendToFrontend = (record: BackendSplitBillRecord) => {
       additionalExpenses: [],
       selectedPaymentMethodIds: [],
       paymentMethodSnapshots: [],
+      receiptImages: [],
     };
   }
   return {
@@ -232,6 +235,7 @@ export const mapBackendToFrontend = (record: BackendSplitBillRecord) => {
           phoneNumber: s?.phoneNumber || "",
         }))
       : [],
+    receiptImages: Array.isArray(record.receiptImages) ? record.receiptImages : [],
   };
 };
 
@@ -304,6 +308,48 @@ export interface FinalizeDraftResponse {
   success: boolean;
   record: BackendSplitBillRecord;
 }
+
+// ─── Receipt Image API ────────────────────────────────────────────────────────
+
+export interface ReceiptImagePayload {
+  mime_type: string;
+  base64Image: string;
+}
+
+export interface BackendReceiptImage {
+  id: string;
+  url: string;
+  mimeType: string;
+  size: number;
+  width: number | null;
+  height: number | null;
+  uploadedAt: string;
+}
+
+export interface UploadReceiptImagesResponse {
+  success: boolean;
+  images: BackendReceiptImage[];
+}
+
+/** Converts "data:image/jpeg;base64,...." strings into upload payloads. Silently
+ * skips anything that isn't a well-formed base64 data URL. */
+export const parseDataUrlImages = (dataUrls: string[]): ReceiptImagePayload[] =>
+  dataUrls.reduce<ReceiptImagePayload[]>((acc, dataUrl) => {
+    const match = dataUrl.match(/^data:(.+);base64,(.+)$/);
+    if (match) {
+      acc.push({ mime_type: match[1], base64Image: match[2] });
+    }
+    return acc;
+  }, []);
+
+export const receiptImageApi = {
+  /** Uploads one or more receipt photos and links them to the split bill record (draft or finalized). */
+  upload: (recordId: string, images: ReceiptImagePayload[]) =>
+    apiClient.request<UploadReceiptImagesResponse>(`/api/split-bills/${recordId}/images`, {
+      method: "POST",
+      body: JSON.stringify({ images }),
+    }),
+};
 
 export const draftApi = {
   /** Create a new draft (Step 1). Auth is optional — sends token if available. */

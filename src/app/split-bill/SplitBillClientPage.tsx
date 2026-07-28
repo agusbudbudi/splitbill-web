@@ -23,7 +23,7 @@ import { useWalletStore, type PaymentMethod } from "@/store/useWalletStore";
 import { useBillCalculations } from "@/hooks/useBillCalculations";
 import { WalletSelectionCard } from "@/components/wallet/WalletSelectionCard";
 import { AddPaymentMethodBottomSheet } from "@/components/wallet/AddPaymentMethodBottomSheet";
-import { draftApi, splitBillApi, mapFrontendToBackend } from "@/lib/api/split-bills";
+import { draftApi, splitBillApi, mapFrontendToBackend, receiptImageApi, parseDataUrlImages } from "@/lib/api/split-bills";
 import {
   Users,
   ReceiptText,
@@ -360,6 +360,26 @@ const SplitBillContent = () => {
             additionalExpenses: backendAdditionalExpenses,
             participants: backendParticipants,
           });
+
+          // Upload any receipt photos scanned so far, tied to this draft.
+          // Non-blocking: image storage is supplementary, so a failure here
+          // must never stop the user from advancing to Step 3.
+          const { scannedReceiptImages, clearScannedReceiptImages, addUploadedReceiptImages } =
+            useSplitBillStore.getState();
+          if (scannedReceiptImages.length > 0) {
+            const imagesPayload = parseDataUrlImages(scannedReceiptImages);
+            if (imagesPayload.length > 0) {
+              try {
+                const uploadRes = await receiptImageApi.upload(activeDraftId, imagesPayload);
+                if (uploadRes.success && Array.isArray(uploadRes.images)) {
+                  addUploadedReceiptImages(uploadRes.images);
+                }
+                clearScannedReceiptImages();
+              } catch (uploadErr) {
+                console.error("Failed to upload receipt images:", uploadErr);
+              }
+            }
+          }
         }
       } else if (step === 3) {
         let activeDraftId = draftId;

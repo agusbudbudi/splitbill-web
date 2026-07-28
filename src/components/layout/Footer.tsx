@@ -8,6 +8,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useSplitBillStore } from "@/store/useSplitBillStore";
 import { useAuthStore } from "@/lib/stores/authStore";
 import { toast } from "sonner";
+import { compressImageFile } from "@/lib/utils/imageCompress";
 
 export const Footer = () => {
   const pathname = usePathname();
@@ -58,17 +59,23 @@ export const Footer = () => {
       const file = e.target.files?.[0];
       if (!file) return;
 
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64 = reader.result as string;
-        setPendingCapturedImage(base64);
+      const onCaptured = (dataUrl: string) => {
+        setPendingCapturedImage(dataUrl);
         toast.success("Foto tersimpan! 📸", {
           description: "Tambahkan teman dulu, lalu lanjut ke scan AI.",
           duration: 3000,
         });
         router.push("/split-bill?step=1");
       };
-      reader.readAsDataURL(file);
+
+      compressImageFile(file)
+        .then(onCaptured)
+        .catch((err) => {
+          console.warn("Image compression failed, using original file:", err);
+          const reader = new FileReader();
+          reader.onloadend = () => onCaptured(reader.result as string);
+          reader.readAsDataURL(file);
+        });
 
       // Reset so the same file can be re-selected
       e.target.value = "";

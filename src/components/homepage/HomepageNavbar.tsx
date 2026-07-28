@@ -16,7 +16,6 @@ const navLinks = [
   { label: "Fitur", href: "#fitur" },
   { label: "Cara Pakai", href: "#cara-pakai" },
   { label: "Testimoni", href: "#testimoni" },
-  { label: "FAQ", href: "#faq" },
 ];
 
 export const HomepageNavbar = () => {

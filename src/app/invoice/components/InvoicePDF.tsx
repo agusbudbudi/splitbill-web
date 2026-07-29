@@ -9,7 +9,7 @@ import {
   Font,
 } from "@react-pdf/renderer";
 import { parseHtmlToPdf } from "@/lib/utils/pdfHtmlParser";
-import { formatToIDR } from "@/lib/utils/invoice";
+import { formatToIDR, isPaymentLogoImageSrc } from "@/lib/utils/invoice";
 
 // Register fonts if needed, or use defaults
 // Font.register({ family: 'Inter', src: '...' });
@@ -445,7 +445,9 @@ export const InvoicePDF = ({ invoice }: { invoice: any }) => {
               {invoice.paymentMethods.map((method: any) => (
                 <View key={method.id} style={styles.paymentItem}>
                   <View style={styles.paymentIcon}>
-                    {method.logo && method.logo !== "/img/wallet-icon.png" ? (
+                    {method.logo &&
+                    method.logo !== "/img/wallet-icon.png" &&
+                    isPaymentLogoImageSrc(method.logo) ? (
                       <Image src={method.logo} style={styles.paymentLogo} />
                     ) : (
                       <Text

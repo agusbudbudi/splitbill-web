@@ -5,12 +5,13 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import Image from "next/image";
 import { useInvoiceStore } from "@/lib/stores/invoiceStore";
-import { formatToIDR, generateAvatarUrl } from "@/lib/utils/invoice";
+import { formatToIDR, generateAvatarUrl, isPaymentLogoImageSrc } from "@/lib/utils/invoice";
 import { FileCheck, Download, History, Home } from "lucide-react";
 import { SuccessSection } from "@/components/ui/SuccessSection";
 import { toast } from "sonner";
 import { downloadInvoicePDF } from "@/lib/utils/pdfGenerator";
 import { useRouter } from "next/navigation";
+import { DynamicFinLogo } from "@/components/wallet/DynamicFinLogo";
 
 export function Step6Preview() {
   const router = useRouter();
@@ -287,12 +288,21 @@ export function Step6Preview() {
                       <div className="w-12 h-12 rounded bg-white flex-shrink-0 flex items-center justify-center p-1 relative overflow-hidden">
                         {method.logo &&
                         method.logo !== "/img/wallet-icon.png" ? (
-                          <Image
-                            src={method.logo}
-                            alt={method.bankName || method.name || "Payment Method"}
-                            fill
-                            className="object-contain p-1"
-                          />
+                          isPaymentLogoImageSrc(method.logo) ? (
+                            <Image
+                              src={method.logo}
+                              alt={method.bankName || method.name || "Payment Method"}
+                              fill
+                              unoptimized={method.logo.startsWith("data:")}
+                              className="object-contain p-1"
+                            />
+                          ) : (
+                            <DynamicFinLogo
+                              slug={method.logo}
+                              alt={method.bankName || method.name || "Payment Method"}
+                              className="w-full h-full"
+                            />
+                          )
                         ) : (
                           <span className="text-[9px] font-bold text-muted-foreground">
                             {(method.bankName || method.name)

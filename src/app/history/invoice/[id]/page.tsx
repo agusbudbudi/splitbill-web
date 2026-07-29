@@ -5,7 +5,8 @@ import { useParams, useRouter } from "next/navigation";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { useInvoiceStore } from "@/lib/stores/invoiceStore";
-import { formatToIDR } from "@/lib/utils/invoice";
+import { formatToIDR, isPaymentLogoImageSrc } from "@/lib/utils/invoice";
+import { DynamicFinLogo } from "@/components/wallet/DynamicFinLogo";
 import { Card, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import {
@@ -279,11 +280,19 @@ export default function InvoiceDetailPage() {
                       <div className="w-10 h-10 rounded-sm bg-muted/30 flex items-center justify-center p-1.5 overflow-hidden">
                         {method.logo &&
                           method.logo !== "/img/wallet-icon.png" ? (
-                          <img
-                            src={method.logo}
-                            alt={method.bankName || method.name}
-                            className="w-full h-full object-contain"
-                          />
+                          isPaymentLogoImageSrc(method.logo) ? (
+                            <img
+                              src={method.logo}
+                              alt={method.bankName || method.name}
+                              className="w-full h-full object-contain"
+                            />
+                          ) : (
+                            <DynamicFinLogo
+                              slug={method.logo}
+                              alt={method.bankName || method.name}
+                              className="w-full h-full"
+                            />
+                          )
                         ) : (
                           <span className="text-[10px] font-bold text-muted-foreground">
                             {(method.bankName || method.name)

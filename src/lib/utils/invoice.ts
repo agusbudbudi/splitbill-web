@@ -234,3 +234,12 @@ export function validateInvoiceStep(
 export function generateAvatarUrl(seed: string): string {
   return `https://api.dicebear.com/9.x/personas/svg?backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf&scale=100&seed=${encodeURIComponent(seed)}`;
 }
+
+/**
+ * PaymentMethod.logo holds either a provider slug (e.g. "bca", for idn-finlogos)
+ * or an actual image src (URL/base64). Only the latter is safe to pass to
+ * an <img>/<Image> src — a bare slug isn't a valid URL.
+ */
+export function isPaymentLogoImageSrc(logo: string): boolean {
+  return logo.startsWith("/") || logo.startsWith("http") || logo.startsWith("data:");
+}

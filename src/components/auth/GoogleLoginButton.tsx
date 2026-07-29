@@ -41,7 +41,7 @@ export function GoogleLoginButton({ onSuccess, callbackUrl }: GoogleLoginButtonP
       type="button"
       onClick={handleGoogleLogin}
       disabled={isLoading}
-      className="w-full h-14 border border-slate-200 bg-white hover:bg-slate-50 active:bg-slate-100 transition-colors rounded-2xl flex items-center justify-center gap-3 font-semibold text-foreground cursor-pointer shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+      className="w-full h-14 border border-slate-200 bg-white hover:bg-slate-50 active:bg-slate-100 transition-colors rounded-sm flex items-center justify-center gap-3 font-semibold text-foreground cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
     >
       {isLoading ? (
         <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />

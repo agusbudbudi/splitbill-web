@@ -15,7 +15,7 @@ import {
   Eye,
 } from "lucide-react";
 import { LoadingIndicator } from "@/components/ui/LoadingIndicator";
-import { InvoiceProgress } from "../components/InvoiceProgress";
+import { StepperV2 } from "@/components/splitbill/StepperV2";
 import { Step1Details } from "../components/Step1Details";
 import { Step2Billed } from "../components/Step2Billed";
 import { Step3Items } from "../components/Step3Items";
@@ -170,63 +170,27 @@ function InvoiceCreateContent() {
         title="Invoice"
         showBackButton
         onBack={handlePrev}
-        className="pb-10 rounded-b-xl shadow-lg shadow-primary/20"
-      >
-        {/* Stepper Inside Header */}
-        <div className="flex justify-between items-center px-8 relative">
-          <div className="absolute top-1/2 left-12 right-12 h-0.5 bg-white/20 -translate-y-1/2 z-0" />
-          <div className="absolute top-1/2 left-12 right-12 h-0.5 -translate-y-1/2 z-0 overflow-hidden">
-            <div
-              className="h-full bg-white transition-all duration-500 ease-in-out"
-              style={{
-                width: `${((currentStep - 1) / (steps.length - 1)) * 100}%`,
-              }}
-            />
+        sticky={true}
+        className="rounded-b-none shadow-none"
+      />
+
+      <div className="relative w-full max-w-[600px] flex-1 flex flex-col">
+        {/* Stepper Row */}
+        <div className="relative z-20">
+          <StepperV2 steps={steps} currentStep={currentStep} />
+        </div>
+
+        <main className="relative z-10 w-full px-4 pt-4 pb-8 space-y-8 flex flex-col">
+          <div className="flex flex-col items-start text-left gap-1 mb-3 animate-in fade-in slide-in-from-right-4 duration-500">
+            <h2 className="text-lg font-bold text-foreground">{getStepTitle()}</h2>
+            <p className="text-muted-foreground text-xs max-w-[360px]">{getStepSubtitle()}</p>
           </div>
-          {steps.map((s) => (
-            <div
-              key={s.id}
-              className={cn(
-                "relative z-10 w-8 h-8 rounded-full flex flex-col items-center justify-center transition-all duration-500 border-2",
-                currentStep === s.id
-                  ? "bg-white border-white scale-110 shadow-lg shadow-black/10"
-                  : currentStep > s.id
-                    ? "bg-white border-white"
-                    : "bg-primary border-white/40 text-white/40",
-              )}
-            >
-              <s.icon
-                className={cn(
-                  "w-4 h-4 font-bold transition-colors duration-500",
-                  currentStep >= s.id ? "text-primary" : "text-white/40",
-                )}
-              />
 
-              <span
-                className={cn(
-                  "absolute -bottom-5 text-[9px] font-bold uppercase tracking-tighter whitespace-nowrap transition-colors duration-500",
-                  currentStep === s.id
-                    ? "text-white opacity-100"
-                    : "text-white/40 opacity-50",
-                )}
-              >
-                {s.label}
-              </span>
-            </div>
-          ))}
-        </div>
-      </Header>
-
-      <main className="flex-1 w-full max-w-[600px] px-4 pt-10 pb-10 space-y-6 relative z-10 flex flex-col">
-        <div className="text-center space-y-2 animate-in fade-in slide-in-from-right-4 duration-500">
-          <h2 className="text-2xl font-bold">{getStepTitle()}</h2>
-          <p className="text-muted-foreground text-sm">{getStepSubtitle()}</p>
-        </div>
-
-        <div className="animate-in fade-in slide-in-from-right-4 duration-500">
-          {renderStep()}
-        </div>
-      </main>
+          <div className="animate-in fade-in slide-in-from-right-4 duration-500">
+            {renderStep()}
+          </div>
+        </main>
+      </div>
 
       {/* Sticky CTA Footer - Show for all steps less than 6 OR (step 6 IF not finalized) */}
       {(currentStep < 6 || (currentStep === 6 && !isFinalized)) && (

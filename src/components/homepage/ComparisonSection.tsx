@@ -13,7 +13,7 @@ const withoutSplitBill = [
 ];
 
 const withSplitBill = [
-  "Cukup foto struk belanjaan, AI kelar hitung dalam 3 detik!",
+  "Cukup foto struk belanjaan, AI kelar hitung dalam 5 detik!",
   "Pajak & service charge otomatis kebagi presisi per item menu",
   "Link tagihan transparan dikirim ke grup, otomatis pada sadar diri",
   "Info rekening & e-wallet langsung tertera, tinggal salin & transfer",
@@ -63,7 +63,7 @@ export const ComparisonSection = () => {
             viewport={{ once: true, margin: "-50px" }}
             transition={{ duration: 0.6 }}
             whileHover={{ y: -6 }}
-            className="bg-rose-50/50 border border-rose-100/80 rounded-3xl p-6 sm:p-8 hover:shadow-[0_12px_30px_-6px_rgba(244,63,94,0.15)] hover:border-rose-400/70 transition-[box-shadow,border-color,background-color] duration-300 cursor-pointer"
+            className="bg-rose-50/50 border border-rose-100/80 rounded-md p-6 sm:p-8 hover:shadow-[0_12px_30px_-6px_rgba(244,63,94,0.15)] hover:border-rose-400/70 transition-[box-shadow,border-color,background-color] duration-300 cursor-pointer"
           >
             <div className="flex items-center gap-2 mb-6">
               <span className="text-2xl">😩</span>
@@ -71,7 +71,7 @@ export const ComparisonSection = () => {
                 Sebelum pake SplitBill
               </h3>
             </div>
- 
+
             <ul className="space-y-4">
               {withoutSplitBill.map((item, idx) => (
                 <li key={idx} className="flex items-start gap-3">
@@ -83,7 +83,7 @@ export const ComparisonSection = () => {
               ))}
             </ul>
           </motion.div>
- 
+
           {/* With SplitBill Card */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
@@ -91,10 +91,10 @@ export const ComparisonSection = () => {
             viewport={{ once: true, margin: "-50px" }}
             transition={{ duration: 0.6 }}
             whileHover={{ y: -6 }}
-            className="bg-emerald-50/50 border border-emerald-300 rounded-3xl p-6 sm:p-8 hover:shadow-[0_12px_30px_-6px_rgba(16,185,129,0.15)] hover:border-emerald-400 transition-[box-shadow,border-color,background-color] duration-300 relative overflow-hidden cursor-pointer"
+            className="bg-emerald-50/50 border border-emerald-300 rounded-md p-6 sm:p-8 hover:shadow-[0_12px_30px_-6px_rgba(16,185,129,0.15)] hover:border-emerald-400 transition-[box-shadow,border-color,background-color] duration-300 relative overflow-hidden cursor-pointer"
           >
             {/* Glow badge */}
-            <div className="absolute top-0 right-0 bg-emerald-500 text-white text-[10px] font-black px-4 py-1.5 rounded-bl-2xl uppercase tracking-wider">
+            <div className="absolute top-0 right-0 bg-emerald-500 text-white text-[10px] font-black px-4 py-1.5 rounded-bl-md uppercase tracking-wider">
               Solusi Terbaik ✨
             </div>
 

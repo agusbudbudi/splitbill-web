@@ -38,7 +38,7 @@ const TestimonialCard = ({ review }: { review: Review }) => {
       className="flex-shrink-0 w-[290px] sm:w-[360px] snap-start h-full"
       whileHover={{ y: -6, transition: { duration: 0.2 } }}
     >
-      <div className="h-full bg-white rounded-2xl p-6 border border-slate-100/80 shadow-[0_4px_20px_-4px_rgba(71,159,234,0.08)] hover:shadow-[0_12px_30px_-6px_rgba(71,159,234,0.15)] hover:border-primary/20 transition-all duration-300 flex flex-col justify-between cursor-pointer">
+      <div className="h-full bg-white rounded-md p-6 border border-slate-100/80 shadow-[0_4px_20px_-4px_rgba(71,159,234,0.08)] hover:shadow-[0_12px_30px_-6px_rgba(71,159,234,0.15)] hover:border-primary/20 transition-all duration-300 flex flex-col justify-between cursor-pointer">
         <div>
           {/* Rating & Expand Button Row */}
           <div className="flex items-center justify-between mb-4">

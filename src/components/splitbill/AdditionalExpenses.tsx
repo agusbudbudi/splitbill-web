@@ -25,10 +25,42 @@ import { PersonChip } from "./PersonChip";
 import { SplitTypeToggle } from "./SplitTypeToggle";
 
 const PREDEFINED_TYPES = [
-  { id: "tax", label: "Pajak (Tax)", icon: ReceiptText, defaultRate: 10 },
-  { id: "service", label: "Service", icon: Utensils, defaultRate: 5 },
-  { id: "discount", label: "Diskon", icon: Tag, defaultRate: 0 }, // Discount logic might need negative values
-  { id: "other", label: "Lainnya", icon: Calculator, defaultRate: 0 },
+  {
+    id: "tax",
+    label: "Pajak (Tax)",
+    icon: ReceiptText,
+    defaultRate: 10,
+    hint: "+10% nominal",
+    theme: "bg-white border-blue-200 text-slate-700",
+    iconBg: "bg-blue-500/10 text-blue-600",
+  },
+  {
+    id: "service",
+    label: "Service",
+    icon: Utensils,
+    defaultRate: 5,
+    hint: "+5% nominal",
+    theme: "bg-white border-amber-200 text-slate-700",
+    iconBg: "bg-amber-500/10 text-amber-600",
+  },
+  {
+    id: "discount",
+    label: "Diskon",
+    icon: Tag,
+    defaultRate: 0, // Discount logic might need negative values
+    hint: "Kurangi total",
+    theme: "bg-white border-emerald-200 text-slate-700",
+    iconBg: "bg-emerald-500/10 text-emerald-600",
+  },
+  {
+    id: "other",
+    label: "Lainnya",
+    icon: Calculator,
+    defaultRate: 0,
+    hint: "Custom nominal",
+    theme: "bg-white border-slate-200 text-slate-700",
+    iconBg: "bg-slate-500/10 text-slate-600",
+  },
 ];
 
 export const AdditionalExpenses = () => {
@@ -163,9 +195,9 @@ export const AdditionalExpenses = () => {
         </div>
 
         {/* Highlighted Banner */}
-        <div className="bg-success/5 border border-success/10 rounded-sm p-3 flex items-start gap-2.5 animate-in fade-in duration-300">
+        <div className="bg-white border border-success/20 border-l-4 border-l-success rounded-xs p-3 flex items-start gap-2.5 animate-in fade-in duration-300">
           <span className="text-base leading-none">💡</span>
-          <p className="text-[11px] text-success font-medium leading-relaxed">
+          <p className="text-xs text-slate-800 leading-relaxed">
             <span className="font-bold text-success">Diskon / Cashback?</span> Input aja nominalnya pake tanda <span className="font-black underline decoration-success/30 decoration-2 text-success">minus (–)</span> (contoh: <span className="font-mono font-bold bg-success/10 px-1 py-0.5 rounded text-[10px] text-success">-Rp5.000</span> atau <span className="font-mono font-bold bg-success/10 px-1 py-0.5 rounded text-[10px] text-success">-10%</span>), otomatis ngurangin tagihan semua yang terlibat. Ez! 🎉
           </p>
         </div>
@@ -179,9 +211,6 @@ export const AdditionalExpenses = () => {
             >
               <div className="flex justify-between items-start">
                 <div className="flex items-start gap-2">
-                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary mt-0.5">
-                    <ReceiptText className="w-4 h-4" />
-                  </div>
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-bold leading-tight">
@@ -286,25 +315,39 @@ export const AdditionalExpenses = () => {
 
         {/* Add Actions */}
         {!isAdding ? (
-          <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-            {PREDEFINED_TYPES.map((type) => (
-              <button
-                key={type.id}
-                onClick={() => quickAdd(type)}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-full border border-primary/20 bg-primary/5 hover:bg-primary/10 transition-colors whitespace-nowrap cursor-pointer"
-              >
-                <type.icon className="w-3.5 h-3.5 text-primary" />
-                <span className="text-xs font-medium text-primary">
-                  {type.label}
-                </span>
-              </button>
-            ))}
+          <div className="space-y-2">
+            <span className="text-[10px] text-muted-foreground/60 uppercase font-bold tracking-tight px-1">
+              Tambah Cepat
+            </span>
+            <div className="grid grid-cols-2 gap-2">
+              {PREDEFINED_TYPES.map((type) => (
+                <button
+                  key={type.id}
+                  onClick={() => quickAdd(type)}
+                  className={cn(
+                    "flex items-center gap-2 p-2.5 rounded-sm border transition-all hover:shadow-sm hover:-translate-y-0.5 cursor-pointer text-left",
+                    type.theme,
+                  )}
+                >
+                  <div className={cn("w-8 h-8 rounded-full flex items-center justify-center shrink-0", type.iconBg)}>
+                    <type.icon className="w-4 h-4" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs font-bold leading-tight truncate">
+                      {type.label}
+                    </p>
+                    <p className="text-[10px] font-medium leading-tight opacity-70 truncate">
+                      {type.hint}
+                    </p>
+                  </div>
+                </button>
+              ))}
+            </div>
           </div>
         ) : (
           <div className="bg-white p-4 rounded-sm border border-primary/10 space-y-4 animate-in slide-in-from-top-2">
             <div className="flex items-center justify-between px-1">
               <span className="text-sm font-bold flex items-center gap-2 text-primary">
-                <selectedType.icon className="w-4 h-4" />
                 {selectedType.label}
               </span>
               <button

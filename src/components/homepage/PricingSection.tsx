@@ -65,7 +65,7 @@ export const PricingSection = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-50px" }}
             transition={{ duration: 0.5 }}
-            className="group relative bg-white rounded-3xl p-8 border border-slate-100/80 shadow-[0_4px_20px_-4px_rgba(71,159,234,0.08)] hover:shadow-[0_12px_30px_-6px_rgba(71,159,234,0.15)] hover:border-primary/20 transition-all duration-300 flex flex-col justify-between overflow-hidden"
+            className="group relative bg-white rounded-md p-8 border border-slate-100/80 shadow-[0_4px_20px_-4px_rgba(71,159,234,0.08)] hover:shadow-[0_12px_30px_-6px_rgba(71,159,234,0.15)] hover:border-primary/20 transition-all duration-300 flex flex-col justify-between overflow-hidden"
           >
             <div>
               <div className="mb-6">
@@ -103,7 +103,7 @@ export const PricingSection = () => {
 
             <Link
               href="/split-bill"
-              className="flex items-center justify-center w-full py-4 rounded-lg border-2 border-slate-200 text-slate-700 font-bold hover:bg-slate-50 transition-colors duration-200"
+              className="flex items-center justify-center w-full py-4 rounded-md border-2 border-slate-200 text-slate-700 font-bold hover:bg-slate-50 transition-colors duration-200"
             >
               Mulai Sekarang - Gratis
             </Link>
@@ -115,13 +115,13 @@ export const PricingSection = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-50px" }}
             transition={{ duration: 0.5, delay: 0.15 }}
-            className="bg-gradient-to-br from-violet-600 to-primary rounded-3xl p-8 border border-transparent shadow-xl shadow-primary/20 flex flex-col justify-between relative overflow-hidden text-white"
+            className="bg-gradient-to-br from-violet-600 to-primary rounded-md p-8 border border-transparent shadow-xl shadow-primary/20 flex flex-col justify-between relative overflow-hidden text-white"
           >
             {/* Glow effect */}
             <div className="absolute top-[-30%] right-[-30%] w-[300px] h-[300px] bg-white/10 rounded-full blur-[60px] pointer-events-none" />
 
             {/* Populer Badge */}
-            <div className="absolute top-0 right-0 bg-white text-primary text-[10px] font-black px-4 py-1.5 rounded-bl-2xl uppercase tracking-wider shadow-md">
+            <div className="absolute top-0 right-0 bg-white text-primary text-[10px] font-black px-4 py-1.5 rounded-bl-md uppercase tracking-wider shadow-md">
               Paling Populer 🔥
             </div>
 
@@ -161,7 +161,7 @@ export const PricingSection = () => {
 
             <Link
               href="/membership"
-              className="flex items-center justify-center w-full py-4 rounded-lg bg-white text-primary font-black hover:bg-white/95 transition-colors duration-200 shadow-md"
+              className="flex items-center justify-center w-full py-4 rounded-md bg-white text-primary font-black hover:bg-white/95 transition-colors duration-200 shadow-md"
             >
               Langganan Sekarang ⚡
             </Link>

@@ -229,7 +229,7 @@ function RegisterPageContent() {
                 <h2 className="text-lg sm:text-xl font-bold text-[#2d2d3e] tracking-tight">
                   Buat akun barumu
                 </h2>
-                <p className="text-xs sm:text-sm text-muted-foreground font-semibold">
+                <p className="text-xs sm:text-sm text-muted-foreground">
                   Yuk, patungan seru bareng circle-mu!
                 </p>
               </div>

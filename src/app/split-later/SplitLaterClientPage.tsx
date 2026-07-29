@@ -12,6 +12,7 @@ import { FeatureBanner } from "@/components/ui/FeatureBanner";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { Card, CardContent } from "@/components/ui/Card";
 import {
   FolderOpen,
   Plus,
@@ -230,79 +231,92 @@ export default function SplitLaterClientPage() {
       case 1:
         return (
           <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
-            <div className="flex flex-col items-center text-center gap-2">
-              <h2 className="text-2xl font-bold text-white">Ini Acara Apaan Nih? 🍜</h2>
-              <p className="text-white/80 text-sm max-w-[360px]">
-                Pilih kategori circle/trip lu. Emojinya bakal otomatis
-                menyesuaikan, kece kan?
+            <div className="flex flex-col items-start text-left gap-1 mb-3">
+              <h2 className="text-lg font-bold text-foreground">Ini Acara Apaan Nih? 🍜</h2>
+              <p className="text-muted-foreground text-xs max-w-[360px]">
+                Pilih kategori acara/trip kamu
               </p>
             </div>
 
-            <div className="bg-white rounded-2xl p-5 border border-primary/5 shadow-soft space-y-4">
-              <label className="text-sm font-bold text-foreground px-1 block">
-                Kategori Acara
-              </label>
-              <div className="grid grid-cols-3 gap-2">
-                {BUCKET_TYPE_OPTIONS.map((opt) => (
-                  <button
-                    key={opt.label}
-                    type="button"
-                    onClick={() => {
-                      setBucketType(opt.value);
-                      setSelectedCategoryLabel(opt.label);
-                      setEmoji(opt.emoji);
-                      if (
-                        !title ||
-                        BUCKET_TYPE_OPTIONS.some((o) => o.label === title)
-                      ) {
-                        setTitle(opt.label);
-                      }
-                    }}
-                    className={cn(
-                      "flex flex-col items-center gap-1.5 py-4 px-2 rounded-2xl text-xs font-bold transition-all active:scale-95 cursor-pointer border-2",
-                      selectedCategoryLabel === opt.label
-                        ? "bg-primary/10 border-primary/50 text-primary"
-                        : "bg-muted/30 border-transparent text-muted-foreground hover:bg-primary/5 hover:text-primary",
-                    )}
-                  >
-                    <span className="text-2xl">{opt.emoji}</span>
-                    <span className="text-center text-[10px] leading-tight">
-                      {opt.label}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            </div>
+            <Card className="shadow-soft">
+              <CardContent className="p-5 space-y-4">
+                <div className="flex items-center gap-2 px-1">
+                  <Briefcase className="w-4 h-4 text-primary" />
+                  <label className="text-sm font-bold text-foreground">
+                    Kategori Acara
+                  </label>
+                </div>
+                <div className="grid grid-cols-3 gap-2">
+                  {BUCKET_TYPE_OPTIONS.map((opt) => (
+                    <button
+                      key={opt.label}
+                      type="button"
+                      onClick={() => {
+                        setBucketType(opt.value);
+                        setSelectedCategoryLabel(opt.label);
+                        setEmoji(opt.emoji);
+                        if (
+                          !title ||
+                          BUCKET_TYPE_OPTIONS.some((o) => o.label === title)
+                        ) {
+                          setTitle(opt.label);
+                        }
+                      }}
+                      className={cn(
+                        "flex flex-col items-center gap-1.5 py-4 px-2 rounded-sm text-xs font-bold transition-all active:scale-95 cursor-pointer border-2",
+                        selectedCategoryLabel === opt.label
+                          ? "bg-primary/10 border-primary/50 text-primary"
+                          : "bg-muted/30 border-transparent text-muted-foreground hover:bg-primary/5 hover:text-primary",
+                      )}
+                    >
+                      <span className="text-2xl">{opt.emoji}</span>
+                      <span className="text-center text-[10px] leading-tight">
+                        {opt.label}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
           </div>
         );
       case 2:
         return (
           <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
-            <div className="flex flex-col items-center text-center gap-2">
-              <h2 className="text-2xl font-bold text-white">
+            <div className="flex flex-col items-start text-left gap-1 mb-3">
+              <h2 className="text-lg font-bold text-foreground">
                 Kasih Nama & Emoji Unik! 🏷️
               </h2>
-              <p className="text-white/80 text-sm max-w-[360px]">
-                Biar ga ketuker sama Split Later sebelah. Bebas edit nama & ganti
-                emoji sesuka hati lu!
+              <p className="text-muted-foreground text-xs max-w-[360px]">
+                Kasih nama & emoji biar gampang dikenali
               </p>
             </div>
 
-            <div className="bg-white rounded-2xl p-5 border border-primary/5 shadow-soft space-y-6">
-              <div className="space-y-2">
-                <label className="text-sm text-foreground px-1">
-                  Nama Acara / Trip
-                </label>
+            <Card className="shadow-soft">
+              <CardContent className="p-5 space-y-4">
+                <div className="flex items-center gap-2 px-1">
+                  <PenLine className="w-4 h-4 text-primary" />
+                  <label className="text-sm font-bold text-foreground">
+                    Nama Acara / Trip
+                  </label>
+                </div>
+
                 <Input
                   placeholder="Contoh: Roadtrip Bandung, Liburan Bali"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   autoFocus
-                  className="bg-white border-primary/10 h-12 text-sm px-4 focus-visible:ring-primary/20"
+                  className="bg-white border-primary/10 h-12 text-sm font-bold px-4 focus-visible:ring-primary/20"
                 />
-              </div>
 
-              <div className="space-y-2">
+                <p className="text-[11px] text-muted-foreground px-1 -mt-2">
+                  Dipakai untuk riwayat & saat dibagikan ke peserta.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="shadow-soft">
+              <CardContent className="p-5 space-y-4">
                 <label className="text-sm font-bold text-foreground px-1 block">
                   Pilih Emoji Utama
                 </label>
@@ -323,18 +337,17 @@ export default function SplitLaterClientPage() {
                     </button>
                   ))}
                 </div>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
           </div>
         );
       case 3:
         return (
           <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
-            <div className="flex flex-col items-center text-center gap-2">
-              <h2 className="text-2xl font-bold text-white">Siapa Aja yang Join? 👥</h2>
-              <p className="text-white/80 text-sm max-w-[360px]">
-                Minimal ajak 2 bestie biar bisa patungan. Tambah manual atau tap
-                dari Besties Gua!
+            <div className="flex flex-col items-start text-left gap-1 mb-3">
+              <h2 className="text-lg font-bold text-foreground">Siapa Aja yang Join? 👥</h2>
+              <p className="text-muted-foreground text-xs max-w-[360px]">
+                Ajak minimal 2 bestie buat mulai patungan
               </p>
             </div>
 
@@ -398,21 +411,29 @@ export default function SplitLaterClientPage() {
       case 4:
         return (
           <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
-            <div className="flex flex-col items-center text-center gap-2">
-              <h2 className="text-2xl font-bold text-white">Spill Struk Pertama Lu! 📸</h2>
-              <p className="text-white/80 text-sm max-w-[360px]">
-                Biar langsung diproses pas lu lagi santai. Selow, ini opsional,
-                bisa di-skip dulu!
+            <div className="flex flex-col items-start text-left gap-1 mb-3">
+              <h2 className="text-lg font-bold text-foreground">Spill Struk Pertama Lu! 📸</h2>
+              <p className="text-muted-foreground text-xs max-w-[360px]">
+                Opsional, bisa di-skip kapan aja
               </p>
             </div>
 
-            <div className="bg-white rounded-2xl p-5 border border-primary/5 shadow-soft space-y-6">
-              <ReceiptImagePicker
-                image={receiptPreview}
-                onFileSelect={(file: File) => handleReceiptFileSelect(file)}
-                onRemove={handleRemoveReceiptFile}
-              />
-            </div>
+            <Card className="shadow-soft">
+              <CardContent className="p-5 space-y-4">
+                <div className="flex items-center gap-2 px-1">
+                  <Camera className="w-4 h-4 text-primary" />
+                  <label className="text-sm font-bold text-foreground">
+                    Struk Belanja
+                  </label>
+                </div>
+
+                <ReceiptImagePicker
+                  image={receiptPreview}
+                  onFileSelect={(file: File) => handleReceiptFileSelect(file)}
+                  onRemove={handleRemoveReceiptFile}
+                />
+              </CardContent>
+            </Card>
           </div>
         );
       default:
@@ -446,15 +467,12 @@ export default function SplitLaterClientPage() {
         />
 
         <div className="relative w-full max-w-[600px] flex-1 flex flex-col">
-          {/* Gradient background, connecting seamlessly from the header down */}
-          <div className="absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-primary via-primary/80 to-transparent pointer-events-none z-0" />
-
           {/* Stepper Row */}
           <div className="relative z-20">
             <StepperV2 steps={steps} currentStep={step} />
           </div>
 
-          <main className="relative z-10 w-full px-4 py-8 space-y-6">
+          <main className="relative z-10 w-full px-4 pt-4 pb-8 space-y-8">
             {renderStepContent()}
           </main>
         </div>

@@ -35,29 +35,47 @@ export const CTABannerSection = () => {
   ];
 
   return (
-    <section className="py-16 sm:py-24 bg-gradient-to-br from-white via-[#f0f7ff] to-primary/8 relative overflow-hidden">
-      {/* Subtle background orbs — light & airy, matching Hero */}
+    <section className="py-16 sm:py-24 bg-white relative overflow-hidden">
+      {/* Soft bottom spotlight */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_110%,rgba(71,159,234,0.16),transparent)]" />
+
+      {/* Aurora blobs — matches Hero */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Top-right: soft primary blue wash */}
         <motion.div
-          animate={{ scale: [1, 1.1, 1], opacity: [0.25, 0.4, 0.25] }}
-          transition={{ repeat: Infinity, duration: 8, ease: "easeInOut" }}
-          className="absolute top-[-10%] right-[-5%] w-[45vw] h-[45vw] max-w-[650px] max-h-[650px] rounded-full bg-primary/20 blur-[90px]"
+          animate={{ scale: [1, 1.12, 1], x: [0, 24, 0], y: [0, -18, 0], opacity: [0.28, 0.42, 0.28] }}
+          transition={{ repeat: Infinity, duration: 9, ease: "easeInOut" }}
+          className="absolute top-[-15%] right-[-8%] w-[50vw] h-[50vw] max-w-[700px] max-h-[700px] rounded-full bg-primary/25 blur-[100px]"
         />
-        {/* Bottom-left: lighter blue-white glow */}
         <motion.div
-          animate={{ scale: [1, 1.15, 1], opacity: [0.15, 0.3, 0.15] }}
-          transition={{ repeat: Infinity, duration: 10, ease: "easeInOut", delay: 2 }}
-          className="absolute bottom-[-10%] left-[-5%] w-[40vw] h-[40vw] max-w-[550px] max-h-[550px] rounded-full bg-sky-300/20 blur-[80px]"
+          animate={{ scale: [1, 1.15, 1], x: [0, -22, 0], y: [0, 18, 0], opacity: [0.18, 0.32, 0.18] }}
+          transition={{ repeat: Infinity, duration: 11, ease: "easeInOut", delay: 1.5 }}
+          className="absolute bottom-[-15%] left-[-10%] w-[45vw] h-[45vw] max-w-[600px] max-h-[600px] rounded-full bg-sky-300/25 blur-[90px]"
+        />
+        <motion.div
+          animate={{ scale: [1, 1.1, 1], opacity: [0.15, 0.28, 0.15] }}
+          transition={{ repeat: Infinity, duration: 7, ease: "easeInOut", delay: 3 }}
+          className="absolute top-[18%] right-[8%] w-[25vw] h-[25vw] max-w-[350px] max-h-[350px] rounded-full bg-emerald-300/20 blur-[80px]"
         />
       </div>
 
-      {/* Subtle dot grid */}
+      {/* Fine grid, faded toward the edges — matches Hero */}
       <div
-        className="absolute inset-0 pointer-events-none opacity-[0.12]"
+        className="absolute inset-0 pointer-events-none"
         style={{
-          backgroundImage: `radial-gradient(circle, #479fea 1.5px, transparent 1.5px)`,
-          backgroundSize: "32px 32px",
+          backgroundImage:
+            "linear-gradient(#479fea0d 1px, transparent 1px), linear-gradient(90deg, #479fea0d 1px, transparent 1px)",
+          backgroundSize: "72px 72px",
+          maskImage: "radial-gradient(ellipse 70% 55% at 50% 75%, black, transparent 75%)",
+          WebkitMaskImage: "radial-gradient(ellipse 70% 55% at 50% 75%, black, transparent 75%)",
+        }}
+      />
+
+      {/* Subtle grain — matches Hero */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-[0.025] mix-blend-overlay"
+        style={{
+          backgroundImage:
+            "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
         }}
       />
 
@@ -89,7 +107,7 @@ export const CTABannerSection = () => {
             <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
               <Link
                 href="/split-bill"
-                className="group flex items-center justify-center gap-2 px-8 py-4 rounded-lg bg-primary text-white font-black text-base shadow-2xl shadow-primary/30 hover:bg-primary/90 hover:scale-105 active:scale-95 transition-all duration-200"
+                className="group flex items-center justify-center gap-2 px-8 py-4 rounded-md bg-primary text-white font-black text-base shadow-2xl shadow-primary/30 hover:bg-primary/90 hover:scale-105 active:scale-95 transition-all duration-200"
               >
                 <Camera className="w-5 h-5" />
                 Coba Gratis Sekarang
@@ -98,7 +116,7 @@ export const CTABannerSection = () => {
 
               <Link
                 href="/register"
-                className="flex items-center justify-center gap-2 px-8 py-4 rounded-lg bg-white border border-primary/30 text-primary font-bold text-base hover:bg-primary/5 hover:border-primary/60 hover:scale-105 active:scale-95 transition-all duration-200 shadow-sm"
+                className="flex items-center justify-center gap-2 px-8 py-4 rounded-md border border-primary/20 text-primary font-bold text-base hover:bg-primary/5 hover:border-primary/60 hover:scale-105 active:scale-95 transition-all duration-200"
               >
                 Buat Akun Baru
               </Link>
@@ -127,9 +145,9 @@ export const CTABannerSection = () => {
                   viewport={{ once: true }}
                   transition={{ duration: 0.4, delay: 0.1 * idx }}
                   whileHover={{ x: 6, scale: 1.02 }}
-                  className={`flex gap-4 p-5 sm:p-6 rounded-2xl bg-white/70 backdrop-blur-md border ${card.bg} shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_12px_40px_rgba(71,159,234,0.06)] transition-[box-shadow,border-color,background-color] duration-300`}
+                  className={`flex gap-4 p-5 sm:p-6 rounded-md bg-white/70 backdrop-blur-md border ${card.bg} shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_12px_40px_rgba(71,159,234,0.06)] transition-[box-shadow,border-color,background-color] duration-300`}
                 >
-                  <div className={`flex-shrink-0 w-12 h-12 rounded-lg ${card.bgLight} ${card.bgHover} flex items-center justify-center p-1 transition-all duration-300 group-hover:scale-105 relative`}>
+                  <div className={`flex-shrink-0 w-12 h-12 rounded-sm ${card.bgLight} ${card.bgHover} flex items-center justify-center p-1 transition-all duration-300 group-hover:scale-105 relative`}>
                     <Image
                       src={card.imageSrc}
                       alt={card.title}

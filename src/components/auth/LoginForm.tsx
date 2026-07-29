@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { validateEmail } from "@/lib/auth/utils";
 import { LoginCredentials } from "@/lib/stores/authStore";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { GoogleLoginButton } from "./GoogleLoginButton";
 
 interface LoginFormProps {
@@ -27,6 +27,7 @@ export function LoginForm({
   const [showPassword, setShowPassword] = useState(false);
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [showEmailLogin, setShowEmailLogin] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -81,110 +82,130 @@ export function LoginForm({
         </motion.div>
       )}
 
-      {/* Email Input */}
-      <div className="space-y-2 group">
-        <label
-          htmlFor="email"
-          className="text-xs font-bold text-foreground/80 transition-colors group-focus-within:text-primary ml-1"
-        >
-          Email
-        </label>
-        <div className="relative group/input">
-          <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground/30 group-focus-within/input:text-primary transition-colors" />
-          <Input
-            id="email"
-            type="email"
-            placeholder="Masukkan email kamu"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            onBlur={() => {
-              if (email && !validateEmail(email)) {
-                setEmailError("Format email tidak valid");
-              } else {
-                setEmailError("");
-              }
-            }}
-            className="pl-12 h-14 bg-white border border-slate-100 hover:border-primary/30 focus-visible:border-primary/60 focus-visible:ring-primary/5 transition-all rounded-2xl font-medium text-base text-foreground placeholder:text-muted-foreground/30"
-            disabled={isLoading}
-          />
-        </div>
-        {emailError && (
-          <p className="text-xs text-destructive font-bold ml-1">
-            {emailError}
-          </p>
-        )}
-      </div>
-
-      {/* Password Input */}
-      <div className="space-y-2 group">
-        <label
-          htmlFor="password"
-          className="text-xs font-bold text-foreground/80 transition-colors group-focus-within:text-primary ml-1"
-        >
-          Password
-        </label>
-        <div className="relative group/input">
-          <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground/30 group-focus-within/input:text-primary transition-colors" />
-          <Input
-            id="password"
-            type={showPassword ? "text" : "password"}
-            placeholder="••••••••••"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="pl-12 pr-12 h-14 bg-white border border-slate-100 hover:border-primary/30 focus-visible:border-primary/60 focus-visible:ring-primary/5 transition-all rounded-2xl font-medium text-base text-foreground placeholder:text-muted-foreground/30"
-            disabled={isLoading}
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground/30 hover:text-primary transition-colors cursor-pointer"
-            tabIndex={-1}
-          >
-            {showPassword ? (
-              <EyeOff className="w-5 h-5" />
-            ) : (
-              <Eye className="w-5 h-5" />
-            )}
-          </button>
-        </div>
-        {passwordError && (
-          <p className="text-xs text-destructive font-bold ml-1">
-            {passwordError}
-          </p>
-        )}
-      </div>
-
-      {/* Submit Button */}
-      <div className="pt-2">
-        <Button
-          type="submit"
-          className="w-full h-14 text-base font-bold shadow-md shadow-primary/10 hover:shadow-primary/25 transition-all rounded-2xl bg-primary hover:bg-primary/90 text-white border-none flex items-center justify-center gap-2 cursor-pointer group"
-          disabled={isLoading}
-        >
-          {isLoading ? (
-            <div className="flex items-center gap-2">
-              <Loader2 className="w-5 h-5 animate-spin" />
-              <span>Memproses...</span>
-            </div>
-          ) : (
-            <>
-              <span>Masuk ke SplitBill</span>
-              <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-            </>
-          )}
-        </Button>
-      </div>
-
-      <div className="relative my-5 flex items-center justify-center">
-        <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-slate-100"></div>
-        </div>
-        <span className="relative px-3 bg-white text-[10px] sm:text-xs font-bold text-muted-foreground/40 uppercase tracking-wider">
-          Atau masuk dengan
-        </span>
-      </div>
-
+      {/* Google — primary path, most users login this way */}
       <GoogleLoginButton />
+
+      {!showEmailLogin ? (
+        <button
+          type="button"
+          onClick={() => setShowEmailLogin(true)}
+          className="w-full text-center text-xs font-bold text-muted-foreground hover:text-primary transition-colors cursor-pointer py-1"
+        >
+          atau masuk pakai email
+        </button>
+      ) : (
+        <AnimatePresence>
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            transition={{ duration: 0.25 }}
+            className="space-y-4 overflow-hidden"
+          >
+            <div className="relative my-1 flex items-center justify-center">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-slate-100"></div>
+              </div>
+              <span className="relative px-3 bg-white text-[10px] sm:text-xs font-bold text-muted-foreground/40 uppercase tracking-wider">
+                Masuk dengan email
+              </span>
+            </div>
+
+            {/* Email Input */}
+            <div className="space-y-2 group">
+              <label
+                htmlFor="email"
+                className="text-xs font-bold text-foreground/80 transition-colors group-focus-within:text-primary ml-1"
+              >
+                Email
+              </label>
+              <div className="relative group/input">
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground/30 group-focus-within/input:text-primary transition-colors" />
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="Masukkan email kamu"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  onBlur={() => {
+                    if (email && !validateEmail(email)) {
+                      setEmailError("Format email tidak valid");
+                    } else {
+                      setEmailError("");
+                    }
+                  }}
+                  className="pl-12 h-14 bg-white border border-slate-100 hover:border-primary/30 focus-visible:border-primary/60 focus-visible:ring-primary/5 transition-all rounded-sm font-medium text-base text-foreground placeholder:text-muted-foreground/30"
+                  disabled={isLoading}
+                />
+              </div>
+              {emailError && (
+                <p className="text-xs text-destructive font-bold ml-1">
+                  {emailError}
+                </p>
+              )}
+            </div>
+
+            {/* Password Input */}
+            <div className="space-y-2 group">
+              <label
+                htmlFor="password"
+                className="text-xs font-bold text-foreground/80 transition-colors group-focus-within:text-primary ml-1"
+              >
+                Password
+              </label>
+              <div className="relative group/input">
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground/30 group-focus-within/input:text-primary transition-colors" />
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="••••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="pl-12 pr-12 h-14 bg-white border border-slate-100 hover:border-primary/30 focus-visible:border-primary/60 focus-visible:ring-primary/5 transition-all rounded-sm font-medium text-base text-foreground placeholder:text-muted-foreground/30"
+                  disabled={isLoading}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground/30 hover:text-primary transition-colors cursor-pointer"
+                  tabIndex={-1}
+                >
+                  {showPassword ? (
+                    <EyeOff className="w-5 h-5" />
+                  ) : (
+                    <Eye className="w-5 h-5" />
+                  )}
+                </button>
+              </div>
+              {passwordError && (
+                <p className="text-xs text-destructive font-bold ml-1">
+                  {passwordError}
+                </p>
+              )}
+            </div>
+
+            {/* Submit Button */}
+            <div className="pt-2">
+              <Button
+                type="submit"
+                className="w-full h-14 text-base font-bold shadow-md shadow-primary/10 hover:shadow-primary/25 transition-all rounded-sm bg-primary hover:bg-primary/90 text-white border-none flex items-center justify-center gap-2 cursor-pointer group"
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <div className="flex items-center gap-2">
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    <span>Memproses...</span>
+                  </div>
+                ) : (
+                  <>
+                    <span>Masuk ke SplitBill</span>
+                    <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                  </>
+                )}
+              </Button>
+            </div>
+          </motion.div>
+        </AnimatePresence>
+      )}
     </form>
   );
 }

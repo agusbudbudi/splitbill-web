@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Menu, X, ArrowRight, Zap } from "lucide-react";
+import { Menu, X, ArrowRight, Zap, ChevronDown } from "lucide-react";
 import { cn, getAvatarUrl } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -16,6 +16,17 @@ const navLinks = [
   { label: "Fitur", href: "#fitur" },
   { label: "Cara Pakai", href: "#cara-pakai" },
   { label: "Testimoni", href: "#testimoni" },
+  { label: "Member", href: "/subscription", badge: "VIP" },
+];
+
+// Shortcuts shown in the "Fitur" tray — mirrors FeaturesSection so the header doubles as quick nav
+const FEATURE_SHORTCUTS = [
+  { imageSrc: "/img/menu-split-bill.png", title: "Split Bill", href: "/split-bill", bgLight: "bg-blue-100/90", badge: "Populer" },
+  { imageSrc: "/img/menu-split-later.png", title: "Split Later", href: "/split-later", bgLight: "bg-purple-100/90", badge: "NEW" },
+  { imageSrc: "/img/menu-shared-goal.png", title: "Shared Goals", href: "/shared-goals", bgLight: "bg-emerald-100/90" },
+  { imageSrc: "/img/menu-collect-money.png", title: "Collect Money", href: "/collect-money", bgLight: "bg-amber-100/90" },
+  { imageSrc: "/img/menu-invoice.png", title: "Invoice", href: "/invoice", bgLight: "bg-rose-100/90" },
+  { imageSrc: "/img/menu-wallet.png", title: "Wallet", href: "/wallet", bgLight: "bg-violet-100/90" },
 ];
 
 export const HomepageNavbar = () => {
@@ -23,8 +34,14 @@ export const HomepageNavbar = () => {
   const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [fiturHover, setFiturHover] = useState(false);
+  const [fiturPinned, setFiturPinned] = useState(false);
+  const fiturOpen = fiturHover || fiturPinned;
+  const [mobileFiturOpen, setMobileFiturOpen] = useState(false);
   const [headerHeight, setHeaderHeight] = useState(64);
   const headerRef = useRef<HTMLElement>(null);
+  const fiturTrayRef = useRef<HTMLDivElement>(null);
+  const fiturCloseTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { user, isAuthenticated, isInitialized, initialize } = useAuthStore();
   const { isInstallable, isStandalone, isIOS, installPWA } = usePWA();
   const [showPwaBanner, setShowPwaBanner] = useState(false);
@@ -77,6 +94,62 @@ export const HomepageNavbar = () => {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Close the "Fitur" tray on outside click / Escape / route change
+  useEffect(() => {
+    if (!fiturOpen) return;
+    const onClickOutside = (e: MouseEvent) => {
+      if (fiturTrayRef.current && !fiturTrayRef.current.contains(e.target as Node)) {
+        setFiturHover(false);
+        setFiturPinned(false);
+      }
+    };
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setFiturHover(false);
+        setFiturPinned(false);
+      }
+    };
+    document.addEventListener("mousedown", onClickOutside);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", onClickOutside);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [fiturOpen]);
+
+  useEffect(() => {
+    setFiturHover(false);
+    setFiturPinned(false);
+    setMobileFiturOpen(false);
+    if (fiturCloseTimeout.current) clearTimeout(fiturCloseTimeout.current);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!menuOpen) setMobileFiturOpen(false);
+  }, [menuOpen]);
+
+  const handleFiturMouseEnter = () => {
+    if (fiturCloseTimeout.current) {
+      clearTimeout(fiturCloseTimeout.current);
+      fiturCloseTimeout.current = null;
+    }
+    setFiturHover(true);
+  };
+
+  const handleFiturMouseLeave = () => {
+    if (fiturCloseTimeout.current) clearTimeout(fiturCloseTimeout.current);
+    fiturCloseTimeout.current = setTimeout(() => setFiturHover(false), 150);
+  };
+
+  const handleFiturClick = () => {
+    setFiturPinned((v) => !v);
+  };
+
+  const closeFiturTray = () => {
+    setFiturHover(false);
+    setFiturPinned(false);
+  };
+
   // Track exact header height to keep mobile drawer flush below it
   useEffect(() => {
     const el = headerRef.current;
@@ -114,7 +187,7 @@ export const HomepageNavbar = () => {
             const updatedHeaderHeight = updatedHeader ? updatedHeader.offsetHeight : 64;
             const updatedElementPosition = el.getBoundingClientRect().top;
             const updatedOffset = updatedElementPosition + window.scrollY - updatedHeaderHeight - 2;
-            
+
             window.scrollTo({
               top: updatedOffset,
               behavior: "smooth",
@@ -163,7 +236,7 @@ export const HomepageNavbar = () => {
         <Link
           href="/login"
           className={cn(
-            "px-4 py-2 rounded-md text-sm font-bold text-primary border border-primary hover:bg-primary/5 transition-all duration-200",
+            "px-4 py-2 rounded-sm text-sm font-bold text-primary hover:bg-slate-100 transition-all duration-200",
             className
           )}
         >
@@ -203,16 +276,109 @@ export const HomepageNavbar = () => {
 
             {/* Desktop Nav Links */}
             <div className="hidden lg:flex items-center gap-1">
-              {navLinks.map((link) => (
-                <a
-                  key={link.href}
-                  href={pathname === "/" ? link.href : `/${link.href}`}
-                  onClick={(e) => handleNavClick(e, link.href)}
-                  className="px-4 py-2 rounded-sm text-sm font-semibold text-slate-700 hover:text-primary hover:bg-slate-100 transition-all duration-200 cursor-pointer"
-                >
-                  {link.label}
-                </a>
-              ))}
+              {navLinks.map((link) =>
+                link.href === "#fitur" ? (
+                  <div
+                    key={link.href}
+                    ref={fiturTrayRef}
+                    className="relative"
+                    onMouseEnter={handleFiturMouseEnter}
+                    onMouseLeave={handleFiturMouseLeave}
+                  >
+                    <button
+                      type="button"
+                      onClick={handleFiturClick}
+                      className={cn(
+                        "flex items-center gap-1 px-4 py-2 rounded-sm text-sm font-semibold transition-all duration-200 cursor-pointer",
+                        fiturOpen ? "text-primary bg-slate-100" : "text-slate-700 hover:text-primary hover:bg-slate-100"
+                      )}
+                    >
+                      {link.label}
+                      <ChevronDown className={cn("w-3.5 h-3.5 transition-transform duration-200", fiturOpen && "rotate-180")} />
+                    </button>
+
+                    <AnimatePresence>
+                      {fiturOpen && (
+                        <motion.div
+                          initial={{ opacity: 0, y: -8, scale: 0.98 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: -8, scale: 0.98 }}
+                          transition={{ duration: 0.15, ease: "easeOut" }}
+                          className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-[420px] bg-white rounded-md border border-slate-100 shadow-2xl shadow-slate-900/10 p-4 z-50"
+                        >
+                          <div className="grid grid-cols-2 gap-1">
+                            {FEATURE_SHORTCUTS.map((feat) => (
+                              <Link
+                                key={feat.href}
+                                href={feat.href}
+                                onClick={closeFiturTray}
+                                className="group flex items-center gap-3 p-2.5 rounded-sm hover:bg-slate-50 transition-colors duration-150"
+                              >
+                                <div className={`w-10 h-10 shrink-0 ${feat.bgLight} rounded-sm flex items-center justify-center p-1.5`}>
+                                  <Image
+                                    src={feat.imageSrc}
+                                    alt={feat.title}
+                                    width={40}
+                                    height={40}
+                                    className="w-full h-full object-contain"
+                                  />
+                                </div>
+                                <div className="min-w-0">
+                                  <p className="text-sm font-bold text-slate-800 group-hover:text-primary transition-colors truncate">
+                                    {feat.title}
+                                  </p>
+                                  {feat.badge && (
+                                    <span
+                                      className={cn(
+                                        "text-[9px] font-black uppercase tracking-wider",
+                                        feat.badge === "NEW" ? "text-emerald-600" : "text-amber-600"
+                                      )}
+                                    >
+                                      {feat.badge}
+                                    </span>
+                                  )}
+                                </div>
+                              </Link>
+                            ))}
+                          </div>
+
+                          <div className="h-px bg-slate-100 my-3" />
+
+                          <Link
+                            href="/all-feature"
+                            onClick={closeFiturTray}
+                            className="flex items-center justify-center gap-1.5 text-xs font-bold text-primary hover:underline cursor-pointer"
+                          >
+                            Lihat semua fitur <ArrowRight className="w-3 h-3" />
+                          </Link>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                ) : link.href.startsWith("/") ? (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className="flex items-center gap-1.5 px-4 py-2 rounded-sm text-sm font-semibold text-slate-700 hover:text-primary hover:bg-slate-100 transition-all duration-200 cursor-pointer"
+                  >
+                    {link.label}
+                    {link.badge && (
+                      <span className="text-[9px] font-black text-white bg-gradient-to-r from-amber-500 to-amber-600 px-1.5 py-0.5 rounded-full tracking-wider shadow-sm shadow-amber-500/30">
+                        {link.badge}
+                      </span>
+                    )}
+                  </Link>
+                ) : (
+                  <a
+                    key={link.href}
+                    href={pathname === "/" ? link.href : `/${link.href}`}
+                    onClick={(e) => handleNavClick(e, link.href)}
+                    className="px-4 py-2 rounded-sm text-sm font-semibold text-slate-700 hover:text-primary hover:bg-slate-100 transition-all duration-200 cursor-pointer"
+                  >
+                    {link.label}
+                  </a>
+                )
+              )}
             </div>
 
             {/* Mobile/Desktop Auth + Hamburger Wrapper */}
@@ -223,7 +389,7 @@ export const HomepageNavbar = () => {
                 {/* Desktop CTA (Mulai Gratis) */}
                 <Link
                   href="/split-bill"
-                  className="hidden lg:flex items-center gap-1.5 px-5 py-2.5 rounded-lg bg-primary text-white text-sm font-bold shadow-lg shadow-primary/30 hover:bg-primary/90 hover:scale-105 active:scale-95 transition-all duration-200"
+                  className="hidden lg:flex items-center gap-1.5 px-5 py-2.5 rounded-md bg-primary text-white text-sm font-bold shadow-lg shadow-primary/30 hover:bg-primary/90 hover:scale-105 active:scale-95 transition-all duration-200"
                 >
                   <Zap className="w-3.5 h-3.5 fill-white" />
                   Mulai Gratis
@@ -261,8 +427,8 @@ export const HomepageNavbar = () => {
             </motion.div>
           )}
 
-          {/* Scenario 2: Authenticated -> Encourage Install PWA (Without scroll) */}
-          {isAuthenticated && showPwaBanner && (
+          {/* Scenario 2: Authenticated -> Encourage Install PWA (only once user starts scrolling) */}
+          {scrolled && isAuthenticated && showPwaBanner && (
             <motion.div
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: "auto", opacity: 1 }}
@@ -307,16 +473,76 @@ export const HomepageNavbar = () => {
             className="fixed left-0 right-0 z-40 bg-white/95 backdrop-blur-lg border-b border-slate-100 shadow-xl lg:hidden"
           >
             <div className="max-w-7xl mx-auto px-4 py-6 flex flex-col gap-1">
-              {navLinks.map((link) => (
-                <a
-                  key={link.href}
-                  href={pathname === "/" ? link.href : `/${link.href}`}
-                  onClick={(e) => handleNavClick(e, link.href)}
-                  className="px-4 py-3 rounded-xl text-base font-semibold text-slate-700 hover:text-primary hover:bg-primary/5 transition-all duration-200 cursor-pointer"
-                >
-                  {link.label}
-                </a>
-              ))}
+              {navLinks.map((link) =>
+                link.href === "#fitur" ? (
+                  <div key={link.href}>
+                    <button
+                      type="button"
+                      onClick={() => setMobileFiturOpen((v) => !v)}
+                      className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-base font-semibold text-slate-700 hover:text-primary hover:bg-primary/5 transition-all duration-200 cursor-pointer"
+                    >
+                      {link.label}
+                      <ChevronDown className={cn("w-4 h-4 transition-transform duration-200", mobileFiturOpen && "rotate-180")} />
+                    </button>
+                    <AnimatePresence>
+                      {mobileFiturOpen && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.2, ease: "easeInOut" }}
+                          className="overflow-hidden"
+                        >
+                          <div className="grid grid-cols-2 gap-1 px-2 pb-2 pt-1">
+                            {FEATURE_SHORTCUTS.map((feat) => (
+                              <Link
+                                key={feat.href}
+                                href={feat.href}
+                                onClick={() => setMenuOpen(false)}
+                                className="flex items-center gap-2.5 p-2.5 rounded-lg hover:bg-primary/5 transition-colors duration-150"
+                              >
+                                <div className={`w-9 h-9 shrink-0 ${feat.bgLight} rounded-md flex items-center justify-center p-1.5`}>
+                                  <Image
+                                    src={feat.imageSrc}
+                                    alt={feat.title}
+                                    width={36}
+                                    height={36}
+                                    className="w-full h-full object-contain"
+                                  />
+                                </div>
+                                <span className="text-sm font-bold text-slate-700 truncate">{feat.title}</span>
+                              </Link>
+                            ))}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                ) : link.href.startsWith("/") ? (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setMenuOpen(false)}
+                    className="flex items-center gap-1.5 px-4 py-3 rounded-xl text-base font-semibold text-slate-700 hover:text-primary hover:bg-primary/5 transition-all duration-200 cursor-pointer"
+                  >
+                    {link.label}
+                    {link.badge && (
+                      <span className="text-[9px] font-black text-white bg-gradient-to-r from-amber-500 to-amber-600 px-1.5 py-0.5 rounded-full tracking-wider shadow-sm shadow-amber-500/30">
+                        {link.badge}
+                      </span>
+                    )}
+                  </Link>
+                ) : (
+                  <a
+                    key={link.href}
+                    href={pathname === "/" ? link.href : `/${link.href}`}
+                    onClick={(e) => handleNavClick(e, link.href)}
+                    className="px-4 py-3 rounded-xl text-base font-semibold text-slate-700 hover:text-primary hover:bg-primary/5 transition-all duration-200 cursor-pointer"
+                  >
+                    {link.label}
+                  </a>
+                )
+              )}
               <div className="h-px bg-slate-100 my-2" />
               {isInitialized && isAuthenticated ? (
                 <Link

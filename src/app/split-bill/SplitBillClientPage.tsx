@@ -643,6 +643,16 @@ const SplitBillContent = () => {
         trackSplitBill.validationError(step, errorMsg);
         return;
       }
+      const unassignedAdx = additionalExpenses.filter(
+        (e) => e.who.length === 0 || !e.paidBy,
+      );
+      if (unassignedAdx.length > 0) {
+        const errorMsg =
+          "Beberapa biaya tambahan (pajak/service/diskon) belum di-assign 'Split dengan' atau 'Dibayar oleh'. Tolong lengkapi dulu ya!";
+        toast.error(errorMsg);
+        trackSplitBill.validationError(step, errorMsg);
+        return;
+      }
       if (!activityName.trim()) {
         setActivityName(getDefaultActivityName());
       }
@@ -846,235 +856,235 @@ const SplitBillContent = () => {
 
             <div className="space-y-6">
 
-            {/* Bill Quick View - Realistic Ticket Style */}
-            <div className="relative group mb-4">
-              <div
-                className="bg-white border-x border-primary/10 p-8 pt-6 pb-14 relative"
-                style={{
-                  filter: "drop-shadow(0 10px 15px -3px rgba(0, 0, 0, 0.05))",
-                  maskImage:
-                    "radial-gradient(circle 12px at left 50%, transparent 99%, black 100%), radial-gradient(circle 12px at right 50%, transparent 99%, black 100%), linear-gradient(to bottom, black 50%, transparent 100%)",
-                  WebkitMaskImage:
-                    "radial-gradient(circle 12px at left 50%, transparent 99%, black 100%), radial-gradient(circle 12px at right 50%, transparent 99%, black 100%), linear-gradient(to bottom, black 50%, transparent 100%)",
-                  maskComposite: "intersect",
-                  WebkitMaskComposite: "source-in, source-in",
-                }}
-              >
-                {/* Ticket Punch Notches (Sides) */}
-                <div className="absolute top-1/2 -left-3 w-6 h-6 bg-transparent border border-primary/10 rounded-full z-10 -translate-y-1/2 shadow-inner" />
-                <div className="absolute top-1/2 -right-3 w-6 h-6 bg-transparent border border-primary/10 rounded-full z-10 -translate-y-1/2 shadow-inner" />
-
-                {/* Decorative Pattern Background */}
+              {/* Bill Quick View - Realistic Ticket Style */}
+              <div className="relative group mb-4">
                 <div
-                  className="absolute inset-0 opacity-[0.02] pointer-events-none bg-[radial-gradient(#7c3aed_1px,transparent_1px)] [background-size:12px_12px]"
+                  className="bg-white border-x border-primary/10 p-8 pt-6 pb-14 relative"
                   style={{
+                    filter: "drop-shadow(0 10px 15px -3px rgba(0, 0, 0, 0.05))",
                     maskImage:
-                      "linear-gradient(to bottom, black 85%, transparent 100%)",
+                      "radial-gradient(circle 12px at left 50%, transparent 99%, black 100%), radial-gradient(circle 12px at right 50%, transparent 99%, black 100%), linear-gradient(to bottom, black 50%, transparent 100%)",
                     WebkitMaskImage:
-                      "linear-gradient(to bottom, black 85%, transparent 100%)",
+                      "radial-gradient(circle 12px at left 50%, transparent 99%, black 100%), radial-gradient(circle 12px at right 50%, transparent 99%, black 100%), linear-gradient(to bottom, black 50%, transparent 100%)",
+                    maskComposite: "intersect",
+                    WebkitMaskComposite: "source-in, source-in",
                   }}
-                />
+                >
+                  {/* Ticket Punch Notches (Sides) */}
+                  <div className="absolute top-1/2 -left-3 w-6 h-6 bg-transparent border border-primary/10 rounded-full z-10 -translate-y-1/2 shadow-inner" />
+                  <div className="absolute top-1/2 -right-3 w-6 h-6 bg-transparent border border-primary/10 rounded-full z-10 -translate-y-1/2 shadow-inner" />
 
-                <div className="relative z-10 flex items-center justify-between">
-                  <div className="space-y-1">
-                    <p className="text-[10px] font-black uppercase text-primary/80 tracking-widest">
-                      Siap dihitung
-                    </p>
-                    <h3 className="text-3xl font-black text-primary/90 tracking-tighter">
-                      {formatToIDR(totalSpent)}
-                    </h3>
-                    <div className="flex items-center gap-1.5 pt-0.5">
-                      <div className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
-                      <p className="text-[9px] font-bold text-amber-600/80 uppercase tracking-tight">
-                        Lengkapi nama split bill (opsional)
+                  {/* Decorative Pattern Background */}
+                  <div
+                    className="absolute inset-0 opacity-[0.02] pointer-events-none bg-[radial-gradient(#7c3aed_1px,transparent_1px)] [background-size:12px_12px]"
+                    style={{
+                      maskImage:
+                        "linear-gradient(to bottom, black 85%, transparent 100%)",
+                      WebkitMaskImage:
+                        "linear-gradient(to bottom, black 85%, transparent 100%)",
+                    }}
+                  />
+
+                  <div className="relative z-10 flex items-center justify-between">
+                    <div className="space-y-1">
+                      <p className="text-[10px] font-black uppercase text-primary/80 tracking-widest">
+                        Siap dihitung
                       </p>
+                      <h3 className="text-3xl font-black text-primary/90 tracking-tighter">
+                        {formatToIDR(totalSpent)}
+                      </h3>
+                      <div className="flex items-center gap-1.5 pt-0.5">
+                        <div className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                        <p className="text-[9px] font-bold text-amber-600/80 uppercase tracking-tight">
+                          Lengkapi nama split bill (opsional)
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex -space-x-2 items-center">
+                      {people.slice(0, 4).map((name, i) => (
+                        <div
+                          key={i}
+                          className="w-8 h-8 rounded-full border-2 border-white overflow-hidden bg-white shadow-md ring-1 ring-primary/5"
+                        >
+                          <img
+                            src={getFriendAvatarUrl(name, 120)}
+                            alt={name}
+                          />
+                        </div>
+                      ))}
+                      {people.length > 4 && (
+                        <div className="w-8 h-8 rounded-full border-2 border-white bg-primary/20 flex items-center justify-center text-[10px] font-bold text-primary shadow-md ring-1 ring-primary/5">
+                          +{people.length - 4}
+                        </div>
+                      )}
                     </div>
                   </div>
+                </div>
 
-                  <div className="flex -space-x-2 items-center">
-                    {people.slice(0, 4).map((name, i) => (
-                      <div
-                        key={i}
-                        className="w-8 h-8 rounded-full border-2 border-white overflow-hidden bg-white shadow-md ring-1 ring-primary/5"
-                      >
-                        <img
-                          src={getFriendAvatarUrl(name, 120)}
-                          alt={name}
-                        />
-                      </div>
-                    ))}
-                    {people.length > 4 && (
-                      <div className="w-8 h-8 rounded-full border-2 border-white bg-primary/20 flex items-center justify-center text-[10px] font-bold text-primary shadow-md ring-1 ring-primary/5">
-                        +{people.length - 4}
-                      </div>
-                    )}
+                {/* Lock Indicator Overlay */}
+                <div className="absolute inset-x-0 bottom-0 h-14 flex items-end justify-center pb-2 z-20">
+                  <div className="flex items-center gap-2 px-4 py-1.5 bg-white rounded-full shadow-lg shadow-primary/5 ">
+                    <span className="text-xs font-bold text-primary">
+                      Selesaikan Detail di Bawah ✨
+                    </span>
                   </div>
                 </div>
               </div>
 
-              {/* Lock Indicator Overlay */}
-              <div className="absolute inset-x-0 bottom-0 h-14 flex items-end justify-center pb-2 z-20">
-                <div className="flex items-center gap-2 px-4 py-1.5 bg-white rounded-full shadow-lg shadow-primary/5 ">
-                  <span className="text-xs font-bold text-primary">
-                    Selesaikan Detail di Bawah ✨
-                  </span>
-                </div>
-              </div>
-            </div>
+              <Card className="shadow-soft">
+                <CardContent className="p-5 space-y-4">
+                  <div className="flex items-center gap-2 px-1">
+                    <PenLine className="w-4 h-4 text-primary" />
+                    <label className="text-sm font-bold text-foreground flex items-center gap-2">
+                      Nama Split Bill 📝
+                      <span className="text-[10px] font-medium text-muted-foreground">
+                        (Opsional)
+                      </span>
+                    </label>
+                  </div>
 
-            <Card className="shadow-soft">
-              <CardContent className="p-5 space-y-4">
-                <div className="flex items-center gap-2 px-1">
-                  <PenLine className="w-4 h-4 text-primary" />
-                  <label className="text-sm font-bold text-foreground flex items-center gap-2">
-                    Nama Split Bill 📝
-                    <span className="text-[10px] font-medium text-muted-foreground">
-                      (Opsional)
-                    </span>
-                  </label>
-                </div>
+                  <div className="relative">
+                    <Input
+                      placeholder="Contoh: Makan Siang Tim"
+                      value={activityName}
+                      onChange={(e) => {
+                        const newValue = e.target.value;
+                        const emoji = suggestEmoji(newValue);
 
-                <div className="relative">
-                  <Input
-                    placeholder="Contoh: Makan Siang Tim"
-                    value={activityName}
-                    onChange={(e) => {
-                      const newValue = e.target.value;
-                      const emoji = suggestEmoji(newValue);
-
-                      if (emoji && !newValue.includes(emoji)) {
-                        const hasEmoji = /^\p{Emoji}/u.test(newValue);
-                        if (!hasEmoji) {
-                          setActivityName(`${emoji} ${newValue}`);
-                          return;
+                        if (emoji && !newValue.includes(emoji)) {
+                          const hasEmoji = /^\p{Emoji}/u.test(newValue);
+                          if (!hasEmoji) {
+                            setActivityName(`${emoji} ${newValue}`);
+                            return;
+                          }
                         }
-                      }
-                      setActivityName(newValue);
-                    }}
-                    className="bg-white border-primary/10 h-12 text-sm font-bold px-4 focus-visible:ring-primary/20"
-                  />
-                </div>
-
-                <p className="text-[11px] text-muted-foreground px-1 -mt-2">
-                  Dipakai untuk riwayat & saat dibagikan ke teman.
-                </p>
-
-                <div className="flex flex-wrap gap-2 pt-1">
-                  {[
-                    { name: "Makan Bareng", emoji: "🍱" },
-                    { name: "Liburan", emoji: "✈️" },
-                    { name: "Patungan Kado", emoji: "🎁" },
-                    { name: "Tagihan", emoji: "🏠" },
-                    { name: "Belanja", emoji: "🛒" },
-                  ].map((pick) => (
-                    <button
-                      key={pick.name}
-                      onClick={() => {
-                        setActivityName(`${pick.emoji} ${pick.name}`);
-                        trackSplitBill.quickPickActivity(pick.name);
+                        setActivityName(newValue);
                       }}
-                      className={cn(
-                        "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold transition-all active:scale-95 cursor-pointer",
-                        activityName === `${pick.emoji} ${pick.name}`
-                          ? "bg-primary text-white shadow-sm"
-                          : "bg-primary/5 text-primary/70 hover:bg-primary/10 border border-primary/10",
-                      )}
-                    >
-                      <span>{pick.emoji}</span>
-                      <span>{pick.name}</span>
-                    </button>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+                      className="bg-white border-primary/10 h-12 text-sm font-bold px-4 focus-visible:ring-primary/20"
+                    />
+                  </div>
 
-            <Card className="shadow-soft">
-              <CardContent
-                id="onboarding-payment-methods"
-                className="p-5 space-y-4"
-              >
-                <div className="flex items-center justify-between px-1">
-                  <label className="text-sm font-bold flex items-center gap-2">
-                    Dompet Penerima 📥
-                    <span className="text-[10px] font-medium text-muted-foreground">
-                      (Opsional)
-                    </span>
-                  </label>
-                  {selectedPaymentMethodIds.length > 0 && (
-                    <span className="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
-                      {selectedPaymentMethodIds.length} Terpilih
-                    </span>
-                  )}
-                </div>
+                  <p className="text-[11px] text-muted-foreground px-1 -mt-2">
+                    Dipakai untuk riwayat & saat dibagikan ke teman.
+                  </p>
 
-                <p className="text-[11px] text-muted-foreground px-1 -mt-2 leading-relaxed">
-                  Pilih dompet kamu biar temen gampang bayarnya.
-                </p>
-
-                <div className="flex items-center gap-3 overflow-x-auto pb-2 scrollbar-hide -mx-1 px-1">
-                  <Card
-                    onClick={() => {
-                      setIsAddWalletOpen(true);
-                      trackWallet.addMethodInitiate();
-                    }}
-                    className="relative h-[30vw] sm:h-[157px] shrink-0 aspect-square rounded-sm border border-dashed border-primary/20 flex flex-col items-center justify-center gap-1.5 text-primary/40 hover:text-primary hover:border-primary/40 hover:bg-primary/5 transition-all active:scale-95 cursor-pointer bg-white shadow-none"
-                  >
-                    <Plus className="w-5 h-5" />
-                    <span className="text-[11px] font-bold">Tambah</span>
-                  </Card>
-
-                  {paymentMethods.length > 0 ? (
-                    paymentMethods.map((method: PaymentMethod) => (
-                      <WalletSelectionCard
-                        key={method.id}
-                        method={method}
-                        isSelected={selectedPaymentMethodIds.includes(
-                          method.id,
-                        )}
+                  <div className="flex flex-wrap gap-2 pt-1">
+                    {[
+                      { name: "Makan Bareng", emoji: "🍱" },
+                      { name: "Liburan", emoji: "✈️" },
+                      { name: "Patungan Kado", emoji: "🎁" },
+                      { name: "Tagihan", emoji: "🏠" },
+                      { name: "Belanja", emoji: "🛒" },
+                    ].map((pick) => (
+                      <button
+                        key={pick.name}
                         onClick={() => {
-                          const isSelected = !selectedPaymentMethodIds.includes(
-                            method.id,
-                          );
-                          togglePaymentMethodSelection(method.id);
-                          trackWallet.selectPaymentMethod(
-                            method.id,
-                            isSelected,
-                          );
+                          setActivityName(`${pick.emoji} ${pick.name}`);
+                          trackSplitBill.quickPickActivity(pick.name);
                         }}
-                      />
-                    ))
-                  ) : (
-                    <Card className="flex-1 flex items-center justify-center h-[30vw] sm:h-[157px] rounded-sm bg-muted/5 border border-dashed border-muted-foreground/10 px-4 text-center shadow-none">
-                      <p className="text-[11px] text-muted-foreground leading-tight">
-                        Belum ada dompet tersimpan. <br />
-                        <span
-                          onClick={() => {
-                            setIsAddWalletOpen(true);
-                            trackWallet.addMethodInitiate();
-                          }}
-                          className="font-bold underline cursor-pointer"
-                        >
-                          Tambah yuk!
-                        </span>
-                      </p>
-                    </Card>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
+                        className={cn(
+                          "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold transition-all active:scale-95 cursor-pointer",
+                          activityName === `${pick.emoji} ${pick.name}`
+                            ? "bg-primary text-white shadow-sm"
+                            : "bg-primary/5 text-primary/70 hover:bg-primary/10 border border-primary/10",
+                        )}
+                      >
+                        <span>{pick.emoji}</span>
+                        <span>{pick.name}</span>
+                      </button>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
 
-            <AddPaymentMethodBottomSheet
-              isOpen={isAddWalletOpen}
-              onClose={() => setIsAddWalletOpen(false)}
-              onMethodAdded={(id: string) => {
-                if (!selectedPaymentMethodIds.includes(id)) {
-                  setSelectedPaymentMethodIds([
-                    ...selectedPaymentMethodIds,
-                    id,
-                  ]);
-                }
-              }}
-            />
+              <Card className="shadow-soft">
+                <CardContent
+                  id="onboarding-payment-methods"
+                  className="p-5 space-y-4"
+                >
+                  <div className="flex items-center justify-between px-1">
+                    <label className="text-sm font-bold flex items-center gap-2">
+                      Dompet Penerima 📥
+                      <span className="text-[10px] font-medium text-muted-foreground">
+                        (Opsional)
+                      </span>
+                    </label>
+                    {selectedPaymentMethodIds.length > 0 && (
+                      <span className="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+                        {selectedPaymentMethodIds.length} Terpilih
+                      </span>
+                    )}
+                  </div>
+
+                  <p className="text-[11px] text-muted-foreground px-1 -mt-2 leading-relaxed">
+                    Pilih dompet kamu biar temen gampang bayarnya.
+                  </p>
+
+                  <div className="flex items-center gap-3 overflow-x-auto pb-2 scrollbar-hide -mx-1 px-1">
+                    <Card
+                      onClick={() => {
+                        setIsAddWalletOpen(true);
+                        trackWallet.addMethodInitiate();
+                      }}
+                      className="relative h-[30vw] sm:h-[157px] shrink-0 aspect-square rounded-sm border border-dashed border-primary/20 flex flex-col items-center justify-center gap-1.5 text-primary/40 hover:text-primary hover:border-primary/40 hover:bg-primary/5 transition-all active:scale-95 cursor-pointer bg-white shadow-none"
+                    >
+                      <Plus className="w-5 h-5" />
+                      <span className="text-[11px] font-bold">Tambah</span>
+                    </Card>
+
+                    {paymentMethods.length > 0 ? (
+                      paymentMethods.map((method: PaymentMethod) => (
+                        <WalletSelectionCard
+                          key={method.id}
+                          method={method}
+                          isSelected={selectedPaymentMethodIds.includes(
+                            method.id,
+                          )}
+                          onClick={() => {
+                            const isSelected = !selectedPaymentMethodIds.includes(
+                              method.id,
+                            );
+                            togglePaymentMethodSelection(method.id);
+                            trackWallet.selectPaymentMethod(
+                              method.id,
+                              isSelected,
+                            );
+                          }}
+                        />
+                      ))
+                    ) : (
+                      <Card className="flex-1 flex items-center justify-center h-[30vw] sm:h-[157px] rounded-sm bg-muted/5 border border-dashed border-muted-foreground/10 px-4 text-center shadow-none">
+                        <p className="text-[11px] text-muted-foreground leading-tight">
+                          Belum ada dompet tersimpan. <br />
+                          <span
+                            onClick={() => {
+                              setIsAddWalletOpen(true);
+                              trackWallet.addMethodInitiate();
+                            }}
+                            className="font-bold underline cursor-pointer"
+                          >
+                            Tambah yuk!
+                          </span>
+                        </p>
+                      </Card>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+
+              <AddPaymentMethodBottomSheet
+                isOpen={isAddWalletOpen}
+                onClose={() => setIsAddWalletOpen(false)}
+                onMethodAdded={(id: string) => {
+                  if (!selectedPaymentMethodIds.includes(id)) {
+                    setSelectedPaymentMethodIds([
+                      ...selectedPaymentMethodIds,
+                      id,
+                    ]);
+                  }
+                }}
+              />
             </div>
           </div>
         );
@@ -1209,7 +1219,7 @@ const SplitBillContent = () => {
       <div className="sticky bottom-0 w-full z-50 pointer-events-none flex justify-center mt-auto">
         <div className="w-full max-w-[600px] relative pointer-events-auto flex flex-col">
           {/* Solid background area for the actions */}
-          <div className="bg-background px-4 pb-4 pb-safe flex flex-col gap-3">
+          <div className="bg-background px-4 pb-4 pb-safe flex flex-col">
             {step === 1 && (
               <Button
                 onClick={nextStep}
@@ -1242,6 +1252,20 @@ const SplitBillContent = () => {
 
             {step === 2 && (
               <>
+                {expenses.length > 0 && (
+                  <div className="flex items-center justify-between px-1 py-2">
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <ReceiptText className="w-3.5 h-3.5 text-primary shrink-0" />
+                      <span className="text-[11px] font-semibold text-muted-foreground truncate">
+                        Total ({expenses.length + additionalExpenses.length} item) · cocokkan dengan struk
+                      </span>
+                    </div>
+                    <span className="text-sm font-black text-emerald-600 shrink-0 ml-2">
+                      {formatToIDR(totalSpent)}
+                    </span>
+                  </div>
+                )}
+
                 <Button
                   onClick={nextStep}
                   disabled={expenses.length === 0 || isSavingDraft}
@@ -1284,23 +1308,25 @@ const SplitBillContent = () => {
             )}
 
             {step === 3 && (
-              <div className="grid grid-cols-2 gap-3">
-                <Button
-                  onClick={nextStep}
-                  disabled={isCalculating}
-                  variant="outline"
-                  className="h-14 text-base font-bold border-primary/20 text-primary hover:bg-primary/5 active:scale-95 transition-all flex items-center justify-center"
-                >
-                  {isCalculating ? (
-                    <div className="flex items-center justify-center gap-2">
-                      <span>Ngitung... 🧮</span>
-                    </div>
-                  ) : (
-                    <>
-                      <Rocket className="mr-1.5 w-4 h-4" /> Preview Hasil
-                    </>
-                  )}
-                </Button>
+              <div className={cn("grid gap-3", isAuthenticated ? "grid-cols-1" : "grid-cols-2")}>
+                {!isAuthenticated && (
+                  <Button
+                    onClick={nextStep}
+                    disabled={isCalculating}
+                    variant="outline"
+                    className="h-14 text-base font-bold border-primary/20 text-primary hover:bg-primary/5 active:scale-95 transition-all flex items-center justify-center"
+                  >
+                    {isCalculating ? (
+                      <div className="flex items-center justify-center gap-2">
+                        <span>Ngitung... 🧮</span>
+                      </div>
+                    ) : (
+                      <>
+                        <Rocket className="mr-1.5 w-4 h-4" /> Preview Hasil
+                      </>
+                    )}
+                  </Button>
+                )}
 
                 <Button
                   onClick={() => {
@@ -1339,7 +1365,7 @@ const SplitBillContent = () => {
                     </div>
                   ) : (
                     <>
-                      <CheckCircle2 className="mr-1.5 w-4 h-4" /> Simpan Split Bill
+                      <CheckCircle2 className="mr-1.5 w-4 h-4" /> {isAuthenticated ? "Hitung & Simpan Split Bill" : "Simpan Split Bill"}
                     </>
                   )}
                 </Button>
@@ -1486,7 +1512,7 @@ const SplitBillContent = () => {
       />
 
       {/* SplitBill Chat Agent */}
-      <ChatAgentFAB />
+      <ChatAgentFAB bottomClass={step === 2 && expenses.length > 0 ? "bottom-32" : "bottom-24"} />
       <ChatRoom />
     </div>
   );

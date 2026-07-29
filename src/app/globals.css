@@ -119,12 +119,20 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
 
-  --radius-xl: 1.5rem;
-  /* 24px */
+  --radius-3xl: calc(var(--radius) + 1.5rem);
+  /* 2.5rem / 40px */
+  --radius-2xl: calc(var(--radius) + 1rem);
+  /* 2rem / 32px */
+  --radius-xl: calc(var(--radius) + 0.5rem);
+  /* 1.5rem / 24px */
   --radius-lg: var(--radius);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-xs: calc(var(--radius) - 6px);
+  /* 1rem / 16px */
+  --radius-md: calc(var(--radius) - 0.125rem);
+  /* 0.875rem / 14px */
+  --radius-sm: calc(var(--radius) - 0.25rem);
+  /* 0.75rem / 12px */
+  --radius-xs: calc(var(--radius) - 0.375rem);
+  /* 0.625rem / 10px */
 
   --font-sans: var(--font-inter);
   --font-mono: monospace;

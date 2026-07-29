@@ -9,7 +9,6 @@ import {
   Zap,
   Star,
   Users,
-  Sparkles,
   Check,
   Camera,
 } from "lucide-react";
@@ -48,53 +47,88 @@ const CSSAvatar = ({ name }: { name: string }) => {
 };
 
 const PEOPLE = [
-  { name: "Budi", amount: "Rp 210.625", paid: true },
-  { name: "Siti", amount: "Rp 210.625", paid: true },
-  { name: "Andi", amount: "Rp 210.625", paid: false },
-  { name: "Dinda", amount: "Rp 210.625", paid: false },
+  { name: "Budi", amount: "Rp 300.000", status: "Lunas" as const },
+  { name: "Siti", amount: "Rp 300.000", status: "Lunas" as const },
+  { name: "Andi", amount: "Rp 300.000", status: "Harus Bayar" as const },
 ];
+
+const SETTLEMENT = { from: "Andi", to: "Budi", amount: "Rp 300.000" };
+
+// Items that "pop in" one by one while the scan-line sweeps — makes the AI parsing feel active, not just a bare progress bar
+const SCAN_FINDINGS = ["8 menu", "Pajak", "Service"];
 
 const STAGE_DURATIONS = [1600, 1800, 1300, 3800]; // capture -> scanning -> done -> result
 
 // Same card frame throughout — only the content inside swaps (skeleton -> overlay -> real numbers)
+// Content mirrors the real split-bill detail summary (header stats + settlement + per-person status), simplified for a compact hero mockup.
 const MockBillCard = ({ stage }: { stage: number }) => {
   const revealed = stage === 3;
 
   return (
-    <div className="relative bg-white rounded-xl shadow-2xl shadow-primary/15 p-5 border-[5px] border-slate-100 min-w-[260px] max-w-[300px] overflow-hidden">
+    <div className="relative bg-white rounded-lg shadow-2xl shadow-primary/15 p-4 border-[5px] border-white min-w-[260px] max-w-[300px] overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center gap-2 mb-3">
+        <Image
+          src="/img/icon-splitbill.png"
+          alt="Split Bill"
+          width={22}
+          height={22}
+          className="w-[22px] h-[22px] object-contain shrink-0"
+        />
+        <p className="text-xs font-black text-slate-900 truncate">
+          Makan Bareng Squad 🍜
+        </p>
+      </div>
+
+      {/* Stats row — Total Tagihan / Total Orang */}
+      <div className="flex items-center justify-between border-t border-slate-100 pt-3 mb-3">
         <div>
-          <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">
-            Makan Bareng Squad 🍜
+          <p className="text-[8px] uppercase font-black text-primary/60 tracking-wider">
+            Total Tagihan
           </p>
-          {revealed ? (
-            <motion.p
-              initial={{ opacity: 0, y: 4 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-lg font-black text-slate-900 mt-0.5"
-            >
-              Rp 842.500
-            </motion.p>
-          ) : (
-            <div className="h-[22px] w-28 bg-slate-100 rounded mt-1.5 animate-pulse" />
-          )}
+          <div className="h-[26px] flex items-center mt-0.5">
+            {revealed ? (
+              <motion.p
+                initial={{ opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-lg font-black text-primary tracking-tight leading-none"
+              >
+                Rp 900.000
+              </motion.p>
+            ) : (
+              <div className="h-[20px] w-24 bg-slate-100 rounded animate-pulse" />
+            )}
+          </div>
         </div>
-        <div className="w-9 h-9 bg-primary/10 rounded-xl flex items-center justify-center overflow-hidden">
-          <Image
-            src="/img/ai-icon.png"
-            alt="AI"
-            width={20}
-            height={20}
-            className="w-5 h-5 object-contain"
-          />
+        <div className="flex flex-col items-end">
+          <p className="text-[8px] uppercase font-black text-slate-400 tracking-wider">
+            Total Orang
+          </p>
+          <div className="flex items-center gap-1 mt-0.5">
+            <Users className="w-3 h-3 text-primary" />
+            <span className="text-sm font-black text-slate-900">3</span>
+          </div>
         </div>
       </div>
 
-      <div className="h-px bg-slate-100 mb-4" />
+      {/* Settlement instruction — mirrors "Instruksi Transfer" banner */}
+      <div
+        className={`rounded-xs bg-primary px-2.5 py-2 mb-3 transition-opacity duration-300 ${revealed ? "opacity-100" : "opacity-0"
+          }`}
+      >
+        <div className="flex items-center justify-between gap-2">
+          <span className="text-[10px] font-medium text-white/90 truncate">
+            <strong className="font-black">{SETTLEMENT.from}</strong> transfer ke{" "}
+            <strong className="font-black">{SETTLEMENT.to}</strong>
+          </span>
+          <span className="text-[10px] font-black text-white shrink-0">
+            {SETTLEMENT.amount}
+          </span>
+        </div>
+      </div>
 
       {/* Breakdown */}
-      <div className="space-y-2.5 mb-4">
+      <div className="space-y-2">
         {PEOPLE.map((person) => (
           <div key={person.name} className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -103,39 +137,30 @@ const MockBillCard = ({ stage }: { stage: number }) => {
                 {person.name}
               </span>
             </div>
-            <div className="flex items-center gap-1.5">
+            <div className="h-[26px] flex flex-col items-end justify-center">
               {revealed ? (
-                <span className="text-xs font-bold text-slate-900">
-                  {person.amount}
-                </span>
-              ) : (
-                <div className="h-3 w-14 bg-slate-100 rounded animate-pulse" />
-              )}
-              {revealed ? (
-                person.paid ? (
-                  <span className="w-4 h-4 rounded-full bg-emerald-500 flex items-center justify-center">
-                    <Check className="w-2.5 h-2.5 text-white" strokeWidth={3} />
+                <>
+                  <span
+                    className={`text-[8px] font-black px-1.5 py-0.5 rounded-full leading-none ${person.status === "Lunas"
+                      ? "bg-emerald-500/10 text-emerald-600"
+                      : "bg-destructive/10 text-destructive"
+                      }`}
+                  >
+                    {person.status}
                   </span>
-                ) : (
-                  <span className="w-4 h-4 rounded-full bg-slate-200" />
-                )
+                  <span className="text-[10px] font-bold text-slate-900 leading-none mt-1">
+                    {person.amount}
+                  </span>
+                </>
               ) : (
-                <div className="w-4 h-4 rounded-full bg-slate-100 animate-pulse" />
+                <div className="flex flex-col items-end gap-1">
+                  <div className="h-2.5 w-14 bg-slate-100 rounded animate-pulse" />
+                  <div className="h-2.5 w-10 bg-slate-100 rounded animate-pulse" />
+                </div>
               )}
             </div>
           </div>
         ))}
-      </div>
-
-      {/* AI Badge */}
-      <div
-        className={`flex items-center gap-1.5 bg-amber-50 border border-amber-200 rounded-[8px] px-2.5 py-1.5 transition-opacity duration-300 ${revealed ? "opacity-100" : "opacity-0"
-          }`}
-      >
-        <Sparkles className="w-3 h-3 text-amber-500" />
-        <span className="text-[10px] font-bold text-amber-700">
-          AI Membaca Struk Otomatis
-        </span>
       </div>
 
       {/* Overlay — actual receipt photo being "scanned", fades out once the bill is revealed */}
@@ -154,7 +179,9 @@ const MockBillCard = ({ stage }: { stage: number }) => {
               alt="Struk"
               fill
               sizes="300px"
-              className="object-cover"
+              priority
+              fetchPriority="high"
+              className="object-cover object-top"
             />
             <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/20 to-black/60" />
 
@@ -183,7 +210,7 @@ const MockBillCard = ({ stage }: { stage: number }) => {
               )}
 
               {stage === 1 && (
-                <div className="mt-auto mb-4 flex flex-col items-center gap-2">
+                <div className="mt-auto mb-4 flex flex-col items-center gap-2.5">
                   <p className="text-sm font-bold text-white drop-shadow-md">Scanning...</p>
                   <div className="w-32 h-1.5 bg-white/30 rounded-full overflow-hidden">
                     <motion.div
@@ -192,6 +219,27 @@ const MockBillCard = ({ stage }: { stage: number }) => {
                       transition={{ duration: 1.6, ease: "easeInOut" }}
                       className="h-full bg-primary"
                     />
+                  </div>
+                  <div className="flex flex-col items-start gap-1">
+                    {SCAN_FINDINGS.map((item, i) => (
+                      <motion.div
+                        key={item}
+                        initial={{ opacity: 0, x: -8 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.3 + i * 0.45, duration: 0.25 }}
+                        className="flex items-center gap-1.5 bg-black/30 backdrop-blur-sm rounded-full pl-1.5 pr-2 py-0.5"
+                      >
+                        <motion.span
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          transition={{ delay: 0.3 + i * 0.45 + 0.1, type: "spring", stiffness: 400, damping: 15 }}
+                          className="w-3 h-3 rounded-full bg-emerald-500 flex items-center justify-center shrink-0"
+                        >
+                          <Check className="w-2 h-2 text-white" strokeWidth={4} />
+                        </motion.span>
+                        <span className="text-[10px] font-bold text-white whitespace-nowrap">{item}</span>
+                      </motion.div>
+                    ))}
                   </div>
                 </div>
               )}
@@ -237,47 +285,46 @@ const ScanFlow = () => {
       <div className="relative">
         <MockBillCard stage={stage} />
 
-        {/* Camera floating badge (Foto struk -> beres!) — only once the bill has landed */}
+        {/* Camera floating badge (Foto struk -> beres!) — only once the bill has landed, pops in first */}
         <motion.div
-          animate={{ y: [0, -4, 0], opacity: revealed ? 1 : 0 }}
+          animate={{
+            y: revealed ? [0, -4, 0] : 0,
+            opacity: revealed ? 1 : 0,
+            scale: revealed ? 1 : 0.8,
+          }}
           transition={{
             y: { repeat: Infinity, duration: 2.8, ease: "easeInOut" },
-            opacity: { duration: 0.3 },
+            opacity: { duration: 0.25, delay: revealed ? 0.1 : 0 },
+            scale: { type: "spring", stiffness: 350, damping: 16, delay: revealed ? 0.1 : 0 },
           }}
-          className="absolute -top-12 sm:-top-14 left-1/2 -translate-x-1/2 bg-emerald-500 text-white rounded-xl shadow-xl px-3 py-2 flex items-center gap-1.5 sm:gap-2 z-20 whitespace-nowrap pointer-events-none"
+          className="absolute -top-12 sm:-top-14 left-1/2 -translate-x-1/2 bg-emerald-500 text-white rounded-md shadow-xl px-3 py-2 flex items-center gap-1.5 sm:gap-2 z-20 whitespace-nowrap pointer-events-none"
         >
           <Camera className="w-3.5 h-3.5" />
-          <span className="text-xs sm:text-[10px] font-black">Foto struk → beres!</span>
+          <span className="text-xs sm:text-[10px] font-black">Struk Kebaca Otomatis!</span>
         </motion.div>
 
-        {/* Floating success card (AI scan selesai) */}
+        {/* Floating success card (AI scan selesai) — pops in a beat after the badge above, so the reveal feels sequential rather than synced */}
         <motion.div
-          animate={{ y: [0, -5, 0], opacity: revealed ? 1 : 0 }}
+          animate={{
+            y: revealed ? [0, -5, 0] : 0,
+            opacity: revealed ? 1 : 0,
+            scale: revealed ? 1 : 0.8,
+          }}
           transition={{
             y: { repeat: Infinity, duration: 3, ease: "easeInOut" },
-            opacity: { duration: 0.3 },
+            opacity: { duration: 0.25, delay: revealed ? 0.45 : 0 },
+            scale: { type: "spring", stiffness: 350, damping: 16, delay: revealed ? 0.45 : 0 },
           }}
-          className="absolute -bottom-18 sm:-bottom-20 -left-14 sm:-left-20 bg-white rounded-2xl shadow-xl px-3 py-2 sm:px-4 sm:py-3 border border-slate-100 flex items-center gap-2 sm:gap-2.5 z-20 pointer-events-none"
+          className="absolute -bottom-20 sm:-bottom-20 -left-16 sm:-left-20 bg-white rounded-md shadow-xl px-4 py-3 sm:px-4 sm:py-3 flex items-center gap-2.5 sm:gap-2.5 z-20 pointer-events-none"
         >
-          <div className="w-7 h-7 sm:w-8 sm:h-8 bg-emerald-100 rounded-lg flex items-center justify-center shrink-0">
-            <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600" strokeWidth={3} />
+          <div className="w-10 h-10 sm:w-8 sm:h-8 bg-emerald-100 rounded-full flex items-center justify-center shrink-0">
+            <Check className="w-5 h-5 sm:w-4 sm:h-4 text-emerald-600" strokeWidth={3} />
           </div>
           <div>
-            <p className="text-[9px] sm:text-[10px] text-slate-400 font-medium">AI scan selesai</p>
-            <p className="text-[11px] sm:text-xs font-black text-slate-800">3 detik aja! ⚡</p>
+            <p className="text-xs sm:text-[10px] text-slate-400 font-medium">AI scan selesai</p>
+            <p className="text-sm sm:text-xs font-black text-slate-800">5 detik aja! ⚡</p>
           </div>
         </motion.div>
-      </div>
-
-      {/* Stage progress dots — reinforces the sat-set narrative without needing to read anything */}
-      <div className="flex items-center gap-1.5 mt-1">
-        {STAGE_DURATIONS.map((_, i) => (
-          <span
-            key={i}
-            className={`h-1.5 rounded-full transition-all duration-300 ${i === stage ? "w-5 bg-primary" : "w-1.5 bg-primary/20"
-              }`}
-          />
-        ))}
       </div>
     </div>
   );
@@ -285,29 +332,47 @@ const ScanFlow = () => {
 
 export const HeroSection = () => {
   return (
-    <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-gradient-to-br from-white via-[#f0f7ff] to-primary/80">
-      {/* Subtle background orbs — light & airy */}
+    <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-white">
+      {/* Soft top spotlight — depth without a heavy corner gradient */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-10%,rgba(71,159,234,0.16),transparent)]" />
+
+      {/* Aurora blobs — layered, slowly drifting, more alive than a flat wash */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Top-right: soft primary blue wash */}
         <motion.div
-          animate={{ scale: [1, 1.1, 1], opacity: [0.25, 0.4, 0.25] }}
-          transition={{ repeat: Infinity, duration: 8, ease: "easeInOut" }}
-          className="absolute top-[-10%] right-[-5%] w-[45vw] h-[45vw] max-w-[650px] max-h-[650px] rounded-full bg-primary/20 blur-[90px]"
+          animate={{ scale: [1, 1.12, 1], x: [0, 24, 0], y: [0, -18, 0], opacity: [0.28, 0.42, 0.28] }}
+          transition={{ repeat: Infinity, duration: 9, ease: "easeInOut" }}
+          className="absolute top-[-15%] right-[-8%] w-[50vw] h-[50vw] max-w-[700px] max-h-[700px] rounded-full bg-primary/25 blur-[100px]"
         />
-        {/* Bottom-left: lighter blue-white glow */}
         <motion.div
-          animate={{ scale: [1, 1.15, 1], opacity: [0.15, 0.3, 0.15] }}
-          transition={{ repeat: Infinity, duration: 10, ease: "easeInOut", delay: 2 }}
-          className="absolute bottom-[-10%] left-[-5%] w-[40vw] h-[40vw] max-w-[550px] max-h-[550px] rounded-full bg-sky-300/20 blur-[80px]"
+          animate={{ scale: [1, 1.15, 1], x: [0, -22, 0], y: [0, 18, 0], opacity: [0.18, 0.32, 0.18] }}
+          transition={{ repeat: Infinity, duration: 11, ease: "easeInOut", delay: 1.5 }}
+          className="absolute bottom-[-15%] left-[-10%] w-[45vw] h-[45vw] max-w-[600px] max-h-[600px] rounded-full bg-sky-300/25 blur-[90px]"
+        />
+        <motion.div
+          animate={{ scale: [1, 1.1, 1], opacity: [0.15, 0.28, 0.15] }}
+          transition={{ repeat: Infinity, duration: 7, ease: "easeInOut", delay: 3 }}
+          className="absolute top-[18%] right-[8%] w-[25vw] h-[25vw] max-w-[350px] max-h-[350px] rounded-full bg-emerald-300/20 blur-[80px]"
         />
       </div>
 
-      {/* Subtle dot grid */}
+      {/* Fine grid, faded toward the edges instead of a uniform repeat */}
       <div
-        className="absolute inset-0 pointer-events-none opacity-[0.12]"
+        className="absolute inset-0 pointer-events-none"
         style={{
-          backgroundImage: `radial-gradient(circle, #479fea 1.5px, transparent 1.5px)`,
-          backgroundSize: "32px 32px",
+          backgroundImage:
+            "linear-gradient(#479fea0d 1px, transparent 1px), linear-gradient(90deg, #479fea0d 1px, transparent 1px)",
+          backgroundSize: "72px 72px",
+          maskImage: "radial-gradient(ellipse 70% 55% at 50% 25%, black, transparent 75%)",
+          WebkitMaskImage: "radial-gradient(ellipse 70% 55% at 50% 25%, black, transparent 75%)",
+        }}
+      />
+
+      {/* Subtle grain — keeps the wash from looking flat/plasticky */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-[0.025] mix-blend-overlay"
+        style={{
+          backgroundImage:
+            "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
         }}
       />
 
@@ -324,7 +389,7 @@ export const HeroSection = () => {
               initial="hidden"
               animate="visible"
               variants={fadeUp}
-              className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary text-xs font-bold px-2 py-2 pl-4 rounded-full mb-6"
+              className="inline-flex items-center gap-2 border border-primary/20 text-primary text-xs font-bold px-2 py-2 pl-4 rounded-full mb-6"
             >
               ⚡ Foto Struk → Tagihan Jadi
               <span className="ml-1 bg-emerald-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full">
@@ -342,7 +407,7 @@ export const HeroSection = () => {
             >
               Split Tagihan dari Foto Struk{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-[#2563eb]">
-                dalam 3 Detik
+                dalam 5 Detik
               </span>
             </motion.h1>
 
@@ -354,7 +419,7 @@ export const HeroSection = () => {
               variants={fadeUp}
               className="text-base sm:text-lg lg:text-xl text-slate-600 leading-relaxed max-w-lg mx-auto lg:mx-0 mb-8"
             >
-              Aplikasi bagi tagihan online gratis! Scan struk otomatis, hitung patungan fair share, dan selesaikan pembayaran no drama. 100% praktis & akurat!
+              Foto struk, AI otomatis membaca total belanja dan langsung membagi tagihan dengan adil. Gratis tanpa login.
             </motion.p>
 
             {/* CTAs */}
@@ -367,7 +432,7 @@ export const HeroSection = () => {
             >
               <Link
                 href="/split-bill"
-                className="group flex items-center justify-center gap-2 px-7 py-4 rounded-lg bg-primary text-white font-black text-base shadow-xl shadow-primary/30 hover:bg-primary/90 hover:scale-105 active:scale-95 transition-all duration-200"
+                className="group flex items-center justify-center gap-2 px-7 py-4 rounded-md bg-primary text-white font-black text-base shadow-xl shadow-primary/30 hover:bg-primary/90 hover:scale-105 active:scale-95 transition-all duration-200"
               >
                 <Camera className="w-5 h-5" />
                 Scan Struk Gratis
@@ -405,7 +470,7 @@ export const HeroSection = () => {
                     }, 260);
                   }
                 }}
-                className="flex items-center justify-center gap-2 px-7 py-4 rounded-lg bg-white border border-primary/30 text-primary font-bold text-base hover:bg-primary/5 hover:border-primary/60 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer shadow-sm"
+                className="flex items-center justify-center gap-2 px-7 py-4 rounded-md border border-primary/10 text-primary font-bold text-base hover:bg-primary/5 hover:border-primary/60 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer"
               >
                 Lihat Cara Pakainya
               </a>
@@ -452,7 +517,7 @@ export const HeroSection = () => {
 
             <div className="relative flex flex-col items-center justify-center min-h-[460px] sm:min-h-[650px] w-full max-w-[600px] lg:translate-x-16 xl:translate-x-24 overflow-visible">
               {/* Phone Mock behind the main card - shifted left */}
-              <div className="absolute -z-10 pointer-events-none opacity-90 -translate-x-20 xs:-translate-x-24 sm:-translate-x-28 transition-transform w-[500px] xs:w-[480px] sm:w-[560px] h-auto">
+              <div className="absolute -z-10 pointer-events-none opacity-90 -translate-x-28 xs:-translate-x-32 sm:-translate-x-36 transition-transform w-[530px] xs:w-[510px] sm:w-[595px] h-auto">
                 <Image
                   src="/img/mockup-phone.webp"
                   alt="Phone Mockup"

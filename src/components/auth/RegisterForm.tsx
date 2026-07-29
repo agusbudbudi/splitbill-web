@@ -30,6 +30,7 @@ export function RegisterForm({
   success,
 }: RegisterFormProps) {
   const [step, setStep] = useState<1 | 2>(1);
+  const [showEmailRegister, setShowEmailRegister] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -141,9 +142,22 @@ export function RegisterForm({
         </motion.div>
       )}
 
+      {/* Google — primary path, most users register this way */}
+      {step === 1 && !showEmailRegister && <GoogleLoginButton />}
+
+      {step === 1 && !showEmailRegister && (
+        <button
+          type="button"
+          onClick={() => setShowEmailRegister(true)}
+          className="w-full text-center text-xs font-bold text-muted-foreground hover:text-primary transition-colors cursor-pointer py-1"
+        >
+          atau daftar pakai email
+        </button>
+      )}
+
       <div className="overflow-hidden relative">
         <AnimatePresence mode="wait">
-          {step === 1 ? (
+          {step === 1 && showEmailRegister ? (
             <motion.div
               key="step-1"
               initial={{ opacity: 0, x: -20 }}
@@ -177,7 +191,7 @@ export function RegisterForm({
                         setNameError("");
                       }
                     }}
-                    className="pl-12 h-14 bg-white border border-slate-100 hover:border-primary/30 focus-visible:border-primary/60 focus-visible:ring-primary/5 transition-all rounded-2xl font-medium text-base text-foreground placeholder:text-muted-foreground/30"
+                    className="pl-12 h-14 bg-white border border-slate-100 hover:border-primary/30 focus-visible:border-primary/60 focus-visible:ring-primary/5 transition-all rounded-sm font-medium text-base text-foreground placeholder:text-muted-foreground/30"
                     disabled={isLoading}
                   />
                 </div>
@@ -209,7 +223,7 @@ export function RegisterForm({
                         setEmailError("");
                       }
                     }}
-                    className="pl-12 h-14 bg-white border border-slate-100 hover:border-primary/30 focus-visible:border-primary/60 focus-visible:ring-primary/5 transition-all rounded-2xl font-medium text-base text-foreground placeholder:text-muted-foreground/30"
+                    className="pl-12 h-14 bg-white border border-slate-100 hover:border-primary/30 focus-visible:border-primary/60 focus-visible:ring-primary/5 transition-all rounded-sm font-medium text-base text-foreground placeholder:text-muted-foreground/30"
                     disabled={isLoading}
                   />
                 </div>
@@ -230,7 +244,7 @@ export function RegisterForm({
                   type="button"
                   onClick={handleNextStep}
                   disabled={isLoading}
-                  className="w-full h-14 text-base font-bold shadow-md shadow-primary/10 hover:shadow-primary/25 transition-all rounded-2xl bg-primary hover:bg-primary/90 text-white border-none flex items-center justify-center gap-2 cursor-pointer group"
+                  className="w-full h-14 text-base font-bold shadow-md shadow-primary/10 hover:shadow-primary/25 transition-all rounded-sm bg-primary hover:bg-primary/90 text-white border-none flex items-center justify-center gap-2 cursor-pointer group"
                 >
                   {isLoading ? (
                     <div className="flex items-center gap-2">
@@ -246,18 +260,17 @@ export function RegisterForm({
                 </Button>
               </div>
 
-              <div className="relative my-4 flex items-center justify-center">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-slate-100"></div>
-                </div>
-                <span className="relative px-3 bg-white text-[10px] sm:text-xs font-bold text-muted-foreground/40 uppercase tracking-wider">
-                  Atau daftar dengan
-                </span>
+              <div className="text-center">
+                <button
+                  type="button"
+                  onClick={() => setShowEmailRegister(false)}
+                  className="text-xs font-bold text-muted-foreground hover:text-primary transition-colors cursor-pointer"
+                >
+                  ← Pakai Google aja
+                </button>
               </div>
-
-              <GoogleLoginButton />
             </motion.div>
-          ) : (
+          ) : step === 2 ? (
             <motion.div
               key="step-2"
               initial={{ opacity: 0, x: 20 }}
@@ -282,7 +295,7 @@ export function RegisterForm({
                     placeholder="Minimal 8 karakter"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="pl-12 pr-12 h-14 bg-white border border-slate-100 hover:border-primary/30 focus-visible:border-primary/60 focus-visible:ring-primary/5 transition-all rounded-2xl font-medium text-base text-foreground placeholder:text-muted-foreground/30"
+                    className="pl-12 pr-12 h-14 bg-white border border-slate-100 hover:border-primary/30 focus-visible:border-primary/60 focus-visible:ring-primary/5 transition-all rounded-sm font-medium text-base text-foreground placeholder:text-muted-foreground/30"
                     disabled={isLoading}
                   />
                   <button
@@ -336,7 +349,7 @@ export function RegisterForm({
                         setConfirmPasswordError("");
                       }
                     }}
-                    className="pl-12 pr-12 h-14 bg-white border border-slate-100 hover:border-primary/30 focus-visible:border-primary/60 focus-visible:ring-primary/5 transition-all rounded-2xl font-medium text-base text-foreground placeholder:text-muted-foreground/30"
+                    className="pl-12 pr-12 h-14 bg-white border border-slate-100 hover:border-primary/30 focus-visible:border-primary/60 focus-visible:ring-primary/5 transition-all rounded-sm font-medium text-base text-foreground placeholder:text-muted-foreground/30"
                     disabled={isLoading}
                   />
                   <button
@@ -362,7 +375,7 @@ export function RegisterForm({
               <div className="pt-2 space-y-3">
                 <Button
                   type="submit"
-                  className="w-full h-14 text-base font-bold shadow-md shadow-primary/10 hover:shadow-primary/25 transition-all rounded-2xl bg-primary hover:bg-primary/90 text-white border-none flex items-center justify-center gap-2 cursor-pointer group"
+                  className="w-full h-14 text-base font-bold shadow-md shadow-primary/10 hover:shadow-primary/25 transition-all rounded-sm bg-primary hover:bg-primary/90 text-white border-none flex items-center justify-center gap-2 cursor-pointer group"
                   disabled={isLoading}
                 >
                   {isLoading ? (
@@ -389,7 +402,7 @@ export function RegisterForm({
                 </div>
               </div>
             </motion.div>
-          )}
+          ) : null}
         </AnimatePresence>
       </div>
 

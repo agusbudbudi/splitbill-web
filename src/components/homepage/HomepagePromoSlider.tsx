@@ -98,7 +98,7 @@ export const HomepagePromoSlider = () => {
                     </div>
 
                     <div className="pt-5 mt-auto">
-                      <div className="w-full flex items-center justify-center gap-2 h-12 bg-white hover:bg-primary border-1 border-primary text-primary hover:text-white font-bold text-sm rounded-lg transition-all cursor-pointer">
+                      <div className="w-full flex items-center justify-center gap-2 h-12 bg-white hover:bg-primary border-1 border-primary text-primary hover:text-white font-bold text-sm rounded-sm transition-all cursor-pointer">
                         Coba Split Later
                         <ChevronRight className="w-4 h-4 group-hover/card:translate-x-0.5 transition-transform" />
                       </div>
@@ -140,7 +140,7 @@ export const HomepagePromoSlider = () => {
                     </div>
 
                     <div className="pt-5 mt-auto">
-                      <div className="w-full flex items-center justify-center gap-2 h-12 bg-white hover:bg-orange-500 border-1 border-orange-400 text-orange-600 hover:text-white font-bold text-sm rounded-lg transition-all cursor-pointer">
+                      <div className="w-full flex items-center justify-center gap-2 h-12 bg-white hover:bg-orange-500 border-1 border-orange-400 text-orange-600 hover:text-white font-bold text-sm rounded-sm transition-all cursor-pointer">
                         Tulis Review Sekarang
                         <ChevronRight className="w-4 h-4 group-hover/card:translate-x-0.5 transition-transform" />
                       </div>

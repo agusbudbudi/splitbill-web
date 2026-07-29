@@ -18,7 +18,7 @@ export const HomepageAIScanCard = () => {
     <div className="relative p-[1.5px] rounded-2xl bg-gradient-to-br from-violet-400 via-pink-400 to-primary shadow-lg shadow-pink-500/5 transition-all duration-300 h-full w-full flex flex-col group/card hover:scale-[1.005] active:scale-[0.99] overflow-hidden">
       {/* Stick Badge */}
       <div className={cn(
-        "absolute top-0 right-0 px-3 py-1.5 rounded-bl-xl flex items-center gap-1 text-[9px] font-black uppercase z-30 shadow-md transition-transform group-hover/card:scale-105 origin-top-right",
+        "absolute top-0 right-0 px-3 py-1.5 rounded-bl-md flex items-center gap-1 text-[9px] font-black uppercase z-30 shadow-md transition-transform group-hover/card:scale-105 origin-top-right",
         isSubscribed
           ? "bg-gradient-to-r from-amber-400 to-amber-500 text-white"
           : "bg-gradient-to-r from-primary to-violet-500 text-white"
@@ -61,7 +61,7 @@ export const HomepageAIScanCard = () => {
         {/* CTA Button */}
         <div className="pt-5 mt-auto">
           <Link href="/split-bill?step=1" className="block w-full">
-            <button className="w-full flex items-center justify-center gap-2 h-12 bg-primary hover:bg-primary/95 text-white font-bold text-sm rounded-lg shadow-lg shadow-primary/10 hover:shadow-primary/20 active:scale-[0.98] transition-all cursor-pointer">
+            <button className="w-full flex items-center justify-center gap-2 h-12 bg-primary hover:bg-primary/95 text-white font-bold text-sm rounded-sm shadow-lg shadow-primary/10 hover:shadow-primary/20 active:scale-[0.98] transition-all cursor-pointer">
               Bagi Tagihan Sekarang
               <ChevronRight className="w-4 h-4 group-hover/card:translate-x-0.5 transition-transform" />
             </button>

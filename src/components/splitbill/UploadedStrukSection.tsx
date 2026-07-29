@@ -105,14 +105,7 @@ export const UploadedStrukSection: React.FC<UploadedStrukSectionProps> = ({
                     : formatRelativeTime(img.uploadedAt)}
                 </p>
               </div>
-              {isDeleted ? (
-                <div
-                  title="Struk sudah dihapus"
-                  className="shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-muted/30 text-muted-foreground"
-                >
-                  <ImageOff className="w-4 h-4" />
-                </div>
-              ) : (
+              {!isDeleted && (
                 <button
                   onClick={() => setViewerIndex(idx)}
                   title="Lihat Struk"

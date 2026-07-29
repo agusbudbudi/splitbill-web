@@ -292,7 +292,7 @@ function LoginPageContent() {
                 <h2 className="text-lg sm:text-xl font-bold text-[#2d2d3e] tracking-tight">
                   Masuk ke akunmu
                 </h2>
-                <p className="text-xs sm:text-sm text-muted-foreground font-semibold">
+                <p className="text-xs sm:text-sm text-muted-foreground">
                   Yuk, lanjut split bareng temanmu!
                 </p>
               </div>

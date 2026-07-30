@@ -57,7 +57,9 @@ const SETTLEMENT = { from: "Andi", to: "Budi", amount: "Rp 300.000" };
 // Items that "pop in" one by one while the scan-line sweeps — makes the AI parsing feel active, not just a bare progress bar
 const SCAN_FINDINGS = ["8 menu", "Pajak", "Service"];
 
-const STAGE_DURATIONS = [1600, 1800, 1300, 3800]; // capture -> scanning -> done -> result
+// Kept short — Lighthouse Speed Index counts every pixel change until the page settles,
+// so a slow multi-second reveal directly tanks SI even though FCP/LCP land fine.
+const STAGE_DURATIONS = [500, 1600, 500, 3800]; // capture -> scanning -> done -> result (last unused, reveal stops the loop)
 
 // Same card frame throughout — only the content inside swaps (skeleton -> overlay -> real numbers)
 // Content mirrors the real split-bill detail summary (header stats + settlement + per-person status), simplified for a compact hero mockup.
@@ -201,7 +203,7 @@ const MockBillCard = ({ stage }: { stage: number }) => {
                   <motion.div
                     animate={{ scale: [1, 1.15, 1] }}
                     transition={{ repeat: Infinity, duration: 0.9, ease: "easeInOut" }}
-                    className="w-14 h-14 rounded-2xl bg-white/90 flex items-center justify-center shadow-lg"
+                    className="w-14 h-14 rounded-md bg-white/90 flex items-center justify-center shadow-lg"
                   >
                     <Camera className="w-7 h-7 text-primary" />
                   </motion.div>
@@ -293,7 +295,7 @@ const ScanFlow = () => {
             scale: revealed ? 1 : 0.8,
           }}
           transition={{
-            y: { repeat: Infinity, duration: 2.8, ease: "easeInOut" },
+            y: { repeat: 2, duration: 2.8, ease: "easeInOut" },
             opacity: { duration: 0.25, delay: revealed ? 0.1 : 0 },
             scale: { type: "spring", stiffness: 350, damping: 16, delay: revealed ? 0.1 : 0 },
           }}
@@ -311,7 +313,7 @@ const ScanFlow = () => {
             scale: revealed ? 1 : 0.8,
           }}
           transition={{
-            y: { repeat: Infinity, duration: 3, ease: "easeInOut" },
+            y: { repeat: 2, duration: 3, ease: "easeInOut" },
             opacity: { duration: 0.25, delay: revealed ? 0.45 : 0 },
             scale: { type: "spring", stiffness: 350, damping: 16, delay: revealed ? 0.45 : 0 },
           }}
@@ -336,21 +338,23 @@ export const HeroSection = () => {
       {/* Soft top spotlight — depth without a heavy corner gradient */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-10%,rgba(71,159,234,0.16),transparent)]" />
 
-      {/* Aurora blobs — layered, slowly drifting, more alive than a flat wash */}
+      {/* Aurora blobs — single settle-in pass, not infinite. An endless loop never lets
+          Lighthouse consider the page "visually stable," which tanks Speed Index even
+          after real content has painted. */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <motion.div
           animate={{ scale: [1, 1.12, 1], x: [0, 24, 0], y: [0, -18, 0], opacity: [0.28, 0.42, 0.28] }}
-          transition={{ repeat: Infinity, duration: 9, ease: "easeInOut" }}
+          transition={{ repeat: 1, duration: 2.5, ease: "easeInOut" }}
           className="absolute top-[-15%] right-[-8%] w-[50vw] h-[50vw] max-w-[700px] max-h-[700px] rounded-full bg-primary/25 blur-[100px]"
         />
         <motion.div
           animate={{ scale: [1, 1.15, 1], x: [0, -22, 0], y: [0, 18, 0], opacity: [0.18, 0.32, 0.18] }}
-          transition={{ repeat: Infinity, duration: 11, ease: "easeInOut", delay: 1.5 }}
+          transition={{ repeat: 1, duration: 2.5, ease: "easeInOut", delay: 0.3 }}
           className="absolute bottom-[-15%] left-[-10%] w-[45vw] h-[45vw] max-w-[600px] max-h-[600px] rounded-full bg-sky-300/25 blur-[90px]"
         />
         <motion.div
           animate={{ scale: [1, 1.1, 1], opacity: [0.15, 0.28, 0.15] }}
-          transition={{ repeat: Infinity, duration: 7, ease: "easeInOut", delay: 3 }}
+          transition={{ repeat: 1, duration: 2.5, ease: "easeInOut", delay: 0.6 }}
           className="absolute top-[18%] right-[8%] w-[25vw] h-[25vw] max-w-[350px] max-h-[350px] rounded-full bg-emerald-300/20 blur-[80px]"
         />
       </div>
@@ -525,8 +529,6 @@ export const HeroSection = () => {
                   height={720}
                   sizes="(max-width: 640px) 280px, 560px"
                   className="object-contain w-full h-auto"
-                  priority
-                  fetchPriority="high"
                 />
               </div>
 

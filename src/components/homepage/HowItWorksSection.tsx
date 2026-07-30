@@ -113,7 +113,7 @@ export const HowItWorksSection = () => {
                     className="flex-shrink-0 w-[82vw] snap-center flex flex-col items-center text-center"
                   >
                     {/* Image */}
-                    <div className="relative w-full max-w-[260px] aspect-square rounded-3xl overflow-hidden mb-6">
+                    <div className="relative w-full max-w-[260px] aspect-square rounded-xl overflow-hidden mb-6">
                       <Image
                         src={step.image}
                         alt={step.title}

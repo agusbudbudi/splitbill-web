@@ -40,10 +40,23 @@ export const TutorialOverlay = ({
 
   const currentStep = steps[currentStepIndex];
 
-  const updateSpotlight = useCallback(() => {
+  const recalculateSpotlight = useCallback(() => {
+    if (!isOpen || !currentStep) return;
+    const element = document.getElementById(currentStep.targetId);
+    if (!element) return;
+    const rect = element.getBoundingClientRect();
+    setSpotlightRect({
+      top: rect.top - 8,
+      left: rect.left - 8,
+      width: rect.width + 16,
+      height: rect.height + 16,
+    });
+  }, [isOpen, currentStep]);
+
+  const scrollToTarget = useCallback(() => {
     if (!isOpen || !currentStep) return;
 
-    const findAndSetSpotlight = (retryCount = 0) => {
+    const findAndScroll = (retryCount = 0) => {
       const element = document.getElementById(currentStep.targetId);
       if (element) {
         const rect = element.getBoundingClientRect();
@@ -53,32 +66,31 @@ export const TutorialOverlay = ({
           width: rect.width + 16,
           height: rect.height + 16,
         });
-        
-        // Scroll to element if not in view
+
         element.scrollIntoView({ behavior: "smooth", block: "center" });
       } else if (retryCount < 5) {
         // Retry if element not found yet (e.g., during page transition)
-        setTimeout(() => findAndSetSpotlight(retryCount + 1), 100);
+        setTimeout(() => findAndScroll(retryCount + 1), 100);
       } else {
         // If element still not found, show in center
         setSpotlightRect(null);
       }
     };
 
-    findAndSetSpotlight();
+    findAndScroll();
   }, [isOpen, currentStep]);
 
   useEffect(() => {
     if (isOpen) {
-      updateSpotlight();
-      window.addEventListener("resize", updateSpotlight);
-      window.addEventListener("scroll", updateSpotlight);
+      scrollToTarget();
+      window.addEventListener("resize", recalculateSpotlight);
+      window.addEventListener("scroll", recalculateSpotlight);
     }
     return () => {
-      window.removeEventListener("resize", updateSpotlight);
-      window.removeEventListener("scroll", updateSpotlight);
+      window.removeEventListener("resize", recalculateSpotlight);
+      window.removeEventListener("scroll", recalculateSpotlight);
     };
-  }, [isOpen, updateSpotlight]);
+  }, [isOpen, scrollToTarget, recalculateSpotlight]);
 
   const handleNext = () => {
     if (currentStepIndex < steps.length - 1) {
@@ -111,7 +123,7 @@ export const TutorialOverlay = ({
       )}>
         {spotlightRect && (
           <div
-            className="absolute bg-transparent shadow-[0_0_0_9999px_rgba(0,0,0,0.6)] rounded-2xl transition-all duration-500 ease-in-out"
+            className="absolute bg-transparent shadow-[0_0_0_9999px_rgba(0,0,0,0.6)] rounded-md transition-all duration-500 ease-in-out"
             style={{
               top: spotlightRect.top,
               left: spotlightRect.left,
@@ -131,7 +143,7 @@ export const TutorialOverlay = ({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: -20 }}
             className={cn(
-              "absolute pointer-events-auto w-full max-w-[280px] bg-white rounded-2xl p-4 shadow-2xl flex flex-col gap-2 border border-white/20",
+              "absolute pointer-events-auto w-full max-w-[280px] bg-white rounded-md p-4 shadow-2xl flex flex-col gap-2 border border-white/20",
               !spotlightRect && "static",
               spotlightRect && currentStep.position === "bottom" && "top-[calc(var(--top)+var(--height)+20px)]",
               spotlightRect && currentStep.position === "top" && "bottom-[calc(100%-var(--top)+20px)]"
@@ -163,14 +175,14 @@ export const TutorialOverlay = ({
                 <Button
                   variant="outline"
                   onClick={handleBack}
-                  className="flex-1 rounded-md h-10 text-xs"
+                  className="flex-1 rounded-sm h-10 text-xs"
                 >
                   <ChevronLeft className="w-3 h-3 mr-1" /> Balik
                 </Button>
               )}
               <Button
                 onClick={handleNext}
-                className="flex-2 rounded-md h-10 font-bold text-xs"
+                className="flex-2 rounded-xs h-10 font-bold text-xs"
               >
                 {currentStepIndex === steps.length - 1 ? (
                   <>Mulai! <Rocket className="w-3 h-3 ml-1" /></>

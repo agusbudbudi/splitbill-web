@@ -297,7 +297,7 @@ export default function ProfilePage() {
                     <div className="snap-center shrink-0">
                       <Card
                         onClick={() => router.push("/wallet")}
-                        className="relative w-[42vw] sm:w-[220px] shrink-0 aspect-[1.4/1] rounded-2xl border border-slate-200 bg-white hover:border-slate-300 flex flex-col items-center justify-center gap-2 text-slate-600 hover:text-primary transition-all active:scale-95 cursor-pointer shadow-none"
+                        className="relative w-[42vw] sm:w-[220px] shrink-0 aspect-[1.4/1] rounded-md border border-slate-200 bg-white hover:border-slate-300 flex flex-col items-center justify-center gap-2 text-slate-600 hover:text-primary transition-all active:scale-95 cursor-pointer shadow-none"
                       >
                         <div className="w-10 h-10 rounded-full bg-primary/5 flex items-center justify-center text-primary">
                           <Wallet className="w-5 h-5" />

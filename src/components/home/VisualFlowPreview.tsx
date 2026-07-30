@@ -52,7 +52,7 @@ export const VisualFlowPreview = () => {
               key={step.number}
               className="flex-shrink-0 w-[180px] snap-start pb-2"
             >
-              <div className="relative bg-white border border-slate-100 backdrop-blur-sm rounded-2xl overflow-hidden shadow-soft hover:shadow-lg hover:shadow-primary/5 transition-all duration-500 group h-full flex flex-col">
+              <div className="relative bg-white border border-slate-100 backdrop-blur-sm rounded-md overflow-hidden shadow-soft hover:shadow-lg hover:shadow-primary/5 transition-all duration-500 group h-full flex flex-col">
                 {/* Step Image */}
                 <div className="relative w-full aspect-square overflow-hidden bg-muted">
                   <Image

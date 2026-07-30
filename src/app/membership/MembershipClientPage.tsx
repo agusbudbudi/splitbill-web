@@ -68,11 +68,11 @@ export default function MembershipClientPage() {
 
           <main className="relative z-10 w-full px-4 pt-4 pb-4">
             <div className="space-y-4">
-              <div className="rounded-2xl border border-border/50 bg-white p-6 animate-pulse">
+              <div className="rounded-md border border-border/50 bg-white p-6 animate-pulse">
                 <div className="flex flex-col items-center space-y-6">
                   {/* VIP Icon */}
                   <div className="w-20 h-20 rounded-full bg-muted" />
-                  
+
                   {/* Text */}
                   <div className="space-y-3 w-full flex flex-col items-center">
                     <div className="h-8 w-48 bg-muted rounded-md" />
@@ -81,17 +81,17 @@ export default function MembershipClientPage() {
                   </div>
 
                   {/* Table */}
-                  <div className="w-full h-[260px] bg-muted rounded-2xl" />
+                  <div className="w-full h-[260px] bg-muted rounded-md" />
 
                   {/* Button */}
-                  <div className="w-full h-14 bg-muted rounded-2xl" />
+                  <div className="w-full h-14 bg-muted rounded-md" />
                 </div>
               </div>
 
               {/* Secondary Card */}
-              <div className="rounded-2xl border border-border/50 bg-white p-5 animate-pulse">
+              <div className="rounded-md border border-border/50 bg-white p-5 animate-pulse">
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-muted shrink-0" />
+                  <div className="w-12 h-12 rounded-md bg-muted shrink-0" />
                   <div className="space-y-2 flex-1 pt-1">
                     <div className="h-4 w-48 bg-muted rounded-md" />
                     <div className="h-3 w-full bg-muted rounded-md" />
@@ -131,7 +131,7 @@ export default function MembershipClientPage() {
                   </p>
                 </div>
 
-                <div className="border border-primary rounded-2xl bg-white overflow-hidden shadow-sm">
+                <div className="border border-primary rounded-md bg-white overflow-hidden shadow-sm">
                   <div className="grid grid-cols-[1.2fr_1fr_1fr] gap-0 bg-primary/5 border-b border-primary">
                     <span className="p-3.5 text-center text-[11px] font-black uppercase tracking-widest text-muted-foreground border-r border-primary/20">
                       Fitur
@@ -210,7 +210,7 @@ export default function MembershipClientPage() {
 
                   {/* Bordered Comparison Table - Larger Text & Primary Borders */}
                   <div className="w-full pt-4 mb-2">
-                    <div className="border border-primary rounded-2xl bg-white overflow-hidden">
+                    <div className="border border-primary rounded-md bg-white overflow-hidden">
                       <div className="grid grid-cols-[1.2fr_1fr_1fr] gap-0 bg-primary/5 border-b border-primary">
                         <span className="p-3.5 text-center text-[11px] font-black uppercase tracking-widest text-muted-foreground border-r border-primary/20">
                           Fitur
@@ -278,7 +278,7 @@ export default function MembershipClientPage() {
                   </div>
 
                   <Button
-                    className="w-full h-14 rounded-2xl bg-primary text-white hover:bg-primary/90 text-base font-black transition-all active:scale-[0.98] mt-4"
+                    className="w-full h-14 rounded-md bg-primary text-white hover:bg-primary/90 text-base font-black transition-all active:scale-[0.98] mt-4"
                     onClick={() => router.push("/subscription")}
                   >
                     Lihat Paket Langganan
@@ -289,7 +289,7 @@ export default function MembershipClientPage() {
               {/* Secondary Info */}
               <Card className="p-5 border-none shadow-soft bg-white/50 backdrop-blur-sm">
                 <div className="flex items-top gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-amber-100 flex items-center justify-center text-amber-600 shrink-0">
+                  <div className="w-12 h-12 rounded-md bg-amber-100 flex items-center justify-center text-amber-600 shrink-0">
                     <Zap className="w-6 h-6" />
                   </div>
                   <div>

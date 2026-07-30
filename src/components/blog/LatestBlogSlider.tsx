@@ -69,7 +69,7 @@ export const LatestBlogSlider = () => {
           {!isLoading && blogs.length >= 3 && (
             <div className="flex-shrink-0 w-[180px] snap-start pr-4 flex items-stretch">
               <Link href="/blog" className="w-full flex">
-                <div className="w-full border-2 border-dashed border-slate-200 rounded-2xl flex flex-col items-center justify-center p-6 text-center hover:border-primary hover:bg-primary/5 transition-all duration-300 group cursor-pointer">
+                <div className="w-full border-2 border-dashed border-slate-200 rounded-md flex flex-col items-center justify-center p-6 text-center hover:border-primary hover:bg-primary/5 transition-all duration-300 group cursor-pointer">
                   <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
                     <ArrowRight className="w-6 h-6 text-primary" />
                   </div>

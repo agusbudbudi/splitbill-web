@@ -65,7 +65,7 @@ export const InfoBanner = ({
     return (
       <div
         className={cn(
-          "py-4 flex flex-col items-center justify-center gap-3 border-1 border-dashed rounded-2xl animate-in fade-in zoom-in-95",
+          "py-4 flex flex-col items-center justify-center gap-3 border-1 border-dashed rounded-md animate-in fade-in zoom-in-95",
           currentStyle.container,
           className,
         )}

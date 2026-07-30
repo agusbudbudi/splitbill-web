@@ -360,7 +360,7 @@ export default function PaymentPage() {
 
           {/* QRIS Section */}
           <div className="flex flex-col items-center space-y-6">
-            <Card className="p-6 bg-white rounded-2xl border-none shadow-soft">
+            <Card className="p-6 bg-white rounded-md border-none shadow-soft">
               <div className="flex flex-col items-center gap-4">
                 <div className="relative bg-white">
                   {order.qrisData?.payment_number ? (
@@ -530,7 +530,7 @@ export default function PaymentPage() {
           </div>
 
           {/* Trust Badge */}
-          <div className="flex items-center gap-4 p-4 bg-white rounded-2xl border border-border/50">
+          <div className="flex items-center gap-4 p-4 bg-white rounded-md border border-border/50">
             <div className="shrink-0 w-12 h-12 relative">
               <Image
                 src="/img/icon-privacy.png"

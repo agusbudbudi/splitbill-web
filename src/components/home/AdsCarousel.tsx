@@ -44,7 +44,7 @@ export const AdsCarousel = () => {
     const isExternal = ad.url.startsWith("http");
 
     const Content = (
-      <div className="relative aspect-[1080/1350] w-[178px] overflow-hidden rounded-2xl shadow-soft border border-white/50 backdrop-blur-sm">
+      <div className="relative aspect-[1080/1350] w-[178px] overflow-hidden rounded-md shadow-soft border border-white/50 backdrop-blur-sm">
         <Image
           src={ad.image}
           alt={ad.alt}

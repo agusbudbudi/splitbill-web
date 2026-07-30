@@ -69,7 +69,7 @@ export function ReceiptScanCard({
   // ── Guest Limit Barrier ───────────────────────────────────────────────────
   if (!isAuthenticated && guestRemainingScans <= 0 && !isCompleted && !scanResult) {
     return (
-      <div className="rounded-2xl border border-primary/20 bg-white overflow-hidden">
+      <div className="rounded-md border border-primary/20 bg-white overflow-hidden">
         <div className="px-4 py-3 bg-gradient-to-r from-primary/5 to-violet-500/5 border-b border-primary/10 flex items-center gap-2">
           <Sparkles className="w-4 h-4 text-primary" />
           <p className="text-xs font-bold text-primary uppercase tracking-wide">
@@ -122,7 +122,7 @@ export function ReceiptScanCard({
     !scanResult
   ) {
     return (
-      <div className="rounded-2xl border border-primary/20 bg-white overflow-hidden">
+      <div className="rounded-md border border-primary/20 bg-white overflow-hidden">
         <div className="px-4 py-3 bg-gradient-to-r from-primary/5 to-violet-500/5 border-b border-primary/10 flex items-center gap-2">
           <Sparkles className="w-4 h-4 text-primary" />
           <p className="text-xs font-bold text-primary uppercase tracking-wide">
@@ -161,7 +161,7 @@ export function ReceiptScanCard({
   // ── Frozen state ────────────────────────────────────────────────────────────
   if (isCompleted && scannedResult) {
     return (
-      <div className="rounded-2xl border border-emerald-200 bg-white overflow-hidden">
+      <div className="rounded-md border border-emerald-200 bg-white overflow-hidden">
         <div className="flex items-center gap-2 px-4 py-3 bg-emerald-50 border-b border-emerald-100">
           <div className="w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center">
             <Check className="w-3 h-3 text-white" />
@@ -284,7 +284,7 @@ export function ReceiptScanCard({
   };
 
   return (
-    <div className="rounded-2xl border border-primary/20 bg-white overflow-hidden">
+    <div className="rounded-md border border-primary/20 bg-white overflow-hidden">
       {/* Header */}
       <div className="px-4 py-3 bg-gradient-to-r from-primary/5 to-violet-500/5 border-b border-primary/10 flex items-center gap-2">
         <p className="text-xs font-bold text-primary uppercase tracking-wide">

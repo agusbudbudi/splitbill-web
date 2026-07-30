@@ -19,7 +19,7 @@ export function AddButton({
     <Button
       variant={variant}
       className={cn(
-        "w-full h-12 text-base font-bold shadow-lg shadow-primary/20 rounded-2xl",
+        "w-full h-12 text-base font-bold shadow-lg shadow-primary/20 rounded-md",
         className,
       )}
       {...props}

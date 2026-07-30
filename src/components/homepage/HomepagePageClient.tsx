@@ -49,23 +49,36 @@ const CTABannerSection = dynamic(
 );
 const HomepagePromoSlider = dynamic(
   () => import("./HomepagePromoSlider").then((mod) => mod.HomepagePromoSlider),
-  { ssr: true }
+  { ssr: true, loading: sectionSkeleton(320) }
 );
+// loading: () => null — no fallback UI needed, but required so next/dynamic wraps
+// its own local Suspense instead of suspending to the root app/loading.tsx and
+// blanking the whole page while the chunk fetches (same bug as HomepagePromoSlider).
 const ChatAgentFAB = dynamic(
   () => import("@/components/splitbill/chat/ChatAgentFAB").then((mod) => mod.ChatAgentFAB),
-  { ssr: false }
+  { ssr: false, loading: () => null }
 );
 const ChatRoom = dynamic(
   () => import("@/components/splitbill/chat/ChatRoom").then((mod) => mod.ChatRoom),
-  { ssr: false }
+  { ssr: false, loading: () => null }
 );
 
 export const HomepagePageClient = () => {
   const { isAuthenticated } = useAuthStore();
   const [isMounted, setIsMounted] = useState(false);
+  const [isChatReady, setIsChatReady] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
+
+    // Chat widget isn't needed for first paint — load it once the browser is idle
+    // instead of racing the hero's own hydration/animation work.
+    if ("requestIdleCallback" in window) {
+      const id = window.requestIdleCallback(() => setIsChatReady(true), { timeout: 3000 });
+      return () => window.cancelIdleCallback(id);
+    }
+    const t = setTimeout(() => setIsChatReady(true), 2000);
+    return () => clearTimeout(t);
   }, []);
 
   return (
@@ -178,9 +191,9 @@ export const HomepagePageClient = () => {
       {/* Site Footer */}
       <HomepageFooter />
 
-      {/* Chat Agent FAB */}
-      {isMounted && <ChatAgentFAB bottomClass="bottom-6" />}
-      {isMounted && <ChatRoom />}
+      {/* Chat Agent FAB — deferred to idle, not needed for first paint */}
+      {isChatReady && <ChatAgentFAB bottomClass="bottom-6" />}
+      {isChatReady && <ChatRoom />}
     </div>
   );
 };

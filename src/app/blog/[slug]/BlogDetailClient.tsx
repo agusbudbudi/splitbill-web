@@ -228,7 +228,7 @@ export default function BlogDetailClient({
         {/* Right Column: Sidebar */}
         <aside className="w-full lg:w-[360px] shrink-0 flex flex-col gap-6">
           {/* Ads Banner CTA to /split-bill */}
-          <div className="w-full bg-gradient-to-br from-slate-50 to-slate-100/50 p-6 rounded-2xl flex flex-col gap-4 relative overflow-hidden">
+          <div className="w-full bg-gradient-to-br from-slate-50 to-slate-100/50 p-6 rounded-md flex flex-col gap-4 relative overflow-hidden">
             <div className="space-y-2">
               <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-wider">
                 Fitur Populer
@@ -249,7 +249,7 @@ export default function BlogDetailClient({
 
           {/* Sidebar: Read Next Section */}
           {recentBlogs.length > 0 && (
-            <div className="w-full bg-gray-50/50 lg:bg-transparent lg:p-0 rounded-3xl">
+            <div className="w-full bg-gray-50/50 lg:bg-transparent lg:p-0 rounded-md">
               <h2 className="text-xl font-black mb-6 tracking-tight text-foreground">
                 Baca Artikel Lainnya
               </h2>

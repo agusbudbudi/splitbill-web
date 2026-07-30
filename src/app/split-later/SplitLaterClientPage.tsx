@@ -491,7 +491,7 @@ export default function SplitLaterClientPage() {
                     }
                     router.replace("/split-later?step=2");
                   }}
-                  className="w-full h-14 text-lg font-bold rounded-2xl shadow-xl transition-all duration-300 active:scale-95 bg-primary text-white shadow-primary/20"
+                  className="w-full h-14 text-lg font-bold rounded-md shadow-xl transition-all duration-300 active:scale-95 bg-primary text-white shadow-primary/20"
                 >
                   Lanjut Isi Detail Acara
                 </Button>
@@ -502,7 +502,7 @@ export default function SplitLaterClientPage() {
                   <button
                     type="button"
                     onClick={() => router.replace("/split-later?step=1")}
-                    className="flex-1 h-14 rounded-2xl bg-white border border-primary/20 text-primary text-base font-bold active:scale-95 transition-all cursor-pointer"
+                    className="flex-1 h-14 rounded-md bg-white border border-primary/20 text-primary text-base font-bold active:scale-95 transition-all cursor-pointer"
                   >
                     Kembali
                   </button>
@@ -515,7 +515,7 @@ export default function SplitLaterClientPage() {
                       }
                       router.replace("/split-later?step=3");
                     }}
-                    className="flex-1 h-14 text-base font-bold rounded-2xl shadow-xl shadow-primary/20"
+                    className="flex-1 h-14 text-base font-bold rounded-md shadow-xl shadow-primary/20"
                   >
                     Lanjut Tambah Peserta
                   </Button>
@@ -527,7 +527,7 @@ export default function SplitLaterClientPage() {
                   <button
                     type="button"
                     onClick={() => router.replace("/split-later?step=2")}
-                    className="flex-1 h-14 rounded-2xl bg-white border border-primary/20 text-primary text-base font-bold active:scale-95 transition-all cursor-pointer"
+                    className="flex-1 h-14 rounded-md bg-white border border-primary/20 text-primary text-base font-bold active:scale-95 transition-all cursor-pointer"
                   >
                     Kembali
                   </button>
@@ -542,7 +542,7 @@ export default function SplitLaterClientPage() {
                     }}
                     disabled={participants.length < 2}
                     className={cn(
-                      "flex-1 h-14 text-base font-bold rounded-2xl shadow-xl transition-all duration-300",
+                      "flex-1 h-14 text-base font-bold rounded-md shadow-xl transition-all duration-300",
                       participants.length >= 2
                         ? "bg-primary text-white shadow-primary/20"
                         : "bg-primary/10 text-primary shadow-none opacity-80",
@@ -559,7 +559,7 @@ export default function SplitLaterClientPage() {
                     type="button"
                     disabled={isUploading}
                     onClick={() => handleSave(true)}
-                    className="flex-1 h-14 rounded-2xl bg-white border border-primary/20 text-primary text-base font-bold active:scale-95 transition-all hover:bg-muted/10 cursor-pointer disabled:opacity-50"
+                    className="flex-1 h-14 rounded-md bg-white border border-primary/20 text-primary text-base font-bold active:scale-95 transition-all hover:bg-muted/10 cursor-pointer disabled:opacity-50"
                   >
                     Lewati Dulu
                   </button>
@@ -567,7 +567,7 @@ export default function SplitLaterClientPage() {
                     type="button"
                     disabled={!receiptFile || isUploading}
                     onClick={() => handleSave(false)}
-                    className="flex-1 h-14 text-base font-bold rounded-2xl shadow-xl shadow-primary/20"
+                    className="flex-1 h-14 text-base font-bold rounded-md shadow-xl shadow-primary/20"
                   >
                     {isUploading ? (
                       <span className="flex items-center gap-1 justify-center">
@@ -633,7 +633,7 @@ export default function SplitLaterClientPage() {
               action={
                 <Button
                   onClick={() => router.push("/split-later?step=1")}
-                  className="h-12 px-8 font-bold rounded-2xl"
+                  className="h-12 px-8 font-bold rounded-md"
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   Buat Split Later Pertama

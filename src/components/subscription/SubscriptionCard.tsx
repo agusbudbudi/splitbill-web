@@ -35,7 +35,7 @@ export function SubscriptionCard({
   return (
     <Card
       className={cn(
-        "relative flex flex-col overflow-hidden rounded-2xl border shadow-sm transition-all",
+        "relative flex flex-col overflow-hidden rounded-md border shadow-sm transition-all",
         isBestValue
           ? "border-primary shadow-primary/10 shadow-md"
           : "border-border/50",

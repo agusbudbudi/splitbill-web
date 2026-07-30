@@ -63,7 +63,7 @@ export const CollectionMoreBottomSheet = ({
                 onArchive();
                 onClose();
               }}
-              className="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-primary/5 transition-all active:scale-95 cursor-pointer group"
+              className="w-full flex items-center gap-4 p-4 rounded-md hover:bg-primary/5 transition-all active:scale-95 cursor-pointer group"
             >
               <div className="w-10 h-10 rounded-xl bg-primary/5 flex items-center justify-center group-hover:bg-primary/10 transition-colors">
                 {isArchived ? (
@@ -90,7 +90,7 @@ export const CollectionMoreBottomSheet = ({
                 onDelete();
                 onClose();
               }}
-              className="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-destructive/5 transition-all active:scale-95 cursor-pointer group"
+              className="w-full flex items-center gap-4 p-4 rounded-md hover:bg-destructive/5 transition-all active:scale-95 cursor-pointer group"
             >
               <div className="w-10 h-10 rounded-xl bg-destructive/5 flex items-center justify-center group-hover:bg-destructive/10 transition-colors">
                 <Trash2 className="w-5 h-5 text-destructive" />

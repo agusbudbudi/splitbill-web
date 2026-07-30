@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { HeroBanner } from "@/components/ui/HeroBanner";
 
 const HeroFloatingCard = () => (
-  <div className="bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] p-3.5 border border-slate-100/60 min-w-[150px]">
+  <div className="bg-white rounded-md shadow-[0_8px_30px_rgb(0,0,0,0.08)] p-3.5 border border-slate-100/60 min-w-[150px]">
     <p className="text-[10px] text-slate-500 font-medium mb-0.5">
       Total Tagihan
     </p>

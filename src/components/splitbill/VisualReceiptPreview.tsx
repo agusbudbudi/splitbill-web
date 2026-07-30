@@ -113,7 +113,7 @@ export const VisualReceiptPreview = () => {
       {/* Modal Dialog */}
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs animate-in fade-in duration-200">
-          <div className="relative w-full max-w-md bg-white rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[85vh] animate-in zoom-in-95 duration-300">
+          <div className="relative w-full max-w-md bg-white rounded-md overflow-hidden shadow-2xl flex flex-col max-h-[85vh] animate-in zoom-in-95 duration-300">
             {/* Header */}
             <div className="flex justify-between items-center px-5 py-4 border-b border-gray-100 shrink-0">
               <div>

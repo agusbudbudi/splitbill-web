@@ -55,7 +55,7 @@ export const ComparisonSection = () => {
         </div>
 
         {/* Comparison grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-8">
           {/* Without SplitBill Card */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}

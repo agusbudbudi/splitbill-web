@@ -77,7 +77,7 @@ export default function FAQClientPage() {
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50 z-10" />
               <Input
                 placeholder="Cari pertanyaan..."
-                className="pl-11 h-14 bg-white border-primary/10 shadow-soft focus:ring-primary/20 rounded-2xl text-sm"
+                className="pl-11 h-14 bg-white border-primary/10 shadow-soft focus:ring-primary/20 rounded-md text-sm"
                 value={searchQuery}
                 onChange={handleSearchChange}
               />
@@ -187,9 +187,9 @@ export default function FAQClientPage() {
         </div>
 
         {/* Contact Section */}
-        <div className="p-6 bg-primary/[0.03] border border-primary/10 rounded-3xl space-y-4">
+        <div className="p-6 bg-primary/[0.03] border border-primary/10 rounded-md space-y-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-md bg-primary/10 flex items-center justify-center">
               <HelpCircle className="w-5 h-5 text-primary" />
             </div>
             <div>
@@ -207,7 +207,7 @@ export default function FAQClientPage() {
             rel="noopener noreferrer"
             className="block w-full"
           >
-            <button className="w-full h-12 bg-white border border-primary/20 text-primary font-bold text-sm rounded-2xl flex items-center justify-center gap-2 hover:bg-primary/5 transition-all cursor-pointer">
+            <button className="w-full h-12 bg-white border border-primary/20 text-primary font-bold text-sm rounded-md flex items-center justify-center gap-2 hover:bg-primary/5 transition-all cursor-pointer">
               Hubungi Support <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </a>

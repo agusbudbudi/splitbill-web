@@ -204,7 +204,7 @@ function InvoiceCreateContent() {
                 onClick={handleNext}
                 disabled={!canProceed()}
                 className={cn(
-                  "w-full h-14 text-lg font-bold rounded-2xl shadow-xl shadow-primary/20 text-white !disabled:opacity-100 disabled:bg-[#ede9fe] disabled:text-primary/40 disabled:shadow-none transition-all duration-300",
+                  "w-full h-14 text-lg font-bold rounded-md shadow-xl shadow-primary/20 text-white !disabled:opacity-100 disabled:bg-[#ede9fe] disabled:text-primary/40 disabled:shadow-none transition-all duration-300",
                   currentStep === 6
                     ? "bg-green-600 hover:bg-green-700 shadow-green-600/20"
                     : "bg-primary hover:bg-primary/90",

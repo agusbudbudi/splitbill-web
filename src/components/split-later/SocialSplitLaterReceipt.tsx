@@ -105,7 +105,7 @@ export const SocialSplitLaterReceipt = React.forwardRef<
       {/* Branding */}
       <div className="relative z-10 w-full flex justify-between items-center mb-8">
         <div className="flex items-center gap-5">
-          <div className="w-20 h-20 bg-white rounded-2xl flex items-center justify-center border border-primary/5 relative overflow-hidden">
+          <div className="w-20 h-20 bg-white rounded-md flex items-center justify-center border border-primary/5 relative overflow-hidden">
             <img
               src="/img/footer-icon.png"
               alt="SplitBill Logo"
@@ -348,7 +348,7 @@ export const SocialSplitLaterReceipt = React.forwardRef<
                   key={method.id}
                   className="p-6 bg-white border border-slate-100 rounded-[35px] flex items-center gap-8"
                 >
-                  <div className="w-24 h-24 bg-slate-50 rounded-3xl flex items-center justify-center border border-slate-100 shrink-0 relative overflow-hidden">
+                  <div className="w-24 h-24 bg-slate-50 rounded-md flex items-center justify-center border border-slate-100 shrink-0 relative overflow-hidden">
                     {[
                       "bca",
                       "bni",

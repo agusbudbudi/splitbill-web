@@ -39,7 +39,7 @@ export function ConfirmationModal({
 
   return createPortal(
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[999] p-4 animate-in fade-in duration-200">
-      <div className="max-w-sm w-full bg-white rounded-2xl p-6 shadow-2xl animate-in zoom-in-95 duration-200">
+      <div className="max-w-sm w-full bg-white rounded-md p-6 shadow-2xl animate-in zoom-in-95 duration-200">
         <div className="text-center space-y-4">
           <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
             <Icon className="w-8 h-8 text-primary" />
@@ -67,7 +67,7 @@ export function ConfirmationModal({
               className={cn(
                 "flex-1 h-12 font-bold shadow-lg cursor-pointer",
                 confirmButtonClassName ||
-                  "bg-primary text-white shadow-primary/20",
+                "bg-primary text-white shadow-primary/20",
               )}
             >
               {confirmText}

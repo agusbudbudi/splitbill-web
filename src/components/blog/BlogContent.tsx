@@ -15,7 +15,7 @@ export const BlogContent = ({ content, className }: BlogContentProps) => {
         "prose prose-blue max-w-none dark:prose-invert",
         "prose-headings:font-bold prose-headings:tracking-tight",
         "prose-p:text-muted-foreground prose-p:leading-relaxed",
-        "prose-img:rounded-2xl prose-img:shadow-lg",
+        "prose-img:rounded-md prose-img:shadow-lg",
         "prose-a:text-primary prose-a:no-underline hover:prose-a:underline",
         "blog-content-container",
         className

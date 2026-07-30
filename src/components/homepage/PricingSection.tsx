@@ -58,7 +58,7 @@ export const PricingSection = () => {
         </div>
 
         {/* Pricing Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto items-stretch">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-8 max-w-4xl mx-auto items-stretch">
           {/* Free Card */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -132,7 +132,7 @@ export const PricingSection = () => {
                 </h3>
                 <div className="flex items-baseline gap-1">
                   <span className="text-4xl sm:text-5xl font-black text-white">
-                    Rp 15K
+                    Rp 9K
                   </span>
                   <span className="text-violet-200 font-semibold text-sm">
                     / bulan

@@ -107,9 +107,9 @@ export function Step1Details() {
               onChange={(e) => updateInvoice({ dueDate: e.target.value })}
               className={
                 !currentInvoice.dueDate ||
-                (currentInvoice.invoiceDate &&
-                  currentInvoice.dueDate &&
-                  new Date(currentInvoice.dueDate) <
+                  (currentInvoice.invoiceDate &&
+                    currentInvoice.dueDate &&
+                    new Date(currentInvoice.dueDate) <
                     new Date(currentInvoice.invoiceDate))
                   ? "border-destructive/30"
                   : ""
@@ -119,7 +119,7 @@ export function Step1Details() {
               <FormError message="Jatuh tempo harus diisi" />
             ) : currentInvoice.invoiceDate &&
               new Date(currentInvoice.dueDate) <
-                new Date(currentInvoice.invoiceDate) ? (
+              new Date(currentInvoice.invoiceDate) ? (
               <FormError message="Jatuh tempo tidak boleh sebelum tanggal invoice" />
             ) : null}
           </div>
@@ -134,7 +134,7 @@ export function Step1Details() {
           {!logoPreview ? (
             <div
               onClick={() => fileInputRef.current?.click()}
-              className="border-2 border-dashed border-primary/20 rounded-2xl py-4 flex flex-col items-center justify-center gap-3 bg-primary/5 hover:bg-primary/10 transition-colors cursor-pointer group"
+              className="border-2 border-dashed border-primary/20 rounded-md py-4 flex flex-col items-center justify-center gap-3 bg-primary/5 hover:bg-primary/10 transition-colors cursor-pointer group"
             >
               <div className="w-12 h-12 rounded-full bg-white shadow-soft flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
                 <Camera className="w-6 h-6" />
@@ -154,7 +154,7 @@ export function Step1Details() {
               />
             </div>
           ) : (
-            <div className="relative aspect-[2/0.63] rounded-2xl overflow-hidden border border-primary/20 bg-muted">
+            <div className="relative aspect-[2/0.63] rounded-md overflow-hidden border border-primary/20 bg-muted">
               <Image
                 src={logoPreview}
                 alt="Logo preview"

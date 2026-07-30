@@ -59,7 +59,7 @@ export const MerchandisingBanner = ({
         </button>
 
         {/* Image Content */}
-        <div className="relative overflow-hidden rounded-3xl">
+        <div className="relative overflow-hidden rounded-md">
           <Image
             src={imageSrc}
             alt={altText}

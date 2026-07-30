@@ -7,12 +7,15 @@ import Image from "next/image";
 import { useAuthStore } from "@/lib/stores/authStore";
 import { ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
 
+// loading: () => null — same reasoning as ChatAgentFAB in HomepagePageClient:
+// without it, next/dynamic suspends to the root app/loading.tsx instead of
+// failing locally, blanking the whole page while this chunk fetches.
 const HomepageAIScanCard = dynamic(
   () =>
     import("./HomepageAIScanCard").then(
       (mod) => mod.HomepageAIScanCard,
     ),
-  { ssr: false },
+  { ssr: false, loading: () => null },
 );
 
 export const HomepagePromoSlider = () => {
@@ -69,14 +72,14 @@ export const HomepagePromoSlider = () => {
             {/* Card 2: Split Later Feature */}
             <div className="flex-shrink-0 w-[85vw] sm:w-[480px] snap-start h-auto flex">
               <Link href="/split-later" className="block w-full h-full group/card transition-all duration-300 hover:scale-[1.005] active:scale-[0.99]">
-                <div className="relative p-[1.5px] rounded-2xl bg-gradient-to-br from-blue-400 via-blue-500 to-primary shadow-lg shadow-primary/5 h-full flex flex-col overflow-hidden">
+                <div className="relative p-[1.5px] rounded-md bg-gradient-to-br from-blue-400 via-blue-500 to-primary shadow-lg shadow-primary/5 h-full flex flex-col overflow-hidden">
                   {/* Stick Badge - Primary Blue Style */}
                   <div className="absolute top-0 right-0 px-3 py-1.5 rounded-bl-xl flex items-center gap-1.5 text-[9px] font-black uppercase bg-primary text-white z-30 shadow-md transition-transform group-hover/card:scale-105 origin-top-right">
                     <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
                     <span>NEW</span>
                   </div>
 
-                  <div className="bg-white rounded-[calc(1rem-1.5px)] p-6 flex-grow flex flex-col justify-between relative overflow-hidden">
+                  <div className="bg-white rounded-[calc(var(--radius-md)-1.5px)] p-6 flex-grow flex flex-col justify-between relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full blur-2xl -mr-6 -mt-6 pointer-events-none" />
 
                     <div className="flex items-center gap-4">
@@ -111,14 +114,14 @@ export const HomepagePromoSlider = () => {
             {/* Card 3: Review Rewards */}
             <div className="flex-shrink-0 w-[85vw] sm:w-[480px] snap-start h-auto flex">
               <Link href="/review" className="block w-full h-full group/card transition-all duration-300 hover:scale-[1.005] active:scale-[0.99]">
-                <div className="relative p-[1.5px] rounded-2xl bg-gradient-to-br from-amber-200 via-orange-300 to-yellow-200 shadow-lg shadow-amber-200/5 h-full flex flex-col overflow-hidden">
+                <div className="relative p-[1.5px] rounded-md bg-gradient-to-br from-amber-200 via-orange-300 to-yellow-200 shadow-lg shadow-amber-200/5 h-full flex flex-col overflow-hidden">
                   {/* Stick Badge - Pastel Orange Style */}
                   <div className="absolute top-0 right-0 px-3 py-1.5 rounded-bl-xl flex items-center gap-1.5 text-[9px] font-black uppercase bg-orange-400 text-white z-30 shadow-md transition-transform group-hover/card:scale-105 origin-top-right">
                     <Sparkles className="w-3 h-3 fill-current" />
                     <span>REWARDS</span>
                   </div>
 
-                  <div className="bg-white rounded-[calc(1rem-1.5px)] p-6 flex-grow flex flex-col justify-between relative overflow-hidden">
+                  <div className="bg-white rounded-[calc(var(--radius-md)-1.5px)] p-6 flex-grow flex flex-col justify-between relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-24 h-24 bg-orange-500/5 rounded-full blur-2xl -mr-6 -mt-6 pointer-events-none" />
 
                     <div className="flex items-center gap-4">

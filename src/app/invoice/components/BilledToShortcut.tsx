@@ -46,7 +46,7 @@ export const BilledToShortcut = () => {
                   setCurrentStep(2);
                   router.push("/invoice/create?step=2");
                 }}
-                className="w-[100px] h-[100px] rounded-2xl border-2 border-dashed border-primary/20 bg-white/50 hover:bg-primary/5 flex flex-col items-center justify-center gap-2 transition-all active:scale-95 group"
+                className="w-[100px] h-[100px] rounded-md border-2 border-dashed border-primary/20 bg-white/50 hover:bg-primary/5 flex flex-col items-center justify-center gap-2 transition-all active:scale-95 group"
               >
                 <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors">
                   <Plus className="w-5 h-5 text-primary group-hover:text-white" />

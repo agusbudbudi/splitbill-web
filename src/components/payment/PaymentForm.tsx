@@ -76,7 +76,7 @@ export default function PaymentForm({ onSuccess }: PaymentFormProps) {
               <Input
                 id="name"
                 placeholder="Contoh: Agus"
-                className="pl-12 h-14 bg-white border-border/60 hover:border-primary/40 focus-visible:border-primary/60 focus-visible:ring-primary/5 transition-all rounded-2xl font-medium"
+                className="pl-12 h-14 bg-white border-border/60 hover:border-primary/40 focus-visible:border-primary/60 focus-visible:ring-primary/5 transition-all rounded-md font-medium"
                 value={formData.name}
                 onChange={handleChange}
                 required
@@ -94,7 +94,7 @@ export default function PaymentForm({ onSuccess }: PaymentFormProps) {
                 id="phone"
                 type="tel"
                 placeholder="08123456789"
-                className="pl-12 h-14 bg-white border-border/60 hover:border-primary/40 focus-visible:border-primary/60 focus-visible:ring-primary/5 transition-all rounded-2xl font-medium"
+                className="pl-12 h-14 bg-white border-border/60 hover:border-primary/40 focus-visible:border-primary/60 focus-visible:ring-primary/5 transition-all rounded-md font-medium"
                 value={formData.phone}
                 onChange={handleChange}
                 required
@@ -112,7 +112,7 @@ export default function PaymentForm({ onSuccess }: PaymentFormProps) {
                 id="amount"
                 type="number"
                 placeholder="0"
-                className="pl-12 h-14 bg-white border-border/60 hover:border-primary/40 focus-visible:border-primary/60 focus-visible:ring-primary/5 transition-all rounded-2xl font-bold text-lg"
+                className="pl-12 h-14 bg-white border-border/60 hover:border-primary/40 focus-visible:border-primary/60 focus-visible:ring-primary/5 transition-all rounded-md font-bold text-lg"
                 value={formData.amount}
                 onChange={handleChange}
                 required
@@ -120,9 +120,9 @@ export default function PaymentForm({ onSuccess }: PaymentFormProps) {
             </div>
           </div>
 
-          <Button 
-            type="submit" 
-            className="w-full h-14 text-lg font-bold hover:scale-[1.01] active:scale-95 transition-all rounded-2xl mt-2" 
+          <Button
+            type="submit"
+            className="w-full h-14 text-lg font-bold hover:scale-[1.01] active:scale-95 transition-all rounded-md mt-2"
             disabled={loading}
           >
             {loading ? (

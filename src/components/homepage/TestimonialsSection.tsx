@@ -7,7 +7,7 @@ import { useReview, Review } from "@/hooks/useReview";
 
 // Skeleton card for loading state
 const SkeletonCard = () => (
-  <div className="flex-shrink-0 w-[290px] sm:w-[360px] bg-white rounded-2xl p-6 border border-slate-100/80 shadow-[0_4px_20px_-4px_rgba(71,159,234,0.08)] space-y-4">
+  <div className="flex-shrink-0 w-[290px] sm:w-[360px] bg-white rounded-md p-6 border border-slate-100/80 shadow-[0_4px_20px_-4px_rgba(71,159,234,0.08)] space-y-4">
     <div className="flex gap-1">
       {[0, 1, 2, 3, 4].map((s) => (
         <div key={s} className="h-3.5 w-3.5 rounded-sm bg-slate-100 animate-pulse" />

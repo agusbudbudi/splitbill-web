@@ -7,12 +7,15 @@ import Image from "next/image";
 import { useAuthStore } from "@/lib/stores/authStore";
 import { ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
 
+// loading: () => null — same reasoning as ChatAgentFAB in HomepagePageClient:
+// without it, next/dynamic suspends to the root app/loading.tsx instead of
+// failing locally, blanking the whole page while this chunk fetches.
 const HomepageAIScanCard = dynamic(
   () =>
     import("./HomepageAIScanCard").then(
       (mod) => mod.HomepageAIScanCard,
     ),
-  { ssr: false },
+  { ssr: false, loading: () => null },
 );
 
 export const HomepagePromoSlider = () => {

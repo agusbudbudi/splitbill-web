@@ -39,21 +39,22 @@ export const CTABannerSection = () => {
       {/* Soft bottom spotlight */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_110%,rgba(71,159,234,0.16),transparent)]" />
 
-      {/* Aurora blobs — matches Hero */}
+      {/* Aurora blobs — single settle-in pass, not infinite (same reasoning as Hero: an
+          endless loop never lets the page look visually stable, hurting Speed Index). */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <motion.div
           animate={{ scale: [1, 1.12, 1], x: [0, 24, 0], y: [0, -18, 0], opacity: [0.28, 0.42, 0.28] }}
-          transition={{ repeat: Infinity, duration: 9, ease: "easeInOut" }}
+          transition={{ repeat: 1, duration: 2.5, ease: "easeInOut" }}
           className="absolute top-[-15%] right-[-8%] w-[50vw] h-[50vw] max-w-[700px] max-h-[700px] rounded-full bg-primary/25 blur-[100px]"
         />
         <motion.div
           animate={{ scale: [1, 1.15, 1], x: [0, -22, 0], y: [0, 18, 0], opacity: [0.18, 0.32, 0.18] }}
-          transition={{ repeat: Infinity, duration: 11, ease: "easeInOut", delay: 1.5 }}
+          transition={{ repeat: 1, duration: 2.5, ease: "easeInOut", delay: 0.3 }}
           className="absolute bottom-[-15%] left-[-10%] w-[45vw] h-[45vw] max-w-[600px] max-h-[600px] rounded-full bg-sky-300/25 blur-[90px]"
         />
         <motion.div
           animate={{ scale: [1, 1.1, 1], opacity: [0.15, 0.28, 0.15] }}
-          transition={{ repeat: Infinity, duration: 7, ease: "easeInOut", delay: 3 }}
+          transition={{ repeat: 1, duration: 2.5, ease: "easeInOut", delay: 0.6 }}
           className="absolute top-[18%] right-[8%] w-[25vw] h-[25vw] max-w-[350px] max-h-[350px] rounded-full bg-emerald-300/20 blur-[80px]"
         />
       </div>

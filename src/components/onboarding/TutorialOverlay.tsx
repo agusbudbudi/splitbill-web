@@ -40,10 +40,23 @@ export const TutorialOverlay = ({
 
   const currentStep = steps[currentStepIndex];
 
-  const updateSpotlight = useCallback(() => {
+  const recalculateSpotlight = useCallback(() => {
+    if (!isOpen || !currentStep) return;
+    const element = document.getElementById(currentStep.targetId);
+    if (!element) return;
+    const rect = element.getBoundingClientRect();
+    setSpotlightRect({
+      top: rect.top - 8,
+      left: rect.left - 8,
+      width: rect.width + 16,
+      height: rect.height + 16,
+    });
+  }, [isOpen, currentStep]);
+
+  const scrollToTarget = useCallback(() => {
     if (!isOpen || !currentStep) return;
 
-    const findAndSetSpotlight = (retryCount = 0) => {
+    const findAndScroll = (retryCount = 0) => {
       const element = document.getElementById(currentStep.targetId);
       if (element) {
         const rect = element.getBoundingClientRect();
@@ -53,32 +66,31 @@ export const TutorialOverlay = ({
           width: rect.width + 16,
           height: rect.height + 16,
         });
-        
-        // Scroll to element if not in view
+
         element.scrollIntoView({ behavior: "smooth", block: "center" });
       } else if (retryCount < 5) {
         // Retry if element not found yet (e.g., during page transition)
-        setTimeout(() => findAndSetSpotlight(retryCount + 1), 100);
+        setTimeout(() => findAndScroll(retryCount + 1), 100);
       } else {
         // If element still not found, show in center
         setSpotlightRect(null);
       }
     };
 
-    findAndSetSpotlight();
+    findAndScroll();
   }, [isOpen, currentStep]);
 
   useEffect(() => {
     if (isOpen) {
-      updateSpotlight();
-      window.addEventListener("resize", updateSpotlight);
-      window.addEventListener("scroll", updateSpotlight);
+      scrollToTarget();
+      window.addEventListener("resize", recalculateSpotlight);
+      window.addEventListener("scroll", recalculateSpotlight);
     }
     return () => {
-      window.removeEventListener("resize", updateSpotlight);
-      window.removeEventListener("scroll", updateSpotlight);
+      window.removeEventListener("resize", recalculateSpotlight);
+      window.removeEventListener("scroll", recalculateSpotlight);
     };
-  }, [isOpen, updateSpotlight]);
+  }, [isOpen, scrollToTarget, recalculateSpotlight]);
 
   const handleNext = () => {
     if (currentStepIndex < steps.length - 1) {

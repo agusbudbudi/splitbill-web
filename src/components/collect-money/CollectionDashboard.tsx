@@ -398,7 +398,7 @@ export const CollectionDashboard = ({
           {/* Celebration Card */}
           {progress >= 100 && (
             <div className="mb-6 animate-in zoom-in-95 fade-in duration-500 cursor-default">
-              <div className="relative rounded-2xl p-6 bg-gradient-to-br from-white via-emerald-50/40 to-emerald-50/60 border border-emerald-100/50 shadow-2xl shadow-emerald-600/5 backdrop-blur-md group">
+              <div className="relative rounded-md p-6 bg-gradient-to-br from-white via-emerald-50/40 to-emerald-50/60 border border-emerald-100/50 shadow-2xl shadow-emerald-600/5 backdrop-blur-md group">
                 <div className="absolute -top-3 right-4 p-1 opacity-100 transition-transform group-hover:scale-110 group-hover:rotate-6 z-20">
                   <img
                     alt="Koleksi Selesai"
@@ -487,7 +487,7 @@ export const CollectionDashboard = ({
             </div>
 
             {isAdding && (
-              <div className="bg-white border border-primary/20 p-4 rounded-2xl space-y-4 animate-in fade-in slide-in-from-top-2 mb-4">
+              <div className="bg-white border border-primary/20 p-4 rounded-md space-y-4 animate-in fade-in slide-in-from-top-2 mb-4">
                 <div className="space-y-3">
                   <div className="space-y-1.5">
                     <label className="text-xs font-bold text-foreground/70 ml-1">
@@ -667,7 +667,7 @@ export const CollectionDashboard = ({
                   {/* Add New Button at the beginning */}
                   <Card
                     onClick={() => setIsAddWalletOpen(true)}
-                    className="relative h-[30vw] sm:h-[157px] shrink-0 aspect-square rounded-2xl border border-dashed border-primary/20 flex flex-col items-center justify-center gap-1.5 text-primary/40 hover:text-primary hover:border-primary/40 hover:bg-primary/5 transition-all active:scale-95 cursor-pointer bg-white shadow-none"
+                    className="relative h-[30vw] sm:h-[157px] shrink-0 aspect-square rounded-md border border-dashed border-primary/20 flex flex-col items-center justify-center gap-1.5 text-primary/40 hover:text-primary hover:border-primary/40 hover:bg-primary/5 transition-all active:scale-95 cursor-pointer bg-white shadow-none"
                   >
                     <Plus className="w-5 h-5" />
                     <span className="text-[11px] font-bold">Tambah</span>
@@ -683,7 +683,7 @@ export const CollectionDashboard = ({
                       />
                     ))
                   ) : (
-                    <div className="flex-1 min-w-[200px] h-[30vw] sm:h-[157px] flex flex-col items-center justify-center py-4 px-6 rounded-2xl bg-muted/5 border border-dashed border-muted-foreground/10 text-center">
+                    <div className="flex-1 min-w-[200px] h-[30vw] sm:h-[157px] flex flex-col items-center justify-center py-4 px-6 rounded-md bg-muted/5 border border-dashed border-muted-foreground/10 text-center">
                       <p className="text-[10px] text-muted-foreground leading-tight">
                         Belum ada dompet tersimpan. <br />
                         <span

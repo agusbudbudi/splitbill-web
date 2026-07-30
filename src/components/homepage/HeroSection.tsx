@@ -203,7 +203,7 @@ const MockBillCard = ({ stage }: { stage: number }) => {
                   <motion.div
                     animate={{ scale: [1, 1.15, 1] }}
                     transition={{ repeat: Infinity, duration: 0.9, ease: "easeInOut" }}
-                    className="w-14 h-14 rounded-2xl bg-white/90 flex items-center justify-center shadow-lg"
+                    className="w-14 h-14 rounded-md bg-white/90 flex items-center justify-center shadow-lg"
                   >
                     <Camera className="w-7 h-7 text-primary" />
                   </motion.div>

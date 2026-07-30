@@ -89,7 +89,7 @@ export function LoadingModal({ isOpen, image }: LoadingModalProps) {
       <div className="relative max-w-md w-full flex flex-col items-center text-center gap-6 z-10">
 
         {/* Square Scan Frame — shows the uploaded receipt with a sweeping scan line */}
-        <div className="relative w-60 h-60 md:w-64 md:h-64 rounded-2xl overflow-hidden border border-primary/15 bg-slate-50">
+        <div className="relative w-60 h-60 md:w-64 md:h-64 rounded-md overflow-hidden border border-primary/15 bg-slate-50">
           {image ? (
             <img
               src={image}

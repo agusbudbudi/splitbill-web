@@ -26,7 +26,7 @@ export function InfoModal({
 
   return createPortal(
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[999] p-4 animate-in fade-in duration-200">
-      <div className="max-w-sm w-full bg-white rounded-2xl p-6 shadow-2xl animate-in zoom-in-95 duration-200 relative overflow-hidden">
+      <div className="max-w-sm w-full bg-white rounded-md p-6 shadow-2xl animate-in zoom-in-95 duration-200 relative overflow-hidden">
         {/* Decorative background element */}
         <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full -mr-12 -mt-12 transition-transform" />
 
@@ -38,7 +38,7 @@ export function InfoModal({
         </button>
 
         <div className="text-center space-y-4 pt-2">
-          <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto rotate-12">
+          <div className="w-12 h-12 bg-primary/10 rounded-md flex items-center justify-center mx-auto rotate-12">
             <Info className="w-6 h-6 text-primary -rotate-12" />
           </div>
 

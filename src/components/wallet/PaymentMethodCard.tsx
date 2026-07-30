@@ -33,7 +33,7 @@ export const PaymentMethodCard = ({
   return (
     <div
       onClick={() => router.push(`/wallet/${method.id}`)}
-      className="relative w-[42vw] sm:w-[220px] shrink-0 aspect-[1.4/1] rounded-2xl overflow-hidden transition-all duration-300 font-sans select-none bg-white border border-slate-200 text-slate-800 group cursor-pointer"
+      className="relative w-[42vw] sm:w-[220px] shrink-0 aspect-[1.4/1] rounded-md overflow-hidden transition-all duration-300 font-sans select-none bg-white border border-slate-200 text-slate-800 group cursor-pointer"
     >
       <div className="flex flex-col h-full p-3.5 justify-between">
         {/* Top: logo kiri atas + type badge kanan */}

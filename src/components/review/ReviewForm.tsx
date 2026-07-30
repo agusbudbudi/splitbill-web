@@ -176,7 +176,7 @@ export function ReviewForm() {
               Ulasan & Feedback
             </label>
             <textarea
-              className="w-full min-h-[120px] rounded-2xl border border-foreground/10 bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all resize-none"
+              className="w-full min-h-[120px] rounded-md border border-foreground/10 bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all resize-none"
               placeholder="Tuliskan ulasan dan feedback kamu di sini..."
               value={review}
               onChange={(e) => setReview(e.target.value)}
@@ -264,7 +264,7 @@ export function ReviewForm() {
           <div className="bg-background px-4 pb-4 flex flex-col gap-3">
             <Button
               type="submit"
-              className="w-full h-14 rounded-2xl text-lg font-bold shadow-xl shadow-primary/20 bg-primary text-white transition-all active:scale-95"
+              className="w-full h-14 rounded-md text-lg font-bold shadow-xl shadow-primary/20 bg-primary text-white transition-all active:scale-95"
               disabled={isSubmitting || isInCooldown}
               loading={isSubmitting}
             >

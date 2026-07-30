@@ -30,7 +30,7 @@ export const SharedGoalsTab = ({
   return (
     <div className="space-y-4">
       {goals.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-12 px-4 text-center border-2 border-dashed border-muted/40 rounded-2xl bg-muted/5">
+        <div className="flex flex-col items-center justify-center py-12 px-4 text-center border-2 border-dashed border-muted/40 rounded-md bg-muted/5">
           <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4 text-primary">
             <Target className="w-8 h-8" />
           </div>

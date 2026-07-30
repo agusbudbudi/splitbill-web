@@ -28,16 +28,16 @@ const BUCKET_TYPE_OPTIONS: {
   label: string;
   emoji: string;
 }[] = [
-  { value: "trip", label: "Liburan / Traveling", emoji: "✈️" },
-  { value: "hangout", label: "Makan / Nongkrong", emoji: "🍜" },
-  { value: "event", label: "Pesta / Konser / Event", emoji: "🎉" },
-  { value: "office", label: "Kantor / Work Trip", emoji: "💼" },
-  { value: "household", label: "Belanja / Sembako", emoji: "🏠" },
-  { value: "event", label: "Arisan / Gathering", emoji: "🎈" },
-  { value: "other", label: "Olahraga / Workout", emoji: "⚽" },
-  { value: "other", label: "Kado / Ulang Tahun", emoji: "🎁" },
-  { value: "other", label: "Lainnya", emoji: "📦" },
-];
+    { value: "trip", label: "Liburan / Traveling", emoji: "✈️" },
+    { value: "hangout", label: "Makan / Nongkrong", emoji: "🍜" },
+    { value: "event", label: "Pesta / Konser / Event", emoji: "🎉" },
+    { value: "office", label: "Kantor / Work Trip", emoji: "💼" },
+    { value: "household", label: "Belanja / Sembako", emoji: "🏠" },
+    { value: "event", label: "Arisan / Gathering", emoji: "🎈" },
+    { value: "other", label: "Olahraga / Workout", emoji: "⚽" },
+    { value: "other", label: "Kado / Ulang Tahun", emoji: "🎁" },
+    { value: "other", label: "Lainnya", emoji: "📦" },
+  ];
 
 const EMOJI_OPTIONS = [
   "✈️",
@@ -192,7 +192,7 @@ export const BucketFormBottomSheet = ({
 
       <div
         className={cn(
-          "absolute bottom-0 w-full max-w-[600px] bg-white rounded-t-3xl shadow-2xl overflow-hidden flex flex-col max-h-[80dvh]",
+          "absolute bottom-0 w-full max-w-[600px] bg-white rounded-t-md shadow-2xl overflow-hidden flex flex-col max-h-[80dvh]",
           "animate-in slide-in-from-bottom-full duration-300 ease-out",
         )}
       >
@@ -272,7 +272,7 @@ export const BucketFormBottomSheet = ({
                     setEmoji(opt.emoji);
                   }}
                   className={cn(
-                    "flex flex-col items-center gap-1 py-3 px-2 rounded-2xl text-xs font-bold transition-all active:scale-95 cursor-pointer border border-primary/5 ",
+                    "flex flex-col items-center gap-1 py-3 px-2 rounded-md text-xs font-bold transition-all active:scale-95 cursor-pointer border border-primary/5 ",
                     selectedCategoryLabel === opt.label
                       ? "bg-primary text-white border-primary shadow-md shadow-primary/20"
                       : "bg-muted/30 text-muted-foreground hover:bg-primary/5 hover:text-primary",

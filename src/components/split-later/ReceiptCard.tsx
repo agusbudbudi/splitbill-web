@@ -17,7 +17,7 @@ export const ReceiptCard = ({ receipt, onProcess, onDelete }: ReceiptCardProps) 
   const isPending = receipt.status === "pending";
 
   return (
-    <div className="relative group rounded-2xl overflow-hidden bg-white shadow-soft border border-primary/5 hover:shadow-md transition-all duration-300">
+    <div className="relative group rounded-md overflow-hidden bg-white shadow-soft border border-primary/5 hover:shadow-md transition-all duration-300">
       {/* Receipt image */}
       <div className="aspect-[3/4] w-full overflow-hidden bg-muted/30">
         <img

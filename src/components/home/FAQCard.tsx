@@ -9,7 +9,7 @@ export const FAQCard = ({ compact = false }: { compact?: boolean }) => {
   return (
     <section className="animate-in fade-in slide-in-from-bottom-4 duration-500">
       <Link href="/faq">
-        <Card className="group relative overflow-hidden bg-white border border-slate-100 shadow-soft hover:shadow-md transition-all duration-300 cursor-pointer rounded-2xl">
+        <Card className="group relative overflow-hidden bg-white border border-slate-100 shadow-soft hover:shadow-md transition-all duration-300 cursor-pointer rounded-md">
           <CardContent className="relative p-4">
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-3 flex-1">

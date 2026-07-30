@@ -15,7 +15,7 @@ export const HomepageAIScanCard = () => {
   const isExhausted = !isSubscribed && freeScanCount <= 0;
 
   return (
-    <div className="relative p-[1.5px] rounded-2xl bg-gradient-to-br from-violet-400 via-pink-400 to-primary shadow-lg shadow-pink-500/5 transition-all duration-300 h-full w-full flex flex-col group/card hover:scale-[1.005] active:scale-[0.99] overflow-hidden">
+    <div className="relative p-[1.5px] rounded-md bg-gradient-to-br from-violet-400 via-pink-400 to-primary shadow-lg shadow-pink-500/5 transition-all duration-300 h-full w-full flex flex-col group/card hover:scale-[1.005] active:scale-[0.99] overflow-hidden">
       {/* Stick Badge */}
       <div className={cn(
         "absolute top-0 right-0 px-3 py-1.5 rounded-bl-md flex items-center gap-1 text-[9px] font-black uppercase z-30 shadow-md transition-transform group-hover/card:scale-105 origin-top-right",
@@ -27,7 +27,7 @@ export const HomepageAIScanCard = () => {
         <span>{isSubscribed ? "PRO" : "Free"}</span>
       </div>
 
-      <div className="relative overflow-hidden bg-white rounded-[calc(1rem-1.5px)] z-10 flex-grow flex flex-col justify-between p-6">
+      <div className="relative overflow-hidden bg-white rounded-[calc(var(--radius-md)-1.5px)] z-10 flex-grow flex flex-col justify-between p-6">
         {/* Subtle background glow */}
         <div className="absolute top-0 right-0 w-24 h-24 bg-pink-500/5 rounded-full blur-2xl -mr-6 -mt-6 pointer-events-none" />
 

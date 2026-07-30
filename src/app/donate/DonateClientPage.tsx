@@ -99,7 +99,7 @@ export default function DonateClientPage() {
         <main className="relative z-10 w-full pb-10">
           <div className="px-4 pt-4 space-y-6">
             {/* Welcome Card */}
-            <Card className="p-6 border border-border/50 shadow-md rounded-2xl bg-card relative overflow-hidden">
+            <Card className="p-6 border border-border/50 shadow-md rounded-md bg-card relative overflow-hidden">
               <div className="absolute top-0 right-0 p-2 opacity-[0.03] rotate-12">
                 <Coffee className="w-24 h-24" />
               </div>
@@ -135,7 +135,7 @@ export default function DonateClientPage() {
             </Card>
 
             {/* Cost Tracker Card */}
-            <Card className="p-5 border border-border/50 shadow-sm rounded-2xl bg-card">
+            <Card className="p-5 border border-border/50 shadow-sm rounded-md bg-card">
               <div className="flex items-center justify-between mb-3">
                 <div className="space-y-0.5">
                   <h3 className="text-xs font-bold text-foreground flex items-center gap-1.5 uppercase tracking-wider">
@@ -177,7 +177,7 @@ export default function DonateClientPage() {
                     <button
                       key={tier.id}
                       onClick={() => setSelectedTier(tier.id)}
-                      className={`text-left p-4 rounded-2xl border transition-all duration-300 relative overflow-hidden flex flex-col justify-between cursor-pointer ${isSelected
+                      className={`text-left p-4 rounded-md border transition-all duration-300 relative overflow-hidden flex flex-col justify-between cursor-pointer ${isSelected
                         ? "border-primary bg-primary/[0.03] shadow-sm ring-1 ring-primary"
                         : "border-border/60 bg-card hover:border-border-hover"
                         }`}
@@ -211,7 +211,7 @@ export default function DonateClientPage() {
                 <Sparkles className="w-3.5 h-3.5 fill-primary" /> Metode Donasi Utama
               </h3>
 
-              <Card className="py-4 border-2 border-primary bg-card shadow-soft rounded-2xl flex flex-col items-center text-center relative overflow-hidden">
+              <Card className="py-4 border-2 border-primary bg-card shadow-soft rounded-md flex flex-col items-center text-center relative overflow-hidden">
                 {/* DANA Header */}
                 <div className="flex items-center gap-2">
                   <div className="h-6 w-16 flex items-center justify-center">
@@ -269,7 +269,7 @@ export default function DonateClientPage() {
 
               <div className="space-y-3">
                 {/* Saweria Card */}
-                <Card className="p-4 border border-border/50 hover:border-primary/20 transition-all rounded-2xl bg-card flex items-center justify-between gap-4">
+                <Card className="p-4 border border-border/50 hover:border-primary/20 transition-all rounded-md bg-card flex items-center justify-between gap-4">
                   <div className="flex items-center gap-3">
                     <div className="h-6 w-10 flex items-center justify-center shrink-0 relative">
                       <Image
@@ -305,7 +305,7 @@ export default function DonateClientPage() {
               </h3>
               <div
                 onClick={() => (window.location.href = "/review")}
-                className="relative rounded-2xl p-5 text-white active:scale-[0.98] transition-all group cursor-pointer bg-brand-reversed"
+                className="relative rounded-md p-5 text-white active:scale-[0.98] transition-all group cursor-pointer bg-brand-reversed"
               >
                 <div className="absolute bottom-0 right-2 w-28 h-32 transition-transform group-hover:scale-110 group-hover:rotate-3 z-20">
                   <img
@@ -331,7 +331,7 @@ export default function DonateClientPage() {
 
       {/* Hidden Ticket for Download */}
       <div className="fixed top-[-9999px] left-[-9999px]">
-        <Card id="qris-ticket-hidden-donate" className="p-6 bg-white rounded-2xl border-2 border-primary w-[360px] shadow-none relative overflow-hidden flex flex-col items-center text-center">
+        <Card id="qris-ticket-hidden-donate" className="p-6 bg-white rounded-md border-2 border-primary w-[360px] shadow-none relative overflow-hidden flex flex-col items-center text-center">
           <div className="flex flex-col items-center w-full">
             {/* DANA Header */}
             <div className="flex items-center gap-2 mb-4">

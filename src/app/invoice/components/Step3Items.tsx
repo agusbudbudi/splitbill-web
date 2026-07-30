@@ -153,7 +153,7 @@ export function Step3Items() {
               />
               <FormError message={fieldErrors.rate} />
             </div>
-            <div className="flex items-center px-4 py-1 rounded-2xl border border-primary/10 bg-white text-sm font-bold text-foreground h-12 mt-0">
+            <div className="flex items-center px-4 py-1 rounded-md border border-primary/10 bg-white text-sm font-bold text-foreground h-12 mt-0">
               {formatToIDR(newItem.qty * newItem.rate)}
             </div>
           </div>
@@ -222,7 +222,7 @@ export function Step3Items() {
                     });
                     calculateTotals();
                   }}
-                  className="h-12 w-full rounded-2xl border border-primary/10 bg-white px-4 py-1 pr-8 text-sm font-medium transition-all focus:outline-none focus:border-primary/30 focus:ring-2 focus:ring-primary/10 appearance-none cursor-pointer"
+                  className="h-12 w-full rounded-md border border-primary/10 bg-white px-4 py-1 pr-8 text-sm font-medium transition-all focus:outline-none focus:border-primary/30 focus:ring-2 focus:ring-primary/10 appearance-none cursor-pointer"
                 >
                   <option value="amount">Fixed (Rp)</option>
                   <option value="percent">Percentage (%)</option>

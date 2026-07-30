@@ -48,7 +48,7 @@ export const ShareCollectionReceipt = React.forwardRef<
       {/* Branding */}
       <div className="relative z-10 w-full flex justify-between items-center mb-12">
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center border border-primary/5 p-2">
+          <div className="w-16 h-16 bg-white rounded-md flex items-center justify-center border border-primary/5 p-2">
             <img
               src="/img/footer-icon.png"
               alt="SplitBill Logo"
@@ -124,7 +124,7 @@ export const ShareCollectionReceipt = React.forwardRef<
 
         <div className="grid grid-cols-2 gap-8 pt-6 border-t border-slate-100">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center">
+            <div className="w-14 h-14 bg-emerald-50 rounded-md flex items-center justify-center">
               <CheckCircle2 className="w-8 h-8 text-emerald-600" />
             </div>
             <div>
@@ -137,7 +137,7 @@ export const ShareCollectionReceipt = React.forwardRef<
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 bg-amber-50 rounded-2xl flex items-center justify-center">
+            <div className="w-14 h-14 bg-amber-50 rounded-md flex items-center justify-center">
               <Clock className="w-8 h-8 text-amber-600" />
             </div>
             <div>
@@ -163,7 +163,7 @@ export const ShareCollectionReceipt = React.forwardRef<
             {paidPayers.slice(0, 5).map((payer, idx) => (
               <div
                 key={payer.id}
-                className="bg-emerald-50/50 border border-emerald-100 rounded-3xl p-6 flex items-center justify-between"
+                className="bg-emerald-50/50 border border-emerald-100 rounded-md p-6 flex items-center justify-between"
               >
                 <div className="flex items-center gap-5">
                   <div className="w-16 h-16 rounded-full border-4 border-white overflow-hidden bg-white shrink-0">
@@ -209,7 +209,7 @@ export const ShareCollectionReceipt = React.forwardRef<
             {unpaidPayers.slice(0, 3).map((payer, idx) => (
               <div
                 key={payer.id}
-                className="bg-amber-50/30 border border-amber-100 rounded-3xl p-6 flex items-center justify-between"
+                className="bg-amber-50/30 border border-amber-100 rounded-md p-6 flex items-center justify-between"
               >
                 <div className="flex items-center gap-5">
                   <div className="w-16 h-16 rounded-full border-4 border-white overflow-hidden bg-white shrink-0">

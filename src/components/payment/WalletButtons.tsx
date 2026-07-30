@@ -48,11 +48,11 @@ export default function WalletButtons({ phone, amount }: WalletButtonsProps) {
         >
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 flex items-center justify-center bg-slate-50 rounded-xl group-hover:bg-[#00AA13]/5 transition-colors">
-              <Image 
-                src="/img/logo-gopay.png" 
-                alt="GoPay" 
-                width={32} 
-                height={32} 
+              <Image
+                src="/img/logo-gopay.png"
+                alt="GoPay"
+                width={32}
+                height={32}
                 className="object-contain"
               />
             </div>
@@ -71,11 +71,11 @@ export default function WalletButtons({ phone, amount }: WalletButtonsProps) {
         >
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 flex items-center justify-center bg-slate-50 rounded-xl group-hover:bg-[#118EEA]/5 transition-colors">
-              <Image 
-                src="/img/logo-dana.png" 
-                alt="DANA" 
-                width={32} 
-                height={32} 
+              <Image
+                src="/img/logo-dana.png"
+                alt="DANA"
+                width={32}
+                height={32}
                 className="object-contain"
               />
             </div>
@@ -94,11 +94,11 @@ export default function WalletButtons({ phone, amount }: WalletButtonsProps) {
         >
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 flex items-center justify-center bg-slate-50 rounded-xl group-hover:bg-[#EE4D2D]/5 transition-colors">
-              <Image 
-                src="/img/logo-shopeepay.png" 
-                alt="ShopeePay" 
-                width={32} 
-                height={32} 
+              <Image
+                src="/img/logo-shopeepay.png"
+                alt="ShopeePay"
+                width={32}
+                height={32}
                 className="object-contain"
               />
             </div>
@@ -120,9 +120,9 @@ export default function WalletButtons({ phone, amount }: WalletButtonsProps) {
         </div>
       </div>
 
-      <Button 
-        variant="secondary" 
-        className="w-full h-14 text-base font-bold rounded-2xl transition-all active:scale-[0.98]"
+      <Button
+        variant="secondary"
+        className="w-full h-14 text-base font-bold rounded-md transition-all active:scale-[0.98]"
         onClick={copyPhone}
       >
         <Copy className="mr-2 h-5 w-5" />

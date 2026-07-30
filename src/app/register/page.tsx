@@ -125,7 +125,7 @@ function RegisterPageContent() {
             </div>
 
             {/* Social Proof Card — overlaps transparent bottom of PNG */}
-            <div className="relative z-10 flex items-center gap-3 bg-white/75 backdrop-blur-md border border-white p-3 rounded-2xl max-w-[380px] w-[90%] shadow-sm mx-auto -mt-1">
+            <div className="relative z-10 flex items-center gap-3 bg-white/75 backdrop-blur-md border border-white p-3 rounded-md max-w-[380px] w-[90%] shadow-sm mx-auto -mt-1">
               <div className="flex items-center">
                 {avatarSeeds.map((seed, idx) => (
                   <div
@@ -221,7 +221,7 @@ function RegisterPageContent() {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="relative z-10 md:mt-0 -mt-28 sm:-mt-34"
           >
-            <Card className="rounded-2xl border border-white/60 bg-white p-5 sm:p-7 shadow-[0_8px_30px_rgba(0,0,0,0.05)]">
+            <Card className="rounded-md border border-white/60 bg-white p-5 sm:p-7 shadow-[0_8px_30px_rgba(0,0,0,0.05)]">
               <CardHeader className="sr-only">
                 <h2 className="text-xl font-bold">Daftar</h2>
               </CardHeader>
@@ -250,7 +250,7 @@ function RegisterPageContent() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
-            className="flex md:hidden items-center gap-3.5 bg-white border border-slate-100/60 p-3.5 rounded-2xl shadow-[0_4px_12px_rgba(0,0,0,0.01)]"
+            className="flex md:hidden items-center gap-3.5 bg-white border border-slate-100/60 p-3.5 rounded-md shadow-[0_4px_12px_rgba(0,0,0,0.01)]"
           >
             <div className="flex items-center">
               {avatarSeeds.map((seed, idx) => (

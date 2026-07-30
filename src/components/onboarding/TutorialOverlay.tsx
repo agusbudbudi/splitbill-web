@@ -111,7 +111,7 @@ export const TutorialOverlay = ({
       )}>
         {spotlightRect && (
           <div
-            className="absolute bg-transparent shadow-[0_0_0_9999px_rgba(0,0,0,0.6)] rounded-2xl transition-all duration-500 ease-in-out"
+            className="absolute bg-transparent shadow-[0_0_0_9999px_rgba(0,0,0,0.6)] rounded-md transition-all duration-500 ease-in-out"
             style={{
               top: spotlightRect.top,
               left: spotlightRect.left,
@@ -131,7 +131,7 @@ export const TutorialOverlay = ({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: -20 }}
             className={cn(
-              "absolute pointer-events-auto w-full max-w-[280px] bg-white rounded-2xl p-4 shadow-2xl flex flex-col gap-2 border border-white/20",
+              "absolute pointer-events-auto w-full max-w-[280px] bg-white rounded-md p-4 shadow-2xl flex flex-col gap-2 border border-white/20",
               !spotlightRect && "static",
               spotlightRect && currentStep.position === "bottom" && "top-[calc(var(--top)+var(--height)+20px)]",
               spotlightRect && currentStep.position === "top" && "bottom-[calc(100%-var(--top)+20px)]"
@@ -163,14 +163,14 @@ export const TutorialOverlay = ({
                 <Button
                   variant="outline"
                   onClick={handleBack}
-                  className="flex-1 rounded-md h-10 text-xs"
+                  className="flex-1 rounded-sm h-10 text-xs"
                 >
                   <ChevronLeft className="w-3 h-3 mr-1" /> Balik
                 </Button>
               )}
               <Button
                 onClick={handleNext}
-                className="flex-2 rounded-md h-10 font-bold text-xs"
+                className="flex-2 rounded-xs h-10 font-bold text-xs"
               >
                 {currentStepIndex === steps.length - 1 ? (
                   <>Mulai! <Rocket className="w-3 h-3 ml-1" /></>

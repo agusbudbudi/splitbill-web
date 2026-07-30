@@ -13,7 +13,7 @@ interface SubscriptionListProps {
 
 function SkeletonCard() {
   return (
-    <div className="rounded-2xl border border-border/50 overflow-hidden animate-pulse">
+    <div className="rounded-md border border-border/50 overflow-hidden animate-pulse">
       <div className="p-5 space-y-4">
         <div className="flex items-start justify-between gap-2">
           <div className="space-y-2 flex-1">
@@ -35,7 +35,7 @@ function SkeletonCard() {
             </div>
           ))}
         </div>
-        <div className="h-11 bg-muted rounded-2xl w-full" />
+        <div className="h-11 bg-muted rounded-md w-full" />
       </div>
     </div>
   );

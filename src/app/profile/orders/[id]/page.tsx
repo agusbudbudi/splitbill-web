@@ -158,7 +158,7 @@ export default function OrderDetailPage() {
             <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-widest px-1">
               Informasi Pesanan
             </h3>
-            <Card className="border-border/50 shadow-sm rounded-2xl overflow-hidden">
+            <Card className="border-border/50 shadow-sm rounded-md overflow-hidden">
               <CardContent className="p-0 divide-y divide-border/50">
                 <div className="p-4 flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -212,7 +212,7 @@ export default function OrderDetailPage() {
               <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-widest px-1">
                 Rincian Paket
               </h3>
-              <Card className="border-border/50 shadow-sm rounded-2xl overflow-hidden">
+              <Card className="border-border/50 shadow-sm rounded-md overflow-hidden">
                 <CardContent className="p-5 space-y-4">
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
@@ -260,7 +260,7 @@ export default function OrderDetailPage() {
             <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-widest px-1">
               Rincian Harga
             </h3>
-            <Card className="border-border/50 shadow-sm rounded-2xl overflow-hidden">
+            <Card className="border-border/50 shadow-sm rounded-md overflow-hidden">
               <CardContent className="p-0 divide-y divide-border/50">
                 <div className="p-4 flex items-center justify-between text-sm">
                   <span className="text-muted-foreground font-medium">
@@ -298,7 +298,7 @@ export default function OrderDetailPage() {
               <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-widest px-1">
                 Detail Pembayaran
               </h3>
-              <Card className="border-border/50 shadow-sm rounded-2xl overflow-hidden bg-white">
+              <Card className="border-border/50 shadow-sm rounded-md overflow-hidden bg-white">
                 <CardContent className="p-5 flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center">

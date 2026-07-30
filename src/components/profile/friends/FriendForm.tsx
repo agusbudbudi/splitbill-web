@@ -141,7 +141,7 @@ export const FriendForm = ({
           />
         </div>
 
-        <div className="p-4 bg-primary/5 rounded-2xl border border-primary/10">
+        <div className="p-4 bg-primary/5 rounded-md border border-primary/10">
           <p className="text-[11px] leading-relaxed text-slate-600">
             💡 <b>Tips:</b> Dengan menyimpan daftar teman, kamu bisa lebih cepat memilih orang saat sedang bagi tagihan.
           </p>

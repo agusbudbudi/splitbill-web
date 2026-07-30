@@ -46,7 +46,7 @@ export const BucketCard = ({ bucket, stats, onClick }: BucketCardProps) => {
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3 min-w-0">
             {/* Emoji icon */}
-            <div className="w-12 h-12 rounded-2xl bg-primary/5 border border-primary/10 flex items-center justify-center text-2xl shrink-0 group-hover:scale-110 transition-transform duration-300">
+            <div className="w-12 h-12 rounded-md bg-primary/5 border border-primary/10 flex items-center justify-center text-2xl shrink-0 group-hover:scale-110 transition-transform duration-300">
               {bucket.emoji}
             </div>
 

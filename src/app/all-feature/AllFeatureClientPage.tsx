@@ -127,7 +127,7 @@ export const AllFeatureClientPage = () => {
 
         <main className="relative z-10 w-full flex-1 pb-20 pt-4 px-4 flex flex-col">
           {/* PWA Banner */}
-          <div className="w-full rounded-2xl overflow-hidden mb-4">
+          <div className="w-full rounded-md overflow-hidden mb-4">
             <Image
               src="/img/banner-all-feature.png"
               alt="Semua Fitur Banner"

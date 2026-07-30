@@ -57,7 +57,7 @@ export const FeatureBanner = ({
 
       <div
         className={cn(
-          "w-full rounded-xl p-6 relative overflow-hidden transition-all duration-300 h-full",
+          "w-full rounded-md p-6 relative overflow-hidden transition-all duration-300 h-full",
           variant === "primary" &&
           "bg-primary text-white shadow-xl shadow-primary/20",
           variant === "secondary" && "bg-[#f0f4ff] text-foreground",
@@ -90,7 +90,7 @@ export const FeatureBanner = ({
               <Button
                 onClick={onCtaClick}
                 className={cn(
-                  "w-full h-12 rounded-2xl font-bold text-base shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2 relative overflow-hidden",
+                  "w-full h-12 rounded-md font-bold text-base shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2 relative overflow-hidden",
                   variant === "primary"
                     ? "bg-white text-primary hover:bg-white/95"
                     : "bg-primary text-white hover:opacity-90",

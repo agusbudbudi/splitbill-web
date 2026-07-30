@@ -71,7 +71,7 @@ export default function InvoiceDetailPage() {
 
         <main className="flex-1 p-4 pb-10 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
           {/* Main Info Card */}
-          <Card className="border-none shadow-soft overflow-hidden rounded-3xl">
+          <Card className="border-none shadow-soft overflow-hidden rounded-md">
             <CardContent className="p-0">
               <div className="bg-[#f0f4ff] p-8 text-foreground text-center relative overflow-hidden">
                 {/* Decorative background element */}
@@ -80,7 +80,7 @@ export default function InvoiceDetailPage() {
 
                 <div className="relative z-10 space-y-4">
                   <div className="flex flex-col items-center gap-1">
-                    <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center mb-2 shadow-sm border border-primary/10">
+                    <div className="w-12 h-12 bg-white rounded-md flex items-center justify-center mb-2 shadow-sm border border-primary/10">
                       <FileText className="w-6 h-6 text-primary" />
                     </div>
                     <h2 className="text-md font-black tracking-tight text-foreground/80 uppercase">
@@ -319,7 +319,7 @@ export default function InvoiceDetailPage() {
           <Button
             onClick={handleDownloadPDF}
             disabled={isDownloading}
-            className="w-full h-14 font-black rounded-2xl shadow-xl shadow-primary/20 bg-primary hover:bg-primary/90 text-white transition-all text-base tracking-tight active:scale-[0.98]"
+            className="w-full h-14 font-black rounded-md shadow-xl shadow-primary/20 bg-primary hover:bg-primary/90 text-white transition-all text-base tracking-tight active:scale-[0.98]"
           >
             <Download className="w-5 h-5 mr-3" />
             {isDownloading ? "Downloading..." : "Download Invoice (PDF)"}

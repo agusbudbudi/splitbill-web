@@ -248,7 +248,7 @@ export const Banner = () => {
               "aspect-[1080/608] shrink-0 block relative z-20 group rounded-sm md:rounded-lg overflow-hidden transition-all duration-300"
             )}
           >
-            <div className="relative h-full w-full overflow-hidden cursor-pointer leading-[0] rounded-sm md:rounded-lg">
+            <div className="relative h-full w-full overflow-hidden cursor-pointer leading-[0] rounded-sm md:rounded-md">
               {/* Skeleton Loader */}
               {!loadedImages[banner.id] && (
                 <div className="absolute inset-0 z-10 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 bg-[length:200%_100%] animate-[shimmer_1.5s_infinite] h-full w-full" />

@@ -12,7 +12,7 @@ interface ReviewBannerProps {
 
 export const ReviewBanner: React.FC<ReviewBannerProps> = ({ onClose }) => {
   const router = useRouter();
-   const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(true);
   const { user, isAuthenticated } = useAuthStore();
 
   const showRewardCopy = !isAuthenticated || (isAuthenticated && !user?.hasClaimedReviewReward);
@@ -47,7 +47,7 @@ export const ReviewBanner: React.FC<ReviewBannerProps> = ({ onClose }) => {
           trackGeneral.reviewBannerClick();
           router.push("/review");
         }}
-        className="bg-primary text-primary-foreground rounded-2xl p-4 shadow-xl flex items-center justify-between cursor-pointer relative overflow-hidden group max-w-[600px] mx-auto pointer-events-auto"
+        className="bg-primary text-primary-foreground rounded-md p-4 shadow-xl flex items-center justify-between cursor-pointer relative overflow-hidden group max-w-[600px] mx-auto pointer-events-auto"
       >
         {/* Background elements for visual interest */}
         <div className="absolute top-0 right-0 p-8 bg-white/10 rounded-full -mr-4 -mt-4 blur-xl"></div>
@@ -62,8 +62,8 @@ export const ReviewBanner: React.FC<ReviewBannerProps> = ({ onClose }) => {
               {showRewardCopy ? "Bonus +5 Kuota Scan AI 🎁" : "Suka aplikasinya?"}
             </h4>
             <p className="text-xs text-primary-foreground/80">
-              {showRewardCopy 
-                ? "Kirim review pertama kamu sekarang!" 
+              {showRewardCopy
+                ? "Kirim review pertama kamu sekarang!"
                 : "Bantu kami kasih rating bintang 5 ya! ⭐"}
             </p>
           </div>

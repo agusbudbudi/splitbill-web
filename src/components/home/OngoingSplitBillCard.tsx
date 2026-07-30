@@ -119,10 +119,10 @@ export const OngoingSplitBillCard = () => {
       <div
         onClick={handleCardClick}
         className={cn(
-          "relative px-[1.5px] pt-[1.5px] pb-[4px] rounded-2xl bg-gradient-to-r from-violet-400 via-pink-400 to-primary/70 shadow-lg shadow-pink-500/5 transition-all duration-300 overflow-hidden cursor-pointer h-full group hover:scale-[1.01] active:scale-[0.99]"
+          "relative px-[1.5px] pt-[1.5px] pb-[4px] rounded-md bg-gradient-to-r from-violet-400 via-pink-400 to-primary/70 shadow-lg shadow-pink-500/5 transition-all duration-300 overflow-hidden cursor-pointer h-full group hover:scale-[1.01] active:scale-[0.99]"
         )}
       >
-        <div className="relative overflow-hidden bg-white rounded-[calc(1rem-1.5px)] z-10 p-4 space-y-3 h-full flex flex-col">
+        <div className="relative overflow-hidden bg-white rounded-[calc(var(--radius-md)-1.5px)] z-10 p-4 space-y-3 h-full flex flex-col">
           {/* Subtle background glow */}
           <div className="absolute top-0 right-0 w-24 h-24 bg-pink-500/5 rounded-full blur-2xl -mr-6 -mt-6 pointer-events-none" />
 

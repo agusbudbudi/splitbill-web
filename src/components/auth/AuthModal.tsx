@@ -98,7 +98,7 @@ export function AuthModal({
           <Link
             href={loginUrl}
             onClick={onClose}
-            className="w-full h-14 border border-dashed border-primary/20 hover:border-primary/40 text-primary transition-colors rounded-2xl flex items-center justify-center gap-3 font-bold cursor-pointer"
+            className="w-full h-14 border border-dashed border-primary/20 hover:border-primary/40 text-primary transition-colors rounded-md flex items-center justify-center gap-3 font-bold cursor-pointer"
           >
             <Mail className="w-5 h-5" />
             <span>Masuk dengan Email</span>

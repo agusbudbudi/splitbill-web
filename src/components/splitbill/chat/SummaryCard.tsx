@@ -82,7 +82,7 @@ export function SummaryCard() {
   };
 
   return (
-    <Card className="overflow-hidden relative shadow-none rounded-2xl">
+    <Card className="overflow-hidden relative shadow-none rounded-md">
       {/* Decorative background element */}
       <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 blur-3xl pointer-events-none" />
 

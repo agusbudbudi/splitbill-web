@@ -68,7 +68,7 @@ export default function BlogListClient() {
               <input
                 type="text"
                 placeholder="Cari artikel menarik..."
-                className="w-full bg-white border border-border/60 rounded-2xl py-3 pl-12 pr-4 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all shadow-sm"
+                className="w-full bg-white border border-border/60 rounded-md py-3 pl-12 pr-4 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all shadow-sm"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -92,7 +92,7 @@ export default function BlogListClient() {
             ))}
           </div>
         ) : (
-          <div className="bg-white rounded-3xl p-12 text-center shadow-soft border border-border/50 mt-12">
+          <div className="bg-white rounded-md p-12 text-center shadow-soft border border-border/50 mt-12">
             <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mx-auto mb-6">
               <Search className="w-10 h-10 text-muted-foreground/30" />
             </div>

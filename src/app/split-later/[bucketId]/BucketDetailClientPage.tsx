@@ -230,7 +230,7 @@ export default function BucketDetailClientPage({
 
           {/* Hero stats Card - White card below blue BG */}
           <div className="px-4 -mt-2 mb-4">
-            <div className="rounded-2xl backdrop-blur-xs text-card-foreground border-none shadow-md shadow-primary/5 bg-white relative overflow-hidden p-4">
+            <div className="rounded-md backdrop-blur-xs text-card-foreground border-none shadow-md shadow-primary/5 bg-white relative overflow-hidden p-4">
               <p className="text-[10px] font-black text-foreground/50 mb-3 px-1 tracking-wider uppercase">
                 Status Split Later
               </p>

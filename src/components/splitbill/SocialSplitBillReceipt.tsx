@@ -93,7 +93,7 @@ export const SocialSplitBillReceipt = React.forwardRef<
       {/* Branding */}
       <div className="relative z-10 w-full flex justify-between items-center mb-6">
         <div className="flex items-center gap-5">
-          <div className="w-20 h-20 bg-white rounded-2xl flex items-center justify-center border border-primary/5 relative overflow-hidden">
+          <div className="w-20 h-20 bg-white rounded-md flex items-center justify-center border border-primary/5 relative overflow-hidden">
             <img
               src="/img/footer-icon.png"
               alt="SplitBill Logo"
@@ -121,8 +121,8 @@ export const SocialSplitBillReceipt = React.forwardRef<
       <div className="relative z-10 w-full flex flex-col items-center text-center mt-[-72px]">
         <div className="mb-6 relative">
           <div className="w-36 h-36 bg-white rounded-full flex items-center justify-center relative z-10 overflow-hidden border-4 border-primary/10">
-            <img 
-              src="/img/icon-splitbill.png" 
+            <img
+              src="/img/icon-splitbill.png"
               className="w-24 h-24 object-contain"
               crossOrigin="anonymous"
             />
@@ -383,7 +383,7 @@ export const SocialSplitBillReceipt = React.forwardRef<
                     key={method.id}
                     className="p-6 bg-white border border-slate-100 rounded-[35px] flex items-center gap-8"
                   >
-                    <div className="w-24 h-24 bg-slate-50 rounded-3xl flex items-center justify-center border border-slate-100 shrink-0 relative overflow-hidden">
+                    <div className="w-24 h-24 bg-slate-50 rounded-md flex items-center justify-center border border-slate-100 shrink-0 relative overflow-hidden">
                       {[
                         "bca",
                         "bni",

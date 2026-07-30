@@ -14,8 +14,8 @@ export const ShareEncouragement = ({ isCompact = false }: ShareEncouragementProp
     <Link
       href="/split-later"
       className={`relative block w-full bg-[#2E6FF3] overflow-hidden shadow-soft transition-all duration-500 group cursor-pointer active:scale-[0.99] ${isCompact
-        ? "rounded-2xl"
-        : "rounded-2xl lg:rounded-xl"
+        ? "rounded-md"
+        : "rounded-md lg:rounded-lg"
         }`}
     >
       {/* Background styling for the right side */}
@@ -63,7 +63,7 @@ export const ShareEncouragement = ({ isCompact = false }: ShareEncouragementProp
           <div className="pt-1">
             <span className={`inline-flex bg-white text-[#2E6FF3] font-bold rounded-xl items-center justify-center gap-2 hover:bg-blue-50 transition-all shadow-md group-hover:translate-x-1 duration-300 ${isCompact
               ? "text-[10px] px-4 py-2"
-              : "text-[12px] lg:text-base px-5 lg:px-8 py-2.5 lg:py-4 lg:rounded-2xl"
+              : "text-[12px] lg:text-base px-5 lg:px-8 py-2.5 lg:py-4 lg:rounded-md"
               }`}>
               Coba Sekarang <ArrowRight className={`w-3.5 h-3.5 ${isCompact ? "" : "lg:w-5 lg:h-5"}`} />
             </span>

@@ -60,7 +60,7 @@ export function LoginForm({
         <motion.div
           initial={{ opacity: 0, x: -10 }}
           animate={{ opacity: 1, x: 0 }}
-          className="bg-destructive/10 border border-destructive/20 rounded-2xl p-4 flex items-center gap-3"
+          className="bg-destructive/10 border border-destructive/20 rounded-md p-4 flex items-center gap-3"
         >
           <div className="w-5 h-5 rounded-full bg-destructive/20 flex items-center justify-center shrink-0">
             <span className="text-destructive font-bold text-xs">!</span>
@@ -73,7 +73,7 @@ export function LoginForm({
         <motion.div
           initial={{ opacity: 0, x: 10 }}
           animate={{ opacity: 1, x: 0 }}
-          className="bg-green-500/10 border border-green-500/20 rounded-2xl p-4 flex items-center gap-3"
+          className="bg-green-500/10 border border-green-500/20 rounded-md p-4 flex items-center gap-3"
         >
           <div className="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center shrink-0">
             <span className="text-green-500 font-bold text-xs">✓</span>

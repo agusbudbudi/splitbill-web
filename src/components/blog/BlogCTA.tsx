@@ -46,7 +46,7 @@ export const BlogCTA = () => {
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="w-full lg:max-w-xs bg-primary text-white font-bold py-3.5 px-6 rounded-2xl shadow-glow flex items-center justify-center gap-2 group transition-all cursor-pointer text-sm"
+              className="w-full lg:max-w-xs bg-primary text-white font-bold py-3.5 px-6 rounded-md shadow-glow flex items-center justify-center gap-2 group transition-all cursor-pointer text-sm"
             >
               Coba Split Bill
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
@@ -61,7 +61,7 @@ export const BlogCTA = () => {
             return (
               <div key={index} className="flex lg:flex-col gap-4 lg:justify-start">
                 <div
-                  className={`flex-shrink-0 w-12 h-12 rounded-2xl ${step.color} flex items-center justify-center`}
+                  className={`flex-shrink-0 w-12 h-12 rounded-md ${step.color} flex items-center justify-center`}
                 >
                   <Icon className="w-6 h-6" />
                 </div>

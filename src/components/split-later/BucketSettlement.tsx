@@ -379,7 +379,7 @@ export const BucketSettlement = ({
         icon={TrendingUp}
         message="Belum Ada Struk yang Diproses"
         subtitle="Proses struk-struk di tab Struk dulu ya, nanti hasilnya bakal muncul di sini."
-        className="bg-white/50 rounded-2xl"
+        className="bg-white/50 rounded-md"
       />
     );
   }
@@ -387,7 +387,7 @@ export const BucketSettlement = ({
   return (
     <div className="space-y-4">
       {/* Encourage to Share Card (SaveBillNudge style) */}
-      <Card className="border border-primary/20 shadow-soft bg-primary/5 overflow-hidden rounded-2xl">
+      <Card className="border border-primary/20 shadow-soft bg-primary/5 overflow-hidden rounded-md">
         <CardContent className="p-5 space-y-4">
           <div className="flex items-start gap-4">
             <div className="w-10 h-10 rounded-xl relative overflow-hidden shrink-0">

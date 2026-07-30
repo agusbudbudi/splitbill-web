@@ -38,7 +38,7 @@ export const PaymentMethodsTab = () => {
     <div className="flex-1 flex flex-col space-y-6 pb-4">
       {/* Empty State / Intro */}
       {paymentMethods.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-8 px-6 animate-in fade-in zoom-in duration-500 rounded-2xl bg-white border border-primary/10 shadow-soft">
+        <div className="flex flex-col items-center justify-center py-8 px-6 animate-in fade-in zoom-in duration-500 rounded-md bg-white border border-primary/10 shadow-soft">
           <div className="w-20 h-20 rounded-full flex items-center justify-center mb-4 bg-primary/5">
             <img
               src="/img/menu-wallet.png"
@@ -190,7 +190,7 @@ export const PaymentMethodsTab = () => {
       {/* Share All Card (Premium Box) */}
       {paymentMethods.length > 0 && (
         <div className="px-1 animate-in fade-in slide-in-from-bottom-6 duration-700 delay-150">
-          <div className="p-5 rounded-2xl bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border border-primary/20 relative overflow-hidden group cursor-pointer hover:shadow-soft transition-all active:scale-[0.98]">
+          <div className="p-5 rounded-md bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border border-primary/20 relative overflow-hidden group cursor-pointer hover:shadow-soft transition-all active:scale-[0.98]">
             <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform duration-500">
               <Share2 className="w-20 h-20 text-primary" />
             </div>
@@ -244,7 +244,7 @@ export const PaymentMethodsTab = () => {
 
       {/* Feature Highlights (Premium Soft Grid) */}
       <div className="grid grid-cols-2 gap-3 px-1 animate-in slide-in-from-bottom-8 duration-700 delay-200">
-        <div className="p-4 rounded-2xl bg-white border border-primary/5 flex flex-col gap-2 group hover:scale-[1.02] transition-all duration-300 cursor-pointer shadow-soft">
+        <div className="p-4 rounded-md bg-white border border-primary/5 flex flex-col gap-2 group hover:scale-[1.02] transition-all duration-300 cursor-pointer shadow-soft">
           <ShieldCheck className="w-5 h-5 text-emerald-500 mb-1" />
           <h4 className="font-bold text-xs sm:text-sm text-foreground">
             Aman & Privat
@@ -254,7 +254,7 @@ export const PaymentMethodsTab = () => {
           </p>
         </div>
 
-        <div className="p-4 rounded-2xl bg-white border border-primary/5 flex flex-col gap-2 group hover:scale-[1.02] transition-all duration-300 cursor-pointer shadow-soft">
+        <div className="p-4 rounded-md bg-white border border-primary/5 flex flex-col gap-2 group hover:scale-[1.02] transition-all duration-300 cursor-pointer shadow-soft">
           <Share2 className="w-5 h-5 text-blue-500 mb-1" />
           <h4 className="font-bold text-xs sm:text-sm text-foreground">
             Sat Set Share
@@ -264,7 +264,7 @@ export const PaymentMethodsTab = () => {
           </p>
         </div>
 
-        <div className="p-4 rounded-2xl bg-white border border-primary/5 flex flex-col gap-2 group hover:scale-[1.02] transition-all duration-300 cursor-pointer shadow-soft">
+        <div className="p-4 rounded-md bg-white border border-primary/5 flex flex-col gap-2 group hover:scale-[1.02] transition-all duration-300 cursor-pointer shadow-soft">
           <WifiOff className="w-5 h-5 text-slate-500 mb-1" />
           <h4 className="font-bold text-xs sm:text-sm text-foreground">
             Mode Offline
@@ -274,7 +274,7 @@ export const PaymentMethodsTab = () => {
           </p>
         </div>
 
-        <div className="p-4 rounded-2xl bg-white border border-primary/5 flex flex-col gap-2 group hover:scale-[1.02] transition-all duration-300 cursor-pointer shadow-soft">
+        <div className="p-4 rounded-md bg-white border border-primary/5 flex flex-col gap-2 group hover:scale-[1.02] transition-all duration-300 cursor-pointer shadow-soft">
           <LayoutGrid className="w-5 h-5 text-purple-500 mb-1" />
           <h4 className="font-bold text-xs sm:text-sm text-foreground">
             Rapi & Praktis

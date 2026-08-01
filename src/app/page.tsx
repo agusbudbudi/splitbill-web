@@ -64,5 +64,33 @@ export const metadata: Metadata = {
 };
 
 export default function HomepagePage() {
-  return <HomepagePageClient />;
+  const websiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Split Bill Online",
+    alternateName: "SplitBill.my.id",
+    url: "https://www.splitbill.my.id",
+  };
+
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "Split Bill Online",
+    url: "https://www.splitbill.my.id",
+    logo: "https://www.splitbill.my.id/icon.png",
+  };
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+      />
+      <HomepagePageClient />
+    </>
+  );
 }

@@ -6,6 +6,8 @@ export async function fetchBlogs(params?: {
   limit?: number;
   category?: string;
   tag?: string;
+  cache?: RequestCache;
+  next?: NextFetchRequestConfig;
 }): Promise<BlogsResponse> {
   const query = new URLSearchParams();
   if (params?.page) query.append("page", params.page.toString());
@@ -19,6 +21,8 @@ export async function fetchBlogs(params?: {
   return apiClient.request<BlogsResponse>(endpoint, {
     method: "GET",
     skipAuth: true,
+    ...(params?.cache && { cache: params.cache }),
+    ...(params?.next && { next: params.next }),
   });
 }
 

@@ -159,7 +159,7 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
           ? "\n\nRincian Transfer:\n" + settlementInstructions.map(inst => `• ${inst.from} ➡️ ${inst.to}: ${formatToIDR(inst.amount)}`).join("\n")
           : "";
 
-        const caption = `💸 Habis seru-seruan bareng di "${activityName || "Makan-makan"}"!\n\nTotal tagihannya ${formatToIDR(totalSpent)}. Biar pertemanan makin asik, yuk lunasin tagihannya ya! 😉✨${instructionsText}\n\nCek rincian lengkapnya di sini:\n🔗 ${shareUrl}\n\nPowered by splitbill.my.id`;
+        const caption = `💸 Habis seru-seruan bareng di "${activityName || "Makan-makan"}"!\n\nTotal tagihannya ${formatToIDR(totalSpent)}. Biar pertemanan makin asik, yuk lunasin tagihannya ya! 😉✨${instructionsText}\n\nCek rincian lengkapnya di sini:\n🔗 ${shareUrl}\n\nPowered by www.splitbill.my.id`;
 
         // Pre-copy text to clipboard as many apps ignore 'text' when 'files' are shared
         try {
@@ -229,7 +229,7 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
         ? "\n\nRincian Transfer:\n" + settlementInstructions.map(inst => `• ${inst.from} ➡️ ${inst.to}: ${formatToIDR(inst.amount)}`).join("\n")
         : "";
 
-      const caption = `💸 Habis seru-seruan bareng di "${activityName || "Makan-makan"}"!\n\nTotal tagihannya ${formatToIDR(totalSpent)}. Biar pertemanan makin asik, yuk lunasin tagihannya ya! 😉✨${instructionsText}\n\nCek rincian lengkapnya di sini:\n🔗 ${shareUrl}\n\nPowered by splitbill.my.id`;
+      const caption = `💸 Habis seru-seruan bareng di "${activityName || "Makan-makan"}"!\n\nTotal tagihannya ${formatToIDR(totalSpent)}. Biar pertemanan makin asik, yuk lunasin tagihannya ya! 😉✨${instructionsText}\n\nCek rincian lengkapnya di sini:\n🔗 ${shareUrl}\n\nPowered by www.splitbill.my.id`;
 
       if (
         typeof navigator !== "undefined" &&

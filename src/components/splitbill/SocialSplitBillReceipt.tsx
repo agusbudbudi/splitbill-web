@@ -490,7 +490,7 @@ export const SocialSplitBillReceipt = React.forwardRef<
           <span className="text-primary font-black">SplitBill</span>
         </p>
         <p className="text-primary font-black text-3xl mt-3 tracking-tighter">
-          splitbill.my.id
+          www.splitbill.my.id
         </p>
       </div>
     </div>

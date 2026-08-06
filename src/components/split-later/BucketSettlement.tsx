@@ -327,7 +327,7 @@ export const BucketSettlement = ({
       });
 
       const fileName = `SplitLater-${bucket.title?.replace(/\s+/g, "-") || "Summary"}-${Date.now()}.png`;
-      const caption = `💸 Settlement Rangkuman untuk "${bucket.emoji || "✈️"} ${bucket.title || "Trip Kami"}"!\n\nTotal pengeluaran trip ini ${formatToIDR(totalSpend)}.\n\nPowered by splitbill.my.id`;
+      const caption = `💸 Settlement Rangkuman untuk "${bucket.emoji || "✈️"} ${bucket.title || "Trip Kami"}"!\n\nTotal pengeluaran trip ini ${formatToIDR(totalSpend)}.\n\nPowered by www.splitbill.my.id`;
 
       if (
         typeof navigator !== "undefined" &&

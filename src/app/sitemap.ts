@@ -8,23 +8,27 @@ interface RouteConfig {
   path: string;
   priority: number;
   changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"];
+  // Fixed date of last real content change. Omit only for pages whose
+  // content genuinely changes on every visit (home, blog listing) —
+  // those fall back to today's date instead.
+  lastModified?: string;
 }
 
 const routeConfigs: RouteConfig[] = [
   { path: "/", priority: 1.0, changeFrequency: "daily" },
   { path: "/blog", priority: 0.9, changeFrequency: "daily" },
-  { path: "/split-bill", priority: 0.9, changeFrequency: "weekly" },
-  { path: "/collect-money", priority: 0.8, changeFrequency: "weekly" },
-  { path: "/shared-goals", priority: 0.8, changeFrequency: "weekly" },
-  { path: "/split-later", priority: 0.8, changeFrequency: "weekly" },
-  { path: "/invoice", priority: 0.8, changeFrequency: "weekly" },
-  { path: "/membership", priority: 0.6, changeFrequency: "monthly" },
-  { path: "/review", priority: 0.7, changeFrequency: "weekly" },
-  { path: "/subscription", priority: 0.6, changeFrequency: "monthly" },
-  { path: "/faq", priority: 0.7, changeFrequency: "monthly" },
-  { path: "/donate", priority: 0.5, changeFrequency: "monthly" },
-  { path: "/privacy", priority: 0.2, changeFrequency: "yearly" },
-  { path: "/terms", priority: 0.2, changeFrequency: "yearly" },
+  { path: "/split-bill", priority: 0.9, changeFrequency: "weekly", lastModified: "2026-07-25" },
+  { path: "/collect-money", priority: 0.8, changeFrequency: "weekly", lastModified: "2026-07-25" },
+  { path: "/shared-goals", priority: 0.8, changeFrequency: "weekly", lastModified: "2026-07-25" },
+  { path: "/split-later", priority: 0.8, changeFrequency: "weekly", lastModified: "2026-07-25" },
+  { path: "/invoice", priority: 0.8, changeFrequency: "weekly", lastModified: "2026-07-25" },
+  { path: "/membership", priority: 0.6, changeFrequency: "monthly", lastModified: "2026-07-25" },
+  { path: "/review", priority: 0.7, changeFrequency: "weekly", lastModified: "2026-07-25" },
+  { path: "/subscription", priority: 0.6, changeFrequency: "monthly", lastModified: "2026-07-25" },
+  { path: "/faq", priority: 0.7, changeFrequency: "monthly", lastModified: "2026-07-25" },
+  { path: "/donate", priority: 0.5, changeFrequency: "monthly", lastModified: "2026-07-25" },
+  { path: "/privacy", priority: 0.2, changeFrequency: "yearly", lastModified: "2026-07-25" },
+  { path: "/terms", priority: 0.2, changeFrequency: "yearly", lastModified: "2026-07-25" },
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -33,9 +37,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const todayStr = now.toISOString().split("T")[0];
 
   // Static routes
-  const staticRoutes = routeConfigs.map(({ path, priority, changeFrequency }) => ({
+  const staticRoutes = routeConfigs.map(({ path, priority, changeFrequency, lastModified }) => ({
     url: `${baseUrl}${path === "/" ? "" : path}`,
-    lastModified: todayStr,
+    lastModified: lastModified ?? todayStr,
     changeFrequency,
     priority,
   }));
@@ -44,7 +48,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let blogRoutes: MetadataRoute.Sitemap = [];
   try {
     // Add a timeout to the fetch if possible, but here we just catch the error
-    const blogsRes = await fetchBlogs({ limit: 1000 });
+    const blogsRes = await fetchBlogs({
+      limit: 1000,
+      cache: "force-cache",
+      next: { revalidate: 86400 },
+    });
     
     if (blogsRes && blogsRes.success && Array.isArray(blogsRes.data)) {
       blogRoutes = blogsRes.data

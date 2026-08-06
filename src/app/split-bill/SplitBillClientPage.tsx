@@ -1381,7 +1381,7 @@ const SplitBillContent = () => {
                     const instructionsText = calculationResult.settlementInstructions.length > 0
                       ? "\n\nRincian Transfer:\n" + calculationResult.settlementInstructions.map(inst => `• ${inst.from} ➡️ ${inst.to}: ${formatCurrency(inst.amount)}`).join("\n")
                       : "";
-                    const caption = `💸 Habis seru-seruan bareng di "${activityName || "Makan-makan"}"!\n\nTotal tagihannya ${formatCurrency(totalSpent)}. Biar pertemanan makin asik, yuk lunasin tagihannya ya! 😉✨${instructionsText}\n\nCek rincian lengkapnya di sini:\n🔗 ${shareUrl}\n\nPowered by splitbill.my.id`;
+                    const caption = `💸 Habis seru-seruan bareng di "${activityName || "Makan-makan"}"!\n\nTotal tagihannya ${formatCurrency(totalSpent)}. Biar pertemanan makin asik, yuk lunasin tagihannya ya! 😉✨${instructionsText}\n\nCek rincian lengkapnya di sini:\n🔗 ${shareUrl}\n\nPowered by www.splitbill.my.id`;
 
                     if (typeof navigator !== "undefined" && navigator.share) {
                       navigator.share({

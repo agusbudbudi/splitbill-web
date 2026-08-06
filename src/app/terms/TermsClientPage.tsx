@@ -645,7 +645,7 @@ export default function TermsClientPage() {
                     Syarat dan Ketentuan ini berlaku sejak 16 Mei 2026
                   </p>
                   <p className="text-xs">
-                    © 2026 Split Bill Online - splitbill.my.id
+                    © 2026 Split Bill Online - www.splitbill.my.id
                   </p>
                   <p className="text-[10px] italic">
                     Dokumen ini disusun sesuai dengan UU ITE, UU PDP, UU

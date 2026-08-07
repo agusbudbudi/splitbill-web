@@ -54,7 +54,7 @@ export const ReceiptGrid = ({
           icon={Camera}
           message="Belum Ada Struk"
           subtitle="Yuk foto struk pertamamu! Bisa ambil foto langsung atau upload dari galeri."
-          className="bg-white/50 rounded-md"
+          className="bg-transparent rounded-md mt-4"
         />
       ) : (
         <div className="grid grid-cols-2 gap-3 pt-4">

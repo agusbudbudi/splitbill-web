@@ -84,10 +84,11 @@ export const GroupForm = ({
       onClose={onClose}
       title={editGroupId ? "Edit Grup" : "Buat Grup Baru"}
       maxHeight="90vh"
+      showBackButton={false}
       footer={
         <Button
           onClick={handleSave}
-          className="w-full h-12 text-base font-bold shadow-lg shadow-primary/20 rounded-lg"
+          className="w-full h-12 text-base font-bold shadow-lg shadow-primary/20"
         >
           {editGroupId ? (
             <>
@@ -112,7 +113,7 @@ export const GroupForm = ({
               value={name}
               onChange={(e) => setName(e.target.value)}
               autoFocus
-              className="bg-white h-12 rounded-lg"
+              className="bg-white h-12"
             />
           </div>
 
@@ -125,14 +126,14 @@ export const GroupForm = ({
                 {selectedMemberIds.length} Terpilih
               </span>
             </div>
-            
+
             <div className="relative group">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground group-focus-within:text-primary transition-colors" />
               <Input
                 placeholder="Cari teman..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="bg-white h-10 pl-9 rounded-lg text-xs"
+                className="bg-white h-12 pl-9 text-xs"
               />
             </div>
           </div>
@@ -142,42 +143,42 @@ export const GroupForm = ({
           <div className="grid gap-2">
             {filteredFriends.length > 0 ? (
               filteredFriends.map((friend) => (
-                 <div 
-                    key={friend.id}
-                    onClick={() => toggleMember(friend.id)}
-                    className={cn(
-                      "flex items-center justify-between p-3 rounded-lg border transition-all cursor-pointer",
-                      selectedMemberIds.includes(friend.id) 
-                        ? "bg-primary/5 border-primary/20 shadow-xs" 
-                        : "bg-white border-border/40 hover:bg-accent/5"
-                    )}
-                 >
-                   <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full border border-primary/10 overflow-hidden bg-primary/5 shrink-0">
-                         <img 
-                            src={`https://api.dicebear.com/9.x/personas/svg?seed=${friend.id}`} 
-                            className="w-full h-full object-cover" 
-                         />
-                      </div>
-                      <span className={cn(
-                        "text-xs font-bold transition-colors",
-                        selectedMemberIds.includes(friend.id) ? "text-primary" : "text-foreground/80"
-                      )}>
-                        {friend.name}
-                      </span>
-                   </div>
-                   <div className={cn(
-                     "w-5 h-5 rounded-full border transition-all flex items-center justify-center",
-                     selectedMemberIds.includes(friend.id)
+                <div
+                  key={friend.id}
+                  onClick={() => toggleMember(friend.id)}
+                  className={cn(
+                    "flex items-center justify-between p-3 rounded-sm border transition-all cursor-pointer",
+                    selectedMemberIds.includes(friend.id)
+                      ? "bg-primary/5 border-primary/20 shadow-xs"
+                      : "bg-white border-border/40 hover:bg-accent/5"
+                  )}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full border border-primary/10 overflow-hidden bg-primary/5 shrink-0">
+                      <img
+                        src={`https://api.dicebear.com/9.x/personas/svg?seed=${friend.id}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <span className={cn(
+                      "text-xs font-bold transition-colors",
+                      selectedMemberIds.includes(friend.id) ? "text-primary" : "text-foreground/80"
+                    )}>
+                      {friend.name}
+                    </span>
+                  </div>
+                  <div className={cn(
+                    "w-5 h-5 rounded-full border transition-all flex items-center justify-center",
+                    selectedMemberIds.includes(friend.id)
                       ? "bg-primary border-primary text-white scale-110"
                       : "border-border/60 bg-white"
-                   )}>
-                     {selectedMemberIds.includes(friend.id) && <Check className="w-3 h-3 stroke-[3]" />}
-                   </div>
-                 </div>
+                  )}>
+                    {selectedMemberIds.includes(friend.id) && <Check className="w-3 h-3 stroke-[3]" />}
+                  </div>
+                </div>
               ))
             ) : (
-              <EmptyState 
+              <EmptyState
                 message="Belum ada teman"
                 subtitle="Ayo tambah teman kamu dulu biar bisa dimasukin ke grup!"
                 icon={Users2}

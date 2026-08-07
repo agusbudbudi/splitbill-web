@@ -90,9 +90,9 @@ export const Sidebar = () => {
   const navItems = [
     { label: "Home", href: "/", icon: Home },
     { label: "Blog", href: "/blog", icon: BookOpen },
-    { label: "Teman Saya", href: "/profile/friends", icon: Users },
-    { label: "Aktivitas", href: "/history", icon: History },
-    { label: "Profile", href: "/profile", icon: User },
+    { label: "Teman Saya", href: "/member/friends", icon: Users },
+    { label: "Aktivitas", href: "/member/history", icon: History },
+    { label: "Profile", href: "/member/profile", icon: User },
   ];
 
   return (

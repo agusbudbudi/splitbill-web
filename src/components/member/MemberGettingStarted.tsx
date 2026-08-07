@@ -11,12 +11,11 @@ import { getOrders } from "@/lib/api/subscription";
 
 export const MemberGettingStarted = () => {
   const friends = useFriendStore((state) => state.friends);
-  const { paymentMethods, savedBills, fetchBills } = useWalletStore();
+  const paymentMethods = useWalletStore((state) => state.paymentMethods);
+  const savedBills = useWalletStore((state) => state.savedBills);
   const [ordersCount, setOrdersCount] = useState(0);
 
   useEffect(() => {
-    fetchBills().catch((err) => console.error("Error fetching bills:", err));
-    
     getOrders()
       .then((orders) => {
         if (Array.isArray(orders)) {
@@ -26,7 +25,7 @@ export const MemberGettingStarted = () => {
       .catch((err) => {
         console.warn("Failed to fetch orders count:", err);
       });
-  }, [fetchBills]);
+  }, []);
 
   const backendBillsCount = savedBills.filter((b) =>
     /^[0-9a-fA-F]{24}$/.test(b.id)
@@ -37,28 +36,28 @@ export const MemberGettingStarted = () => {
       title: "Save Geng Squad",
       desc: "Simpan squad nongkrong biar gak cape ketik ulang pas split bill",
       icon: Users,
-      href: "/profile/friends",
+      href: "/member/friends",
       count: friends.length,
     },
     {
       title: "Kantong QR & Rek",
       desc: "Set up e-wallet/rekening biar temen langsung sat set transfer",
       icon: Wallet,
-      href: "/wallet",
+      href: "/member/wallet",
       count: paymentMethods.length,
     },
     {
       title: "Pantau History",
       desc: "Cek riwayat tagihan biar tau siapa aja yang belom bayar",
       icon: ReceiptText,
-      href: "/history",
+      href: "/member/history",
       count: backendBillsCount,
     },
     {
       title: "Orderan Kamu",
       desc: "Cek list pesanan & tagihan aktif kamu biar gak boncos",
       icon: ShoppingBag,
-      href: "/profile/orders",
+      href: "/member/orders",
       count: ordersCount,
     },
   ];

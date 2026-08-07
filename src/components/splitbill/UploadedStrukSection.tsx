@@ -1,11 +1,9 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
 import {
   Eye,
   ImageOff,
-  ArrowLeft,
   ChevronLeft,
   ChevronRight,
   ZoomIn,
@@ -13,6 +11,7 @@ import {
   Maximize2,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { BottomSheet } from "@/components/ui/BottomSheet";
 import { cn, formatRelativeTime } from "@/lib/utils";
 import { BackendReceiptImage } from "@/lib/api/split-bills";
 import { API_BASE_URL } from "@/lib/constants";
@@ -119,20 +118,18 @@ export const UploadedStrukSection: React.FC<UploadedStrukSectionProps> = ({
         })}
       </div>
 
-      {viewerIndex !== null && (
-        <ReceiptFullscreenViewer
-          images={images}
-          initialIndex={viewerIndex}
-          onClose={() => setViewerIndex(null)}
-        />
-      )}
+      <ReceiptFullscreenViewer
+        images={images}
+        initialIndex={viewerIndex}
+        onClose={() => setViewerIndex(null)}
+      />
     </>
   );
 };
 
 interface ReceiptFullscreenViewerProps {
   images: BackendReceiptImage[];
-  initialIndex: number;
+  initialIndex: number | null;
   onClose: () => void;
 }
 
@@ -141,7 +138,8 @@ const ReceiptFullscreenViewer: React.FC<ReceiptFullscreenViewerProps> = ({
   initialIndex,
   onClose,
 }) => {
-  const [currentIndex, setCurrentIndex] = useState(initialIndex);
+  const isOpen = initialIndex !== null;
+  const [currentIndex, setCurrentIndex] = useState(initialIndex ?? 0);
   const [scale, setScale] = useState(1);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
@@ -149,11 +147,12 @@ const ReceiptFullscreenViewer: React.FC<ReceiptFullscreenViewerProps> = ({
   const dragStart = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = "unset";
-    };
-  }, []);
+    if (initialIndex !== null) {
+      setCurrentIndex(initialIndex);
+      setScale(1);
+      setPosition({ x: 0, y: 0 });
+    }
+  }, [initialIndex]);
 
   const goToIndex = (idx: number) => {
     setCurrentIndex(idx);
@@ -202,96 +201,18 @@ const ReceiptFullscreenViewer: React.FC<ReceiptFullscreenViewerProps> = ({
   const handleNext = () =>
     goToIndex(currentIndex < images.length - 1 ? currentIndex + 1 : 0);
 
-  return createPortal(
-    <div className="fixed inset-0 z-[100] flex justify-center pointer-events-auto">
-      {/* Full screen page — same treatment as AddPaymentMethodBottomSheet */}
-      <div
-        className={cn(
-          "absolute inset-0 w-full max-w-[600px] mx-auto bg-background flex flex-col",
-          "animate-in slide-in-from-bottom-full duration-300 ease-out",
-        )}
-      >
-        {/* Header */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-primary/5 bg-background/95 backdrop-blur-sm sticky top-0 z-10 shrink-0">
-          <div className="flex items-center gap-2">
-            <button
-              onClick={onClose}
-              className="p-2 -ml-2 text-muted-foreground hover:text-foreground rounded-full hover:bg-muted/10 transition-colors cursor-pointer"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            <div>
-              <h2 className="text-lg font-bold">Struk Diunggah</h2>
-              {images.length > 1 && (
-                <p className="text-[10px] text-muted-foreground font-semibold">
-                  Struk {currentIndex + 1} dari {images.length}
-                </p>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Zoomable Image Area */}
-        <div className="relative flex-1 bg-gray-950 overflow-hidden flex items-center justify-center">
-          <div
-            className={cn(
-              "w-full h-full flex items-center justify-center overflow-hidden select-none",
-              scale > 1 ? "cursor-grab active:cursor-grabbing" : "",
-            )}
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUpOrLeave}
-            onMouseLeave={handleMouseUpOrLeave}
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleMouseUpOrLeave}
-          >
-            {brokenIndexes.has(currentIndex) ? (
-              <div className="flex flex-col items-center gap-2 text-white/70 px-6 text-center">
-                <ImageOff className="w-10 h-10" />
-                <p className="text-sm font-bold">Struk sudah dihapus</p>
-                <p className="text-xs text-white/50">
-                  Struk hanya tersimpan selama 7 hari sejak diunggah.
-                </p>
-              </div>
-            ) : (
-              <img
-                src={resolveImageUrl(activeImage.url)}
-                alt={`Struk ${currentIndex + 1}`}
-                className="max-w-full max-h-full object-contain pointer-events-none transition-transform duration-100 ease-out"
-                style={{
-                  transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
-                  transformOrigin: "center center",
-                }}
-                onError={() =>
-                  setBrokenIndexes((prev) => new Set(prev).add(currentIndex))
-                }
-              />
-            )}
-          </div>
-
-          {images.length > 1 && (
-            <>
-              <button
-                onClick={handlePrev}
-                className="absolute left-3 w-10 h-10 rounded-full bg-black/40 hover:bg-black/60 text-white flex items-center justify-center backdrop-blur-md transition-colors cursor-pointer"
-                title="Sebelumnya"
-              >
-                <ChevronLeft className="w-6 h-6" />
-              </button>
-              <button
-                onClick={handleNext}
-                className="absolute right-3 w-10 h-10 rounded-full bg-black/40 hover:bg-black/60 text-white flex items-center justify-center backdrop-blur-md transition-colors cursor-pointer"
-                title="Selanjutnya"
-              >
-                <ChevronRight className="w-6 h-6" />
-              </button>
-            </>
-          )}
-        </div>
-
-        {/* Zoom Controls */}
-        <div className="flex items-center justify-between px-6 py-3.5 bg-background border-t border-primary/5 shrink-0 pb-safe">
+  return (
+    <BottomSheet
+      isOpen={isOpen}
+      onClose={onClose}
+      fullScreen
+      title={
+        images.length > 1
+          ? `Struk Diunggah (${currentIndex + 1}/${images.length})`
+          : "Struk Diunggah"
+      }
+      footer={
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-1.5">
             <Button
               onClick={handleZoomOut}
@@ -327,8 +248,66 @@ const ReceiptFullscreenViewer: React.FC<ReceiptFullscreenViewerProps> = ({
             </Button>
           )}
         </div>
+      }
+    >
+      {/* Zoomable Image Area — full-bleed, cancels the sheet's default p-6 */}
+      <div className="relative -m-6 h-[calc(100%+3rem)] bg-gray-950 overflow-hidden flex items-center justify-center">
+        <div
+          className={cn(
+            "w-full h-full flex items-center justify-center overflow-hidden select-none",
+            scale > 1 ? "cursor-grab active:cursor-grabbing" : "",
+          )}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUpOrLeave}
+          onMouseLeave={handleMouseUpOrLeave}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleMouseUpOrLeave}
+        >
+          {brokenIndexes.has(currentIndex) ? (
+            <div className="flex flex-col items-center gap-2 text-white/70 px-6 text-center">
+              <ImageOff className="w-10 h-10" />
+              <p className="text-sm font-bold">Struk sudah dihapus</p>
+              <p className="text-xs text-white/50">
+                Struk hanya tersimpan selama 7 hari sejak diunggah.
+              </p>
+            </div>
+          ) : (
+            <img
+              src={resolveImageUrl(activeImage.url)}
+              alt={`Struk ${currentIndex + 1}`}
+              className="max-w-full max-h-full object-contain pointer-events-none transition-transform duration-100 ease-out"
+              style={{
+                transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
+                transformOrigin: "center center",
+              }}
+              onError={() =>
+                setBrokenIndexes((prev) => new Set(prev).add(currentIndex))
+              }
+            />
+          )}
+        </div>
+
+        {images.length > 1 && (
+          <>
+            <button
+              onClick={handlePrev}
+              className="absolute left-3 w-10 h-10 rounded-full bg-black/40 hover:bg-black/60 text-white flex items-center justify-center backdrop-blur-md transition-colors cursor-pointer"
+              title="Sebelumnya"
+            >
+              <ChevronLeft className="w-6 h-6" />
+            </button>
+            <button
+              onClick={handleNext}
+              className="absolute right-3 w-10 h-10 rounded-full bg-black/40 hover:bg-black/60 text-white flex items-center justify-center backdrop-blur-md transition-colors cursor-pointer"
+              title="Selanjutnya"
+            >
+              <ChevronRight className="w-6 h-6" />
+            </button>
+          </>
+        )}
       </div>
-    </div>,
-    document.body,
+    </BottomSheet>
   );
 };

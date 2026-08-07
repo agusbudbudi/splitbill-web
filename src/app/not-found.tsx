@@ -47,7 +47,7 @@ export default function NotFound() {
               <path d="M140 210 L150 220 L160 210 L170 220 L180 210 L190 220 L200 210 L210 220 L220 210 L230 220 L240 210 L250 220 L260 210" stroke="white" strokeWidth="3" fill="none" />
 
               {/* Big 404 text */}
-              <text x="200" y="175" textAnchor="middle" fontSize="48" fontWeight="800" fill="#479fea" fillOpacity="0.15" fontFamily="system-ui, sans-serif">404</text>
+              <text x="200" y="210" textAnchor="middle" fontSize="48" fontWeight="800" fill="#479fea" fillOpacity="0.15" fontFamily="system-ui, sans-serif">404</text>
 
               {/* Magnifying glass */}
               <circle cx="300" cy="100" r="28" fill="white" stroke="#479fea" strokeWidth="3" />

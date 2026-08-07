@@ -27,17 +27,39 @@ export async function createOrder(
   return response.data;
 }
 
+const orderInFlight = new Map<string, Promise<Order>>();
+
 export async function getOrder(orderId: string): Promise<Order> {
-  const response = await apiClient.request<{ success: boolean; data: Order }>(
-    API_ENDPOINTS.ORDERS.BY_ID(orderId),
-  );
-  return response.data;
+  const existing = orderInFlight.get(orderId);
+  if (existing) return existing;
+
+  const promise = apiClient
+    .request<{ success: boolean; data: Order }>(
+      API_ENDPOINTS.ORDERS.BY_ID(orderId),
+    )
+    .then((response) => response.data)
+    .finally(() => {
+      orderInFlight.delete(orderId);
+    });
+
+  orderInFlight.set(orderId, promise);
+  return promise;
 }
 
+let ordersInFlight: Promise<Order[]> | null = null;
+
 export async function getOrders(): Promise<Order[]> {
-  const response = await apiClient.request<{
-    success: boolean;
-    data: { orders: Order[]; pagination: any };
-  }>(API_ENDPOINTS.ORDERS.LIST);
-  return response.data.orders;
+  if (ordersInFlight) return ordersInFlight;
+
+  ordersInFlight = apiClient
+    .request<{
+      success: boolean;
+      data: { orders: Order[]; pagination: any };
+    }>(API_ENDPOINTS.ORDERS.LIST)
+    .then((response) => response.data.orders)
+    .finally(() => {
+      ordersInFlight = null;
+    });
+
+  return ordersInFlight;
 }

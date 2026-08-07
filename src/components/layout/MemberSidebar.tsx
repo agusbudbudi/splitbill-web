@@ -56,8 +56,8 @@ export const MemberSidebar = () => {
     {
       icon: History,
       label: "Aktivitas",
-      href: isAuthenticated ? "/history" : "/login",
-      activeHref: "/history"
+      href: isAuthenticated ? "/member/history" : "/login",
+      activeHref: "/member/history"
     },
   ];
 

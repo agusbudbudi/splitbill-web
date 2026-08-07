@@ -269,6 +269,7 @@ export const useSplitBillStore = create<SplitBillState>()(
       clearDraftAfterFinalize: () =>
         set({
           activityName: "",
+          people: [],
           expenses: [],
           additionalExpenses: [],
           draftId: null,

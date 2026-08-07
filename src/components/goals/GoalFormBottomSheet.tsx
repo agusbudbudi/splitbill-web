@@ -4,10 +4,9 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { useSharedGoalsStore } from "@/store/useSharedGoalsStore";
-import { ArrowLeft, Save, Plus, X } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Save, Plus, X } from "lucide-react";
 import { toast } from "sonner";
-import { createPortal } from "react-dom";
+import { BottomSheet } from "@/components/ui/BottomSheet";
 import { CurrencyInput } from "@/components/ui/CurrencyInput";
 
 const AVATAR_BASE_URL =
@@ -121,44 +120,29 @@ export const GoalFormBottomSheet = ({
     setMembersError(null);
   };
 
-  if (!isOpen) return null;
-
-  return createPortal(
-    <div className="fixed inset-0 z-[100] flex justify-center pointer-events-auto">
-      <div
-        className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity animate-in fade-in"
-        onClick={onClose}
-      />
-
-      <div
-        className={cn(
-          "absolute bottom-0 w-full max-w-[600px] bg-white rounded-t-md shadow-2xl overflow-hidden flex flex-col max-h-[90vh]",
-          "animate-in slide-in-from-bottom-full duration-300 ease-out",
-        )}
-      >
-        <div
-          className="w-full flex justify-center pt-2 pb-1 cursor-pointer"
-          onClick={onClose}
+  return (
+    <BottomSheet
+      isOpen={isOpen}
+      onClose={onClose}
+      title={editGoalId ? "Edit Shared Goal" : "New Shared Goal"}
+      footer={
+        <Button
+          onClick={handleSave}
+          className="w-full h-12 text-base font-bold shadow-lg shadow-primary/20"
         >
-          <div className="w-12 h-1.5 rounded-full bg-muted/40" />
-        </div>
-
-        <div className="flex items-center justify-between px-6 py-2 border-b border-primary/5">
-          <div className="flex items-center gap-2">
-            <button
-              onClick={onClose}
-              className="p-2 -ml-2 text-muted-foreground hover:text-foreground rounded-full hover:bg-muted/10 transition-colors cursor-pointer"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            <h2 className="text-lg font-bold">
-              {editGoalId ? "Edit Shared Goal" : "New Shared Goal"}
-            </h2>
-          </div>
-        </div>
-
-        <div className="flex-1 overflow-y-auto p-6 space-y-6">
-          <div className="space-y-4">
+          {editGoalId ? (
+            <>
+              <Save className="w-5 h-5 mr-2" /> Save Changes
+            </>
+          ) : (
+            <>
+              <Plus className="w-5 h-5 mr-2" /> Create Goal
+            </>
+          )}
+        </Button>
+      }
+    >
+      <div className="space-y-4">
             <div className="space-y-2">
               <label className="text-sm font-semibold text-foreground px-1">
                 Nama Goal
@@ -261,26 +245,6 @@ export const GoalFormBottomSheet = ({
               )}
             </div>
           </div>
-        </div>
-
-        <div className="p-4 border-t border-primary/5 bg-background">
-          <Button
-            onClick={handleSave}
-            className="w-full h-12 text-base font-bold shadow-lg shadow-primary/20"
-          >
-            {editGoalId ? (
-              <>
-                <Save className="w-5 h-5 mr-2" /> Save Changes
-              </>
-            ) : (
-              <>
-                <Plus className="w-5 h-5 mr-2" /> Create Goal
-              </>
-            )}
-          </Button>
-        </div>
-      </div>
-    </div>,
-    document.body,
+    </BottomSheet>
   );
 };

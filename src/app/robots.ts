@@ -13,9 +13,9 @@ export default function robots(): MetadataRoute.Robots {
         "/_next/",     // Folder internal Next.js
         "/static/",    // Static files biasanya sudah di-handle
         "/*.json$",    // File konfigurasi JSON
-        "/profile",    // Protected route
         "/wallet",     // Protected route
         "/history",    // Protected route
+        "/member",  // Protected route
       ],
     },
     sitemap: `${baseUrl}/sitemap.xml`,

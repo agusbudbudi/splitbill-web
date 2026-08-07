@@ -5,9 +5,10 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { PersonSelector } from "@/components/splitbill/PersonSelector";
 import { useSplitBillStore, Expense } from "@/store/useSplitBillStore";
-import { X, Save, Trash2, ArrowLeft } from "lucide-react";
-import { formatToIDR, cn } from "@/lib/utils";
+import { Save, Trash2 } from "lucide-react";
+import { formatToIDR } from "@/lib/utils";
 import { toast } from "sonner";
+import { BottomSheet } from "@/components/ui/BottomSheet";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import { InfoModal } from "@/components/ui/InfoModal";
 import { Info } from "lucide-react";
@@ -88,55 +89,31 @@ export const EditExpenseBottomSheet = ({
 
   const amount = parseFloat(amountStr.replace(/[^0-9]/g, "")) || 0;
 
-  if (!isOpen) return null;
-
-  // Use Portal to render at the document body level to ensure it overlays everything
-  return typeof document !== "undefined"
-    ? require("react-dom").createPortal(
-        <div className="fixed inset-0 z-[100] flex justify-center pointer-events-auto">
-          {/* Backdrop */}
-          <div
-            className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity animate-in fade-in"
-            onClick={onClose}
-          />
-
-          {/* Sheet Content */}
-          <div
-            className={cn(
-              "absolute bottom-0 w-full max-w-[600px] bg-white rounded-t-sm shadow-2xl overflow-hidden flex flex-col max-h-[90vh]",
-              "animate-in slide-in-from-bottom-full duration-300 ease-out",
-            )}
-          >
-            {/* Drag handle for mobile feel */}
-            <div
-              className="w-full flex justify-center pt-2 pb-1 cursor-pointer"
-              onClick={onClose}
-            >
-              <div className="w-12 h-1.5 rounded-full bg-muted/40" />
-            </div>
-
-            {/* Header */}
-            <div className="flex items-center justify-between px-6 py-2 border-b border-primary/5">
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={onClose}
-                  className="p-2 -ml-2 text-muted-foreground hover:text-foreground rounded-full hover:bg-muted/10 cursor-pointer"
-                >
-                  <ArrowLeft className="w-5 h-5" />
-                </button>
-                <h2 className="text-lg font-bold">Edit Pengeluaran</h2>
-              </div>
-              <button
-                onClick={handleDelete}
-                className="text-destructive hover:bg-destructive/10 p-2 rounded-full transition-colors cursor-pointer"
-              >
-                <Trash2 className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* Scrollable Form */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-6">
-              <div className="space-y-4">
+  return (
+    <>
+    <BottomSheet
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Edit Pengeluaran"
+      headerAction={
+        <button
+          onClick={handleDelete}
+          className="text-destructive hover:bg-destructive/10 p-2 rounded-full transition-colors cursor-pointer"
+        >
+          <Trash2 className="w-5 h-5" />
+        </button>
+      }
+      footer={
+        <Button
+          onClick={handleSave}
+          className="w-full h-12 text-base font-bold shadow-lg shadow-primary/20"
+        >
+          <Save className="w-5 h-5 mr-2" /> Simpan Perubahan
+        </Button>
+      }
+    >
+      <div className="space-y-6">
+        <div className="space-y-4">
                 <div className="space-y-2">
                   <label className="text-sm font-semibold">Nama Item</label>
                   <Input
@@ -199,38 +176,26 @@ export const EditExpenseBottomSheet = ({
                   </div>
                 </div>
               </div>
-            </div>
+      </div>
+    </BottomSheet>
 
-            {/* Footer Actions */}
-            <div className="p-4 border-t border-primary/5 bg-background">
-              <Button
-                onClick={handleSave}
-                className="w-full h-12 text-base font-bold shadow-lg shadow-primary/20"
-              >
-                <Save className="w-5 h-5 mr-2" /> Simpan Perubahan
-              </Button>
-            </div>
-          </div>
+    <ConfirmationModal
+      isOpen={isConfirmOpen}
+      onClose={() => setIsConfirmOpen(false)}
+      onConfirm={confirmDelete}
+      title="Hapus Transaksi?"
+      description="Data pengeluaran ini akan dihapus permanen. Kamu yakin?"
+      icon={Trash2}
+      confirmText="Ya, Hapus"
+      confirmButtonClassName="bg-destructive text-white shadow-destructive/20"
+    />
 
-          <ConfirmationModal
-            isOpen={isConfirmOpen}
-            onClose={() => setIsConfirmOpen(false)}
-            onConfirm={confirmDelete}
-            title="Hapus Transaksi?"
-            description="Data pengeluaran ini akan dihapus permanen. Kamu yakin?"
-            icon={Trash2}
-            confirmText="Ya, Hapus"
-            confirmButtonClassName="bg-destructive text-white shadow-destructive/20"
-          />
-
-          <InfoModal
-            isOpen={isInfoOpen}
-            onClose={() => setIsInfoOpen(false)}
-            title="ℹ️ Informasi Jumlah"
-            description={`• Isi jumlah pengeluaran seperti: Rp 50.000\n• Untuk diskon atau pengurangan, kamu bisa menambahkan di bagian Biaya Tambahan`}
-          />
-        </div>,
-        document.body,
-      )
-    : null;
+    <InfoModal
+      isOpen={isInfoOpen}
+      onClose={() => setIsInfoOpen(false)}
+      title="ℹ️ Informasi Jumlah"
+      description={`• Isi jumlah pengeluaran seperti: Rp 50.000\n• Untuk diskon atau pengurangan, kamu bisa menambahkan di bagian Biaya Tambahan`}
+    />
+    </>
+  );
 };

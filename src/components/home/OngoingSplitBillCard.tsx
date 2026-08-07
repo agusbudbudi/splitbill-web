@@ -190,7 +190,7 @@ export const OngoingSplitBillCard = () => {
             <Button
               onClick={handleButtonClick}
               className={cn(
-                "w-full text-xs font-bold gap-2 rounded-md shadow-lg shadow-primary/20 transition-all duration-300",
+                "w-full text-xs font-bold gap-2 rounded-sm shadow-lg shadow-primary/20 transition-all duration-300",
                 isReadyToSave
                   ? "bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-emerald-500/20"
                   : "bg-gradient-to-r from-primary to-violet-600 text-white shadow-primary/20"

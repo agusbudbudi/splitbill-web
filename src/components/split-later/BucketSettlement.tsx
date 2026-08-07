@@ -379,7 +379,7 @@ export const BucketSettlement = ({
         icon={TrendingUp}
         message="Belum Ada Struk yang Diproses"
         subtitle="Proses struk-struk di tab Struk dulu ya, nanti hasilnya bakal muncul di sini."
-        className="bg-white/50 rounded-md"
+        className="bg-transparent rounded-md"
       />
     );
   }

@@ -6,9 +6,10 @@ import { Input } from "@/components/ui/Input";
 import { PersonSelector } from "@/components/splitbill/PersonSelector";
 import { useSplitBillChatStore } from "@/store/useSplitBillChatStore";
 import type { Expense } from "@/store/useSplitBillStore";
-import { Save, Trash2, ArrowLeft, Info } from "lucide-react";
-import { formatToIDR, cn } from "@/lib/utils";
+import { Save, Trash2, Info } from "lucide-react";
+import { formatToIDR } from "@/lib/utils";
 import { toast } from "sonner";
+import { BottomSheet } from "@/components/ui/BottomSheet";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import { InfoModal } from "@/components/ui/InfoModal";
 
@@ -87,149 +88,111 @@ export const EditChatExpenseBottomSheet = ({
     }
   };
 
-  if (!isOpen) return null;
-
-  // Use Portal to render at the document body level to ensure it overlays everything
-  return typeof document !== "undefined"
-    ? require("react-dom").createPortal(
-        <div className="fixed inset-0 z-[100] flex justify-center pointer-events-auto">
-          {/* Backdrop */}
-          <div
-            className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity animate-in fade-in"
-            onClick={onClose}
-          />
-
-          {/* Sheet Content */}
-          <div
-            className={cn(
-              "absolute bottom-0 w-full max-w-[600px] bg-white rounded-t-sm shadow-2xl overflow-hidden flex flex-col max-h-[90vh]",
-              "animate-in slide-in-from-bottom-full duration-300 ease-out",
-            )}
+  return (
+    <>
+      <BottomSheet
+        isOpen={isOpen}
+        onClose={onClose}
+        title="Edit Detail Item"
+        headerAction={
+          <button
+            onClick={handleDelete}
+            className="text-destructive hover:bg-destructive/10 p-2 rounded-full transition-colors cursor-pointer"
           >
-            {/* Drag handle for mobile feel */}
-            <div
-              className="w-full flex justify-center pt-2 pb-1 cursor-pointer"
-              onClick={onClose}
-            >
-              <div className="w-12 h-1.5 rounded-full bg-muted/40" />
-            </div>
+            <Trash2 className="w-5 h-5" />
+          </button>
+        }
+        footer={
+          <Button
+            onClick={handleSave}
+            className="w-full h-12 text-base font-bold shadow-lg shadow-primary/20"
+          >
+            <Save className="w-5 h-5 mr-2" /> Simpan Perubahan
+          </Button>
+        }
+      >
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <label className="text-sm font-semibold">Nama Item</label>
+            <Input
+              placeholder="Contoh: Makan malam, Tiket bioskop"
+              value={item}
+              onChange={(e) => setItem(e.target.value)}
+            />
+          </div>
 
-            {/* Header */}
-            <div className="flex items-center justify-between px-6 py-2 border-b border-primary/5">
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={onClose}
-                  className="p-2 -ml-2 text-muted-foreground hover:text-foreground rounded-full hover:bg-muted/10 cursor-pointer"
-                >
-                  <ArrowLeft className="w-5 h-5" />
-                </button>
-                <h2 className="text-lg font-bold">Edit Detail Item</h2>
-              </div>
+          <div className="space-y-2">
+            <label className="text-sm font-semibold flex items-center gap-1">
+              Jumlah (Rupiah)
               <button
-                onClick={handleDelete}
-                className="text-destructive hover:bg-destructive/10 p-2 rounded-full transition-colors cursor-pointer"
+                type="button"
+                onClick={() => setIsInfoOpen(true)}
+                className="hover:text-primary transition-colors cursor-pointer"
               >
-                <Trash2 className="w-5 h-5" />
+                <Info className="w-4 h-4 text-muted-foreground" />
               </button>
-            </div>
+            </label>
+            <Input
+              placeholder="Contoh: 50.000"
+              value={amountStr}
+              onChange={(e) => {
+                const val = e.target.value.replace(/[^0-9]/g, "");
+                setAmountStr(val ? formatToIDR(parseInt(val)) : "");
+              }}
+            />
+          </div>
 
-            {/* Scrollable Form */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-6">
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-semibold">Nama Item</label>
-                  <Input
-                    placeholder="Contoh: Makan malam, Tiket bioskop"
-                    value={item}
-                    onChange={(e) => setItem(e.target.value)}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-semibold flex items-center gap-1">
-                    Jumlah (Rupiah)
-                    <button
-                      type="button"
-                      onClick={() => setIsInfoOpen(true)}
-                      className="hover:text-primary transition-colors cursor-pointer"
-                    >
-                      <Info className="w-4 h-4 text-muted-foreground" />
-                    </button>
-                  </label>
-                  <Input
-                    placeholder="Contoh: 50.000"
-                    value={amountStr}
-                    onChange={(e) => {
-                      const val = e.target.value.replace(/[^0-9]/g, "");
-                      setAmountStr(val ? formatToIDR(parseInt(val)) : "");
-                    }}
-                  />
-                </div>
-
-                <div className="space-y-3">
-                  <label className="text-sm font-bold text-foreground">
-                    Dibayar oleh
-                  </label>
-                  <div className="flex flex-wrap gap-3">
-                    {participants.map((name) => (
-                      <PersonSelector
-                        key={name}
-                        name={name}
-                        isSelected={paidBy === name}
-                        onClick={setPaidBy}
-                      />
-                    ))}
-                  </div>
-                </div>
-
-                <div className="space-y-3">
-                  <label className="text-sm font-bold text-foreground">
-                    Split dengan Siapa
-                  </label>
-                  <div className="flex flex-wrap gap-3">
-                    {participants.map((name) => (
-                      <PersonSelector
-                        key={name}
-                        name={name}
-                        isSelected={selectedWho.includes(name)}
-                        onClick={handleToggleWho}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Footer Actions */}
-            <div className="p-4 border-t border-primary/5 bg-background">
-              <Button
-                onClick={handleSave}
-                className="w-full h-12 text-base font-bold shadow-lg shadow-primary/20"
-              >
-                <Save className="w-5 h-5 mr-2" /> Simpan Perubahan
-              </Button>
+          <div className="space-y-3">
+            <label className="text-sm font-bold text-foreground">
+              Dibayar oleh
+            </label>
+            <div className="flex flex-wrap gap-3">
+              {participants.map((name) => (
+                <PersonSelector
+                  key={name}
+                  name={name}
+                  isSelected={paidBy === name}
+                  onClick={setPaidBy}
+                />
+              ))}
             </div>
           </div>
 
-          <ConfirmationModal
-            isOpen={isConfirmOpen}
-            onClose={() => setIsConfirmOpen(false)}
-            onConfirm={confirmDelete}
-            title="Hapus Transaksi?"
-            description="Data pengeluaran ini akan dihapus permanen dari sesi chat. Kamu yakin?"
-            icon={Trash2}
-            confirmText="Ya, Hapus"
-            confirmButtonClassName="bg-destructive text-white shadow-destructive/20"
-          />
+          <div className="space-y-3">
+            <label className="text-sm font-bold text-foreground">
+              Split dengan Siapa
+            </label>
+            <div className="flex flex-wrap gap-3">
+              {participants.map((name) => (
+                <PersonSelector
+                  key={name}
+                  name={name}
+                  isSelected={selectedWho.includes(name)}
+                  onClick={handleToggleWho}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </BottomSheet>
 
-          <InfoModal
-            isOpen={isInfoOpen}
-            onClose={() => setIsInfoOpen(false)}
-            title="ℹ️ Informasi Jumlah"
-            description={`• Isi jumlah pengeluaran seperti: Rp 50.000\n• Untuk diskon atau pengurangan, kamu bisa menambahkan di bagian Biaya Tambahan`}
-          />
-        </div>,
-        document.body,
-      )
-    : null;
+      <ConfirmationModal
+        isOpen={isConfirmOpen}
+        onClose={() => setIsConfirmOpen(false)}
+        onConfirm={confirmDelete}
+        title="Hapus Transaksi?"
+        description="Data pengeluaran ini akan dihapus permanen dari sesi chat. Kamu yakin?"
+        icon={Trash2}
+        confirmText="Ya, Hapus"
+        confirmButtonClassName="bg-destructive text-white shadow-destructive/20"
+      />
+
+      <InfoModal
+        isOpen={isInfoOpen}
+        onClose={() => setIsInfoOpen(false)}
+        title="ℹ️ Informasi Jumlah"
+        description={`• Isi jumlah pengeluaran seperti: Rp 50.000\n• Untuk diskon atau pengurangan, kamu bisa menambahkan di bagian Biaya Tambahan`}
+      />
+    </>
+  );
 };

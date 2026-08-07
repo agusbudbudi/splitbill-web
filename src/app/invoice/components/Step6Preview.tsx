@@ -380,7 +380,7 @@ export function Step6Preview() {
           actions={[
             {
               label: "Lihat History",
-              onClick: () => router.push("/history?tab=invoice"),
+              onClick: () => router.push("/member/history?tab=invoice"),
               variant: "outline",
               icon: History,
             },

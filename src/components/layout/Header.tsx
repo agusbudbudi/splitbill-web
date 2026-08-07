@@ -19,9 +19,11 @@ interface HeaderProps {
   className?: string;
   transparent?: boolean;
   rightContent?: React.ReactNode;
+  leftContent?: React.ReactNode;
   alignTitle?: "center" | "left";
   sticky?: boolean;
   wide?: boolean;
+  containerClassName?: string;
 }
 
 export const Header = ({
@@ -33,9 +35,11 @@ export const Header = ({
   className,
   transparent = false,
   rightContent,
+  leftContent,
   alignTitle = "center",
   sticky = true,
   wide = false,
+  containerClassName,
 }: HeaderProps) => {
   const router = useRouter();
   const { user, isAuthenticated, initialize } = useAuthStore();
@@ -65,10 +69,10 @@ export const Header = ({
       <div
         className={cn(
           "w-full mx-auto text-white transition-colors duration-300 pt-safe",
-          wide ? "max-w-[600px] lg:max-w-7xl" : "max-w-[600px]"
+          containerClassName ?? (wide ? "max-w-[600px] lg:max-w-7xl" : "max-w-[600px]")
         )}
       >
-        <div className="flex h-14 lg:h-16 items-center px-4 gap-4">
+        <div className={cn("flex h-14 lg:h-16 items-center gap-4", containerClassName ? "" : "px-4")}>
           {title || showBackButton ? (
             <div className="flex-1 flex items-center justify-between gap-2">
               <div className="w-10 flex items-center">
@@ -123,26 +127,29 @@ export const Header = ({
             </div>
           ) : (
             <div className="w-full flex items-center justify-between">
-              <Link
-                href="/"
-                className="flex items-center gap-2 group"
-                aria-label="SplitBill Home"
-              >
-                <Image
-                  src="/img/logo.png"
-                  alt="SplitBill Logo"
-                  width={130}
-                  height={36}
-                  className="h-8 lg:h-9 w-auto"
-                  priority
-                />
-              </Link>
+              <div className="flex items-center gap-1">
+                {leftContent}
+                <Link
+                  href="/"
+                  className="flex items-center gap-2 group"
+                  aria-label="SplitBill Home"
+                >
+                  <Image
+                    src="/img/logo.png"
+                    alt="SplitBill Logo"
+                    width={130}
+                    height={36}
+                    className="h-8 lg:h-9 w-auto"
+                    priority
+                  />
+                </Link>
+              </div>
 
               <div className="flex items-center gap-3 lg:gap-5">
 
                 {isAuthenticated ? (
                   <Link
-                    href="/profile"
+                    href="/member/profile"
                     className={cn(
                       "group relative flex items-center justify-center rounded-full transition-all duration-300",
                       user?.subscriptionStatus === "active"

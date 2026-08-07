@@ -22,7 +22,7 @@ const routeConfigs: RouteConfig[] = [
   { path: "/shared-goals", priority: 0.8, changeFrequency: "weekly", lastModified: "2026-07-25" },
   { path: "/split-later", priority: 0.8, changeFrequency: "weekly", lastModified: "2026-07-25" },
   { path: "/invoice", priority: 0.8, changeFrequency: "weekly", lastModified: "2026-07-25" },
-  { path: "/membership", priority: 0.6, changeFrequency: "monthly", lastModified: "2026-07-25" },
+  { path: "/member/membership", priority: 0.6, changeFrequency: "monthly", lastModified: "2026-07-25" },
   { path: "/review", priority: 0.7, changeFrequency: "weekly", lastModified: "2026-07-25" },
   { path: "/subscription", priority: 0.6, changeFrequency: "monthly", lastModified: "2026-07-25" },
   { path: "/faq", priority: 0.7, changeFrequency: "monthly", lastModified: "2026-07-25" },

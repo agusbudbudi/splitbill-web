@@ -160,7 +160,7 @@ export const PricingSection = () => {
             </div>
 
             <Link
-              href="/membership"
+              href="/member/membership"
               className="flex items-center justify-center w-full py-4 rounded-md bg-white text-primary font-black hover:bg-white/95 transition-colors duration-200 shadow-md"
             >
               Langganan Sekarang ⚡

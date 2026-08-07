@@ -51,7 +51,7 @@ export default function InvoiceDetailPage() {
       <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
         <h1 className="text-xl font-bold">Invoice tidak ditemukan</h1>
         <Button
-          onClick={() => router.push("/history")}
+          onClick={() => router.push("/member/history")}
           className="mt-4"
           variant="outline"
         >
@@ -71,7 +71,7 @@ export default function InvoiceDetailPage() {
 
         <main className="flex-1 p-4 pb-10 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
           {/* Main Info Card */}
-          <Card className="border-none shadow-soft overflow-hidden rounded-md">
+          <Card className="shadow-md overflow-hidden relative">
             <CardContent className="p-0">
               <div className="bg-[#f0f4ff] p-8 text-foreground text-center relative overflow-hidden">
                 {/* Decorative background element */}
@@ -272,9 +272,9 @@ export default function InvoiceDetailPage() {
               </div>
               <div className="grid grid-cols-1 gap-3">
                 {invoice.paymentMethods.map((method, idx) => (
-                  <div
+                  <Card
                     key={idx}
-                    className="relative p-3 rounded-lg border border-primary/10 bg-white"
+                    className="p-3 shadow-md overflow-hidden relative"
                   >
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-sm bg-muted/30 flex items-center justify-center p-1.5 overflow-hidden">
@@ -310,7 +310,7 @@ export default function InvoiceDetailPage() {
                         </p>
                       </div>
                     </div>
-                  </div>
+                  </Card>
                 ))}
               </div>
             </section>

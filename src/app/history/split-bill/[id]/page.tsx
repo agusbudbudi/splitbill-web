@@ -130,7 +130,7 @@ function SplitBillDetailContent() {
       <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
         <h1 className="text-xl font-bold">{error || "Split bill tidak ditemukan"}</h1>
         <Button
-          onClick={() => router.push(isAuthenticated ? "/history" : "/")}
+          onClick={() => router.push(isAuthenticated ? "/member/history" : "/")}
           className="mt-4"
           variant="outline"
         >
@@ -197,7 +197,7 @@ function SplitBillDetailView({
       <Header
         title="Detail Split Bill"
         showBackButton
-        onBack={() => router.push(isAuthenticated ? "/history?tab=split-bill" : "/")}
+        onBack={() => router.push(isAuthenticated ? "/member/history?tab=split-bill" : "/")}
       />
 
       <div className="relative w-full flex-1 flex flex-col">

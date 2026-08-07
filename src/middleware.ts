@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 // Protected routes that require authentication
-const protectedRoutes = ["/profile", "/wallet", "/history"];
+const protectedRoutes = ["/wallet", "/history"];
 
 // Auth routes that should redirect to home if already logged in
 const authRoutes = ["/login", "/register"];
@@ -27,7 +27,6 @@ export const config = {
      * Hanya jalankan middleware pada route yang membutuhkan pengecekan autentikasi
      * untuk mengurangi penggunaan Edge Requests di Vercel.
      */
-    "/profile/:path*",
     "/wallet/:path*",
     "/history/:path*",
     "/split-bill/:path*",

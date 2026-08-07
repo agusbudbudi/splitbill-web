@@ -232,7 +232,7 @@ export const PaymentMethodsTab = () => {
                     );
                   }
                 }}
-                className="w-full bg-primary hover:bg-primary/90 text-white font-bold h-11 rounded-lg shadow-md shadow-primary/20 active:scale-95 transition-all cursor-pointer"
+                className="w-full bg-primary hover:bg-primary/90 text-white font-bold h-11 rounded-sm shadow-md shadow-primary/20 active:scale-95 transition-all cursor-pointer"
                 size="sm"
               >
                 Salin & Bagikan Semua
@@ -244,7 +244,7 @@ export const PaymentMethodsTab = () => {
 
       {/* Feature Highlights (Premium Soft Grid) */}
       <div className="grid grid-cols-2 gap-3 px-1 animate-in slide-in-from-bottom-8 duration-700 delay-200">
-        <div className="p-4 rounded-md bg-white border border-primary/5 flex flex-col gap-2 group hover:scale-[1.02] transition-all duration-300 cursor-pointer shadow-soft">
+        <div className="p-4 rounded-md bg-white border border-primary/5 flex flex-col gap-2 group hover:scale-[1.02] transition-all duration-300 shadow-soft">
           <ShieldCheck className="w-5 h-5 text-emerald-500 mb-1" />
           <h4 className="font-bold text-xs sm:text-sm text-foreground">
             Aman & Privat
@@ -254,7 +254,7 @@ export const PaymentMethodsTab = () => {
           </p>
         </div>
 
-        <div className="p-4 rounded-md bg-white border border-primary/5 flex flex-col gap-2 group hover:scale-[1.02] transition-all duration-300 cursor-pointer shadow-soft">
+        <div className="p-4 rounded-md bg-white border border-primary/5 flex flex-col gap-2 group hover:scale-[1.02] transition-all duration-300 shadow-soft">
           <Share2 className="w-5 h-5 text-blue-500 mb-1" />
           <h4 className="font-bold text-xs sm:text-sm text-foreground">
             Sat Set Share
@@ -264,7 +264,7 @@ export const PaymentMethodsTab = () => {
           </p>
         </div>
 
-        <div className="p-4 rounded-md bg-white border border-primary/5 flex flex-col gap-2 group hover:scale-[1.02] transition-all duration-300 cursor-pointer shadow-soft">
+        <div className="p-4 rounded-md bg-white border border-primary/5 flex flex-col gap-2 group hover:scale-[1.02] transition-all duration-300 shadow-soft">
           <WifiOff className="w-5 h-5 text-slate-500 mb-1" />
           <h4 className="font-bold text-xs sm:text-sm text-foreground">
             Mode Offline
@@ -274,7 +274,7 @@ export const PaymentMethodsTab = () => {
           </p>
         </div>
 
-        <div className="p-4 rounded-md bg-white border border-primary/5 flex flex-col gap-2 group hover:scale-[1.02] transition-all duration-300 cursor-pointer shadow-soft">
+        <div className="p-4 rounded-md bg-white border border-primary/5 flex flex-col gap-2 group hover:scale-[1.02] transition-all duration-300 shadow-soft">
           <LayoutGrid className="w-5 h-5 text-purple-500 mb-1" />
           <h4 className="font-bold text-xs sm:text-sm text-foreground">
             Rapi & Praktis

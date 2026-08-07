@@ -11,7 +11,6 @@ import {
   Clock,
   CheckCircle2,
   ChevronRight,
-  ArrowUpRight,
   ReceiptText,
   Sparkles,
   Wallet,
@@ -22,7 +21,6 @@ import { cn } from "@/lib/utils";
 import { formatToIDR } from "@/lib/utils/invoice";
 import { FeatureBanner } from "@/components/ui/FeatureBanner";
 import { ActionCard } from "@/components/ui/ActionCard";
-import { TextButton } from "@/components/ui/TextButton";
 import { BilledToShortcut } from "./BilledToShortcut";
 
 export const InvoiceLanding = () => {
@@ -112,23 +110,22 @@ export const InvoiceLanding = () => {
       {invoiceHistory.length > 0 && (
         <section className="space-y-4">
           <div className="flex items-center justify-between px-1">
-            <h3 className="text-sm font-bold text-foreground/70 flex items-center gap-2">
-              <Clock className="w-4 h-4" /> Invoice Terbaru
-            </h3>
-            <Link href="/history?tab=invoice">
-              <TextButton
-                label="Lihat Semua"
-                icon={ArrowUpRight}
-                iconPlacement="right"
-                className="-mr-2"
-              />
+            <h2 className="text-sm font-bold text-foreground">
+              Invoice Terbaru
+            </h2>
+            <Link
+              href="/member/history?tab=invoice"
+              className="text-xs font-bold text-primary hover:underline flex items-center gap-0.5"
+            >
+              Lihat Semua
+              <ChevronRight className="w-3.5 h-3.5" />
             </Link>
           </div>
 
           <div className="space-y-3">
             {recentInvoices.map((inv, idx) => (
-              <Link key={idx} href={`/history/invoice/${inv.id}`}>
-                <Card className="border-none shadow-soft hover:shadow-lg hover:shadow-primary/5 transition-all cursor-pointer group">
+              <Link key={idx} href={`/member/history/invoice/${inv.id}`}>
+                <Card className="shadow-md overflow-hidden relative hover:shadow-lg hover:shadow-primary/5 transition-all cursor-pointer group">
                   <CardContent className="p-4 flex items-stretch justify-between">
                     <div className="flex items-center gap-4">
                       <div className="w-10 h-10 rounded-xl bg-primary/5 flex items-center justify-center">

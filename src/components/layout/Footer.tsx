@@ -30,7 +30,7 @@ export const Footer = () => {
       icon: Home,
     },
     {
-      path: "/split-bill",
+      path: "/member/split-bill",
       label: "Split Bill",
       icon: ReceiptText,
     },
@@ -38,13 +38,13 @@ export const Footer = () => {
 
   const rightMenuItems = [
     {
-      path: "/invoice",
+      path: "/member/invoice",
       label: "Invoice",
       icon: ScrollText,
     },
     {
-      path: isAuthenticated ? "/history" : "/login",
-      activePath: "/history",
+      path: isAuthenticated ? "/member/history" : "/login",
+      activePath: "/member/history",
       label: "Aktivitas",
       icon: History,
     },

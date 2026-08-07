@@ -21,14 +21,14 @@ const menuItems = [
     label: "Split Bill",
     image: "/img/menu-split-bill.png",
     badge: "Populer",
-    href: "/split-bill",
+    href: "/member/split-bill",
   },
   {
     id: "later",
     label: "Split Later",
     badge: "New",
     image: "/img/menu-split-later.png",
-    href: "/split-later",
+    href: "/member/split-later",
   },
   {
     id: "goals",
@@ -40,7 +40,13 @@ const menuItems = [
     id: "invoice",
     label: "Invoice",
     image: "/img/menu-invoice.png",
-    href: "/invoice",
+    href: "/member/invoice",
+  },
+  {
+    id: "wallet",
+    label: "Wallet",
+    image: "/img/menu-wallet.png",
+    href: "/member/wallet",
   },
   {
     id: "others",
@@ -56,7 +62,7 @@ export const NavigationMenu = ({ variant = "flex" }: { variant?: "flex" | "grid"
       "w-full",
       variant === "flex"
         ? "py-6 px-4 flex flex-wrap items-center justify-center gap-6 sm:gap-8 lg:gap-12"
-        : "grid grid-cols-4 lg:grid-cols-5 gap-y-8 gap-x-2"
+        : "grid grid-cols-4 lg:grid-cols-6 gap-y-8 gap-x-2"
     )}>
       {menuItems.map((item, index) => (
         <Link
@@ -73,7 +79,11 @@ export const NavigationMenu = ({ variant = "flex" }: { variant?: "flex" | "grid"
                     : index === menuItems.length - 1
                       ? "justify-self-end"
                       : "justify-self-center",
-                  item.id === "invoice" ? "hidden sm:flex" : "flex"
+                  item.id === "invoice"
+                    ? "hidden sm:flex"
+                    : item.id === "wallet"
+                      ? "hidden lg:flex"
+                      : "flex"
                 )
           )}
         >

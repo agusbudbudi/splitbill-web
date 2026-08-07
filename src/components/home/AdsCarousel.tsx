@@ -17,7 +17,7 @@ const SAMPLE_ADS: AdItem[] = [
     id: 0,
     image: "/img/ads-teman-saya.png",
     alt: "Kelola Teman & Kontak — Tambah daftar teman untuk bagi tagihan lebih mudah",
-    url: "/profile/friends",
+    url: "/member/friends",
   },
   {
     id: 1,

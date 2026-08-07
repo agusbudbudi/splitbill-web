@@ -189,7 +189,7 @@ export default function PaymentPage() {
             actions={[
               {
                 label: "Detail Transaksi",
-                onClick: () => router.push(`/profile/orders/${order.orderId}`),
+                onClick: () => router.push(`/member/orders/${order.orderId}`),
                 variant: "default",
               },
               {

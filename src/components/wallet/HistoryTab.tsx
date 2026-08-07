@@ -19,11 +19,12 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useInvoiceStore } from "@/lib/stores/invoiceStore";
 import { cn } from "@/lib/utils";
-import { SegmentedControl } from "@/components/ui/SegmentedControl";
+import { TabsUnderline } from "@/components/ui/TabsUnderline";
 import { useTransactionFilter } from "@/hooks/useTransactionFilter";
 import { TransactionFilterBottomSheet } from "@/components/history/TransactionFilterBottomSheet";
 import { Badge } from "@/components/ui/Badge";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { TransactionCardSkeleton } from "@/components/ui/TransactionCardSkeleton";
 
 export const HistoryTab = () => {
   const { savedBills, fetchBills, isLoading } = useWalletStore();
@@ -73,7 +74,7 @@ export const HistoryTab = () => {
           subtitle="Aktivitas split bill kamu akan muncul di sini setelah kamu menyelesaikan transaksi pertamamu."
           action={
             <Link href="/split-bill">
-              <Button className="rounded-lg px-10 shadow-lg shadow-primary/20 font-bold h-12">
+              <Button className="px-10 shadow-lg shadow-primary/20 font-bold h-12">
                 <Plus className="w-5 h-5 mr-2" /> Buat Split Bill
               </Button>
             </Link>
@@ -89,7 +90,7 @@ export const HistoryTab = () => {
         subtitle="Aktivitas invoice kamu akan muncul di sini setelah kamu memfinalisasi invoice pertamamu."
         action={
           <Link href="/invoice/create">
-            <Button className="rounded-lg px-10 shadow-lg shadow-primary/20 font-bold h-12">
+            <Button className="px-10 shadow-lg shadow-primary/20 font-bold h-12">
               <Plus className="w-5 h-5 mr-2" /> Buat Invoice
             </Button>
           </Link>
@@ -121,10 +122,10 @@ export const HistoryTab = () => {
       {data.map((bill) => (
         <Link
           key={bill.id}
-          href={`/history/split-bill/${bill.id}`}
+          href={`/member/history/split-bill/${bill.id}`}
           className="block"
         >
-          <Card className="border-none shadow-soft hover:shadow-lg hover:shadow-primary/5 transition-all cursor-pointer group">
+          <Card className="shadow-md overflow-hidden relative hover:shadow-lg hover:shadow-primary/5 transition-all cursor-pointer group">
             <CardContent className="p-4 flex items-stretch justify-between">
               <div className="flex items-center gap-4">
                 <div className="w-10 h-10 rounded-xl bg-primary/5 flex items-center justify-center">
@@ -170,10 +171,10 @@ export const HistoryTab = () => {
       {[...data].reverse().map((invoice) => (
         <Link
           key={invoice.id}
-          href={`/history/invoice/${invoice.id}`}
+          href={`/member/history/invoice/${invoice.id}`}
           className="block"
         >
-          <Card className="border-none shadow-soft hover:shadow-lg hover:shadow-primary/5 transition-all cursor-pointer group">
+          <Card className="shadow-md overflow-hidden relative hover:shadow-lg hover:shadow-primary/5 transition-all cursor-pointer group">
             <CardContent className="p-4 flex items-stretch justify-between">
               <div className="flex items-center gap-4">
                 <div className="w-10 h-10 rounded-xl bg-primary/5 flex items-center justify-center">
@@ -244,7 +245,7 @@ export const HistoryTab = () => {
       {/* Tabs and Filter Button */}
       <div className="flex items-center gap-3">
         <div className="flex-1">
-          <SegmentedControl
+          <TabsUnderline
             options={tabs}
             activeId={activeTab}
             onChange={(id) => setActiveTab(id as TabId)}
@@ -268,7 +269,7 @@ export const HistoryTab = () => {
 
       {/* Active Filter Summary */}
       {currentFilter.hasActiveFilters && (
-        <div className="bg-primary/5 border border-primary/10 rounded-md p-3 flex items-center justify-between animate-in slide-in-from-top-2">
+        <div className="bg-primary/5 border border-primary/10 rounded-sm p-3 flex items-center justify-between animate-in slide-in-from-top-2">
           <div className="flex-1">
             <p className="text-xs font-bold text-primary">
               Menampilkan {currentFilter.filteredData.length} dari{" "}
@@ -292,17 +293,25 @@ export const HistoryTab = () => {
 
       {/* List Content */}
       <div className="min-h-[300px]">
-        {activeTab === "split-bill"
-          ? splitBillFilter.filteredData.length > 0
+        {activeTab === "split-bill" && isLoading && savedBills.length === 0 ? (
+          <div className="space-y-4">
+            {[1, 2, 3].map((i) => (
+              <TransactionCardSkeleton key={i} />
+            ))}
+          </div>
+        ) : activeTab === "split-bill" ? (
+          splitBillFilter.filteredData.length > 0
             ? renderSplitBillList(splitBillFilter.filteredData)
             : currentFilter.hasActiveFilters
               ? renderFilteredEmptyState()
               : renderEmptyState({ type: "split-bill" })
-          : invoiceFilter.filteredData.length > 0
-            ? renderInvoiceList(invoiceFilter.filteredData)
-            : currentFilter.hasActiveFilters
-              ? renderFilteredEmptyState()
-              : renderEmptyState({ type: "invoice" })}
+        ) : invoiceFilter.filteredData.length > 0 ? (
+          renderInvoiceList(invoiceFilter.filteredData)
+        ) : currentFilter.hasActiveFilters ? (
+          renderFilteredEmptyState()
+        ) : (
+          renderEmptyState({ type: "invoice" })
+        )}
       </div>
 
       {/* Filter Bottom Sheets */}

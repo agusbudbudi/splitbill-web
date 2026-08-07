@@ -38,7 +38,7 @@ export const HeroBanner = ({
   return (
     <div
       className={cn(
-        "relative w-full rounded-[24px] overflow-hidden px-6 py-4 sm:px-8 sm:py-6 flex flex-row items-center justify-between gap-2 sm:gap-6",
+        "relative w-full rounded-md overflow-hidden px-6 py-4 sm:px-8 sm:py-6 flex flex-row items-center justify-between gap-2 sm:gap-6",
         isPrimaryGrad
           ? "bg-gradient-to-br from-primary via-blue-600 to-indigo-700 border-none"
           : "bg-primary/[0.03]",

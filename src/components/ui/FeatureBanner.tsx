@@ -90,7 +90,7 @@ export const FeatureBanner = ({
               <Button
                 onClick={onCtaClick}
                 className={cn(
-                  "w-full h-12 rounded-md font-bold text-base shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2 relative overflow-hidden",
+                  "w-full h-12 font-bold text-base shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2 relative overflow-hidden",
                   variant === "primary"
                     ? "bg-white text-primary hover:bg-white/95"
                     : "bg-primary text-white hover:opacity-90",

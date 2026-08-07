@@ -119,13 +119,10 @@ export default function BucketDetailClientPage({
     // 2. Pre-fill activity name with bucket title
     setActivityName(`${bucket.emoji} ${bucket.title}`);
 
-    // 3. Auto-populate participants from bucket into Split Bill
-    // Clear existing people first by adding new ones (addPerson is idempotent)
+    // 3. Clear the draft, then pass bucket participants via query param so
+    // SplitBillPage can init people fresh from the bucket
     clearDraftAfterFinalize();
 
-    // We need to also clear people — use the store's addPerson after resetting
-    // Since clearDraftAfterFinalize doesn't reset people, we reload the page with a query param
-    // that tells SplitBillPage to init people from bucket
     const participantsParam = encodeURIComponent(
       JSON.stringify(bucket.participants),
     );

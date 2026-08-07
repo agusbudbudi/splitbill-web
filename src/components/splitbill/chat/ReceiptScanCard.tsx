@@ -59,13 +59,6 @@ export function ReceiptScanCard({
     }
   }, [isAuthenticated]);
 
-  // Sync user data on mount/auth change
-  useEffect(() => {
-    if (isAuthenticated) {
-      getCurrentUser();
-    }
-  }, [isAuthenticated, getCurrentUser]);
-
   // ── Guest Limit Barrier ───────────────────────────────────────────────────
   if (!isAuthenticated && guestRemainingScans <= 0 && !isCompleted && !scanResult) {
     return (

@@ -71,6 +71,7 @@ export const useWalletStore = create<WalletState>()(
         })),
 
       fetchBills: async () => {
+        if (get().isLoading) return;
         set({ isLoading: true, error: null });
         try {
           const response = await splitBillApi.getAll();

@@ -43,7 +43,7 @@ export const MemberGettingStarted = () => {
       title: "Kantong QR & Rek",
       desc: "Set up e-wallet/rekening biar temen langsung sat set transfer",
       icon: Wallet,
-      href: "/wallet",
+      href: "/member/wallet",
       count: paymentMethods.length,
     },
     {

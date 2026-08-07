@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/Input";
 import { useSplitLaterStore, BucketType } from "@/store/useSplitLaterStore";
 import { useFriendStore } from "@/lib/stores/friendStore";
 import {
-  ArrowLeft,
   Plus,
   X,
   Save,
@@ -17,7 +16,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
-import { createPortal } from "react-dom";
+import { BottomSheet } from "@/components/ui/BottomSheet";
 import { SavedBestiesSelection } from "@/components/splitbill/SavedBestiesSelection";
 
 const AVATAR_BASE_URL =
@@ -181,45 +180,24 @@ export const BucketFormBottomSheet = ({
 
 
 
-  if (!isOpen) return null;
-
-  return createPortal(
-    <div className="fixed inset-0 z-[100] flex justify-center pointer-events-auto">
-      <div
-        className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity animate-in fade-in"
-        onClick={onClose}
-      />
-
-      <div
-        className={cn(
-          "absolute bottom-0 w-full max-w-[600px] bg-white rounded-t-md shadow-2xl overflow-hidden flex flex-col max-h-[80dvh]",
-          "animate-in slide-in-from-bottom-full duration-300 ease-out",
-        )}
-      >
-        {/* Drag handle */}
-        <div
-          className="w-full flex justify-center pt-2 pb-1 cursor-pointer"
-          onClick={onClose}
+  return (
+    <BottomSheet
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Edit Split Later"
+      maxHeight="80dvh"
+      footer={
+        <Button
+          type="button"
+          onClick={handleSave}
+          className="w-full h-12 text-base font-bold shadow-lg shadow-primary/20"
         >
-          <div className="w-12 h-1.5 rounded-full bg-muted/40" />
-        </div>
-
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 py-2.5 border-b border-primary/5">
-          <div className="flex items-center gap-2">
-            <button
-              onClick={onClose}
-              className="p-2 -ml-2 text-muted-foreground hover:text-foreground rounded-full hover:bg-muted/10 transition-colors cursor-pointer"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            <h2 className="text-lg font-bold">Edit Split Later</h2>
-          </div>
-        </div>
-
-        {/* Form Body Scroll Area */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-6">
-          {/* Nama Split Later */}
+          <Save className="w-5 h-5 mr-2" /> Simpan Perubahan
+        </Button>
+      }
+    >
+      <div className="space-y-6">
+        {/* Nama Split Later */}
           <div className="space-y-2">
             <label className="text-sm font-bold text-foreground px-1">
               Nama Acara / Trip
@@ -391,20 +369,7 @@ export const BucketFormBottomSheet = ({
               }}
             />
           </div>
-        </div>
-
-        {/* Footer Buttons */}
-        <div className="p-4 border-t border-primary/5 bg-background">
-          <Button
-            type="button"
-            onClick={handleSave}
-            className="w-full h-12 text-base font-bold shadow-lg shadow-primary/20"
-          >
-            <Save className="w-5 h-5 mr-2" /> Simpan Perubahan
-          </Button>
-        </div>
       </div>
-    </div>,
-    document.body,
+    </BottomSheet>
   );
 };

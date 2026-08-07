@@ -75,10 +75,11 @@ export const FriendForm = ({
       isOpen={isOpen}
       onClose={onClose}
       title={editFriendId ? "Edit Teman" : "Tambah Teman Baru"}
+      showBackButton={false}
       footer={
         <Button
           onClick={handleSave}
-          className="w-full h-12 text-base font-bold shadow-lg shadow-primary/20 rounded-lg"
+          className="w-full h-12 text-base font-bold shadow-lg shadow-primary/20"
         >
           {editFriendId ? (
             <>
@@ -124,7 +125,7 @@ export const FriendForm = ({
             value={name}
             onChange={(e) => setName(e.target.value)}
             autoFocus
-            className="bg-white h-12 rounded-lg"
+            className="bg-white h-12"
           />
         </div>
 
@@ -137,11 +138,11 @@ export const FriendForm = ({
             placeholder="Ex: 08123456789"
             value={whatsapp}
             onChange={(e) => setWhatsapp(e.target.value)}
-            className="bg-white h-12 rounded-lg"
+            className="bg-white h-12"
           />
         </div>
 
-        <div className="p-4 bg-primary/5 rounded-md border border-primary/10">
+        <div className="p-4 bg-primary/5 rounded-sm border border-primary/10">
           <p className="text-[11px] leading-relaxed text-slate-600">
             💡 <b>Tips:</b> Dengan menyimpan daftar teman, kamu bisa lebih cepat memilih orang saat sedang bagi tagihan.
           </p>

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useCallback } from "react";
+import React, { useRef, useCallback, useState } from "react";
 import { ReceiptText, ScrollText, History, Home, Camera } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -9,6 +9,7 @@ import { useSplitBillStore } from "@/store/useSplitBillStore";
 import { useAuthStore } from "@/lib/stores/authStore";
 import { toast } from "sonner";
 import { compressImageFile } from "@/lib/utils/imageCompress";
+import { ScanChoiceBottomSheet } from "@/components/splitbill/ScanChoiceBottomSheet";
 
 export const Footer = () => {
   const pathname = usePathname();
@@ -16,6 +17,7 @@ export const Footer = () => {
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const { setPendingCapturedImage } = useSplitBillStore();
   const { isAuthenticated } = useAuthStore();
+  const [isScanChoiceOpen, setIsScanChoiceOpen] = useState(false);
 
   const isActive = (path: string) => {
     if (path === "/member" && (pathname === "/" || pathname === "/member")) return true;
@@ -156,7 +158,7 @@ export const Footer = () => {
           <div className="absolute inset-0 rounded-full bg-primary/20 blur-md scale-110 animate-pulse pointer-events-none" />
 
           <button
-            onClick={handleCameraCapture}
+            onClick={() => setIsScanChoiceOpen(true)}
             aria-label="Scan Bill"
             className={cn(
               "relative w-14 h-14 rounded-full flex items-center justify-center",
@@ -190,6 +192,13 @@ export const Footer = () => {
           <NavItem key={item.path} {...item} />
         ))}
       </div>
+
+      <ScanChoiceBottomSheet
+        isOpen={isScanChoiceOpen}
+        onClose={() => setIsScanChoiceOpen(false)}
+        onSelectNow={handleCameraCapture}
+        onSelectLater={() => router.push("/split-later/quick")}
+      />
     </>
   );
 };

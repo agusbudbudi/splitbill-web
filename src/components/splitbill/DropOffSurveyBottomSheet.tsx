@@ -7,6 +7,8 @@ import { useAuthStore } from "@/lib/stores/authStore";
 import { apiClient } from "@/lib/api/client";
 import { API_ENDPOINTS } from "@/lib/constants";
 import { toast } from "sonner";
+import { Star } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface DropOffSurveyBottomSheetProps {
   isOpen: boolean;
@@ -22,6 +24,8 @@ export function DropOffSurveyBottomSheet({
   step,
 }: DropOffSurveyBottomSheetProps) {
   const { user } = useAuthStore();
+  const [rating, setRating] = useState(4);
+  const [hoverRating, setHoverRating] = useState(0);
   const [selectedReasons, setSelectedReasons] = useState<string[]>([]);
   const [otherReason, setOtherReason] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -105,7 +109,7 @@ export function DropOffSurveyBottomSheet({
       await apiClient.request(API_ENDPOINTS.REVIEWS, {
         method: "POST",
         body: JSON.stringify({
-          rating: 3,
+          rating,
           name: user?.name || "User Drop-off Step " + step,
           review: reviewText,
           contactPermission: false,
@@ -134,6 +138,29 @@ export function DropOffSurveyBottomSheet({
       showBackButton={false}
     >
       <div className="space-y-6">
+        <div className="flex justify-center gap-2 py-1">
+          {[1, 2, 3, 4, 5].map((star) => (
+            <button
+              key={star}
+              type="button"
+              onMouseEnter={() => setHoverRating(star)}
+              onMouseLeave={() => setHoverRating(0)}
+              onClick={() => setRating(star)}
+              className="focus:outline-none transition-transform active:scale-95 hover:scale-110"
+            >
+              <Star
+                size={32}
+                className={cn(
+                  "transition-colors duration-200",
+                  (hoverRating || rating) >= star
+                    ? "fill-yellow-400 text-yellow-400"
+                    : "text-foreground/20",
+                )}
+              />
+            </button>
+          ))}
+        </div>
+
         <div>
           <p className="text-sm text-muted-foreground leading-relaxed">
             Kami perhatikan kamu kembali dari halaman pengisian. Boleh tahu alasannya agar kami bisa meningkatkan fitur ini?

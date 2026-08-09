@@ -35,11 +35,10 @@ import {
   ClipboardList,
   Rocket,
   CheckCircle2,
-  FileCheck,
   Home,
   History as HistoryIcon,
   RotateCcw,
-  Share2,
+  Calendar,
 } from "lucide-react";
 import { SuccessSection } from "@/components/ui/SuccessSection";
 import { cn, formatToIDR, getDefaultActivityName, getFriendAvatarUrl } from "@/lib/utils";
@@ -108,11 +107,13 @@ const SplitBillContent = () => {
           console.error("Failed to parse participants from searchParams", e);
         }
       }
-    } else {
-      // Clear any stale sourceBucketId from a previous split-later session
-      // stored in localStorage, so back navigation goes to "/" instead of the old bucket
+    } else if (step === 1) {
+      // Only clear stale sourceBucketId when landing fresh on the wizard's
+      // entry step — step transitions (step=2 -> 3 -> 4) drop the `source`
+      // query param too, but that's not a new/unrelated session starting.
       clearSource();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 
   const unassignedCount = expenses.filter(
@@ -233,6 +234,24 @@ const SplitBillContent = () => {
   const [lastSavedId, setLastSavedId] = useState<string | null>(
     searchParams.get("id"),
   );
+  // Snapshot of the just-saved bill, since clearDraftAfterFinalize() wipes
+  // the store — without this, hitting back to this success card renders zeros.
+  const [savedSummary, setSavedSummary] = useState<{
+    id: string;
+    activityName: string;
+    totalSpent: number;
+    peopleCount: number;
+  } | null>(() => {
+    if (typeof window === "undefined") return null;
+    try {
+      const raw = sessionStorage.getItem("splitbill_success_summary");
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      return parsed.id === searchParams.get("id") ? parsed : null;
+    } catch {
+      return null;
+    }
+  });
 
   const { isAuthenticated, user } = useAuthStore();
   const isVip = user?.subscriptionStatus === "active";
@@ -277,14 +296,6 @@ const SplitBillContent = () => {
         colors: ["#7c3aed", "#a78bfa", "#ddd6fe"],
       });
     }, 250);
-  };
-
-  const formatCurrency = (amt: number) => {
-    return new Intl.NumberFormat("id-ID", {
-      style: "currency",
-      currency: "IDR",
-      minimumFractionDigits: 0,
-    }).format(amt);
   };
 
   // Save/update draft function (with 403 ownership-conflict retry)
@@ -539,6 +550,20 @@ const SplitBillContent = () => {
 
       setLastSavedId(recordId);
       setIsSaved(true);
+
+      const summarySnapshot = {
+        id: recordId,
+        activityName: activityName || "Aktivitas Split Bill",
+        totalSpent,
+        peopleCount: people.length,
+      };
+      setSavedSummary(summarySnapshot);
+      if (typeof window !== "undefined") {
+        sessionStorage.setItem(
+          "splitbill_success_summary",
+          JSON.stringify(summarySnapshot),
+        );
+      }
 
       const bucketIdToRedirect = sourceBucketId;
       if (bucketIdToRedirect && sourceReceiptId) {
@@ -1090,27 +1115,81 @@ const SplitBillContent = () => {
         );
       case 4:
         if (isSaved) {
+          const displayActivityName =
+            savedSummary?.activityName || activityName || "Aktivitas Tanpa Nama";
+          const displayTotalSpent = savedSummary?.totalSpent ?? totalSpent;
+          const displayPeopleCount = savedSummary?.peopleCount ?? people.length;
+
           return (
             <SuccessSection
               title="Split Bill Berhasil Disimpan! 🎉"
+              illustration="/img/success-save-split-bill.png"
+              illustrationAlt="Split bill berhasil disimpan"
               subtitle="Data split bill kamu sudah aman tersimpan di riwayat."
-              icon={FileCheck}
-              actions={[
-                {
-                  label: "Lihat History",
-                  onClick: () =>
-                    router.push(`/history/split-bill/${lastSavedId}?new=true`),
-                  variant: "default",
-                  icon: HistoryIcon,
-                },
-                {
-                  label: "Kembali ke Beranda",
-                  onClick: () => router.push("/"),
-                  variant: "outline",
-                  icon: Home,
-                },
-              ]}
-            />
+              actions={[]}
+            >
+              <Card className="shadow-soft w-full">
+                <CardContent className="p-5 space-y-4">
+                  <div>
+                    <h3 className="text-lg font-black text-foreground truncate">
+                      {displayActivityName}
+                    </h3>
+                    <p className="text-[11px] text-muted-foreground font-medium flex items-center justify-center gap-1.5 mt-1">
+                      <Calendar className="w-3 h-3 text-primary/60" />
+                      Dibuat pada{" "}
+                      {new Date().toLocaleDateString("id-ID", {
+                        day: "2-digit",
+                        month: "long",
+                        year: "numeric",
+                      })}
+                    </p>
+                  </div>
+
+                  <div className="flex items-center justify-between border-t border-primary/10 pt-4">
+                    <div className="flex flex-col gap-1">
+                      <p className="text-[10px] uppercase font-black text-primary/60 tracking-wider">
+                        Total Tagihan
+                      </p>
+                      <p className="text-2xl font-black text-primary tracking-tighter">
+                        {formatToIDR(displayTotalSpent)}
+                      </p>
+                    </div>
+                    <div className="flex flex-col items-end gap-1">
+                      <p className="text-[10px] uppercase font-black text-muted-foreground tracking-wider">
+                        Total Orang
+                      </p>
+                      <div className="flex items-center gap-2">
+                        <Users className="w-5 h-5 text-primary" />
+                        <span className="text-2xl font-black text-foreground tracking-tight">
+                          {displayPeopleCount}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-3">
+                    <Button
+                      variant="outline"
+                      className="flex-1 min-w-0 h-12 px-3 rounded-md font-bold"
+                      onClick={() => router.push("/")}
+                    >
+                      <Home className="w-4 h-4 mr-1.5 shrink-0" />
+                      <span className="truncate">Beranda</span>
+                    </Button>
+                    <Button
+                      variant="default"
+                      className="flex-1 min-w-0 h-12 px-3 rounded-md font-bold shadow-lg shadow-primary/20"
+                      onClick={() =>
+                        router.push(`/history/split-bill/${lastSavedId}?new=true`)
+                      }
+                    >
+                      <HistoryIcon className="w-4 h-4 mr-1.5 shrink-0" />
+                      <span className="truncate">Lihat History</span>
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </SuccessSection>
           );
         }
         return (
@@ -1372,37 +1451,7 @@ const SplitBillContent = () => {
               </div>
             )}
 
-            {step === 4 && (
-              isSaved ? (
-                <Button
-                  onClick={() => {
-                    const origin = typeof window !== "undefined" ? window.location.origin : "https://www.splitbill.my.id";
-                    const shareUrl = lastSavedId ? `${origin}/history/split-bill/${lastSavedId}` : window.location.href.split("?")[0];
-                    const instructionsText = calculationResult.settlementInstructions.length > 0
-                      ? "\n\nRincian Transfer:\n" + calculationResult.settlementInstructions.map(inst => `• ${inst.from} ➡️ ${inst.to}: ${formatCurrency(inst.amount)}`).join("\n")
-                      : "";
-                    const caption = `💸 Habis seru-seruan bareng di "${activityName || "Makan-makan"}"!\n\nTotal tagihannya ${formatCurrency(totalSpent)}. Biar pertemanan makin asik, yuk lunasin tagihannya ya! 😉✨${instructionsText}\n\nCek rincian lengkapnya di sini:\n🔗 ${shareUrl}\n\nPowered by www.splitbill.my.id`;
-
-                    if (typeof navigator !== "undefined" && navigator.share) {
-                      navigator.share({
-                        title: activityName || "Split Bill Summary",
-                        text: caption,
-                      }).then(() => {
-                        toast.success("Berhasil dibagikan! 🚀✨");
-                      }).catch((err) => {
-                        console.warn("Share failed", err);
-                      });
-                    } else {
-                      navigator.clipboard.writeText(caption).then(() => {
-                        toast.success("Rincian & Link berhasil disalin! 📋✨");
-                      });
-                    }
-                  }}
-                  className="w-full h-14 text-lg font-bold bg-primary text-white shadow-xl shadow-primary/30 active:scale-95 transition-all flex items-center justify-center"
-                >
-                  <Share2 className="mr-2 w-5 h-5" /> Bagikan Hasil Split Bill 🚀
-                </Button>
-              ) : (
+            {step === 4 && !isSaved && (
                 <Button
                   onClick={() => {
                     if (expenses.length === 0) {
@@ -1446,7 +1495,6 @@ const SplitBillContent = () => {
                     </>
                   )}
                 </Button>
-              )
             )}
           </div>
         </div>
@@ -1496,7 +1544,11 @@ const SplitBillContent = () => {
         onStepChange={handleTutorialStepChange}
       />
 
-      {(step === 2 || step === 3) && <VisualReceiptPreview />}
+      {(step === 2 || step === 3) && (
+        <VisualReceiptPreview
+          bottomClass={step === 2 && expenses.length > 0 ? "bottom-32" : "bottom-24"}
+        />
+      )}
 
       <DropOffSurveyBottomSheet
         isOpen={isSurveyOpen}

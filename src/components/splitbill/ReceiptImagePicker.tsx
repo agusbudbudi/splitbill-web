@@ -124,8 +124,19 @@ export const ReceiptImagePicker = ({
           <img
             src={image}
             alt="Receipt Preview"
-            className="max-w-full max-h-[360px] w-auto h-auto object-contain"
+            className={cn(
+              "max-w-full max-h-[360px] w-auto h-auto object-contain",
+              isLoading && "opacity-50",
+            )}
           />
+          {isLoading && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-black/30">
+              <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center">
+                <Upload className="w-5 h-5 text-primary animate-bounce" />
+              </div>
+              <p className="text-xs font-bold text-white drop-shadow">{loadingText}</p>
+            </div>
+          )}
           <button
             onClick={onRemove}
             className="absolute top-2 right-2 w-8 h-8 rounded-full bg-black/50 text-white flex items-center justify-center backdrop-blur-md cursor-pointer"

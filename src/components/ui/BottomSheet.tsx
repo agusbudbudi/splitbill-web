@@ -17,6 +17,8 @@ interface BottomSheetProps {
   showBackButton?: boolean;
   /** Optional custom control on the header's right side (e.g. a delete button), shown alongside the back button. */
   headerAction?: React.ReactNode;
+  /** Optional content flush under the header, full modal width, outside the scrollable/padded area (e.g. a step progress bar). */
+  subHeader?: React.ReactNode;
   /**
    * Edge-to-edge, no rounded corners, no drag handle — for flows that need
    * the full viewport on mobile (e.g. multi-field forms, image pickers).
@@ -36,6 +38,7 @@ export const BottomSheet = ({
   maxHeight = "90vh",
   showBackButton = true,
   headerAction,
+  subHeader,
   fullScreen = false,
 }: BottomSheetProps) => {
   const [mounted, setMounted] = useState(false);
@@ -62,17 +65,17 @@ export const BottomSheet = ({
 
   const panelMotion = isDesktop
     ? {
-        initial: { opacity: 0, scale: 0.96, y: 12 },
-        animate: { opacity: 1, scale: 1, y: 0 },
-        exit: { opacity: 0, scale: 0.96, y: 12 },
-        transition: { duration: 0.2, ease: "easeOut" as const },
-      }
+      initial: { opacity: 0, scale: 0.96, y: 12 },
+      animate: { opacity: 1, scale: 1, y: 0 },
+      exit: { opacity: 0, scale: 0.96, y: 12 },
+      transition: { duration: 0.2, ease: "easeOut" as const },
+    }
     : {
-        initial: { y: "100%" },
-        animate: { y: 0 },
-        exit: { y: "100%" },
-        transition: { duration: 0.3, ease: "easeOut" as const },
-      };
+      initial: { y: "100%" },
+      animate: { y: 0 },
+      exit: { y: "100%" },
+      transition: { duration: 0.3, ease: "easeOut" as const },
+    };
 
   return createPortal(
     <AnimatePresence>
@@ -128,18 +131,25 @@ export const BottomSheet = ({
                 {headerAction
                   ? headerAction
                   : !showBackButton && (
-                      <button
-                        onClick={onClose}
-                        className="p-2 -mr-2 text-muted-foreground hover:text-foreground rounded-full hover:bg-muted/10 transition-colors cursor-pointer"
-                      >
-                        <X className="w-5 h-5" />
-                      </button>
-                    )}
+                    <button
+                      onClick={onClose}
+                      className="p-2 -mr-2 text-muted-foreground hover:text-foreground rounded-full hover:bg-muted/10 transition-colors cursor-pointer"
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
+                  )}
+              </div>
+            )}
+
+            {/* Sub-header (e.g. step progress) — flush under header, full width */}
+            {subHeader && (
+              <div className="shrink-0 border-b border-primary/5">
+                {subHeader}
               </div>
             )}
 
             {/* Scrollable Content */}
-            <div className="flex-1 overflow-y-auto p-6">
+            <div className="flex-1 overflow-y-auto p-4">
               {children}
             </div>
 

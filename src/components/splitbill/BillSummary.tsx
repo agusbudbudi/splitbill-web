@@ -147,6 +147,7 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
           quality: 1,
           pixelRatio: 2,
           backgroundColor: "#ffffff",
+          cacheBust: true,
         });
 
         const fileName = `SplitBill-${activityName?.replace(/\s+/g, "-") || "Summary"}-${new Date().getTime()}.png`;
@@ -159,7 +160,11 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
           ? "\n\nRincian Transfer:\n" + settlementInstructions.map(inst => `• ${inst.from} ➡️ ${inst.to}: ${formatToIDR(inst.amount)}`).join("\n")
           : "";
 
-        const caption = `💸 Habis seru-seruan bareng di "${activityName || "Makan-makan"}"!\n\nTotal tagihannya ${formatToIDR(totalSpent)}. Biar pertemanan makin asik, yuk lunasin tagihannya ya! 😉✨${instructionsText}\n\nCek rincian lengkapnya di sini:\n🔗 ${shareUrl}\n\nPowered by www.splitbill.my.id`;
+        const paymentMethodsText = selectedMethods.length > 0
+          ? "\n\nMetode Pembayaran:\n" + selectedMethods.map(m => `• ${m.providerName} - ${m.accountNumber || m.phoneNumber} (a.n. ${m.accountName})`).join("\n")
+          : "";
+
+        const caption = `💸 Habis seru-seruan bareng di "${activityName || "Makan-makan"}"!\n\nTotal tagihannya ${formatToIDR(totalSpent)}. Biar pertemanan makin asik, yuk lunasin tagihannya ya! 😉✨${instructionsText}${paymentMethodsText}\n\nCek rincian lengkapnya di sini:\n🔗 ${shareUrl}\n\nPowered by www.splitbill.my.id`;
 
         // Pre-copy text to clipboard as many apps ignore 'text' when 'files' are shared
         try {
@@ -229,7 +234,11 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
         ? "\n\nRincian Transfer:\n" + settlementInstructions.map(inst => `• ${inst.from} ➡️ ${inst.to}: ${formatToIDR(inst.amount)}`).join("\n")
         : "";
 
-      const caption = `💸 Habis seru-seruan bareng di "${activityName || "Makan-makan"}"!\n\nTotal tagihannya ${formatToIDR(totalSpent)}. Biar pertemanan makin asik, yuk lunasin tagihannya ya! 😉✨${instructionsText}\n\nCek rincian lengkapnya di sini:\n🔗 ${shareUrl}\n\nPowered by www.splitbill.my.id`;
+      const paymentMethodsText = selectedMethods.length > 0
+        ? "\n\nMetode Pembayaran:\n" + selectedMethods.map(m => `• ${m.providerName} - ${m.accountNumber || m.phoneNumber} (a.n. ${m.accountName})`).join("\n")
+        : "";
+
+      const caption = `💸 Habis seru-seruan bareng di "${activityName || "Makan-makan"}"!\n\nTotal tagihannya ${formatToIDR(totalSpent)}. Biar pertemanan makin asik, yuk lunasin tagihannya ya! 😉✨${instructionsText}${paymentMethodsText}\n\nCek rincian lengkapnya di sini:\n🔗 ${shareUrl}\n\nPowered by www.splitbill.my.id`;
 
       if (
         typeof navigator !== "undefined" &&
@@ -450,6 +459,69 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
           </div>
         </Card>
 
+        {/* Payment Methods Card */}
+        {selectedMethods.length > 0 && (
+          <Card className="p-3 shadow-md overflow-hidden relative">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 blur-3xl pointer-events-none" />
+            <div className="space-y-3 relative z-10">
+              <h3 className="font-bold text-xs text-foreground/70 uppercase px-1">
+                Metode Pembayaran 📥
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {selectedMethods.map((method) => {
+                  const logoInfo = getProviderLogoInfo(
+                    method.providerName,
+                    method.type === "bank" ? "bank" : "ewallet"
+                  );
+                  return (
+                    <div
+                      key={method.id}
+                      onClick={() =>
+                        handleCopy(
+                          method.accountNumber || method.phoneNumber || "",
+                          "Nomor rekening",
+                          method.providerName,
+                        )
+                      }
+                      className="p-3 bg-primary/5 border border-primary/10 rounded-sm flex items-center gap-3 cursor-pointer hover:bg-primary/10 transition-all active:scale-[0.98] group/copy"
+                    >
+                      <div className="w-12 h-12 rounded-sm bg-white flex items-center justify-center flex-shrink-0 shadow-sm border border-primary/5 p-1.5 overflow-hidden">
+                        {logoInfo.slug ? (
+                          <DynamicFinLogo
+                            slug={logoInfo.slug}
+                            alt={method.providerName}
+                            className="w-full h-full"
+                          />
+                        ) : (
+                          <img
+                            src={logoInfo.image}
+                            alt={method.providerName}
+                            className="w-full h-full object-contain"
+                          />
+                        )}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[10px] uppercase font-black text-primary/60 leading-none mb-1 tracking-tight truncate">
+                          {method.providerName}
+                        </p>
+                        <div className="flex items-center gap-1.5 min-w-0">
+                          <p className="font-bold text-xs text-foreground truncate leading-none">
+                            {method.accountNumber || method.phoneNumber}
+                          </p>
+                          <Copy className="w-2.5 h-2.5 text-primary/40 group-hover/copy:text-primary transition-colors shrink-0" />
+                        </div>
+                        <p className="text-[9px] text-muted-foreground font-medium truncate mt-1">
+                          a.n. {method.accountName}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </Card>
+        )}
+
         {/* Detailed Expenses & Costs Card */}
         <Card className="p-3 shadow-md overflow-hidden relative">
           <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 blur-3xl pointer-events-none" />
@@ -618,66 +690,6 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
                   })}
               </div>
             </div>
-
-            {/* Payment Methods Section */}
-            {selectedMethods.length > 0 && (
-              <div className="space-y-3">
-                <h3 className="font-bold text-xs text-foreground/70 uppercase px-1">
-                  Metode Pembayaran 📥
-                </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {selectedMethods.map((method) => {
-                    const logoInfo = getProviderLogoInfo(
-                      method.providerName,
-                      method.type === "bank" ? "bank" : "ewallet"
-                    );
-                    return (
-                      <div
-                        key={method.id}
-                        onClick={() =>
-                          handleCopy(
-                            method.accountNumber || method.phoneNumber || "",
-                            "Nomor rekening",
-                            method.providerName,
-                          )
-                        }
-                        className="p-3 bg-primary/5 border border-primary/10 rounded-sm flex items-center gap-3 cursor-pointer hover:bg-primary/10 transition-all active:scale-[0.98] group/copy"
-                      >
-                        <div className="w-12 h-12 rounded-sm bg-white flex items-center justify-center flex-shrink-0 shadow-sm border border-primary/5 p-1.5 overflow-hidden">
-                          {logoInfo.slug ? (
-                            <DynamicFinLogo
-                              slug={logoInfo.slug}
-                              alt={method.providerName}
-                              className="w-full h-full"
-                            />
-                          ) : (
-                            <img
-                              src={logoInfo.image}
-                              alt={method.providerName}
-                              className="w-full h-full object-contain"
-                            />
-                          )}
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <p className="text-[10px] uppercase font-black text-primary/60 leading-none mb-1 tracking-tight truncate">
-                            {method.providerName}
-                          </p>
-                          <div className="flex items-center gap-1.5 min-w-0">
-                            <p className="font-bold text-xs text-foreground truncate leading-none">
-                              {method.accountNumber || method.phoneNumber}
-                            </p>
-                            <Copy className="w-2.5 h-2.5 text-primary/40 group-hover/copy:text-primary transition-colors shrink-0" />
-                          </div>
-                          <p className="text-[9px] text-muted-foreground font-medium truncate mt-1">
-                            a.n. {method.accountName}
-                          </p>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
           </div>
         </Card>
 

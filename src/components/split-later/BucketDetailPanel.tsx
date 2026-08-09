@@ -20,6 +20,7 @@ import {
   Pencil,
   CheckCircle2,
   Clock,
+  UserPlus,
 } from "lucide-react";
 
 interface BucketDetailPanelProps {
@@ -48,6 +49,7 @@ export function BucketDetailPanel({ bucketId }: BucketDetailPanelProps) {
 
   const [activeTab, setActiveTab] = useState<TabId>("receipts");
   const [isEditFormOpen, setIsEditFormOpen] = useState(false);
+  const [editInitialStep, setEditInitialStep] = useState<1 | 2 | 3>(1);
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
   const [deleteReceiptId, setDeleteReceiptId] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -110,6 +112,11 @@ export function BucketDetailPanel({ bucketId }: BucketDetailPanelProps) {
   };
 
   const handleProcess = (receipt: BucketReceipt) => {
+    if (bucket.participants.length === 0) {
+      toast.error("Tambah teman dulu sebelum proses struk ya!");
+      return;
+    }
+
     // 1. Set source so Split Bill knows to redirect back
     setSource(bucketId, receipt.id);
 
@@ -131,19 +138,32 @@ export function BucketDetailPanel({ bucketId }: BucketDetailPanelProps) {
     );
   };
 
+  const deleteStoredImages = (urls: string[]) => {
+    if (urls.length === 0) return;
+    fetch("/api/split-later/delete", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ urls }),
+    }).catch((err) => console.error("Failed to clean up stored images:", err));
+  };
+
   const handleDeleteReceipt = (receiptId: string) => {
     setDeleteReceiptId(receiptId);
   };
 
   const confirmDeleteReceipt = () => {
     if (deleteReceiptId) {
+      const receipt = receipts.find((r) => r.id === deleteReceiptId);
       removeReceipt(deleteReceiptId);
       toast.success("Struk dihapus.");
       setDeleteReceiptId(null);
+      if (receipt) deleteStoredImages([receipt.imageUrl]);
     }
   };
 
   const handleDeleteBucket = () => {
+    const bucketReceiptUrls = receipts.map((r) => r.imageUrl);
+    deleteStoredImages(bucketReceiptUrls);
     deleteBucket(bucketId);
     toast.success(`Split Later "${bucket.title}" dihapus.`);
     router.push("/member/split-later");
@@ -165,7 +185,10 @@ export function BucketDetailPanel({ bucketId }: BucketDetailPanelProps) {
           </Link>
           <div className="flex items-center gap-1">
             <button
-              onClick={() => setIsEditFormOpen(true)}
+              onClick={() => {
+                setEditInitialStep(1);
+                setIsEditFormOpen(true);
+              }}
               className="text-muted-foreground hover:text-primary hover:bg-primary/10 p-2 rounded-full transition-colors cursor-pointer"
             >
               <Pencil className="w-4.5 h-4.5" />
@@ -256,6 +279,29 @@ export function BucketDetailPanel({ bucketId }: BucketDetailPanelProps) {
           </div>
         </div>
 
+        {/* No participants yet — nudge to add friends */}
+        {bucket.participants.length === 0 && (
+          <button
+            onClick={() => {
+              setEditInitialStep(3);
+              setIsEditFormOpen(true);
+            }}
+            className="w-full flex items-center gap-3 p-3.5 rounded-md bg-primary/5 border border-dashed border-primary/30 hover:bg-primary/10 transition-colors cursor-pointer text-left"
+          >
+            <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+              <UserPlus className="w-4.5 h-4.5 text-primary" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-bold text-foreground">
+                Belum ada teman nih
+              </p>
+              <p className="text-[11px] text-muted-foreground">
+                Tambah peserta biar bisa dihitung patungannya
+              </p>
+            </div>
+          </button>
+        )}
+
         {/* Tabs */}
         <TabsUnderline
           options={tabs}
@@ -287,6 +333,7 @@ export function BucketDetailPanel({ bucketId }: BucketDetailPanelProps) {
         isOpen={isEditFormOpen}
         onClose={() => setIsEditFormOpen(false)}
         editBucketId={bucketId}
+        initialStep={editInitialStep}
       />
 
       {/* Delete bucket confirmation */}

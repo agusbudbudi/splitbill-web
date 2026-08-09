@@ -10,11 +10,9 @@ import {
   ArrowRight,
   CheckCircle2,
   TrendingUp,
-  Users,
   ChevronDown,
   ChevronUp,
   Share2,
-  Image as ImageIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { HowToReadSummary } from "@/components/splitbill/HowToReadSummary";
@@ -51,12 +49,6 @@ interface SettlementInstruction {
   amount: number;
 }
 
-const WhatsAppIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
-    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-  </svg>
-);
-
 const AVATAR_BASE_URL =
   "https://api.dicebear.com/9.x/personas/png?backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf&size=64&seed=";
 
@@ -65,12 +57,23 @@ export const BucketSettlement = ({
   participants,
   bucket,
 }: BucketSettlementProps) => {
-  const { savedBills, paymentMethods } = useWalletStore();
+  const { savedBills, paymentMethods, fetchBills } = useWalletStore();
   const [expandedPeople, setExpandedPeople] = React.useState<
     Record<string, boolean>
   >({});
   const [isSharing, setIsSharing] = React.useState(false);
   const socialReceiptRef = React.useRef<HTMLDivElement>(null);
+
+  // savedBills is only ever populated by fetchBills() (called elsewhere, e.g.
+  // member sidebar mount) — a bill finalized via the split-later "Proses Struk"
+  // flow never touches this store directly, so refresh it whenever this tab
+  // is actually viewed instead of relying on a stale earlier fetch.
+  React.useEffect(() => {
+    fetchBills().catch((err) =>
+      console.error("Failed to refresh saved bills:", err),
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const togglePerson = (name: string) => {
     setExpandedPeople((prev) => ({
@@ -384,13 +387,40 @@ export const BucketSettlement = ({
     );
   }
 
+  const getBadgeIcon = (badge: string) => {
+    switch (badge) {
+      case "Si Paling Traktir":
+        return "💳";
+      case "Si Paling Sultan":
+        return "👑";
+      case "Si Paling Hemat":
+        return "🍃";
+      default:
+        return "✨";
+    }
+  };
+
+  const getRibbonColor = (badge: string) => {
+    switch (badge) {
+      case "Si Paling Traktir":
+        return "bg-emerald-100 text-emerald-700";
+      case "Si Paling Sultan":
+        return "bg-amber-100 text-amber-700";
+      case "Si Paling Hemat":
+        return "bg-blue-100 text-blue-700";
+      default:
+        return "bg-primary/10 text-primary";
+    }
+  };
+
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* Encourage to Share Card (SaveBillNudge style) */}
-      <Card className="border border-primary/20 shadow-soft bg-primary/5 overflow-hidden rounded-md">
-        <CardContent className="p-5 space-y-4">
+      <Card className="p-3 shadow-md overflow-hidden relative">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 blur-3xl pointer-events-none" />
+        <CardContent className="p-2 space-y-4 relative z-10">
           <div className="flex items-start gap-4">
-            <div className="w-10 h-10 rounded-xl relative overflow-hidden shrink-0">
+            <div className="w-10 h-10 rounded-sm relative overflow-hidden shrink-0">
               <Image
                 src="/img/save-bill-icon.png"
                 alt="Save Bill Icon"
@@ -408,35 +438,12 @@ export const BucketSettlement = ({
             </div>
           </div>
 
-          <div className="flex items-center gap-4 px-1">
-            <div className="flex -space-x-2">
-              {[TrendingUp, ImageIcon, WhatsAppIcon].map((Icon, i) => (
-                <div
-                  key={i}
-                  className={cn(
-                    "w-7 h-7 rounded-full flex items-center justify-center shadow-sm relative border-2 border-white",
-                    i === 0
-                      ? "z-0 bg-amber-50 text-amber-500"
-                      : i === 1
-                        ? "z-10 bg-blue-50 text-blue-500"
-                        : "z-20 bg-emerald-50 text-emerald-500",
-                  )}
-                >
-                  <Icon className={cn("w-3.5 h-3.5", i === 2 && "w-3 h-3")} />
-                </div>
-              ))}
-            </div>
-            <p className="text-[10px] font-bold text-primary/60 uppercase tracking-wider">
-              Auto-download gambar & langsung share ke sosmed! 📸
-            </p>
-          </div>
-
           <button
             onClick={handleShareSocial}
             disabled={isSharing}
             className={cn(
-              "w-full h-11 rounded-lg font-bold gap-2 text-sm transition-all active:scale-[0.98] bg-primary text-white shadow-md shadow-primary/10 flex items-center justify-center group cursor-pointer",
-              isSharing && "opacity-75 cursor-not-allowed",
+              "w-full h-12 rounded-sm font-bold gap-2 text-sm transition-all active:scale-[0.98] bg-primary text-white shadow-lg shadow-primary/20 flex items-center justify-center group cursor-pointer",
+              isSharing && "opacity-70 cursor-not-allowed",
             )}
           >
             <Share2
@@ -452,63 +459,52 @@ export const BucketSettlement = ({
 
       {/* Settlement instructions */}
       {settlements.length > 0 ? (
-        <div className="space-y-3">
-          <h3 className="text-sm font-bold text-foreground/70 flex items-center gap-2 px-1">
-            <ArrowRight className="w-4 h-4" /> Siapa Bayar ke Siapa
-          </h3>
-          {settlements.map((s, i) => (
-            <Card
-              key={i}
-              className="border-none shadow-soft animate-in fade-in"
-              style={{ animationDelay: `${i * 50}ms` }}
-            >
-              <CardContent className="p-4 flex items-center gap-3">
-                {/* From */}
-                <div className="flex flex-col items-center gap-1 w-16">
-                  <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-red-200 shadow-sm">
-                    <img
-                      src={`${AVATAR_BASE_URL}${encodeURIComponent(s.from)}`}
-                      alt={s.from}
-                    />
-                  </div>
-                  <p className="text-[9px] font-bold text-foreground truncate w-full text-center">
-                    {s.from}
-                  </p>
+        <Card className="p-3 shadow-md overflow-hidden relative">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 blur-3xl pointer-events-none" />
+          <div className="relative z-10">
+            <div className="p-3 bg-primary rounded-sm space-y-3 shadow-sm">
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 bg-white/20 rounded-full flex items-center justify-center">
+                  <ArrowRight className="w-4 h-4 text-white" />
                 </div>
-
-                {/* Arrow + amount */}
-                <div className="flex-1 flex flex-col items-center gap-1">
-                  <div className="w-full flex items-center">
-                    <div className="flex-1 h-0.5 bg-primary/20" />
-                    <div className="mx-2 px-3 py-1 bg-primary/10 rounded-full">
-                      <p className="text-xs font-black text-primary">
-                        {formatToIDR(s.amount)}
+                <p className="text-sm font-black text-white tracking-tight">
+                  Siapa Bayar ke Siapa
+                </p>
+              </div>
+              <div className="grid gap-2">
+                {settlements.map((s, idx) => (
+                  <div
+                    key={idx}
+                    className="flex items-center justify-between p-3 bg-white border border-primary/10 rounded-sm"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <img
+                        src={`${AVATAR_BASE_URL}${encodeURIComponent(s.from)}`}
+                        className="w-7 h-7 rounded-full bg-white border border-primary/20"
+                        alt={s.from}
+                      />
+                      <p className="text-xs font-medium text-muted-foreground">
+                        <span className="text-destructive font-bold">
+                          {s.from}
+                        </span>{" "}
+                        Transfer ke{" "}
+                        <span className="text-emerald-600 font-bold">
+                          {s.to}
+                        </span>
                       </p>
                     </div>
-                    <div className="flex-1 h-0.5 bg-primary/20" />
+                    <span className="text-sm font-black text-primary">
+                      {formatToIDR(s.amount)}
+                    </span>
                   </div>
-                  <ArrowRight className="w-4 h-4 text-primary" />
-                </div>
-
-                {/* To */}
-                <div className="flex flex-col items-center gap-1 w-16">
-                  <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-emerald-200 shadow-sm">
-                    <img
-                      src={`${AVATAR_BASE_URL}${encodeURIComponent(s.to)}`}
-                      alt={s.to}
-                    />
-                  </div>
-                  <p className="text-[9px] font-bold text-foreground truncate w-full text-center">
-                    {s.to}
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </Card>
       ) : (
-        <Card className="border-none shadow-soft bg-emerald-50">
-          <CardContent className="p-5 flex items-center gap-3">
+        <Card className="p-3 shadow-md overflow-hidden relative bg-emerald-50">
+          <CardContent className="p-2 flex items-center gap-3">
             <CheckCircle2 className="w-8 h-8 text-emerald-600 shrink-0" />
             <div>
               <p className="font-bold text-emerald-800">
@@ -523,94 +519,110 @@ export const BucketSettlement = ({
       )}
 
       {/* Per-person breakdown */}
-      <div className="space-y-3">
-        <h3 className="text-sm font-bold text-foreground/70 flex items-center gap-2 px-1">
-          <Users className="w-4 h-4" /> Rincian Per Orang
-        </h3>
-        {balances.map((person, i) => {
-          const isExpanded = !!expandedPeople[person.name];
+      <Card className="p-3 shadow-md overflow-hidden relative">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 blur-3xl pointer-events-none" />
+        <div className="space-y-4 relative z-10">
+          <h3 className="font-bold text-xs text-foreground/70 uppercase px-1">
+            Rincian Per Orang
+          </h3>
+          <div className="grid gap-3">
+            {balances.map((person, i) => {
+              const isExpanded = !!expandedPeople[person.name];
+              const badge = badges[person.name]?.[0];
 
-          // Group items by receipt name
-          const groupedItems = person.items.reduce<
-            Record<string, typeof person.items>
-          >((acc, item) => {
-            if (!acc[item.receiptName]) {
-              acc[item.receiptName] = [];
-            }
-            acc[item.receiptName].push(item);
-            return acc;
-          }, {});
+              // Group items by receipt name
+              const groupedItems = person.items.reduce<
+                Record<string, typeof person.items>
+              >((acc, item) => {
+                if (!acc[item.receiptName]) {
+                  acc[item.receiptName] = [];
+                }
+                acc[item.receiptName].push(item);
+                return acc;
+              }, {});
 
-          return (
-            <Card
-              key={i}
-              className="border-none shadow-soft animate-in fade-in"
-              style={{ animationDelay: `${i * 50}ms` }}
-            >
-              <CardContent className="p-4">
-                {/* Header row (Clickable) */}
+              return (
                 <div
-                  onClick={() => togglePerson(person.name)}
-                  className="flex items-center gap-3 cursor-pointer select-none"
+                  key={i}
+                  className="overflow-hidden rounded-sm border border-primary/10 bg-muted/5 transition-all hover:border-primary/20"
                 >
-                  <div className="w-9 h-9 rounded-full overflow-hidden border-2 border-white shadow-sm shrink-0">
-                    <img
-                      src={`${AVATAR_BASE_URL}${encodeURIComponent(person.name)}`}
-                      alt={person.name}
-                    />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-1.5">
-                      <p className="text-sm font-bold text-foreground truncate">
-                        {person.name}
-                      </p>
-                      {isExpanded ? (
-                        <ChevronUp className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-                      ) : (
-                        <ChevronDown className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-                      )}
-                    </div>
-                    <div className="flex gap-3 mt-0.5">
-                      <p className="text-[10px] text-muted-foreground">
-                        Bayar:{" "}
-                        <span className="font-bold text-foreground">
-                          {formatToIDR(person.totalPaid)}
-                        </span>
-                      </p>
-                      <p className="text-[10px] text-muted-foreground">
-                        Hutang:{" "}
-                        <span className="font-bold text-foreground">
-                          {formatToIDR(person.totalOwed)}
-                        </span>
-                      </p>
-                    </div>
-                  </div>
-                  <div
-                    className={cn(
-                      "shrink-0 px-2.5 py-1.5 rounded-xl text-[11px] font-black",
-                      person.balance > 0.01
-                        ? "bg-emerald-100 text-emerald-700"
-                        : person.balance < -0.01
-                          ? "bg-red-100 text-red-700"
-                          : "bg-muted/50 text-muted-foreground",
+                  {/* Person Header */}
+                  <div className="bg-primary/5 border-b border-primary/10 hover:bg-primary/10 transition-colors">
+                    {badge && (
+                      <div
+                        className={cn(
+                          "w-fit rounded-br-sm px-2 py-1 text-[8px] font-black flex items-center gap-0.5",
+                          getRibbonColor(badge),
+                        )}
+                      >
+                        <span>{getBadgeIcon(badge)}</span>
+                        {badge}
+                      </div>
                     )}
-                  >
-                    {person.balance > 0.01
-                      ? `+${formatToIDR(person.balance)}`
-                      : person.balance < -0.01
-                        ? formatToIDR(person.balance)
-                        : "Lunas ✓"}
+                    <div
+                      onClick={() => togglePerson(person.name)}
+                      className="px-3 py-2.5 flex items-center justify-between cursor-pointer"
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-7 h-7 rounded-full border border-primary/10 overflow-hidden bg-white">
+                          <img
+                            src={`${AVATAR_BASE_URL}${encodeURIComponent(person.name)}`}
+                            alt={person.name}
+                            className="w-full h-full"
+                          />
+                        </div>
+                        <h4 className="font-bold text-sm tracking-tight text-foreground">
+                          {person.name}
+                        </h4>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <div className="text-right">
+                          <div
+                            className={cn(
+                              "text-[8px] font-black tracking-tight px-2 py-0.5 rounded-full inline-block whitespace-nowrap",
+                              person.balance > 0.01
+                                ? "bg-emerald-500/10 text-emerald-600"
+                                : person.balance < -0.01
+                                  ? "bg-destructive/10 text-destructive"
+                                  : "bg-muted text-muted-foreground",
+                            )}
+                          >
+                            {person.balance > 0.01
+                              ? "Akan Menerima"
+                              : person.balance < -0.01
+                                ? "Harus Bayar"
+                                : "Lunas"}
+                          </div>
+                          <p
+                            className={cn(
+                              "text-xs font-black mt-0.5",
+                              person.balance > 0.01
+                                ? "text-emerald-600"
+                                : person.balance < -0.01
+                                  ? "text-destructive"
+                                  : "text-muted-foreground",
+                            )}
+                          >
+                            {formatToIDR(Math.abs(person.balance))}
+                          </p>
+                        </div>
+                        {person.items.length > 0 && (
+                          <div className="text-muted-foreground">
+                            {isExpanded ? (
+                              <ChevronUp className="w-4 h-4" />
+                            ) : (
+                              <ChevronDown className="w-4 h-4" />
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
-                </div>
 
-                {/* Collapsible Details */}
-                {isExpanded && (
-                  <div className="mt-3 pt-3 border-t border-dashed border-muted/80 space-y-3 animate-in slide-in-from-top-2 duration-200">
-                    <p className="text-[9px] font-bold text-foreground/40 uppercase tracking-widest px-1">
-                      Rincian Belanjaan
-                    </p>
-                    {Object.keys(groupedItems).length > 0 ? (
-                      <div className="space-y-3">
+                  {/* Items List */}
+                  {person.items.length > 0 && isExpanded && (
+                    <div className="bg-white/20 animate-in slide-in-from-top-2 duration-200">
+                      <div className="px-3 py-1 divide-y divide-dashed divide-primary/10">
                         {Object.entries(groupedItems).map(
                           ([receiptName, items], idx) => {
                             const receiptSubtotal = items.reduce(
@@ -618,12 +630,9 @@ export const BucketSettlement = ({
                               0,
                             );
                             return (
-                              <div
-                                key={idx}
-                                className="bg-primary/5 rounded-sm p-3 border border-primary/5"
-                              >
+                              <div key={idx} className="py-2.5">
                                 {/* Receipt Header */}
-                                <div className="flex items-center justify-between border-b border-primary/10 pb-1.5 mb-1.5">
+                                <div className="flex items-center justify-between mb-1.5">
                                   <span className="text-sm font-extrabold text-primary truncate max-w-[70%]">
                                     {receiptName}
                                   </span>
@@ -636,19 +645,19 @@ export const BucketSettlement = ({
                                   {items.map((item, itemIdx) => (
                                     <div
                                       key={itemIdx}
-                                      className="flex justify-between items-center text-[11px] text-foreground/80"
+                                      className="flex justify-between items-start text-[11px]"
                                     >
-                                      <span className="truncate max-w-[65%] flex items-center gap-1">
+                                      <span className="text-muted-foreground font-medium truncate max-w-[65%] flex items-center gap-1">
                                         {item.itemName}
                                         {item.isAdditional && (
-                                          <span className="text-[10px] bg-primary/10 text-primary px-1.5 py-0.2 rounded-full font-bold shrink-0 scale-90">
+                                          <span className="text-[8px] font-black uppercase px-1 rounded bg-primary/10 text-primary shrink-0 scale-90">
                                             {item.method === "prop"
                                               ? "Proporsional"
                                               : "Biaya Tambahan"}
                                           </span>
                                         )}
                                       </span>
-                                      <span className="font-semibold text-foreground/90 shrink-0">
+                                      <span className="font-bold text-foreground/80 shrink-0">
                                         {formatToIDR(item.share)}
                                       </span>
                                     </div>
@@ -659,18 +668,34 @@ export const BucketSettlement = ({
                           },
                         )}
                       </div>
-                    ) : (
-                      <div className="bg-muted/30 rounded-xl p-4 text-center text-[10px] text-muted-foreground font-bold">
-                        Tidak ada item belanja yang perlu dibayar.
-                      </div>
-                    )}
+                    </div>
+                  )}
+
+                  {/* Summary Row */}
+                  <div className="grid grid-cols-2 divide-x divide-primary/5 border-t border-primary/5 bg-white/40">
+                    <div className="px-3 py-1.5">
+                      <p className="text-[9px] text-muted-foreground font-bold uppercase">
+                        Sudah Dibayar
+                      </p>
+                      <p className="text-xs font-bold text-foreground">
+                        {formatToIDR(person.totalPaid)}
+                      </p>
+                    </div>
+                    <div className="px-3 py-1.5 text-right">
+                      <p className="text-[9px] text-muted-foreground font-bold uppercase">
+                        Tagihan Kamu
+                      </p>
+                      <p className="text-xs font-bold text-primary">
+                        {formatToIDR(person.totalOwed)}
+                      </p>
+                    </div>
                   </div>
-                )}
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </Card>
 
       {/* How to Read Section */}
       <HowToReadSummary />

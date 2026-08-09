@@ -93,7 +93,7 @@ export const SocialSplitBillReceipt = React.forwardRef<
       {/* Branding */}
       <div className="relative z-10 w-full flex justify-between items-center mb-6">
         <div className="flex items-center gap-5">
-          <div className="w-20 h-20 bg-white rounded-md flex items-center justify-center border border-primary/5 relative overflow-hidden">
+          <div className="w-20 h-20 bg-white rounded-lg flex items-center justify-center border border-primary/5 relative overflow-hidden">
             <img
               src="/img/footer-icon.png"
               alt="SplitBill Logo"
@@ -129,7 +129,7 @@ export const SocialSplitBillReceipt = React.forwardRef<
           </div>
           <div className="absolute inset-0 bg-primary/20 blur-2xl opacity-40 animate-pulse rounded-full" />
         </div>
-        <h1 className="text-slate-900 text-6xl font-black tracking-tight mb-4 max-w-[900px]">
+        <h1 className="text-slate-900 text-5xl font-black tracking-tight mb-4 max-w-[900px]">
           {activityName || "Laporan Keuangan Tongkrongan"}
         </h1>
         <div className="flex items-center gap-4 text-slate-500 text-2xl font-bold uppercase tracking-widest">
@@ -139,8 +139,8 @@ export const SocialSplitBillReceipt = React.forwardRef<
       </div>
 
       {/* Main Stats Card */}
-      <div className="relative z-10 w-full bg-white rounded-[50px] border border-primary/5 p-8 mt-8 flex flex-col gap-10">
-        <div className="flex justify-between items-center py-10 px-10 bg-primary/5 rounded-[30px] border border-primary/10">
+      <div className="relative z-10 w-full bg-white rounded-lg border border-primary/5 p-8 mt-8 flex flex-col gap-10">
+        <div className="flex justify-between items-center py-10 px-10 bg-primary/5 rounded-lg border border-primary/10">
           <div className="flex flex-col gap-2">
             <span className="text-primary text-2xl font-black uppercase tracking-widest opacity-60">
               Total Tagihan
@@ -168,8 +168,150 @@ export const SocialSplitBillReceipt = React.forwardRef<
         </div>
       </div>
 
+      {/* Transfer & Payment Info Section */}
+      <div className="relative z-10 w-full mt-8 px-4">
+        <div className="flex flex-col gap-10">
+          {/* Instructions */}
+          <div className="p-10 bg-primary rounded-lg shadow-sm space-y-10">
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center shrink-0">
+                <ArrowRight className="w-7 h-7 text-white" />
+              </div>
+              <h3 className="text-3xl font-black text-white tracking-tight">
+                Transfer Ke Sini Ya! 💸
+              </h3>
+            </div>
+            <div className="grid grid-cols-1 gap-5">
+              {settlementInstructions.length > 0 ? (
+                settlementInstructions.map((inst, idx) => (
+                  <div
+                    key={idx}
+                    className="bg-white border border-white/10 rounded-lg p-8 flex items-center justify-between gap-4 transition-all"
+                  >
+                    <div className="flex items-center gap-6 flex-1 min-w-0">
+                      <div className="relative flex items-center shrink-0">
+                        <div className="w-16 h-16 rounded-full border-4 border-white overflow-hidden bg-white">
+                          <img
+                            src={`${AVATAR_BASE_URL}${encodeURIComponent(inst.from)}`}
+                            alt={inst.from}
+                            crossOrigin="anonymous"
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center mx-[-8px] z-10 border-2 border-slate-50">
+                          <ArrowRight className="w-5 h-5 text-primary" />
+                        </div>
+                        <div className="w-16 h-16 rounded-full border-4 border-white overflow-hidden bg-white">
+                          <img
+                            src={`${AVATAR_BASE_URL}${encodeURIComponent(inst.to)}`}
+                            alt={inst.to}
+                            crossOrigin="anonymous"
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      </div>
+                      <div className="flex flex-col gap-1 min-w-0">
+                        <p className="text-2xl font-bold text-slate-600">
+                          <span className="text-destructive font-black underline decoration-destructive/20 underline-offset-4">
+                            {inst.from}
+                          </span>
+                          {" Transfer ke "}
+                          <span className="text-emerald-600 font-black underline decoration-emerald-600/20 underline-offset-4">
+                            {inst.to}
+                          </span>
+                        </p>
+                        <p className="text-xl font-bold text-slate-400 uppercase tracking-widest">
+                          Settlement Order
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-end gap-1 shrink-0">
+                      <span className="text-3xl font-black text-primary">
+                        {formatToIDR(inst.amount)}
+                      </span>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-20 bg-white/10 rounded-lg border border-dashed border-white/30">
+                  <p className="text-3xl font-black text-white">
+                    Gak ada yang perlu ditransfer! 🎉
+                  </p>
+                  <p className="text-xl font-bold text-white/70 mt-2">
+                    Semua orang sudah lunas/impas.
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Payment Methods */}
+          {selectedMethods.length > 0 && (
+            <div className="space-y-8 mt-6">
+              <h3 className="text-3xl font-black text-slate-800 flex items-center gap-4">
+                <DollarSign className="w-8 h-8 text-primary" />
+                Detail Rekening Pembayaran 📥
+              </h3>
+              <div className="grid grid-cols-2 gap-6 p-6 bg-slate-50 rounded-lg border border-slate-100">
+                {selectedMethods.map((method) => (
+                  <div
+                    key={method.id}
+                    className="p-6 bg-white border border-slate-100 rounded-lg flex items-center gap-8"
+                  >
+                    <div className="w-24 h-24 bg-slate-50 rounded-lg flex items-center justify-center border border-slate-100 shrink-0 relative overflow-hidden">
+                      {[
+                        "bca",
+                        "bni",
+                        "bri",
+                        "mandiri",
+                        "dana",
+                        "gopay",
+                        "ovo",
+                        "shopeepay",
+                        "jenius",
+                        "linkaja",
+                        "permata",
+                        "danamon",
+                        "bsi",
+                        "btn",
+                        "bank jago",
+                        "seabank",
+                      ].some((kw) =>
+                        method.providerName.toLowerCase().includes(kw),
+                      ) ? (
+                        <img
+                          src={`/img/logo-${method.providerName.toLowerCase()}.png`}
+                          alt={method.providerName}
+                          crossOrigin="anonymous"
+                          className="w-full h-full object-contain p-2"
+                        />
+                      ) : (
+                        <div className="text-primary/40 font-black text-2xl uppercase">
+                          {method.providerName.slice(0, 3)}
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex flex-col gap-1 min-w-0">
+                      <p className="text-lg font-black text-primary uppercase tracking-wider leading-none mb-1">
+                        {method.providerName}
+                      </p>
+                      <p className="text-3xl font-black text-slate-900 tracking-tight leading-none py-1 break-all">
+                        {method.accountNumber || method.phoneNumber}
+                      </p>
+                      <p className="text-xl font-bold text-slate-400 mt-1 truncate">
+                        a.n. {method.accountName}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
       {/* Rincian Per Orang Section */}
-      <div className="relative z-10 w-full mt-16 px-4">
+      <div className="relative z-10 w-full mt-8 px-4">
         <h3 className="text-3xl font-black text-slate-800 mb-10 flex items-center gap-4">
           <Users className="w-8 h-8 text-primary" />
           Rincian Per Orang 📊
@@ -188,7 +330,7 @@ export const SocialSplitBillReceipt = React.forwardRef<
               return (
                 <div
                   key={name}
-                  className="flex flex-col gap-10 p-8 bg-white border border-slate-100 rounded-[50px]"
+                  className="flex flex-col gap-10 p-8 bg-white border border-slate-100 rounded-lg"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-8">
@@ -251,7 +393,7 @@ export const SocialSplitBillReceipt = React.forwardRef<
 
                   {/* Person's Items */}
                   {b.items.length > 0 && (
-                    <div className="bg-slate-50/50 rounded-[35px] p-8 flex flex-col gap-6">
+                    <div className="bg-slate-50/50 rounded-lg p-8 flex flex-col gap-6">
                       <p className="text-[18px] font-black uppercase text-slate-400 tracking-widest pl-2">
                         Item Terdaftar:
                       </p>
@@ -297,144 +439,6 @@ export const SocialSplitBillReceipt = React.forwardRef<
         </div>
       </div>
 
-      {/* Transfer & Payment Info Section */}
-      <div className="relative z-10 w-full mt-16 px-4">
-        <div className="flex flex-col gap-10">
-          {/* Instructions */}
-          <div className="space-y-10">
-            <h3 className="text-3xl font-black text-slate-800 flex items-center gap-4">
-              <ArrowRight className="w-8 h-8 text-primary" />
-              Transfer Ke Sini Ya! 💸
-            </h3>
-            <div className="grid grid-cols-1 gap-5">
-              {settlementInstructions.length > 0 ? (
-                settlementInstructions.map((inst, idx) => (
-                  <div
-                    key={idx}
-                    className="bg-white border border-slate-100 rounded-[35px] p-8 flex items-center justify-between gap-4 transition-all"
-                  >
-                    <div className="flex items-center gap-6 flex-1 min-w-0">
-                      <div className="relative flex items-center shrink-0">
-                        <div className="w-16 h-16 rounded-full border-4 border-white overflow-hidden bg-white">
-                          <img
-                            src={`${AVATAR_BASE_URL}${encodeURIComponent(inst.from)}`}
-                            alt={inst.from}
-                            crossOrigin="anonymous"
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                        <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center mx-[-8px] z-10 border-2 border-slate-50">
-                          <ArrowRight className="w-5 h-5 text-primary" />
-                        </div>
-                        <div className="w-16 h-16 rounded-full border-4 border-white overflow-hidden bg-white">
-                          <img
-                            src={`${AVATAR_BASE_URL}${encodeURIComponent(inst.to)}`}
-                            alt={inst.to}
-                            crossOrigin="anonymous"
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                      </div>
-                      <div className="flex flex-col gap-1 min-w-0">
-                        <p className="text-2xl font-bold text-slate-600">
-                          <span className="text-destructive font-black underline decoration-destructive/20 underline-offset-4">
-                            {inst.from}
-                          </span>
-                          {" Transfer ke "}
-                          <span className="text-emerald-600 font-black underline decoration-emerald-600/20 underline-offset-4">
-                            {inst.to}
-                          </span>
-                        </p>
-                        <p className="text-xl font-bold text-slate-400 uppercase tracking-widest">
-                          Settlement Order
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex flex-col items-end gap-1 shrink-0">
-                      <span className="text-3xl font-black text-primary">
-                        {formatToIDR(inst.amount)}
-                      </span>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div className="text-center py-20 bg-slate-50 rounded-[40px] border border-dashed border-slate-200">
-                  <p className="text-3xl font-black text-slate-400">
-                    Gak ada yang perlu ditransfer! 🎉
-                  </p>
-                  <p className="text-xl font-bold text-slate-400 mt-2">
-                    Semua orang sudah lunas/impas.
-                  </p>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Payment Methods */}
-          {selectedMethods.length > 0 && (
-            <div className="space-y-8 mt-6">
-              <h3 className="text-3xl font-black text-slate-800 flex items-center gap-4">
-                <DollarSign className="w-8 h-8 text-primary" />
-                Detail Rekening Pembayaran 📥
-              </h3>
-              <div className="grid grid-cols-2 gap-6 p-6 bg-slate-50 rounded-[50px] border border-slate-100">
-                {selectedMethods.map((method) => (
-                  <div
-                    key={method.id}
-                    className="p-6 bg-white border border-slate-100 rounded-[35px] flex items-center gap-8"
-                  >
-                    <div className="w-24 h-24 bg-slate-50 rounded-md flex items-center justify-center border border-slate-100 shrink-0 relative overflow-hidden">
-                      {[
-                        "bca",
-                        "bni",
-                        "bri",
-                        "mandiri",
-                        "dana",
-                        "gopay",
-                        "ovo",
-                        "shopeepay",
-                        "jenius",
-                        "linkaja",
-                        "permata",
-                        "danamon",
-                        "bsi",
-                        "btn",
-                        "bank jago",
-                        "seabank",
-                      ].some((kw) =>
-                        method.providerName.toLowerCase().includes(kw),
-                      ) ? (
-                        <img
-                          src={`/img/logo-${method.providerName.toLowerCase()}.png`}
-                          alt={method.providerName}
-                          crossOrigin="anonymous"
-                          className="w-full h-full object-contain p-2"
-                        />
-                      ) : (
-                        <div className="text-primary/40 font-black text-2xl uppercase">
-                          {method.providerName.slice(0, 3)}
-                        </div>
-                      )}
-                    </div>
-                    <div className="flex flex-col gap-1 min-w-0">
-                      <p className="text-lg font-black text-primary uppercase tracking-wider leading-none mb-1">
-                        {method.providerName}
-                      </p>
-                      <p className="text-3xl font-black text-slate-900 tracking-tight leading-none py-1 break-all">
-                        {method.accountNumber || method.phoneNumber}
-                      </p>
-                      <p className="text-xl font-bold text-slate-400 mt-1 truncate">
-                        a.n. {method.accountName}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-
       {/* Badges Section */}
       <div className="relative z-10 w-full mt-16 px-4">
         <div className="grid grid-cols-1 gap-6">
@@ -450,7 +454,7 @@ export const SocialSplitBillReceipt = React.forwardRef<
               return (
                 <div
                   key={name}
-                  className="flex items-center gap-5 p-6 bg-slate-50 rounded-[30px] border border-slate-100 transition-all hover:scale-105"
+                  className="flex items-center gap-5 p-6 bg-slate-50 rounded-lg border border-slate-100 transition-all hover:scale-105"
                 >
                   <div className="w-20 h-20 rounded-full border-4 border-white overflow-hidden bg-white shrink-0">
                     <img

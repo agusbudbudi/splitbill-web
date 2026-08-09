@@ -3,24 +3,16 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { Card, CardContent } from "@/components/ui/Card";
 import { useSplitLaterStore, BucketType } from "@/store/useSplitLaterStore";
 import { useFriendStore } from "@/lib/stores/friendStore";
-import {
-  Plus,
-  X,
-  Save,
-  ChevronDown,
-  ChevronUp,
-  Info,
-  Check,
-} from "lucide-react";
+import { Save, Briefcase, PenLine, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { BottomSheet } from "@/components/ui/BottomSheet";
 import { SavedBestiesSelection } from "@/components/splitbill/SavedBestiesSelection";
-
-const AVATAR_BASE_URL =
-  "https://api.dicebear.com/9.x/personas/svg?backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf&size=64&scale=100&seed=";
+import { StepperV2 } from "@/components/splitbill/StepperV2";
+import { ParticipantsFormCard } from "@/components/splitbill/ParticipantsFormCard";
 
 const BUCKET_TYPE_OPTIONS: {
   value: BucketType;
@@ -58,25 +50,34 @@ interface BucketFormBottomSheetProps {
   onClose: () => void;
   editBucketId?: string | null;
   onDone?: (bucketId: string) => void;
+  /** Which step to land on when the sheet opens. Defaults to 1 (Kategori). */
+  initialStep?: 1 | 2 | 3;
 }
+
+const FORM_STEPS = [
+  { id: 1, label: "Kategori", icon: Briefcase },
+  { id: 2, label: "Nama", icon: PenLine },
+  { id: 3, label: "Peserta", icon: Users },
+];
 
 export const BucketFormBottomSheet = ({
   isOpen,
   onClose,
   editBucketId,
   onDone,
+  initialStep = 1,
 }: BucketFormBottomSheetProps) => {
   const { updateBucket, buckets } = useSplitLaterStore();
   const { friends, groups, addFriend, trackFriendUsage, getFriendsInGroup } =
     useFriendStore();
 
+  const [step, setStep] = useState<1 | 2 | 3>(initialStep);
   const [title, setTitle] = useState("");
   const [emoji, setEmoji] = useState("✈️");
   const [bucketType, setBucketType] = useState<BucketType>("trip");
   const [selectedCategoryLabel, setSelectedCategoryLabel] = useState<string>(
     "Liburan / Traveling",
   );
-  const [newParticipant, setNewParticipant] = useState("");
   const [participants, setParticipants] = useState<string[]>([]);
   const [participantsError, setParticipantsError] = useState<string | null>(
     null,
@@ -107,28 +108,21 @@ export const BucketFormBottomSheet = ({
     }
   }, [editBucketId, isOpen]);
 
-  const handleAddParticipant = () => {
-    setParticipantsError(null);
-    if (!newParticipant.trim()) return;
+  // Land on the requested step every time the sheet is (re)opened
+  useEffect(() => {
+    if (isOpen) setStep(initialStep);
+  }, [isOpen, initialStep]);
 
-    const names = newParticipant
-      .split(",")
-      .map((n) => n.trim())
-      .filter(Boolean);
-    const dupes = names.filter((n) => participants.includes(n));
-
-    if (dupes.length > 0) {
-      setParticipantsError(`"${dupes[0]}" sudah ditambahkan.`);
-    }
-
-    const toAdd = [...new Set(names)].filter((n) => !participants.includes(n));
-    if (toAdd.length > 0) {
-      setParticipants([...participants, ...toAdd]);
-      setNewParticipant("");
+  const syncFriendToStore = (name: string) => {
+    const existingFriend = friends.find(
+      (f) => f.name.toLowerCase() === name.toLowerCase(),
+    );
+    if (!existingFriend) {
+      addFriend({ name });
+    } else {
+      trackFriendUsage(existingFriend.id);
     }
   };
-
-
 
   const handleSave = () => {
     if (!title.trim()) {
@@ -174,165 +168,199 @@ export const BucketFormBottomSheet = ({
     setBucketType("trip");
     setSelectedCategoryLabel("Liburan / Traveling");
     setParticipants([]);
-    setNewParticipant("");
     setParticipantsError(null);
   };
 
 
+
+  const goNext = () => {
+    if (step === 2 && !title.trim()) {
+      toast.error("Isi nama Split Later/trip dulu ya!");
+      return;
+    }
+    setStep((s) => (s < 3 ? ((s + 1) as 1 | 2 | 3) : s));
+  };
+
+  const goBack = () => setStep((s) => (s > 1 ? ((s - 1) as 1 | 2 | 3) : s));
+
+  const footer = (
+    <div className="flex gap-3">
+      {step > 1 && (
+        <button
+          type="button"
+          onClick={goBack}
+          className="flex-1 h-12 rounded-md bg-white border border-primary/20 text-primary text-sm font-bold active:scale-95 transition-all cursor-pointer"
+        >
+          Kembali
+        </button>
+      )}
+      {step < 3 ? (
+        <Button
+          type="button"
+          onClick={goNext}
+          className="flex-1 h-12 text-base font-bold shadow-lg shadow-primary/20"
+        >
+          Lanjut
+        </Button>
+      ) : (
+        <Button
+          type="button"
+          onClick={handleSave}
+          disabled={participants.length < 2}
+          className="flex-1 h-12 text-base font-bold shadow-lg shadow-primary/20"
+        >
+          <Save className="w-5 h-5 mr-2" /> Simpan Perubahan
+        </Button>
+      )}
+    </div>
+  );
 
   return (
     <BottomSheet
       isOpen={isOpen}
       onClose={onClose}
       title="Edit Split Later"
-      maxHeight="80dvh"
-      footer={
-        <Button
-          type="button"
-          onClick={handleSave}
-          className="w-full h-12 text-base font-bold shadow-lg shadow-primary/20"
-        >
-          <Save className="w-5 h-5 mr-2" /> Simpan Perubahan
-        </Button>
-      }
+      fullScreen
+      subHeader={<StepperV2 steps={FORM_STEPS} currentStep={step} />}
+      footer={footer}
     >
-      <div className="space-y-6">
-        {/* Nama Split Later */}
-          <div className="space-y-2">
-            <label className="text-sm font-bold text-foreground px-1">
-              Nama Acara / Trip
-            </label>
-            <Input
-              placeholder="Contoh: Roadtrip Bandung, Liburan Bali"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="bg-white h-12"
+      <div className="space-y-8">
+        {step === 1 && (
+          <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
+            <div className="flex flex-col items-start text-left gap-1 mb-3">
+              <h2 className="text-lg font-bold text-foreground">Ini Acara Apaan Nih? 🍜</h2>
+              <p className="text-muted-foreground text-xs max-w-[360px]">
+                Pilih kategori acara/trip kamu
+              </p>
+            </div>
+
+            <Card className="shadow-soft">
+              <CardContent className="p-5 space-y-4">
+                <div className="flex items-center gap-2 px-1">
+                  <Briefcase className="w-4 h-4 text-primary" />
+                  <label className="text-sm font-bold text-foreground">
+                    Kategori Acara
+                  </label>
+                </div>
+                <div className="grid grid-cols-3 gap-2">
+                  {BUCKET_TYPE_OPTIONS.map((opt) => (
+                    <button
+                      key={opt.label}
+                      type="button"
+                      onClick={() => {
+                        setBucketType(opt.value);
+                        setSelectedCategoryLabel(opt.label);
+                        setEmoji(opt.emoji);
+                      }}
+                      className={cn(
+                        "flex flex-col items-center gap-1.5 py-4 px-2 rounded-sm text-xs font-bold transition-all active:scale-95 cursor-pointer border-2",
+                        selectedCategoryLabel === opt.label
+                          ? "bg-primary/10 border-primary/50 text-primary"
+                          : "bg-muted/30 border-transparent text-muted-foreground hover:bg-primary/5 hover:text-primary",
+                      )}
+                    >
+                      <span className="text-2xl">{opt.emoji}</span>
+                      <span className="text-center text-[10px] leading-tight">
+                        {opt.label}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
+        {step === 2 && (
+          <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
+            <div className="flex flex-col items-start text-left gap-1 mb-3">
+              <h2 className="text-lg font-bold text-foreground">
+                Kasih Nama & Emoji Unik! 🏷️
+              </h2>
+              <p className="text-muted-foreground text-xs max-w-[360px]">
+                Kasih nama & emoji biar gampang dikenali
+              </p>
+            </div>
+
+            <Card className="shadow-soft">
+              <CardContent className="p-5 space-y-4">
+                <div className="flex items-center gap-2 px-1">
+                  <PenLine className="w-4 h-4 text-primary" />
+                  <label className="text-sm font-bold text-foreground">
+                    Nama Acara / Trip
+                  </label>
+                </div>
+
+                <Input
+                  placeholder="Contoh: Roadtrip Bandung, Liburan Bali"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  autoFocus
+                  className="bg-white border-primary/10 h-12 text-sm font-bold px-4 focus-visible:ring-primary/20"
+                />
+
+                <p className="text-[11px] text-muted-foreground px-1 -mt-2">
+                  Dipakai untuk riwayat & saat dibagikan ke peserta.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="shadow-soft">
+              <CardContent className="p-5 space-y-4">
+                <label className="text-sm font-bold text-foreground px-1 block">
+                  Pilih Emoji Utama
+                </label>
+                <div className="grid grid-cols-6 gap-2 w-full">
+                  {EMOJI_OPTIONS.map((e) => (
+                    <button
+                      key={e}
+                      type="button"
+                      onClick={() => setEmoji(e)}
+                      className={cn(
+                        "w-full aspect-square text-xl rounded-sm transition-all active:scale-95 cursor-pointer flex items-center justify-center",
+                        emoji === e
+                          ? "bg-primary/10 border-2 border-primary/50 scale-105"
+                          : "bg-muted/30 border-2 border-transparent hover:bg-primary/5",
+                      )}
+                    >
+                      {e}
+                    </button>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
+        {step === 3 && (
+          <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
+            <div className="flex flex-col items-start text-left gap-1 mb-3">
+              <h2 className="text-lg font-bold text-foreground">Siapa Aja yang Join? 👥</h2>
+              <p className="text-muted-foreground text-xs max-w-[360px]">
+                Ajak minimal 2 bestie buat mulai patungan
+              </p>
+            </div>
+
+            <ParticipantsFormCard
+              people={participants}
+              onAdd={(name) => {
+                setParticipants([...participants, name]);
+                syncFriendToStore(name);
+              }}
+              onDuplicate={(name) =>
+                setParticipantsError(`"${name}" sudah ditambahkan.`)
+              }
+              onRemove={(name) =>
+                setParticipants(participants.filter((p) => p !== name))
+              }
+              addLabel="Daftar Peserta 👥"
+              participantsLabel="Peserta Split Later 👥"
             />
-          </div>
-
-          {/* Emoji Picker */}
-          <div className="space-y-2">
-            <label className="text-sm font-bold text-foreground px-1">
-              Pilih Emoji 🎨
-            </label>
-            <div className="flex overflow-x-auto py-1 pb-2 scrollbar-hide gap-2 px-1">
-              {EMOJI_OPTIONS.map((e) => (
-                <button
-                  key={e}
-                  type="button"
-                  onClick={() => setEmoji(e)}
-                  className={cn(
-                    "w-10 h-10 text-xl rounded-sm transition-all active:scale-95 cursor-pointer shrink-0",
-                    emoji === e
-                      ? "bg-primary/10 border-2 border-primary scale-110"
-                      : "bg-muted/30 border-2 border-transparent hover:bg-primary/5",
-                  )}
-                >
-                  {e}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Kategori Selector */}
-          <div className="space-y-2">
-            <label className="text-sm font-bold text-foreground px-1">
-              Tipe Acara
-            </label>
-            <div className="grid grid-cols-3 gap-2">
-              {BUCKET_TYPE_OPTIONS.map((opt) => (
-                <button
-                  key={opt.label}
-                  type="button"
-                  onClick={() => {
-                    setBucketType(opt.value);
-                    setSelectedCategoryLabel(opt.label);
-                    setEmoji(opt.emoji);
-                  }}
-                  className={cn(
-                    "flex flex-col items-center gap-1 py-3 px-2 rounded-md text-xs font-bold transition-all active:scale-95 cursor-pointer border border-primary/5 ",
-                    selectedCategoryLabel === opt.label
-                      ? "bg-primary text-white border-primary shadow-md shadow-primary/20"
-                      : "bg-muted/30 text-muted-foreground hover:bg-primary/5 hover:text-primary",
-                  )}
-                >
-                  <span className="text-lg">{opt.emoji}</span>
-                  <span className="text-center">{opt.label}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Peserta Form */}
-          <div className="space-y-3">
-            <label className="text-sm font-bold text-foreground px-1">
-              Peserta Trip 👥{" "}
-              <span className="text-muted-foreground font-normal">
-                (min. 2)
-              </span>
-            </label>
-            <div className="flex items-center gap-2">
-              <Input
-                placeholder="Ketik nama, pisahkan dengan koma..."
-                value={newParticipant}
-                onChange={(e) => {
-                  setNewParticipant(e.target.value);
-                  if (participantsError) setParticipantsError(null);
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    handleAddParticipant();
-                  }
-                }}
-                className="flex-1 bg-white h-12"
-              />
-              <Button
-                type="button"
-                onClick={handleAddParticipant}
-                disabled={!newParticipant.trim()}
-                size="icon"
-                className="shrink-0 h-12 w-12"
-              >
-                <Plus className="w-5 h-5" />
-              </Button>
-            </div>
 
             {participantsError && (
-              <p className="text-[10px] text-destructive px-1">
+              <p className="text-[10px] text-destructive px-1 -mt-4">
                 {participantsError}
               </p>
-            )}
-
-            {participants.length > 0 && (
-              <div className="flex flex-wrap gap-2 mt-2">
-                {participants.map((name, i) => (
-                  <div
-                    key={i}
-                    className="flex items-center gap-2 bg-muted/30 px-2 py-1.5 rounded-full border border-primary/5 group"
-                  >
-                    <div className="w-5 h-5 rounded-full border border-white shadow-sm overflow-hidden bg-white shrink-0">
-                      <img
-                        src={`${AVATAR_BASE_URL}${encodeURIComponent(name)}`}
-                        alt={name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <span className="text-xs font-bold text-foreground">
-                      {name}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setParticipants(participants.filter((p) => p !== name))
-                      }
-                      className="hover:text-red-500 transition-colors cursor-pointer"
-                    >
-                      <X className="w-3 h-3" />
-                    </button>
-                  </div>
-                ))}
-              </div>
             )}
 
             {/* Besties & Circle Selection */}
@@ -369,6 +397,7 @@ export const BucketFormBottomSheet = ({
               }}
             />
           </div>
+        )}
       </div>
     </BottomSheet>
   );

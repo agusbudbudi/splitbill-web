@@ -8,6 +8,9 @@ export interface Expense {
   amount: number;
   who: string[]; // names of people sharing the expense
   paidBy: string; // name of person who paid
+  // Origin of the item — "scan" items count toward the AI-scan total-mismatch
+  // check, undefined/"manual" items don't. Undefined = manual for backward compat.
+  source?: "scan" | "manual";
 }
 
 export interface AdditionalExpense {
@@ -17,6 +20,7 @@ export interface AdditionalExpense {
   who: string[];
   paidBy: string;
   splitType: "equally" | "proportionally";
+  source?: "scan" | "manual";
 }
 
 interface SplitBillState {
@@ -41,6 +45,10 @@ interface SplitBillState {
 
   // Scanned receipt images for interactive preview
   scannedReceiptImages: string[];
+
+  // Sum of total_amount from AI-scanned receipts, used to warn when the
+  // manually-assembled expense list drifts from what the receipt says.
+  scannedTotalAmount: number | null;
 
   // Receipt images already uploaded & linked to the current draft/record
   uploadedReceiptImages: BackendReceiptImage[];
@@ -80,6 +88,8 @@ interface SplitBillState {
   clearPendingCapturedImage: () => void;
   addScannedReceiptImage: (image: string) => void;
   clearScannedReceiptImages: () => void;
+  addScannedTotalAmount: (amount: number) => void;
+  clearScannedTotalAmount: () => void;
   addUploadedReceiptImages: (images: BackendReceiptImage[]) => void;
   clearUploadedReceiptImages: () => void;
 }
@@ -99,6 +109,7 @@ export const useSplitBillStore = create<SplitBillState>()(
       sourceReceiptId: undefined,
       pendingCapturedImage: undefined,
       scannedReceiptImages: [],
+      scannedTotalAmount: null,
       uploadedReceiptImages: [],
 
       setActivityName: (activityName) => set({ activityName }),
@@ -277,6 +288,7 @@ export const useSplitBillStore = create<SplitBillState>()(
           sourceReceiptId: undefined,
           pendingCapturedImage: undefined,
           scannedReceiptImages: [],
+          scannedTotalAmount: null,
           uploadedReceiptImages: [],
         }),
 
@@ -293,6 +305,13 @@ export const useSplitBillStore = create<SplitBillState>()(
 
       clearScannedReceiptImages: () =>
         set({ scannedReceiptImages: [] }),
+
+      addScannedTotalAmount: (amount) =>
+        set((state) => ({
+          scannedTotalAmount: (state.scannedTotalAmount ?? 0) + amount,
+        })),
+
+      clearScannedTotalAmount: () => set({ scannedTotalAmount: null }),
 
       addUploadedReceiptImages: (images) =>
         set((state) => ({

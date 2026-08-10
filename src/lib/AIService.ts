@@ -19,6 +19,7 @@ export interface ReceiptScanResult {
   service_charge: number | null;
   discount: number | null;
   additional_charges: AdditionalCharge[];
+  total_amount: number | null;
   [key: string]: any; // Allow for extra fields from API
 }
 
@@ -98,6 +99,7 @@ export const scanReceipt = async (
         service_charge: null,
         discount: null,
         additional_charges: [],
+        total_amount: null,
       };
     }
 
@@ -131,6 +133,9 @@ export const scanReceipt = async (
     rawTaxonomy.tax = parseNumericField(rawTaxonomy.tax);
     rawTaxonomy.service_charge = parseNumericField(rawTaxonomy.service_charge);
     rawTaxonomy.discount = parseNumericField(rawTaxonomy.discount);
+    rawTaxonomy.total_amount = parseNumericField(
+      rawTaxonomy.total_amount ?? rawTaxonomy.total,
+    );
 
     // Normalize additional_charges (e.g. "pembulatan", "biaya parkir", "PB1")
     rawTaxonomy.additional_charges = Array.isArray(rawTaxonomy.additional_charges)

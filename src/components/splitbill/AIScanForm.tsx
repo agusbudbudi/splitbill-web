@@ -43,7 +43,7 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
   const [justImported, setJustImported] = useState<{ count: number } | null>(null);
   const scanStartTimeRef = useRef<number | null>(null);
 
-  const { addExpense, setActivityName, addAdditionalExpense, pendingCapturedImage, clearPendingCapturedImage, addScannedReceiptImage } =
+  const { addExpense, setActivityName, addAdditionalExpense, pendingCapturedImage, clearPendingCapturedImage, addScannedReceiptImage, addScannedTotalAmount } =
     useSplitBillStore();
   const { isAuthenticated, user, getCurrentUser, isInitialized } =
     useAuthStore();
@@ -137,6 +137,7 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
           amount: item.price,
           who: [],
           paidBy: "",
+          source: "scan",
         });
       });
     }
@@ -156,6 +157,7 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
           who: [],
           paidBy: "",
           splitType: "proportionally",
+          source: "scan",
         });
       }
     });
@@ -167,8 +169,13 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
         who: [],
         paidBy: "",
         splitType: "proportionally",
+        source: "scan",
       });
     });
+
+    if (result.total_amount) {
+      addScannedTotalAmount(result.total_amount);
+    }
 
     setImage(null);
     setScanResult(null);
@@ -321,6 +328,7 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
           amount: item.price,
           who: [],
           paidBy: "",
+          source: "scan",
         });
       });
     }
@@ -343,6 +351,7 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
           who: [],
           paidBy: "",
           splitType: "proportionally",
+          source: "scan",
         });
       }
     });
@@ -354,8 +363,13 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
         who: [],
         paidBy: "",
         splitType: "proportionally",
+        source: "scan",
       });
     });
+
+    if (scanResult.total_amount) {
+      addScannedTotalAmount(scanResult.total_amount);
+    }
 
     // Reset
     setImage(null);

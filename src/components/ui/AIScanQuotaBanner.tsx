@@ -4,10 +4,12 @@ import React, { useState, useEffect } from "react";
 import { Sparkles, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/lib/stores/authStore";
 import { getGuestScanQuota, GUEST_LIMIT } from "@/lib/utils/guestQuota";
 import { Button } from "@/components/ui/Button";
+import { trackSubscription } from "@/lib/gtag";
 
 interface AIScanQuotaBannerProps {
   className?: string;
@@ -30,6 +32,7 @@ const CardVariant = ({
   className?: string;
   showRedirect?: boolean;
 }) => {
+  const router = useRouter();
   const { isAuthenticated, user } = useAuthStore();
   const [mounted, setMounted] = useState(false);
 
@@ -47,8 +50,59 @@ const CardVariant = ({
 
   const effectiveCount = isAuthenticated ? freeScanCount : guestRemaining;
   const isExhausted = !isSubscribed && effectiveCount <= 0;
-  // Hide when exhausted — barrier screen already shows the empty-state message
-  if (isExhausted) return null;
+
+  // Guest quota exhausted — barrier screen at the scan flow already handles
+  // the login/register nudge, so stay hidden here.
+  if (!isAuthenticated && isExhausted) return null;
+
+  // Authenticated, non-VIP, quota exhausted — nudge to upgrade instead of
+  // hiding, since this is otherwise the user's only prompt on the homepage.
+  if (isAuthenticated && isExhausted) {
+    return (
+      <div
+        className={cn(
+          "relative px-[1.5px] pt-[1.5px] pb-[4px] bg-gradient-to-r from-violet-400 via-pink-400 to-primary/70 shadow-lg shadow-pink-500/5 transition-all duration-300 h-full w-full flex flex-col overflow-hidden rounded-sm",
+          className
+        )}
+      >
+        <div className="relative overflow-hidden bg-white z-10 flex-grow flex flex-col gap-3 py-3 px-3 rounded-[10.5px]">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-pink-500/5 rounded-full blur-2xl -mr-6 -mt-6 pointer-events-none" />
+
+          <div className="relative flex items-center gap-3">
+            <div className="shrink-0 rounded-full bg-primary/5 border border-primary/10 flex items-center justify-center w-10 h-10">
+              <Image
+                src="/img/ai-icon.png"
+                alt="Ikon AI"
+                width={40}
+                height={40}
+                className="w-6 h-6 object-contain"
+              />
+            </div>
+
+            <div>
+              <h4 className="font-bold text-slate-800 tracking-tight leading-tight text-sm">
+                Scan Habis! 🚀
+              </h4>
+              <p className="text-xs text-muted-foreground leading-relaxed font-medium">
+                Upgrade ke <span className="bg-gradient-to-r from-primary to-violet-500 bg-clip-text text-transparent font-black">VIP</span> buat scan tanpa batas
+              </p>
+            </div>
+          </div>
+
+          <Button
+            onClick={() => {
+              trackSubscription.premiumFeatureClick("ai_scan_quota_barrier");
+              trackSubscription.initiateCheckout("quota_barrier");
+              router.push("/subscription");
+            }}
+            className="w-full h-10 shadow-lg shadow-primary/10 hover:shadow-primary/20 cursor-pointer"
+          >
+            Upgrade ke VIP
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   const badgeLabel = isSubscribed ? "PRO" : "Free";
 

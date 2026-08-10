@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useSplitLaterStore } from "@/store/useSplitLaterStore";
 import { BucketCard } from "@/components/split-later/BucketCard";
 import { FeatureBanner } from "@/components/ui/FeatureBanner";
+import { PromoBanner } from "@/components/ui/PromoBanner";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Button } from "@/components/ui/Button";
 import { FolderOpen, Plus } from "lucide-react";
@@ -78,6 +79,18 @@ export function SplitLaterPanel() {
           ))}
         </div>
       )}
+
+      {/* Fokus Healing Dulu Banner */}
+      <PromoBanner
+        isCompact
+        href="/split-later?step=1"
+        image="/img/promoBanner-split-later-new.jpg"
+        titleText="Udah kumpul struknya?"
+        titleHighlight="Yuk mulai split-nya! 🧾"
+        description="Semua struk yang udah kekumpul siap dihitung dan dibagi rata."
+        compactDescription="Struk siap? Yuk split sekarang."
+        ctaText="Buat Split Later Baru"
+      />
     </div>
   );
 }

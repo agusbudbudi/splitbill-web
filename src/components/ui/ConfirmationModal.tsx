@@ -9,7 +9,7 @@ interface ConfirmationModalProps {
   onClose: () => void;
   onConfirm: () => void;
   title: string;
-  description: string;
+  description: React.ReactNode;
   icon: LucideIcon;
   confirmText?: string;
   cancelText?: string;
@@ -48,9 +48,9 @@ export function ConfirmationModal({
             <h3 className="text-xl font-bold text-foreground tracking-tight">
               {title}
             </h3>
-            <p className="text-sm text-muted-foreground font-medium mt-2 leading-relaxed">
+            <div className="text-sm text-muted-foreground font-medium mt-2 leading-relaxed">
               {description}
-            </p>
+            </div>
           </div>
           <div className="flex gap-3 pt-4">
             <Button

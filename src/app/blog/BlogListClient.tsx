@@ -15,16 +15,23 @@ import { BlogCTA } from "@/components/blog/BlogCTA";
 import { HomepageFooter } from "@/components/homepage/HomepageFooter";
 import { HomepageNavbar } from "@/components/homepage/HomepageNavbar";
 
+const BLOGS_PER_PAGE = 12;
+
 export default function BlogListClient() {
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
     const loadBlogs = async () => {
       try {
-        const response = await fetchBlogs();
+        const response = await fetchBlogs({ page: 1, limit: BLOGS_PER_PAGE });
         setBlogs(response.data || []);
+        setPage(response.pagination?.page || 1);
+        setTotalPages(response.pagination?.totalPages || 1);
       } catch (error) {
         console.error("Failed to fetch blogs:", error);
       } finally {
@@ -33,6 +40,21 @@ export default function BlogListClient() {
     };
     loadBlogs();
   }, []);
+
+  const handleLoadMore = async () => {
+    setIsLoadingMore(true);
+    try {
+      const nextPage = page + 1;
+      const response = await fetchBlogs({ page: nextPage, limit: BLOGS_PER_PAGE });
+      setBlogs((prev) => [...prev, ...(response.data || [])]);
+      setPage(response.pagination?.page || nextPage);
+      setTotalPages(response.pagination?.totalPages || totalPages);
+    } catch (error) {
+      console.error("Failed to fetch more blogs:", error);
+    } finally {
+      setIsLoadingMore(false);
+    }
+  };
 
   const filteredBlogs = blogs.filter(
     (blog) =>
@@ -86,11 +108,24 @@ export default function BlogListClient() {
             ))}
           </div>
         ) : filteredBlogs.length > 0 ? (
-          <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredBlogs.map((blog, index) => (
-              <BlogCard key={blog._id} blog={blog} priority={index === 0} />
-            ))}
-          </div>
+          <>
+            <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {filteredBlogs.map((blog, index) => (
+                <BlogCard key={blog._id} blog={blog} priority={index === 0} />
+              ))}
+            </div>
+            {!searchQuery && page < totalPages && (
+              <div className="w-full flex justify-center mt-10">
+                <button
+                  onClick={handleLoadMore}
+                  disabled={isLoadingMore}
+                  className="px-6 py-3 rounded-md bg-white border border-border/60 font-bold text-foreground shadow-sm hover:bg-muted/50 transition-all disabled:opacity-50"
+                >
+                  {isLoadingMore ? "Memuat..." : "Muat Lebih Banyak"}
+                </button>
+              </div>
+            )}
+          </>
         ) : (
           <div className="bg-white rounded-md p-12 text-center shadow-soft border border-border/50 mt-12">
             <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mx-auto mb-6">

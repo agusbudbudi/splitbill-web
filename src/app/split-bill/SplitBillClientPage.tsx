@@ -39,10 +39,11 @@ import {
   History as HistoryIcon,
   RotateCcw,
   Calendar,
+  Info,
 } from "lucide-react";
 import { SuccessSection } from "@/components/ui/SuccessSection";
 import { cn, formatToIDR, getDefaultActivityName, getFriendAvatarUrl } from "@/lib/utils";
-import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
+import { BottomSheet } from "@/components/ui/BottomSheet";
 
 import { SegmentedControl } from "@/components/ui/SegmentedControl";
 import confetti from "canvas-confetti";
@@ -86,6 +87,7 @@ const SplitBillContent = () => {
     clearSource,
     sourceBucketId,
     sourceReceiptId,
+    scannedTotalAmount,
   } = useSplitBillStore();
 
   useEffect(() => {
@@ -133,6 +135,11 @@ const SplitBillContent = () => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showAIScanAuthModal, setShowAIScanAuthModal] = useState(false);
   const [isSurveyOpen, setIsSurveyOpen] = useState(false);
+  const [showTotalMismatchModal, setShowTotalMismatchModal] = useState(false);
+  const [totalMismatchInfo, setTotalMismatchInfo] = useState<{
+    scanTotal: number;
+    addedTotal: number;
+  } | null>(null);
   const [surveyTriggerStep, setSurveyTriggerStep] = useState<number>(1);
   const [showAdModal, setShowAdModal] = useState(false);
   const [currentAd, setCurrentAd] = useState<AdCampaign | null>(null);
@@ -649,6 +656,38 @@ const SplitBillContent = () => {
     }
   };
 
+  const advanceStep = async () => {
+    if (step === 3) {
+      if (!isVip) {
+        const selectedAd = await getRandomAdCampaign();
+        setCurrentAd(selectedAd);
+        setOnAdFinishedCallback(() => proceedToStep4);
+        setShowAdModal(true);
+        return;
+      }
+      await proceedToStep4();
+      return;
+    } else {
+      // PRO TIP: We now await saveDraft even for Step 1 & 2 to ensure
+      // the draftId is properly set in the store before moving to the next step.
+      // This prevents race conditions and "STEP_1" stuck issues for logged-in users.
+      setIsSavingDraft(true);
+      try {
+        await saveDraft();
+      } catch (err) {
+        console.error("Failed to save draft:", err);
+      } finally {
+        setIsSavingDraft(false);
+      }
+    }
+
+
+    const nextStepNum = step + 1;
+    const stepNames = ["", "Teman", "Bil", "Detail", "Hasil"];
+    trackSplitBill.stepComplete(nextStepNum, stepNames[nextStepNum] || "");
+    router.replace(`/split-bill?step=${nextStepNum}`);
+  };
+
   const nextStep = async () => {
     if (step === 1 && people.length < 2) {
       const errorMsg =
@@ -681,37 +720,34 @@ const SplitBillContent = () => {
       if (!activityName.trim()) {
         setActivityName(getDefaultActivityName());
       }
-    }
 
-    if (step === 3) {
-      if (!isVip) {
-        const selectedAd = await getRandomAdCampaign();
-        setCurrentAd(selectedAd);
-        setOnAdFinishedCallback(() => proceedToStep4);
-        setShowAdModal(true);
+      // Only compare the scan-sourced items against the receipt's own total —
+      // manually added items are excluded so mixing scan + manual doesn't
+      // false-positive, while editing/deleting a scanned item still does
+      // (it no longer sums up to what the receipt said).
+      const scanDerivedTotal =
+        expenses
+          .filter((e) => e.source === "scan")
+          .reduce((sum, e) => sum + e.amount, 0) +
+        additionalExpenses
+          .filter((e) => e.source === "scan")
+          .reduce((sum, e) => sum + e.amount, 0);
+
+      if (
+        scannedTotalAmount !== null &&
+        scannedTotalAmount > 0 &&
+        scanDerivedTotal !== scannedTotalAmount
+      ) {
+        setTotalMismatchInfo({
+          scanTotal: scannedTotalAmount,
+          addedTotal: scanDerivedTotal,
+        });
+        setShowTotalMismatchModal(true);
         return;
       }
-      await proceedToStep4();
-      return;
-    } else {
-      // PRO TIP: We now await saveDraft even for Step 1 & 2 to ensure 
-      // the draftId is properly set in the store before moving to the next step.
-      // This prevents race conditions and "STEP_1" stuck issues for logged-in users.
-      setIsSavingDraft(true);
-      try {
-        await saveDraft();
-      } catch (err) {
-        console.error("Failed to save draft:", err);
-      } finally {
-        setIsSavingDraft(false);
-      }
     }
 
-
-    const nextStepNum = step + 1;
-    const stepNames = ["", "Teman", "Bil", "Detail", "Hasil"];
-    trackSplitBill.stepComplete(nextStepNum, stepNames[nextStepNum] || "");
-    router.replace(`/split-bill?step=${nextStepNum}`);
+    await advanceStep();
   };
 
   const handleAdClose = () => {
@@ -1452,49 +1488,49 @@ const SplitBillContent = () => {
             )}
 
             {step === 4 && !isSaved && (
-                <Button
-                  onClick={() => {
-                    if (expenses.length === 0) {
-                      toast.error("Belum ada item nih! 📝", {
-                        description:
-                          "Yuk isi dulu item belanjaan atau pengeluarannya sebelum disimpan.",
-                        duration: 4000,
-                      });
-                      return;
-                    }
-                    const hasUnassigned = expenses.some(
-                      (e) => e.who.length === 0 || !e.paidBy
-                    );
-                    const hasUnassignedAdx = additionalExpenses.some(
-                      (e) => e.who.length === 0 || !e.paidBy
-                    );
-                    if (hasUnassigned || hasUnassignedAdx) {
-                      toast.error("Ada item yang belum dilengkapi! ⚠️", {
-                        description:
-                          "Pastikan semua item sudah di-assign 'Split dengan' dan 'Dibayar oleh' ya.",
-                        duration: 4000,
-                      });
-                      return;
-                    }
-                    handleFinalize();
-                  }}
-                  disabled={isFinalizing}
-                  className="w-full h-14 text-lg font-bold bg-primary text-white shadow-xl shadow-primary/30 active:scale-95 transition-all !disabled:opacity-70 flex items-center justify-center"
-                >
-                  {isFinalizing ? (
-                    <div className="flex items-center justify-center gap-2.5">
-                      <div className="relative flex h-3 w-3">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-3 w-3 bg-white"></span>
-                      </div>
-                      <span>Wait, lagi disimpen... 💅</span>
+              <Button
+                onClick={() => {
+                  if (expenses.length === 0) {
+                    toast.error("Belum ada item nih! 📝", {
+                      description:
+                        "Yuk isi dulu item belanjaan atau pengeluarannya sebelum disimpan.",
+                      duration: 4000,
+                    });
+                    return;
+                  }
+                  const hasUnassigned = expenses.some(
+                    (e) => e.who.length === 0 || !e.paidBy
+                  );
+                  const hasUnassignedAdx = additionalExpenses.some(
+                    (e) => e.who.length === 0 || !e.paidBy
+                  );
+                  if (hasUnassigned || hasUnassignedAdx) {
+                    toast.error("Ada item yang belum dilengkapi! ⚠️", {
+                      description:
+                        "Pastikan semua item sudah di-assign 'Split dengan' dan 'Dibayar oleh' ya.",
+                      duration: 4000,
+                    });
+                    return;
+                  }
+                  handleFinalize();
+                }}
+                disabled={isFinalizing}
+                className="w-full h-14 text-lg font-bold bg-primary text-white shadow-xl shadow-primary/30 active:scale-95 transition-all !disabled:opacity-70 flex items-center justify-center"
+              >
+                {isFinalizing ? (
+                  <div className="flex items-center justify-center gap-2.5">
+                    <div className="relative flex h-3 w-3">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-3 w-3 bg-white"></span>
                     </div>
-                  ) : (
-                    <>
-                      <CheckCircle2 className="mr-2 w-5 h-5" /> Simpan & Share ✨
-                    </>
-                  )}
-                </Button>
+                    <span>Wait, lagi disimpen... 💅</span>
+                  </div>
+                ) : (
+                  <>
+                    <CheckCircle2 className="mr-2 w-5 h-5" /> Simpan & Share ✨
+                  </>
+                )}
+              </Button>
             )}
           </div>
         </div>
@@ -1516,6 +1552,87 @@ const SplitBillContent = () => {
           return `${pathname}?${currentParams.toString()}`;
         })()}
       />
+
+      <BottomSheet
+        isOpen={showTotalMismatchModal}
+        onClose={() => setShowTotalMismatchModal(false)}
+        title={
+          totalMismatchInfo
+            ? `Selisih ${formatToIDR(
+              Math.abs(totalMismatchInfo.scanTotal - totalMismatchInfo.addedTotal),
+            )} dari Struk 🧐`
+            : "Total Tidak Cocok 🧐"
+        }
+        showBackButton={false}
+        headerAction={<></>}
+        footer={
+          <div className="grid grid-cols-2 gap-3">
+            <Button
+              variant="outline"
+              onClick={() => setShowTotalMismatchModal(false)}
+              className="h-12 font-bold cursor-pointer"
+            >
+              Periksa
+            </Button>
+            <Button
+              onClick={() => {
+                setShowTotalMismatchModal(false);
+                advanceStep();
+              }}
+              className="h-12 font-bold shadow-lg cursor-pointer bg-primary text-white shadow-primary/20"
+            >
+              Lanjutkan
+            </Button>
+          </div>
+        }
+      >
+        <div className="flex items-start gap-3">
+          <div className="w-10 h-10 shrink-0 bg-primary/10 rounded-full flex items-center justify-center">
+            <ReceiptText className="w-5 h-5 text-primary" />
+          </div>
+          <p className="text-sm text-muted-foreground font-medium leading-relaxed line-clamp-2">
+            {totalMismatchInfo &&
+              totalMismatchInfo.addedTotal < totalMismatchInfo.scanTotal
+              ? "Kami mendeteksi ada kemungkinan item yang kelewat."
+              : "Kami mendeteksi ada kemungkinan item ganda atau salah nominal."}
+          </p>
+        </div>
+
+        {totalMismatchInfo && (
+          <div className="rounded-sm bg-amber-50 border border-amber-200 p-3 mt-4 space-y-1.5 text-sm">
+            <div className="flex items-center justify-between">
+              <span className="text-amber-800">Total hasil scan AI</span>
+              <span className="font-bold text-amber-950">
+                {formatToIDR(totalMismatchInfo.scanTotal)}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-amber-800">Total yang ditambahkan</span>
+              <span className="font-bold text-amber-950">
+                {formatToIDR(totalMismatchInfo.addedTotal)}
+              </span>
+            </div>
+            <div className="flex items-center justify-between border-t border-amber-200 pt-1.5 mt-1.5">
+              <span className="text-amber-800">Selisih</span>
+              <span className="font-bold text-red-600">
+                {formatToIDR(
+                  Math.abs(
+                    totalMismatchInfo.scanTotal - totalMismatchInfo.addedTotal,
+                  ),
+                )}
+              </span>
+            </div>
+          </div>
+        )}
+
+        <div className="flex items-start gap-2 rounded-sm bg-primary/5 p-2.5 mt-3 text-xs text-muted-foreground">
+          <Info className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" />
+          <span>
+            Verifikasi ini cuma bandingin item hasil scan struk AI. Item yang
+            kamu tambah manual gak dihitung di pengecekan ini.
+          </span>
+        </div>
+      </BottomSheet>
 
       {/* Auth Modal for AI Scan Entry Points */}
       <AuthModal

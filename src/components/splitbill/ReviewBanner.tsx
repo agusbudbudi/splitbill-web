@@ -71,7 +71,7 @@ export const ReviewBanner: React.FC<ReviewBannerProps> = ({ onClose }) => {
 
         <div
           onClick={handleDismis}
-          className="p-2 -mr-2 text-white/60 hover:text-white transition-colors"
+          className="p-2 -mr-2 text-white/60 hover:text-white transition-colors cursor-pointer"
         >
           <X className="w-5 h-5" />
         </div>

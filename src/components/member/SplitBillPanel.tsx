@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ChevronRight, ReceiptText, Clock } from "lucide-react";
 import { OngoingSplitBillCard } from "@/components/home/OngoingSplitBillCard";
 import { AIScanEncourageBanner } from "@/components/home/AIScanEncourageBanner";
-import { ShareEncouragement } from "@/components/home/ShareEncouragement";
+import { PromoBanner } from "@/components/ui/PromoBanner";
 import { Card, CardContent } from "@/components/ui/Card";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { formatToIDR } from "@/lib/utils";
@@ -118,7 +118,7 @@ export function SplitBillPanel() {
       </div>
 
       {/* Section 3: Share encouragement banner */}
-      <ShareEncouragement isCompact />
+      <PromoBanner isCompact image="/img/promoBanner-split-later.jpg" />
     </div>
   );
 }

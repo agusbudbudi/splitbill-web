@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import { usePWA } from "@/hooks/usePWA";
 import { useAuthStore } from "@/lib/stores/authStore";
+import { useUIStore } from "@/lib/stores/uiStore";
 import { cn } from "@/lib/utils";
 
 interface PwaInstallBannerProps {
@@ -18,11 +19,9 @@ export function PwaInstallBanner({ containerClassName }: PwaInstallBannerProps) 
 
   useEffect(() => {
     const isDismissed = sessionStorage.getItem("pwa_dismissed") === "true";
-    if (isAuthenticated && !isStandalone && (isInstallable || isIOS) && !isDismissed) {
-      setShowPwaBanner(true);
-    } else {
-      setShowPwaBanner(false);
-    }
+    const shouldShow = isAuthenticated && !isStandalone && (isInstallable || isIOS) && !isDismissed;
+    setShowPwaBanner(shouldShow);
+    useUIStore.getState().setIsPWABannerVisible(shouldShow);
   }, [isInstallable, isStandalone, isIOS, isAuthenticated]);
 
   const handlePwaInstall = async () => {
@@ -47,6 +46,7 @@ export function PwaInstallBanner({ containerClassName }: PwaInstallBannerProps) 
     e.stopPropagation();
     sessionStorage.setItem("pwa_dismissed", "true");
     setShowPwaBanner(false);
+    useUIStore.getState().setIsPWABannerVisible(false);
   };
 
   return (

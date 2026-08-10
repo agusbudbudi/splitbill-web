@@ -14,8 +14,10 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Clock, User, Calendar, Share2, ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
+import { canGoBackInApp } from "@/lib/utils/navigationHistory";
 
 interface BlogDetailClientProps {
   blog: Blog;
@@ -26,7 +28,12 @@ export default function BlogDetailClient({
   blog,
   recentBlogs = [],
 }: BlogDetailClientProps) {
+  const router = useRouter();
   const shareUrl = `https://www.splitbill.my.id/blog/${blog.slug}`;
+
+  const handleBack = () => {
+    canGoBackInApp() ? router.back() : router.push("/blog");
+  };
 
   const handleShare = () => {
     if (navigator.share) {
@@ -67,7 +74,7 @@ export default function BlogDetailClient({
         {/* WhatsApp */}
         <button
           onClick={shareToWhatsApp}
-          className="w-10 h-10 flex items-center justify-center rounded-full bg-[#25D366] text-white hover:bg-[#20ba59] transition-all shadow-md active:scale-95 group relative hover:scale-105"
+          className="w-10 h-10 flex items-center justify-center rounded-full bg-[#25D366] text-white hover:bg-[#20ba59] transition-all shadow-md active:scale-95 group relative hover:scale-105 cursor-pointer"
           title="Bagikan ke WhatsApp"
         >
           <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
@@ -81,7 +88,7 @@ export default function BlogDetailClient({
         {/* X (formerly Twitter) */}
         <button
           onClick={shareToX}
-          className="w-10 h-10 flex items-center justify-center rounded-full bg-black text-white hover:bg-zinc-800 transition-all shadow-md active:scale-95 group relative hover:scale-105"
+          className="w-10 h-10 flex items-center justify-center rounded-full bg-black text-white hover:bg-zinc-800 transition-all shadow-md active:scale-95 group relative hover:scale-105 cursor-pointer"
           title="Bagikan ke X"
         >
           <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
@@ -95,7 +102,7 @@ export default function BlogDetailClient({
         {/* Facebook */}
         <button
           onClick={shareToFacebook}
-          className="w-10 h-10 flex items-center justify-center rounded-full bg-[#1877F2] text-white hover:bg-[#166fe5] transition-all shadow-md active:scale-95 group relative hover:scale-105"
+          className="w-10 h-10 flex items-center justify-center rounded-full bg-[#1877F2] text-white hover:bg-[#166fe5] transition-all shadow-md active:scale-95 group relative hover:scale-105 cursor-pointer"
           title="Bagikan ke Facebook"
         >
           <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
@@ -110,6 +117,7 @@ export default function BlogDetailClient({
       <Header
         sticky
         showBackButton
+        onBack={handleBack}
         wide
         rightContent={
           <button
@@ -126,13 +134,22 @@ export default function BlogDetailClient({
 
         {/* Left Column: Hero Banner Image & Main Content */}
         <main className="w-full lg:flex-1 flex flex-col gap-6">
-          {/* Article Hero */}
-          <section className="relative w-[calc(100%+48px)] -mx-6 -mt-0 rounded-none lg:w-full lg:mx-0 lg:mt-0 lg:rounded-lg aspect-[4/3] md:aspect-[16/9] min-h-[300px] bg-muted overflow-hidden shadow-soft">
+          {/* Article Hero — Mobile: natural image height, no crop */}
+          <div className="lg:hidden w-[calc(100%+48px)] -mx-6 bg-muted overflow-hidden">
+            <img
+              src={blog.thumbnail || "/img/pwa-banner.png"}
+              alt={blog.thumbnailAlt || blog.title}
+              className="w-full h-auto"
+            />
+          </div>
+
+          {/* Article Hero — Desktop: cropped banner with overlay */}
+          <section className="hidden lg:block relative w-full rounded-lg aspect-[16/9] min-h-[300px] bg-muted overflow-hidden shadow-soft">
             <Image
               src={blog.thumbnail || "/img/pwa-banner.png"}
               alt={blog.thumbnailAlt || blog.title}
               fill
-              sizes="(max-width: 1200px) 100vw, 800px"
+              sizes="800px"
               className="w-full h-full object-cover"
               priority
             />
@@ -172,6 +189,39 @@ export default function BlogDetailClient({
               </div>
             </div>
           </section>
+
+          {/* Mobile: Category, Title & Meta below image */}
+          <div className="lg:hidden">
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <Badge className="bg-primary text-white border-none px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest mb-4">
+                {blog.category}
+              </Badge>
+              <h1 className="text-2xl font-black mb-4 leading-tight tracking-tight text-foreground">
+                {blog.title}
+              </h1>
+
+              <div className="flex flex-wrap items-center gap-6 text-xs text-muted-foreground font-medium">
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-full bg-muted flex items-center justify-center">
+                    <User className="w-4 h-4" />
+                  </div>
+                  <span>{blog.author}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-4 h-4" />
+                  <span>{formatDate(blog.publishedAt || blog.createdAt)}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Clock className="w-4 h-4" />
+                  <span>{blog.readTime} mnt baca</span>
+                </div>
+              </div>
+            </motion.div>
+          </div>
 
           <motion.div
             initial={{ opacity: 0 }}
@@ -216,7 +266,7 @@ export default function BlogDetailClient({
               </div>
 
               <Link href="/blog">
-                <button className="flex items-center gap-2 text-primary font-bold text-sm hover:underline transition-all">
+                <button className="flex items-center gap-2 text-primary font-bold text-sm hover:underline transition-all cursor-pointer">
                   <ArrowLeft className="w-4 h-4" />
                   Kembali ke Blog
                 </button>
@@ -228,23 +278,28 @@ export default function BlogDetailClient({
         {/* Right Column: Sidebar */}
         <aside className="w-full lg:w-[360px] shrink-0 flex flex-col gap-6">
           {/* Ads Banner CTA to /split-bill */}
-          <div className="w-full bg-gradient-to-br from-slate-50 to-slate-100/50 p-6 rounded-md flex flex-col gap-4 relative overflow-hidden">
-            <div className="space-y-2">
-              <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-wider">
-                Fitur Populer
-              </div>
-              <h3 className="font-bold text-base text-foreground leading-tight">
+          <div className="w-full bg-primary pt-6 px-6 rounded-md flex flex-col gap-4 relative overflow-hidden">
+            <div className="space-y-2 relative z-10">
+              <h3 className="font-bold text-xl text-white leading-tight">
                 Bagi Tagihan Lebih Praktis ⚡️
               </h3>
-              <p className="text-xs text-muted-foreground leading-relaxed">
+              <p className="text-xs text-white/80 leading-relaxed">
                 Scan struk belanja & hitung nominal secara otomatis dengan AI. Gratis, cepat, dan akurat.
               </p>
             </div>
-            <Link href="/split-bill">
-              <Button className="w-full py-2.5 text-xs font-bold rounded-sm shadow-sm hover:shadow-md transition-all cursor-pointer">
+            <Link href="/split-bill" className="relative z-10">
+              <Button className="w-full py-2.5 text-xs font-bold rounded-sm bg-white text-primary shadow-sm hover:bg-white/90 hover:opacity-100 transition-all cursor-pointer">
                 Coba Split Bill Sekarang
               </Button>
             </Link>
+            <div className="relative mt-2 -mx-6">
+              <img
+                src="/img/hero-ads-blog.png"
+                alt="Ilustrasi Split Bill"
+                className="h-auto w-[90%] mx-auto block relative z-10"
+              />
+              <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-primary to-transparent pointer-events-none z-20" />
+            </div>
           </div>
 
           {/* Sidebar: Read Next Section */}

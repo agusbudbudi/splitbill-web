@@ -20,6 +20,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { formatToIDR } from "@/lib/utils/invoice";
 import { FeatureBanner } from "@/components/ui/FeatureBanner";
+import { PromoBanner } from "@/components/ui/PromoBanner";
 import { ActionCard } from "@/components/ui/ActionCard";
 import { BilledToShortcut } from "./BilledToShortcut";
 
@@ -198,6 +199,18 @@ export const InvoiceLanding = () => {
 
       {/* Billed To Shortcuts */}
       <BilledToShortcut />
+
+      {/* Invoice Promo Banner */}
+      <PromoBanner
+        isCompact
+        href="/invoice/create?step=1"
+        image="/img/promoBanner-invoice.jpg"
+        titleText="Invoice Rapi,"
+        titleHighlight="Kesan Profesional! 📄"
+        description="Buat invoice profesional dalam sekejap, tinggal kirim ke klien."
+        compactDescription="Sat set, tinggal kirim ke klien."
+        ctaText="Buat Invoice"
+      />
 
       {/* Feature Highlights Grid */}
       <section className="space-y-4">

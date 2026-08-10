@@ -9,6 +9,7 @@ import { useFriendStore } from "@/lib/stores/friendStore";
 import { BucketCard } from "@/components/split-later/BucketCard";
 import { BucketFormBottomSheet } from "@/components/split-later/BucketFormBottomSheet";
 import { FeatureBanner } from "@/components/ui/FeatureBanner";
+import { PromoBanner } from "@/components/ui/PromoBanner";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -664,6 +665,18 @@ export default function SplitLaterClientPage() {
               ))}
             </div>
           )}
+
+          {/* Fokus Healing Dulu Banner */}
+          <PromoBanner
+            isCompact
+            href="/split-later?step=1"
+            image="/img/promoBanner-split-later-new.jpg"
+            titleText="Udah kumpul struknya?"
+            titleHighlight="Yuk mulai split-nya! 🧾"
+            description="Semua struk yang udah kekumpul siap dihitung dan dibagi rata."
+            compactDescription="Struk siap? Yuk split sekarang."
+            ctaText="Buat Split Later Baru"
+          />
         </div>
 
         <Footer />

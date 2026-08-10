@@ -7,7 +7,7 @@ import { HeroSection } from "./HeroSection";
 import { SocialProofBar } from "./SocialProofBar";
 import { FeaturesSection } from "./FeaturesSection";
 import { HowItWorksSection } from "./HowItWorksSection";
-import { ShareEncouragement } from "../home/ShareEncouragement";
+import { PromoBanner } from "../ui/PromoBanner";
 import { Banner } from "../home/Banner";
 import { HomepageFooter } from "./HomepageFooter";
 import { useAuthStore } from "@/lib/stores/authStore";
@@ -142,10 +142,10 @@ export const HomepagePageClient = () => {
         {/* How It Works Steps */}
         <HowItWorksSection />
 
-        {/* Encouragement Banner */}
+        {/* Promo Banner */}
         <section className="bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <ShareEncouragement />
+            <PromoBanner />
           </div>
         </section>
 

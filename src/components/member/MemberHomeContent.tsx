@@ -11,17 +11,18 @@ import { MemberGettingStarted } from "@/components/member/MemberGettingStarted";
 import { ReviewRewardBanner } from "@/components/home/ReviewRewardBanner";
 import { FAQCard } from "@/components/home/FAQCard";
 import { AIScanEncourageBanner } from "@/components/home/AIScanEncourageBanner";
-import { ShareEncouragement } from "@/components/home/ShareEncouragement";
+import { PromoBanner } from "@/components/ui/PromoBanner";
 import { useSplitBillStore } from "@/store/useSplitBillStore";
 import { useWalletStore } from "@/store/useWalletStore";
+import { useUIStore } from "@/lib/stores/uiStore";
 import { cn } from "@/lib/utils";
 
 interface MemberHomeContentProps {
-  showPwaBanner?: boolean;
   singleColumn?: boolean;
 }
 
-export function MemberHomeContent({ showPwaBanner = false, singleColumn = false }: MemberHomeContentProps) {
+export function MemberHomeContent({ singleColumn = false }: MemberHomeContentProps) {
+  const showPwaBanner = useUIStore((state) => state.isPWABannerVisible);
   const savedBills = useWalletStore((state) => state.savedBills);
   const expenses = useSplitBillStore((state) => state.expenses);
   const activityName = useSplitBillStore((state) => state.activityName);
@@ -48,7 +49,7 @@ export function MemberHomeContent({ showPwaBanner = false, singleColumn = false 
           </section>
         ) : (
           <div
-            className={`w-[calc(100%+2rem)] -mx-4 -mt-4 bg-gradient-to-b from-primary via-primary/50 to-transparent sm:w-full sm:mx-0 sm:mt-0 sm:pt-0 sm:pb-0 sm:bg-none ${showPwaBanner ? "pt-6" : "pt-0"
+            className={`w-[calc(100%+2rem)] -mx-4 -mt-4 bg-gradient-to-b from-primary via-primary/50 to-transparent sm:w-full sm:mx-0 sm:mt-0 sm:pt-0 sm:pb-0 sm:bg-none ${showPwaBanner ? "pt-4" : "pt-0"
               }`}
           >
             <section className="space-y-4 mx-4 sm:mx-0">
@@ -127,7 +128,7 @@ export function MemberHomeContent({ showPwaBanner = false, singleColumn = false 
         </section>
 
         <section className="space-y-4">
-          <ShareEncouragement isCompact />
+          <PromoBanner isCompact image="/img/promoBanner-split-later.jpg" />
         </section>
 
         <section className="space-y-4">

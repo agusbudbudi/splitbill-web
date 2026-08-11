@@ -8,6 +8,7 @@ export async function fetchBlogs(params?: {
   tag?: string;
   cache?: RequestCache;
   next?: NextFetchRequestConfig;
+  signal?: AbortSignal;
 }): Promise<BlogsResponse> {
   const query = new URLSearchParams();
   if (params?.page) query.append("page", params.page.toString());
@@ -23,6 +24,7 @@ export async function fetchBlogs(params?: {
     skipAuth: true,
     ...(params?.cache && { cache: params.cache }),
     ...(params?.next && { next: params.next }),
+    ...(params?.signal && { signal: params.signal }),
   });
 }
 

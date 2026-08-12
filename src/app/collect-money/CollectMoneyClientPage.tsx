@@ -12,8 +12,10 @@ import { FeatureBanner } from "@/components/ui/FeatureBanner";
 import { Input } from "@/components/ui/Input";
 import { toast } from "sonner";
 import { useSearchParams, useRouter } from "next/navigation";
-import { Plus, Wallet, Clock, Archive } from "lucide-react";
-import { SegmentedControl } from "@/components/ui/SegmentedControl";
+import { Clock, Archive } from "lucide-react";
+import { TabsUnderline } from "@/components/ui/TabsUnderline";
+import { BottomSheet } from "@/components/ui/BottomSheet";
+import { IllustratedEmptyState } from "@/components/ui/IllustratedEmptyState";
 import { cn } from "@/lib/utils";
 
 export default function CollectMoneyClientPage() {
@@ -78,7 +80,7 @@ function CollectMoneyContent() {
       <div
         className={cn(
           "absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[600px] bg-primary z-0 rounded-b-[20px] transition-all duration-300",
-          isDetailView ? "h-[250px]" : "h-[150px]"
+          isDetailView ? "h-[280px]" : "h-[150px]"
         )}
       />
       <div className="w-full flex-1 flex flex-col relative z-10">
@@ -117,37 +119,9 @@ function CollectMoneyContent() {
                   }}
                 />
 
-                {/* Create New Form (shown when needed) */}
-                {isCreating && (
-                  <div className="bg-card border border-border/50 p-4 rounded-lg  space-y-3 animate-in fade-in slide-in-from-top-2">
-                    <label className="text-sm font-bold text-foreground px-1">
-                      Judul Patungan
-                    </label>
-                    <Input
-                      placeholder="Contoh: Trip ke Bandung"
-                      value={newTitle}
-                      onChange={(e) => setNewTitle(e.target.value)}
-                      autoFocus
-                      onKeyDown={(e) => e.key === "Enter" && handleCreate()}
-                    />
-                    <div className="flex gap-2 pt-2">
-                      <Button
-                        variant="ghost"
-                        className="flex-1"
-                        onClick={() => setIsCreating(false)}
-                      >
-                        Batal
-                      </Button>
-                      <Button className="flex-1" onClick={handleCreate}>
-                        Mulai
-                      </Button>
-                    </div>
-                  </div>
-                )}
-
                 {/* List of Collections */}
                 <div className="space-y-4">
-                  <SegmentedControl
+                  <TabsUnderline
                     options={[
                       {
                         id: "active",
@@ -172,35 +146,22 @@ function CollectMoneyContent() {
                     onChange={setActiveTab}
                   />
 
-                  <h3 className="text-sm font-bold text-foreground/70 flex items-center gap-2 px-1">
-                    {activeTab === "active" ? (
-                      <>
-                        <Wallet className="w-4 h-4 text-primary" />
-                        Daftar Patungan Aktif
-                      </>
-                    ) : (
-                      <>
-                        <Archive className="w-4 h-4 text-primary" />
-                        Arsip Patungan
-                      </>
-                    )}
+                  <h3 className="text-sm font-bold text-foreground/70 px-1">
+                    {activeTab === "active"
+                      ? "Daftar Patungan Aktif"
+                      : "Arsip Patungan"}
                   </h3>
 
                   {displayedCollections.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center py-12 px-4 text-center border-2 border-dashed border-muted/40 rounded-md bg-muted/5">
-                      <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4 text-primary">
-                        <Wallet className="w-8 h-8" />
-                      </div>
-                      <h3 className="text-lg font-bold text-foreground">
-                        Belum ada Patungan
-                      </h3>
-                      <p className="text-sm text-muted-foreground max-w-[300px] mb-6">
-                        Buat patungan baru atau import langsung dari Split Bill!
-                      </p>
-                      <Button onClick={() => setIsCreating(true)}>
-                        <Plus className="w-4 h-4 mr-2" /> Buat Baru
-                      </Button>
-                    </div>
+                    <IllustratedEmptyState
+                      title="Belum ada Patungan"
+                      description="Yuk buat patungan pertamamu!"
+                      ctaText="Buat Baru"
+                      onCtaClick={(e) => {
+                        e.preventDefault();
+                        setIsCreating(true);
+                      }}
+                    />
                   ) : (
                     <div className="grid gap-3">
                       {displayedCollections.map((c) => (
@@ -220,6 +181,38 @@ function CollectMoneyContent() {
           )}
         </div>
       </div>
+
+      <BottomSheet
+        isOpen={isCreating}
+        onClose={() => setIsCreating(false)}
+        title="Buat Patungan Baru"
+        footer={
+          <div className="flex gap-2">
+            <Button
+              variant="ghost"
+              className="flex-1"
+              onClick={() => setIsCreating(false)}
+            >
+              Batal
+            </Button>
+            <Button className="flex-1" onClick={handleCreate}>
+              Mulai
+            </Button>
+          </div>
+        }
+      >
+        <label className="text-sm font-bold text-foreground px-1">
+          Judul Patungan
+        </label>
+        <Input
+          className="mt-2"
+          placeholder="Contoh: Trip ke Bandung"
+          value={newTitle}
+          onChange={(e) => setNewTitle(e.target.value)}
+          autoFocus
+          onKeyDown={(e) => e.key === "Enter" && handleCreate()}
+        />
+      </BottomSheet>
     </div>
   );
 }

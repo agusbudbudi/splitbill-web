@@ -1,12 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { useSharedGoalsStore } from "@/store/useSharedGoalsStore";
 import { GoalCard } from "@/components/goals/GoalCard";
 import { Button } from "@/components/ui/Button";
-import { Plus, Target } from "lucide-react";
-import { GoalFormBottomSheet } from "@/components/goals/GoalFormBottomSheet";
+import { Plus } from "lucide-react";
 import { GoalDetailView } from "@/components/goals/GoalDetailView";
+import { IllustratedEmptyState } from "@/components/ui/IllustratedEmptyState";
 
 interface SharedGoalsTabProps {
   isFormOpen: boolean;
@@ -18,11 +18,9 @@ interface SharedGoalsTabProps {
 }
 
 export const SharedGoalsTab = ({
-  isFormOpen,
   setIsFormOpen,
   selectedGoalId,
   setSelectedGoalId,
-  editGoalId,
   setEditGoalId,
 }: SharedGoalsTabProps) => {
   const { goals } = useSharedGoalsStore();
@@ -30,20 +28,15 @@ export const SharedGoalsTab = ({
   return (
     <div className="space-y-4">
       {goals.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-12 px-4 text-center border-2 border-dashed border-muted/40 rounded-md bg-muted/5">
-          <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4 text-primary">
-            <Target className="w-8 h-8" />
-          </div>
-          <h3 className="text-lg font-bold text-foreground">
-            Belum ada Shared Goal
-          </h3>
-          <p className="text-sm text-muted-foreground max-w-[300px] mb-6">
-            Buat tabungan bersama untuk liburan, kado, atau acara bareng teman!
-          </p>
-          <Button onClick={() => setIsFormOpen(true)}>
-            <Plus className="w-4 h-4 mr-2" /> Buat Goal Baru
-          </Button>
-        </div>
+        <IllustratedEmptyState
+          title="Belum ada Shared Goal"
+          description="Yuk buat tabungan bersama pertamamu!"
+          ctaText="Buat Goal Baru"
+          onCtaClick={(e) => {
+            e.preventDefault();
+            setIsFormOpen(true);
+          }}
+        />
       ) : (
         <div className="space-y-3">
           {goals.map((goal) => (
@@ -65,15 +58,6 @@ export const SharedGoalsTab = ({
       )}
 
       {/* Modals */}
-      <GoalFormBottomSheet
-        isOpen={isFormOpen}
-        onClose={() => {
-          setIsFormOpen(false);
-          setEditGoalId(null);
-        }}
-        editGoalId={editGoalId}
-      />
-
       <GoalDetailView
         goalId={selectedGoalId}
         onClose={() => setSelectedGoalId(null)}

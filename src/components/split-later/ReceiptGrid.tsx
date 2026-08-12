@@ -3,9 +3,9 @@
 import React, { useEffect, useState } from "react";
 import { BucketReceipt } from "@/store/useSplitLaterStore";
 import { ReceiptCard } from "./ReceiptCard";
-import { Camera, Receipt } from "lucide-react";
+import { Camera } from "lucide-react";
 import { toast } from "sonner";
-import { EmptyState } from "@/components/ui/EmptyState";
+import { IllustratedEmptyState } from "@/components/ui/IllustratedEmptyState";
 import { Card, CardContent } from "@/components/ui/Card";
 import { ReceiptImagePicker } from "@/components/splitbill/ReceiptImagePicker";
 
@@ -95,11 +95,11 @@ export const ReceiptGrid = ({
 
       {/* Receipt grid */}
       {receipts.length === 0 ? (
-        <EmptyState
-          icon={Receipt}
-          message="Belum Ada Struk"
-          subtitle="Yuk foto struk pertamamu! Bisa ambil foto langsung atau upload dari galeri."
-          className="bg-transparent rounded-md mt-4"
+        <IllustratedEmptyState
+          illustration="/img/empty-state/empty-transaction-image.png"
+          title="Belum Ada Struk"
+          description="Yuk foto atau upload struk pertamamu!"
+          className="mt-4"
         />
       ) : (
         <div className="grid grid-cols-2 gap-3 pt-4">

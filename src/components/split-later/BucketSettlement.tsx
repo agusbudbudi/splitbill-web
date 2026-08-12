@@ -4,12 +4,11 @@ import React from "react";
 import { BucketReceipt, SplitLaterBucket } from "@/store/useSplitLaterStore";
 import { useWalletStore } from "@/store/useWalletStore";
 import { Card, CardContent } from "@/components/ui/Card";
-import { EmptyState } from "@/components/ui/EmptyState";
+import { IllustratedEmptyState } from "@/components/ui/IllustratedEmptyState";
 import { formatToIDR } from "@/lib/utils";
 import {
   ArrowRight,
   CheckCircle2,
-  TrendingUp,
   ChevronDown,
   ChevronUp,
   Share2,
@@ -378,11 +377,10 @@ export const BucketSettlement = ({
 
   if (completedReceipts.length === 0) {
     return (
-      <EmptyState
-        icon={TrendingUp}
-        message="Belum Ada Struk yang Diproses"
-        subtitle="Proses struk-struk di tab Struk dulu ya, nanti hasilnya bakal muncul di sini."
-        className="bg-transparent rounded-md"
+      <IllustratedEmptyState
+        illustration="/img/empty-state/empty-transaction-image.png"
+        title="Belum Ada Struk yang Diproses"
+        description="Proses struk di tab Struk dulu ya!"
       />
     );
   }

@@ -21,7 +21,6 @@ import {
   Users,
   Trophy,
   Copy,
-  MessageCircle,
   Check,
   MoreVertical,
 } from "lucide-react";
@@ -34,7 +33,7 @@ import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import Link from "next/link";
 import { Header } from "@/components/layout/Header";
 import { Card, CardContent } from "@/components/ui/Card";
-import { EmptyState } from "@/components/ui/EmptyState";
+import { IllustratedEmptyState } from "@/components/ui/IllustratedEmptyState";
 import confetti from "canvas-confetti";
 import { ShareCollectionReceipt } from "./ShareCollectionReceipt";
 import { DynamicFinLogo } from "@/components/wallet/DynamicFinLogo";
@@ -45,6 +44,14 @@ import { AddPaymentMethodBottomSheet } from "@/components/wallet/AddPaymentMetho
 
 const AVATAR_BASE_URL =
   "https://api.dicebear.com/9.x/personas/svg?backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf&size=64&scale=100&seed=";
+
+const WhatsAppIcon = ({ className }: { className?: string }) => (
+  <img
+    src="/img/whatsApp-logo.png"
+    alt="WhatsApp"
+    className={cn("rounded-full object-cover", className)}
+  />
+);
 
 interface CollectionDashboardProps {
   collection: CollectionSession;
@@ -264,7 +271,7 @@ export const CollectionDashboard = ({
   const totalCount = collection.payers.length;
 
   return (
-    <div className="relative z-10 flex-1 flex flex-col pb-20 w-full">
+    <div className="relative z-10 flex-1 flex flex-col pb-4 w-full">
       <div className="relative z-10 flex-1 flex flex-col w-full">
         <Header
           title="Detail Patungan"
@@ -422,7 +429,7 @@ export const CollectionDashboard = ({
           )}
 
           {/* Main Progress Card */}
-          <Card className="border-none shadow-md shadow-primary/10 bg-white relative overflow-hidden mb-6">
+          <Card className="shadow-md shadow-primary/10 relative overflow-hidden mb-6">
             <CardContent className="p-5 space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex flex-col">
@@ -463,7 +470,7 @@ export const CollectionDashboard = ({
                   <Users className="w-4 h-4" /> Daftar Patungan
                 </h3>
                 <div className="flex gap-2">
-                  {progress < 100 && (
+                  {collection.payers.some((p) => !p.isPaid) && (
                     <Button
                       variant="ghost"
                       size="sm"
@@ -535,27 +542,44 @@ export const CollectionDashboard = ({
             {/* List Items */}
             <div className="space-y-2">
               {collection.payers.length === 0 ? (
-                <Card className="border-none shadow-soft overflow-hidden">
-                  <CardContent className="p-4">
-                    <EmptyState
-                      message="Belum ada teman di list ini"
-                      subtitle="Yuk tambah teman untuk mulai patungan!"
-                      icon={Users}
-                      className="bg-primary/5"
-                    />
-                  </CardContent>
-                </Card>
+                <IllustratedEmptyState
+                  illustration="/img/empty-state/empty-friend-image.png"
+                  title="Belum ada teman di list ini"
+                  description="Yuk tambah teman untuk mulai patungan!"
+                  ctaText="Tambah Teman"
+                  onCtaClick={(e) => {
+                    e.preventDefault();
+                    setIsAdding(true);
+                  }}
+                />
               ) : (
                 sortedPayers.map((payer) => (
                   <Card
                     key={payer.id}
                     className={cn(
-                      "border-none shadow-soft hover:shadow-lg hover:shadow-primary/5 transition-all group overflow-hidden",
+                      "shadow-soft hover:shadow-lg hover:shadow-primary/5 transition-all group overflow-hidden",
                       payer.isPaid ? "bg-emerald-50/30" : "bg-white",
                     )}
                   >
                     <CardContent className="p-3 flex items-center justify-between">
                       <div className="flex items-center gap-3">
+                        <button
+                          onClick={() =>
+                            togglePayerStatus(collection.id, payer.id)
+                          }
+                          className={cn(
+                            "w-8 h-8 rounded-full flex items-center justify-center transition-all active:scale-95 cursor-pointer shrink-0",
+                            payer.isPaid
+                              ? "bg-emerald-500 text-white shadow-md shadow-emerald-200 hover:bg-emerald-600"
+                              : "bg-muted text-muted-foreground hover:bg-muted-foreground/20",
+                          )}
+                        >
+                          {payer.isPaid ? (
+                            <CheckCircle2 className="w-5 h-5" />
+                          ) : (
+                            <Circle className="w-5 h-5" />
+                          )}
+                        </button>
                         <div
                           className={cn(
                             "w-10 h-10 rounded-full border-2 overflow-hidden shrink-0",
@@ -611,26 +635,9 @@ export const CollectionDashboard = ({
                             className="w-8 h-8 rounded-full flex items-center justify-center text-emerald-500 hover:bg-emerald-50 transition-colors cursor-pointer"
                             title="Tagih via WhatsApp"
                           >
-                            <MessageCircle className="w-4 h-4" />
+                            <WhatsAppIcon className="w-6 h-6" />
                           </button>
                         )}
-                        <button
-                          onClick={() =>
-                            togglePayerStatus(collection.id, payer.id)
-                          }
-                          className={cn(
-                            "w-8 h-8 rounded-full flex items-center justify-center transition-all active:scale-95 cursor-pointer",
-                            payer.isPaid
-                              ? "bg-emerald-500 text-white shadow-md shadow-emerald-200 hover:bg-emerald-600"
-                              : "bg-muted text-muted-foreground hover:bg-muted-foreground/20",
-                          )}
-                        >
-                          {payer.isPaid ? (
-                            <CheckCircle2 className="w-5 h-5" />
-                          ) : (
-                            <Circle className="w-5 h-5" />
-                          )}
-                        </button>
                         <button
                           onClick={() => removePayer(collection.id, payer.id)}
                           className="w-8 h-8 rounded-full flex items-center justify-center text-muted-foreground/30 hover:text-destructive hover:bg-destructive/10 transition-colors cursor-pointer"

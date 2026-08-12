@@ -14,6 +14,7 @@ import { Footer } from "@/components/layout/Footer";
 import { BlogCTA } from "@/components/blog/BlogCTA";
 import { HomepageFooter } from "@/components/homepage/HomepageFooter";
 import { HomepageNavbar } from "@/components/homepage/HomepageNavbar";
+import { IllustratedEmptyState } from "@/components/ui/IllustratedEmptyState";
 
 const BLOGS_PER_PAGE = 12;
 
@@ -100,7 +101,7 @@ export default function BlogListClient() {
       </section>
 
       {/* Main Content */}
-      <main className="w-full max-w-[600px] lg:max-w-7xl mx-auto px-4 mt-8 relative z-20 flex-1">
+      <main className="w-full max-w-[600px] lg:max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 flex-1">
         {isLoading ? (
           <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[1, 2, 3, 4, 5, 6].map((i) => (
@@ -127,21 +128,16 @@ export default function BlogListClient() {
             )}
           </>
         ) : (
-          <div className="bg-white rounded-md p-12 text-center shadow-soft border border-border/50 mt-12">
-            <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mx-auto mb-6">
-              <Search className="w-10 h-10 text-muted-foreground/30" />
-            </div>
-            <h3 className="text-xl font-bold mb-2">Artikel Tidak Ditemukan</h3>
-            <p className="text-muted-foreground">
-              Coba gunakan kata kunci lain atau telusuri semua artikel.
-            </p>
-            <button
-              onClick={() => setSearchQuery("")}
-              className="mt-6 text-primary font-bold hover:underline"
-            >
-              Hapus Filter
-            </button>
-          </div>
+          <IllustratedEmptyState
+            illustration="/img/empty-state/empty-search-image.png"
+            title="Artikel Tidak Ditemukan"
+            description="Coba gunakan kata kunci lain atau telusuri semua artikel."
+            ctaText="Hapus Filter"
+            onCtaClick={(e) => {
+              e.preventDefault();
+              setSearchQuery("");
+            }}
+          />
         )}
       </main>
 

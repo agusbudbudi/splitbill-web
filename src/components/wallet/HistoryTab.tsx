@@ -3,12 +3,9 @@
 import React from "react";
 import { useWalletStore } from "@/store/useWalletStore";
 import { formatToIDR } from "@/lib/utils";
-import { Button } from "@/components/ui/Button";
 import { Card, CardContent } from "@/components/ui/Card";
 import {
   ChevronRight,
-  ScrollText,
-  Plus,
   FileText,
   ReceiptText,
   Clock,
@@ -23,7 +20,7 @@ import { TabsUnderline } from "@/components/ui/TabsUnderline";
 import { useTransactionFilter } from "@/hooks/useTransactionFilter";
 import { TransactionFilterBottomSheet } from "@/components/history/TransactionFilterBottomSheet";
 import { Badge } from "@/components/ui/Badge";
-import { EmptyState } from "@/components/ui/EmptyState";
+import { IllustratedEmptyState } from "@/components/ui/IllustratedEmptyState";
 import { TransactionCardSkeleton } from "@/components/ui/TransactionCardSkeleton";
 
 export const HistoryTab = () => {
@@ -68,52 +65,37 @@ export const HistoryTab = () => {
   const renderEmptyState = ({ type }: { type: "split-bill" | "invoice" }) => {
     if (type === "split-bill") {
       return (
-        <EmptyState
-          icon={ScrollText}
-          message="Belum Ada Transaksi"
-          subtitle="Aktivitas split bill kamu akan muncul di sini setelah kamu menyelesaikan transaksi pertamamu."
-          action={
-            <Link href="/split-bill">
-              <Button className="px-10 shadow-lg shadow-primary/20 font-bold h-12">
-                <Plus className="w-5 h-5 mr-2" /> Buat Split Bill
-              </Button>
-            </Link>
-          }
+        <IllustratedEmptyState
+          illustration="/img/empty-state/empty-transaction-image.png"
+          title="Belum Ada Split Bill"
+          description="Yuk buat split bill pertamamu!"
+          ctaText="Buat Split Bill"
+          ctaHref="/split-bill"
         />
       );
     }
 
     return (
-      <EmptyState
-        icon={FileText}
-        message="Belum Ada Invoice"
-        subtitle="Aktivitas invoice kamu akan muncul di sini setelah kamu memfinalisasi invoice pertamamu."
-        action={
-          <Link href="/invoice/create">
-            <Button className="px-10 shadow-lg shadow-primary/20 font-bold h-12">
-              <Plus className="w-5 h-5 mr-2" /> Buat Invoice
-            </Button>
-          </Link>
-        }
+      <IllustratedEmptyState
+        illustration="/img/empty-state/empty-transaction-image.png"
+        title="Belum Ada Invoice"
+        description="Yuk buat invoice pertamamu!"
+        ctaText="Buat Invoice"
+        ctaHref="/invoice/create"
       />
     );
   };
 
   const renderFilteredEmptyState = () => (
-    <EmptyState
-      icon={Filter}
-      message={`Tidak Ada ${activeTab === "split-bill" ? "Transaksi" : "Invoice"}`}
-      subtitle={`Tidak ada ${activeTab === "split-bill" ? "transaksi" : "invoice"} dalam periode yang dipilih.`}
-      action={
-        <Button
-          variant="outline"
-          onClick={currentFilter.resetFilter}
-          className="rounded-lg"
-        >
-          <X className="w-4 h-4 mr-2" />
-          Hapus Filter
-        </Button>
-      }
+    <IllustratedEmptyState
+      illustration="/img/empty-state/empty-search-image.png"
+      title={`Tidak Ada ${activeTab === "split-bill" ? "Split Bill" : "Invoice"}`}
+      description="Tidak ada data dalam periode yang dipilih."
+      ctaText="Hapus Filter"
+      onCtaClick={(e) => {
+        e.preventDefault();
+        currentFilter.resetFilter();
+      }}
     />
   );
 

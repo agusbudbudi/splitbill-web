@@ -5,9 +5,8 @@ import { useSplitLaterStore } from "@/store/useSplitLaterStore";
 import { BucketCard } from "@/components/split-later/BucketCard";
 import { FeatureBanner } from "@/components/ui/FeatureBanner";
 import { PromoBanner } from "@/components/ui/PromoBanner";
-import { EmptyState } from "@/components/ui/EmptyState";
-import { Button } from "@/components/ui/Button";
-import { FolderOpen, Plus } from "lucide-react";
+import { IllustratedEmptyState } from "@/components/ui/IllustratedEmptyState";
+import { Plus } from "lucide-react";
 
 export function SplitLaterPanel() {
   const router = useRouter();
@@ -41,19 +40,15 @@ export function SplitLaterPanel() {
 
       {/* Bucket list */}
       {buckets.length === 0 ? (
-        <EmptyState
-          icon={FolderOpen}
-          message="Belum Ada Split Later"
-          subtitle="Buat Split Later baru buat ngumpulin struk-struk trip atau acara kamu!"
-          action={
-            <Button
-              onClick={goToPublicCreate}
-              className="h-12 px-8 font-bold rounded-md"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Buat Split Later Pertama
-            </Button>
-          }
+        <IllustratedEmptyState
+          illustration="/img/empty-state/empty-transaction-image.png"
+          title="Belum Ada Split Later"
+          description="Yuk buat Split Later pertamamu!"
+          ctaText="Buat Split Later"
+          onCtaClick={(e) => {
+            e.preventDefault();
+            goToPublicCreate();
+          }}
         />
       ) : (
         <div className="space-y-3">

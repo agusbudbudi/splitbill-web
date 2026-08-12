@@ -85,7 +85,7 @@ interface FeatureItem {
 
 const FeatureGrid = ({ items, hideBadges = false }: { items: FeatureItem[]; hideBadges?: boolean }) => {
   return (
-    <div className="grid grid-cols-4 sm:flex sm:flex-wrap items-start justify-items-start justify-start gap-2 sm:gap-12 py-2 px-2">
+    <div className="grid grid-cols-4 sm:grid-cols-5 items-start justify-items-start justify-start gap-2 sm:gap-12 py-2 px-2">
       {items.map((item) => (
         <Link
           key={item.id}

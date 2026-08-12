@@ -47,12 +47,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Dynamic Blog routes
   let blogRoutes: MetadataRoute.Sitemap = [];
   try {
-    // Add a timeout to the fetch if possible, but here we just catch the error
+    // Hard timeout so a slow/cold-starting backend can't hang this route
+    // past the serverless function limit (Googlebot got "couldn't fetch" from this)
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
     const blogsRes = await fetchBlogs({
       limit: 1000,
       cache: "force-cache",
       next: { revalidate: 86400 },
-    });
+      signal: controller.signal,
+    }).finally(() => clearTimeout(timeoutId));
     
     if (blogsRes && blogsRes.success && Array.isArray(blogsRes.data)) {
       blogRoutes = blogsRes.data

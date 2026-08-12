@@ -13,6 +13,7 @@ import { getOrders } from "@/lib/api/subscription";
 import type { Order } from "@/lib/types/subscription";
 import { formatToIDR, cn, formatDate } from "@/lib/utils";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { IllustratedEmptyState } from "@/components/ui/IllustratedEmptyState";
 import { Badge } from "@/components/ui/Badge";
 import { TransactionCardSkeleton } from "@/components/ui/TransactionCardSkeleton";
 
@@ -132,18 +133,15 @@ export function OrdersPanel() {
           ))}
         </div>
       ) : (
-        <EmptyState
-          icon={ShoppingBag}
-          message="Belum Ada Pesanan"
-          subtitle="Riwayat pesanan langganan kamu akan muncul di sini."
-          action={
-            <button
-              onClick={() => router.push("/subscription")}
-              className="bg-primary text-white px-6 py-2 rounded-sm font-bold text-sm shadow-lg shadow-primary/20 cursor-pointer"
-            >
-              Pilih Paket Langganan
-            </button>
-          }
+        <IllustratedEmptyState
+          illustration="/img/empty-state/empty-transaction-image.png"
+          title="Belum Ada Pesanan"
+          description="Yuk pilih paket langganan pertamamu!"
+          ctaText="Pilih Paket Langganan"
+          onCtaClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+            e.preventDefault();
+            router.push("/subscription");
+          }}
         />
       )}
     </div>

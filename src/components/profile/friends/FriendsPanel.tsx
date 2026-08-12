@@ -5,7 +5,6 @@ import {
   Users,
   Plus,
   Search,
-  UserPlus,
   Users2,
   MoreVertical,
   ChevronRight,
@@ -24,8 +23,7 @@ import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import { toast } from "sonner";
 
 import { TabsUnderline } from "@/components/ui/TabsUnderline";
-import { EmptyState } from "@/components/ui/EmptyState";
-import { X as CloseIcon } from "lucide-react";
+import { IllustratedEmptyState } from "@/components/ui/IllustratedEmptyState";
 
 type TabType = "friends" | "groups";
 
@@ -132,21 +130,27 @@ export function FriendsPanel() {
                     onDelete={() => confirmDelete(friend.id)}
                   />
                 ))
+              ) : searchQuery ? (
+                <IllustratedEmptyState
+                  illustration="/img/empty-state/empty-search-image.png"
+                  title="Teman tidak ditemukan"
+                  description={`Tidak ada hasil untuk "${searchQuery}"`}
+                  ctaText="Hapus Pencarian"
+                  onCtaClick={(e) => {
+                    e.preventDefault();
+                    setSearchQuery("");
+                  }}
+                />
               ) : (
-                <EmptyState
-                  icon={searchQuery ? Search : UserPlus}
-                  message={searchQuery ? "Teman tidak ditemukan" : "Cari teman kamu"}
-                  subtitle={searchQuery ? `Tidak ada hasil untuk "${searchQuery}"` : "Belum ada teman yang ditambahkan"}
-                  action={searchQuery ? (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setSearchQuery("")}
-                      className="rounded-sm"
-                    >
-                      <CloseIcon className="w-4 h-4 mr-2" /> Hapus Pencarian
-                    </Button>
-                  ) : undefined}
+                <IllustratedEmptyState
+                  illustration="/img/empty-state/empty-friend-image.png"
+                  title="Cari teman kamu"
+                  description="Yuk tambah teman pertamamu!"
+                  ctaText="Tambah Teman"
+                  onCtaClick={(e) => {
+                    e.preventDefault();
+                    setIsFriendFormOpen(true);
+                  }}
                 />
               )}
             </>
@@ -161,21 +165,27 @@ export function FriendsPanel() {
                     onDelete={() => confirmDelete(group.id)}
                   />
                 ))
+              ) : searchQuery ? (
+                <IllustratedEmptyState
+                  illustration="/img/empty-state/empty-search-image.png"
+                  title="Grup tidak ditemukan"
+                  description={`Tidak ada hasil untuk "${searchQuery}"`}
+                  ctaText="Hapus Pencarian"
+                  onCtaClick={(e) => {
+                    e.preventDefault();
+                    setSearchQuery("");
+                  }}
+                />
               ) : (
-                <EmptyState
-                  icon={searchQuery ? Search : Users2}
-                  message={searchQuery ? "Grup tidak ditemukan" : "Buat grup pertemanan"}
-                  subtitle={searchQuery ? `Tidak ada hasil untuk "${searchQuery}"` : "Kelompokkan teman-teman kamu biar makin gampang split bill!"}
-                  action={searchQuery ? (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setSearchQuery("")}
-                      className="rounded-sm"
-                    >
-                      <CloseIcon className="w-4 h-4 mr-2" /> Hapus Pencarian
-                    </Button>
-                  ) : undefined}
+                <IllustratedEmptyState
+                  illustration="/img/empty-state/empty-friend-image.png"
+                  title="Buat grup pertemanan"
+                  description="Kelompokkan teman biar makin gampang split bill!"
+                  ctaText="Buat Grup"
+                  onCtaClick={(e) => {
+                    e.preventDefault();
+                    setIsGroupFormOpen(true);
+                  }}
                 />
               )}
             </>

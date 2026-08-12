@@ -46,7 +46,7 @@ export const GoalCard = ({ goal, onClick }: GoalCardProps) => {
   return (
     <Card
       onClick={onClick}
-      className="rounded-[1.2rem] bg-white/80 backdrop-blur-xs text-card-foreground border-none shadow-soft hover:shadow-lg hover:shadow-primary/5 transition-all cursor-pointer group relative overflow-hidden active:scale-[0.99]"
+      className="hover:shadow-lg hover:shadow-primary/5 transition-all cursor-pointer group relative overflow-hidden active:scale-[0.99]"
     >
       {/* Background decoration */
       /* <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:bg-primary/10 transition-colors" /> */}

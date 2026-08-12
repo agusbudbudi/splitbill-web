@@ -226,6 +226,7 @@ export const InvoiceLanding = () => {
             icon={Sparkles}
             color="text-amber-600"
             bgColor="bg-amber-50"
+            className="cursor-default hover:shadow-soft"
           />
           <ActionCard
             title="Export PDF"
@@ -233,6 +234,7 @@ export const InvoiceLanding = () => {
             icon={FileText}
             color="text-blue-600"
             bgColor="bg-blue-50"
+            className="cursor-default hover:shadow-soft"
           />
           <ActionCard
             title="Pembayaran"
@@ -240,6 +242,7 @@ export const InvoiceLanding = () => {
             icon={Wallet}
             color="text-emerald-600"
             bgColor="bg-emerald-50"
+            className="cursor-default hover:shadow-soft"
           />
           <ActionCard
             title="Aktivitas"
@@ -247,6 +250,7 @@ export const InvoiceLanding = () => {
             icon={HistoryIcon}
             color="text-purple-600"
             bgColor="bg-purple-50"
+            className="cursor-default hover:shadow-soft"
           />
         </div>
       </section>

@@ -37,7 +37,7 @@ export const CollectionCard = ({
   return (
     <Card
       onClick={onClick}
-      className="rounded-[1.2rem] bg-white/80 backdrop-blur-xs text-card-foreground border-none shadow-soft hover:shadow-lg hover:shadow-primary/5 transition-all cursor-pointer group relative overflow-hidden active:scale-[0.99]"
+      className="hover:shadow-lg hover:shadow-primary/5 transition-all cursor-pointer group relative overflow-hidden active:scale-[0.99]"
     >
       <div className="p-4 space-y-3 relative z-10">
         <div className="flex justify-between items-start">

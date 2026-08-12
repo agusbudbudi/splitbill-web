@@ -30,7 +30,7 @@ import * as htmlToImage from "html-to-image";
 import { ContributionInputBottomSheet } from "@/components/goals/ContributionInputBottomSheet";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import { Card, CardContent } from "@/components/ui/Card";
-import { EmptyState } from "@/components/ui/EmptyState";
+import { IllustratedEmptyState } from "@/components/ui/IllustratedEmptyState";
 
 import { Header } from "@/components/layout/Header";
 import { Container } from "@/components/layout/Container";
@@ -447,7 +447,7 @@ export const GoalDetailView = ({
             </div>
           )}
 
-          <Card className="border-none shadow-md shadow-primary/10 bg-white relative overflow-hidden mb-6">
+          <Card className="shadow-md shadow-primary/10 relative overflow-hidden mb-6">
             <CardContent className="p-5 space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex flex-col">
@@ -554,8 +554,8 @@ export const GoalDetailView = ({
                     )}
                   </div>
 
-                  <div className="mt-4 p-2.5 bg-primary/10 rounded-xl border border-primary/20 animate-in zoom-in-95 duration-700">
-                    <p className="text-[10px] font-bold text-primary text-center">
+                  <div className="mt-4 bg-primary/5 border-l-4 border-l-primary p-2.5 animate-in fade-in duration-700">
+                    <p className="text-[10px] font-medium text-foreground">
                       {getEncouragementMessage()}
                     </p>
                   </div>
@@ -566,7 +566,7 @@ export const GoalDetailView = ({
 
           {/* Contribution Trends Chart Section */}
           {chartData.length >= 2 && (
-            <Card className="border-none shadow-soft overflow-hidden mb-6 group cursor-default">
+            <Card className="overflow-hidden mb-6 group cursor-default">
               <CardContent className="p-5">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex flex-col">
@@ -651,7 +651,7 @@ export const GoalDetailView = ({
 
           {/* Info Grid */}
           <div className="grid grid-cols-1 gap-3 mb-6">
-            <Card className="border-none shadow-soft hover:shadow-lg hover:shadow-primary/5 transition-all">
+            <Card className="hover:shadow-lg hover:shadow-primary/5 transition-all">
               <CardContent className="p-4 flex flex-col gap-3">
                 {goal.contributions.length > 0 && (
                   <>
@@ -777,16 +777,15 @@ export const GoalDetailView = ({
             </div>
 
             {goal.contributions.length === 0 ? (
-              <Card className="border-none shadow-soft overflow-hidden">
-                <CardContent className="p-4">
-                  <EmptyState
-                    message="Belum ada transaksi"
-                    subtitle="Yuk mulai menabung sekarang!"
-                    icon={History}
-                    className="bg-primary/5"
-                  />
-                </CardContent>
-              </Card>
+              <IllustratedEmptyState
+                title="Belum ada transaksi"
+                description="Yuk mulai menabung sekarang!"
+                ctaText="Tambah Kontribusi"
+                onCtaClick={(e) => {
+                  e.preventDefault();
+                  setIsContributionSheetOpen(true);
+                }}
+              />
             ) : (
               <div className="space-y-3">
                 {(showAllTransactions
@@ -795,7 +794,7 @@ export const GoalDetailView = ({
                 ).map((contribution) => (
                   <Card
                     key={contribution.id}
-                    className="border-none shadow-soft hover:shadow-lg hover:shadow-primary/5 transition-all group"
+                    className="hover:shadow-lg hover:shadow-primary/5 transition-all group"
                   >
                     <CardContent className="p-4 flex items-center justify-between">
                       <div className="flex items-center gap-4">

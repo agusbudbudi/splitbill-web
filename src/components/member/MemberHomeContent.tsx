@@ -45,7 +45,7 @@ export function MemberHomeContent({ singleColumn = false }: MemberHomeContentPro
       <div className={cn("space-y-6", singleColumn ? "" : "lg:col-span-7 lg:space-y-10")}>
         {hasHistory ? (
           <section className="space-y-4">
-            <FeatureHighlights heroMode />
+            <FeatureHighlights />
           </section>
         ) : (
           <div
@@ -104,12 +104,6 @@ export function MemberHomeContent({ singleColumn = false }: MemberHomeContentPro
         {!hasHistory && (
           <section className="space-y-4">
             <VisualFlowPreview />
-          </section>
-        )}
-
-        {!hasHistory && (
-          <section className="space-y-4">
-            <FeatureHighlights />
           </section>
         )}
 

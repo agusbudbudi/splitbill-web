@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -22,27 +23,24 @@ export const FAQItem = ({
   return (
     <div
       className={cn(
-        "border-b border-primary/5 last:border-0 transition-all duration-300",
-        isOpen ? "bg-primary/[0.02]" : "hover:bg-primary/[0.01]",
-        className
+        "bg-white border border-primary/10 rounded-md overflow-hidden shadow-soft hover:shadow-lg hover:shadow-primary/5 transition-shadow duration-300",
+        className,
       )}
     >
       <button
         onClick={onToggle}
-        className="w-full py-5 px-4 flex items-start justify-between text-left gap-4 cursor-pointer"
+        className={cn(
+          "w-full px-5 py-4 flex items-center justify-between text-left font-bold gap-4 cursor-pointer transition-colors duration-200 group",
+          isOpen ? "text-primary" : "text-foreground/80 hover:text-primary",
+        )}
       >
-        <span
-          className={cn(
-            "text-sm lg:text-lg font-bold transition-colors duration-300 leading-snug",
-            isOpen ? "text-primary" : "text-foreground/80",
-          )}
-        >
-          {question}
-        </span>
+        <span className="text-sm lg:text-base pr-2">{question}</span>
         <div
           className={cn(
-            "shrink-0 w-6 h-6 rounded-full flex items-center justify-center transition-all duration-300",
-            isOpen ? "bg-primary text-white" : "bg-primary/5 text-primary/40",
+            "w-6 h-6 rounded-full flex items-center justify-center transition-all duration-300 shrink-0",
+            isOpen
+              ? "bg-primary text-white shadow-md shadow-primary/20"
+              : "bg-primary/5 text-primary/40 group-hover:bg-primary/10 group-hover:text-primary",
           )}
         >
           <ChevronDown
@@ -53,16 +51,21 @@ export const FAQItem = ({
           />
         </div>
       </button>
-      <div
-        className={cn(
-          "overflow-hidden transition-all duration-300 ease-in-out",
-          isOpen ? "max-h-60 opacity-100 pb-6 px-4" : "max-h-0 opacity-0",
+
+      <AnimatePresence initial={false}>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25, ease: "easeInOut" }}
+          >
+            <p className="px-5 pb-5 pt-1 text-xs lg:text-sm text-muted-foreground leading-relaxed border-t border-primary/5">
+              {answer}
+            </p>
+          </motion.div>
         )}
-      >
-        <p className="text-[12px] lg:text-base text-muted-foreground leading-relaxed">
-          {answer}
-        </p>
-      </div>
+      </AnimatePresence>
     </div>
   );
 };

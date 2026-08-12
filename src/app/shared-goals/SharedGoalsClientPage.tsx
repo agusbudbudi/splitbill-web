@@ -5,6 +5,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { SharedGoalsTab } from "@/components/wallet/SharedGoalsTab";
 import { GoalDetailView } from "@/components/goals/GoalDetailView";
+import { GoalFormBottomSheet } from "@/components/goals/GoalFormBottomSheet";
 import { FeatureBanner } from "@/components/ui/FeatureBanner";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -21,7 +22,7 @@ export default function SharedGoalsClientPage() {
       <div
         className={cn(
           "absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[600px] bg-primary z-0 rounded-b-[20px] transition-all duration-300",
-          selectedGoalId ? "h-[250px]" : "h-[150px]"
+          selectedGoalId ? "h-[280px]" : "h-[150px]"
         )}
       />
 
@@ -79,6 +80,15 @@ export default function SharedGoalsClientPage() {
           </>
         )}
       </div>
+
+      <GoalFormBottomSheet
+        isOpen={isFormOpen}
+        onClose={() => {
+          setIsFormOpen(false);
+          setEditGoalId(null);
+        }}
+        editGoalId={editGoalId}
+      />
     </div>
   );
 }

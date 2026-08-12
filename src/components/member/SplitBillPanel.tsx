@@ -7,7 +7,7 @@ import { OngoingSplitBillCard } from "@/components/home/OngoingSplitBillCard";
 import { AIScanEncourageBanner } from "@/components/home/AIScanEncourageBanner";
 import { PromoBanner } from "@/components/ui/PromoBanner";
 import { Card, CardContent } from "@/components/ui/Card";
-import { EmptyState } from "@/components/ui/EmptyState";
+import { IllustratedEmptyState } from "@/components/ui/IllustratedEmptyState";
 import { formatToIDR } from "@/lib/utils";
 import { useSplitBillStore } from "@/store/useSplitBillStore";
 import { useWalletStore } from "@/store/useWalletStore";
@@ -109,10 +109,10 @@ export function SplitBillPanel() {
             ))}
           </div>
         ) : (
-          <EmptyState
-            icon={ReceiptText}
-            message="Belum Ada Aktivitas"
-            subtitle="Split bill pertamamu bakal muncul di sini."
+          <IllustratedEmptyState
+            illustration="/img/empty-state/empty-transaction-image.png"
+            title="Belum Ada Aktivitas"
+            description="Split bill pertamamu bakal muncul di sini."
           />
         )}
       </div>

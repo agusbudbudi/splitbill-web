@@ -10,12 +10,11 @@ import { BucketCard } from "@/components/split-later/BucketCard";
 import { BucketFormBottomSheet } from "@/components/split-later/BucketFormBottomSheet";
 import { FeatureBanner } from "@/components/ui/FeatureBanner";
 import { PromoBanner } from "@/components/ui/PromoBanner";
-import { EmptyState } from "@/components/ui/EmptyState";
+import { IllustratedEmptyState } from "@/components/ui/IllustratedEmptyState";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Card, CardContent } from "@/components/ui/Card";
 import {
-  FolderOpen,
   Plus,
   ArrowLeft,
   Camera,
@@ -627,19 +626,15 @@ export default function SplitLaterClientPage() {
 
           {/* Bucket list */}
           {buckets.length === 0 ? (
-            <EmptyState
-              icon={FolderOpen}
-              message="Belum Ada Split Later"
-              subtitle="Buat Split Later baru buat ngumpulin struk-struk trip atau acara kamu!"
-              action={
-                <Button
-                  onClick={() => router.push("/split-later?step=1")}
-                  className="h-12 px-8 font-bold rounded-md"
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Buat Split Later Pertama
-                </Button>
-              }
+            <IllustratedEmptyState
+              illustration="/img/empty-state/empty-transaction-image.png"
+              title="Belum Ada Split Later"
+              description="Yuk buat Split Later pertamamu!"
+              ctaText="Buat Split Later"
+              onCtaClick={(e) => {
+                e.preventDefault();
+                router.push("/split-later?step=1");
+              }}
             />
           ) : (
             <div className="space-y-3">

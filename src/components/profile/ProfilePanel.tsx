@@ -21,7 +21,6 @@ import { cn, getAvatarUrl } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { useAuthStore } from "@/lib/stores/authStore";
-import { AdsCarousel } from "@/components/home/AdsCarousel";
 
 import { useWalletStore } from "@/store/useWalletStore";
 import { PaymentMethodCard } from "@/components/wallet/PaymentMethodCard";
@@ -354,10 +353,6 @@ export function ProfilePanel() {
               </div>
             </MenuItem>
           </MenuGroup>
-
-          <div className="pt-2 pb-2 mb-0">
-            <AdsCarousel />
-          </div>
 
           <div className="pt-2">
             <Button

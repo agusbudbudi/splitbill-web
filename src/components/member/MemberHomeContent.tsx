@@ -11,6 +11,7 @@ import { MemberGettingStarted } from "@/components/member/MemberGettingStarted";
 import { ReviewRewardBanner } from "@/components/home/ReviewRewardBanner";
 import { FAQCard } from "@/components/home/FAQCard";
 import { AIScanEncourageBanner } from "@/components/home/AIScanEncourageBanner";
+import { EntryPointSection } from "@/components/home/EntryPointSection";
 import { PromoBanner } from "@/components/ui/PromoBanner";
 import { useSplitBillStore } from "@/store/useSplitBillStore";
 import { useWalletStore } from "@/store/useWalletStore";
@@ -107,6 +108,7 @@ export function MemberHomeContent({ singleColumn = false }: MemberHomeContentPro
           </section>
         )}
 
+        {/* Hidden for now — re-enable when ready
         <section className="space-y-4">
           <div className="flex flex-col items-start px-1">
             <div className="space-y-1">
@@ -120,6 +122,9 @@ export function MemberHomeContent({ singleColumn = false }: MemberHomeContentPro
           </div>
           <MemberGettingStarted />
         </section>
+        */}
+
+        <EntryPointSection title="Rekomendasi Buat Kamu" />
 
         <section className="space-y-4">
           <PromoBanner isCompact image="/img/promoBanner-split-later.jpg" />

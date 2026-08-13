@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { LoadingIndicator } from "@/components/ui/LoadingIndicator";
 import { useSplitBillStore } from "@/store/useSplitBillStore";
+import { useSplitBillChatStore } from "@/store/useSplitBillChatStore";
 import { useSplitLaterStore } from "@/store/useSplitLaterStore";
 import { useWalletStore, type PaymentMethod } from "@/store/useWalletStore";
 import { useBillCalculations } from "@/hooks/useBillCalculations";
@@ -89,6 +90,13 @@ const SplitBillContent = () => {
     sourceReceiptId,
     scannedTotalAmount,
   } = useSplitBillStore();
+
+  useEffect(() => {
+    if (searchParams.get("agent") === "billy") {
+      useSplitBillChatStore.getState().openChat();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   useEffect(() => {
     const source = searchParams.get("source");

@@ -175,6 +175,11 @@ export const useAuthStore = create<AuthState>((set) => ({
       clearTokens();
       if (typeof window !== "undefined") {
         localStorage.removeItem("currentUser");
+        // Notify native app shell (splitbill-native WebView) so it can
+        // switch back to its native login screen.
+        (window as any).ReactNativeWebView?.postMessage(
+          JSON.stringify({ type: "LOGOUT" }),
+        );
       }
       clearUser();
       // Clear draft ID on logout to avoid account switching conflicts

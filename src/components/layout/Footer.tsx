@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useRef, useCallback, useState } from "react";
+import React, { useRef, useCallback, useState, useEffect } from "react";
 import { ReceiptText, ScrollText, History, Home, Camera } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, isNativeAppWebView } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useSplitBillStore } from "@/store/useSplitBillStore";
@@ -18,6 +18,11 @@ export const Footer = () => {
   const { setPendingCapturedImage } = useSplitBillStore();
   const { isAuthenticated } = useAuthStore();
   const [isScanChoiceOpen, setIsScanChoiceOpen] = useState(false);
+  const [isNativeApp, setIsNativeApp] = useState(false);
+
+  useEffect(() => {
+    setIsNativeApp(isNativeAppWebView());
+  }, []);
 
   const isActive = (path: string) => {
     if (path === "/member" && (pathname === "/" || pathname === "/member")) return true;
@@ -140,6 +145,9 @@ export const Footer = () => {
       </Link>
     );
   };
+
+  // Native shell has its own bottom tab bar — avoid a duplicate nav here.
+  if (isNativeApp) return null;
 
   return (
     <>

@@ -73,3 +73,13 @@ export function getAvatarUrl(user?: { email?: string | null; image?: string | nu
 export function getFriendAvatarUrl(name: string, size: number = 64) {
   return `https://api.dicebear.com/9.x/personas/svg?backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf&size=${size}&scale=100&seed=${encodeURIComponent(name)}`;
 }
+
+/**
+ * True when this page is loaded inside the splitbill-native WebView shell
+ * (which sets a custom UA suffix via `applicationNameForUserAgent`). The
+ * native shell has its own header/tab bar, so web-only chrome should hide.
+ */
+export function isNativeAppWebView() {
+  if (typeof navigator === "undefined") return false;
+  return navigator.userAgent.includes("SplitBillNativeApp");
+}

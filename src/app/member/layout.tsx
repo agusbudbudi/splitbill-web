@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { Menu, X } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, isNativeAppWebView } from "@/lib/utils";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -15,6 +15,7 @@ import { PwaInstallBanner } from "@/components/member/PwaInstallBanner";
 export default function MemberV2Layout({ children }: { children: React.ReactNode }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const [isNativeApp, setIsNativeApp] = useState(false);
   const [headerHeight, setHeaderHeight] = useState(0);
   const [bannerHeight, setBannerHeight] = useState(0);
   const headerWrapperRef = React.useRef<HTMLDivElement>(null);
@@ -22,6 +23,7 @@ export default function MemberV2Layout({ children }: { children: React.ReactNode
 
   useEffect(() => {
     setIsMounted(true);
+    setIsNativeApp(isNativeAppWebView());
   }, []);
 
   useEffect(() => {
@@ -53,36 +55,40 @@ export default function MemberV2Layout({ children }: { children: React.ReactNode
   return (
     <ProtectedRoute>
       <div className="min-h-screen bg-background flex flex-col items-center">
-        <div ref={headerWrapperRef} className="fixed top-0 left-0 right-0 z-50">
-          <Header
-            wide
-            sticky={false}
-            containerClassName="max-w-[600px] lg:max-w-5xl px-4 sm:px-6 lg:px-8"
-            leftContent={
-              <button
-                onClick={() => setIsMenuOpen(true)}
-                className="lg:hidden p-2 -ml-1 rounded-full hover:bg-white/10 transition-colors cursor-pointer text-white"
-                aria-label="Buka menu"
-              >
-                <Menu className="w-5 h-5" />
-              </button>
-            }
-          />
-        </div>
+        {!isNativeApp && (
+          <>
+            <div ref={headerWrapperRef} className="fixed top-0 left-0 right-0 z-50">
+              <Header
+                wide
+                sticky={false}
+                containerClassName="max-w-[600px] lg:max-w-5xl px-4 sm:px-6 lg:px-8"
+                leftContent={
+                  <button
+                    onClick={() => setIsMenuOpen(true)}
+                    className="lg:hidden p-2 -ml-1 rounded-full hover:bg-white/10 transition-colors cursor-pointer text-white"
+                    aria-label="Buka menu"
+                  >
+                    <Menu className="w-5 h-5" />
+                  </button>
+                }
+              />
+            </div>
 
-        <div
-          ref={bannerWrapperRef}
-          className="fixed left-0 right-0 z-40"
-          style={{ top: headerHeight }}
-        >
-          <PwaInstallBanner containerClassName="max-w-[600px] lg:max-w-5xl px-4 sm:px-6 lg:px-8" />
-        </div>
+            <div
+              ref={bannerWrapperRef}
+              className="fixed left-0 right-0 z-40"
+              style={{ top: headerHeight }}
+            >
+              <PwaInstallBanner containerClassName="max-w-[600px] lg:max-w-5xl px-4 sm:px-6 lg:px-8" />
+            </div>
 
-        {/* Spacer: header + banner are fixed (out of flow), push content down by their measured height */}
-        <div
-          className={headerHeight === 0 ? "h-14 lg:h-16" : undefined}
-          style={headerHeight > 0 ? { height: headerHeight + bannerHeight } : undefined}
-        />
+            {/* Spacer: header + banner are fixed (out of flow), push content down by their measured height */}
+            <div
+              className={headerHeight === 0 ? "h-14 lg:h-16" : undefined}
+              style={headerHeight > 0 ? { height: headerHeight + bannerHeight } : undefined}
+            />
+          </>
+        )}
 
         <div className="w-full max-w-5xl mx-auto px-4 sm:px-6 pb-4 sm:pb-0 lg:px-8 flex lg:gap-8">
           {/* Desktop persistent sidebar */}
@@ -98,7 +104,7 @@ export default function MemberV2Layout({ children }: { children: React.ReactNode
           </main>
         </div>
 
-        <Footer />
+        {!isNativeApp && <Footer />}
 
         <ChatAgentFAB bottomClass="bottom-24 lg:bottom-6" />
         <ChatRoom />

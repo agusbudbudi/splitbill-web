@@ -10,13 +10,17 @@
 
 import type { Metadata } from "next";
 import SplitBillClientPage from "./SplitBillClientPage";
+import { faqData } from "@/data/faqData";
 
 export const metadata: Metadata = {
-  title: "Split Bill Online — Bagi Tagihan Otomatis dengan AI Scan",
+  title: "Split Bill Online Gratis — Kalkulator Bagi Tagihan Tanpa Aplikasi",
   description:
-    "Mulai split bill online gratis sekarang! Tambah teman, scan atau input pengeluaran, dan dapatkan rincian siapa bayar berapa secara otomatis. Cepat, akurat & 100% free.",
+    "Kalkulator split bill online gratis, tanpa install aplikasi. Scan struk pakai AI, atur pajak & service charge otomatis, langsung tahu siapa bayar berapa. 100% gratis!",
   keywords: [
     "split bill online",
+    "split bill online gratis",
+    "kalkulator split bill online",
+    "split bill tanpa aplikasi",
     "cara split bill",
     "bagi tagihan otomatis",
     "hitung patungan",
@@ -28,7 +32,7 @@ export const metadata: Metadata = {
     canonical: "https://www.splitbill.my.id/split-bill",
   },
   openGraph: {
-    title: "Split Bill Online — Bagi Tagihan Otomatis dengan AI Scan",
+    title: "Split Bill Online Gratis — Kalkulator Bagi Tagihan Tanpa Aplikasi",
     description:
       "Mulai split bill online gratis! Scan struk, input pengeluaran, dan dapatkan rincian pembayaran otomatis. Cepat & 100% free.",
     url: "https://www.splitbill.my.id/split-bill",
@@ -67,12 +71,56 @@ export default function SplitBillPage() {
     ],
   };
 
+  // Tool schema — no aggregateRating (would need real review data)
+  const softwareAppSchema = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: "Split Bill Online",
+    applicationCategory: "FinanceApplication",
+    operatingSystem: "Web",
+    url: "https://www.splitbill.my.id/split-bill",
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "IDR",
+    },
+  };
+
+  // Reuse the same FAQ content bank as the homepage, scoped to split-bill
+  // questions, so this page earns its own FAQ rich-result eligibility.
+  const splitBillFaqs = faqData.filter((item) => item.category === "split-bill");
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: splitBillFaqs.map((faq) => ({
+      "@type": "Question",
+      name: faq.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: faq.answer,
+      },
+    })),
+  };
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareAppSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+      {/* Visually hidden H1 — client page starts straight into the wizard UI,
+          so the page had no top-level heading for Google to key off. */}
+      <h1 className="sr-only">
+        Split Bill Online Gratis — Kalkulator Bagi Tagihan Tanpa Aplikasi
+      </h1>
       <SplitBillClientPage />
     </>
   );

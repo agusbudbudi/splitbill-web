@@ -19,6 +19,9 @@ export const metadata: Metadata = {
   keywords: [
     "split bill online",
     "split bill online gratis",
+    "split bill online free",
+    "split bill online scan",
+    "split bill online calculator",
     "kalkulator split bill online",
     "split bill tanpa aplikasi",
     "cara split bill",

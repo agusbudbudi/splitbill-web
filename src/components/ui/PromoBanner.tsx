@@ -18,6 +18,11 @@ interface PromoBannerProps {
   gradientToClass?: string;
   ctaTextColorClass?: string;
   isCompact?: boolean;
+  onClick?: () => void;
+  /** Rounded corners on the outer card. Default true (existing behavior everywhere else). */
+  rounded?: boolean;
+  /** Override the text block's outer padding — e.g. to align its left edge with the page's shared max-w container instead of the banner's own fixed p-5/p-7. */
+  contentPaddingClassName?: string;
 }
 
 export const PromoBanner = ({
@@ -33,13 +38,19 @@ export const PromoBanner = ({
   gradientToClass = "to-[#2E6FF3]",
   ctaTextColorClass = "text-[#2E6FF3]",
   isCompact = false,
+  onClick,
+  rounded = true,
+  contentPaddingClassName,
 }: PromoBannerProps) => {
   return (
     <Link
       href={href}
-      className={`relative block w-full ${bgColorClass} overflow-hidden shadow-soft transition-all duration-500 group cursor-pointer active:scale-[0.99] ${isCompact
-        ? "rounded-md"
-        : "rounded-md lg:rounded-lg"
+      onClick={onClick}
+      className={`relative block w-full ${bgColorClass} overflow-hidden shadow-soft transition-all duration-500 group cursor-pointer active:scale-[0.99] ${rounded
+        ? isCompact
+          ? "rounded-md"
+          : "rounded-md lg:rounded-lg"
+        : ""
         }`}
     >
       {/* Background styling for the right side */}
@@ -62,10 +73,10 @@ export const PromoBanner = ({
         </div>
       </div>
 
-      <div className={`relative z-10 flex flex-col justify-center ${isCompact
+      <div className={`relative z-10 flex flex-col justify-center ${contentPaddingClassName ?? (isCompact
         ? "p-4 sm:p-5 min-h-[140px] lg:min-h-[170px]"
         : "p-5 lg:p-7 min-h-[180px] lg:min-h-[160px]"
-        }`}>
+        )}`}>
         <div className={`text-left space-y-1.5 ${isCompact
           ? "w-[50%] lg:w-[45%]"
           : "w-[50%] lg:w-[60%] lg:space-y-4"

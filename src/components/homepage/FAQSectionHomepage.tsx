@@ -3,12 +3,37 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, ArrowRight } from "lucide-react";
-import { faqData } from "@/data/faqData";
+import { faqData, FAQItem } from "@/data/faqData";
 import Link from "next/link";
 
-export const FAQSectionHomepage = () => {
-  const landingFaqs = faqData.filter((item) => item.showOnLanding);
-  const [openId, setOpenId] = useState<string | null>(null);
+interface FAQSectionHomepageProps {
+  faqs?: FAQItem[];
+  title?: React.ReactNode;
+  subtitle?: string;
+  /** Set to null to hide the "Lihat Semua Pertanyaan" link (e.g. on funnel pages with a single CTA goal) */
+  viewAllHref?: string | null;
+  /** Open the first FAQ by default — gets its answer into the initial server-rendered HTML for SEO. Default false (existing behavior). */
+  defaultOpenFirst?: boolean;
+}
+
+export const FAQSectionHomepage = ({
+  faqs,
+  title = (
+    <>
+      Paling Sering{" "}
+      <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-600">
+        Ditanyain
+      </span>
+    </>
+  ),
+  subtitle = "Punya pertanyaan lain? Tenang, semuanya sudah kami rangkum di sini.",
+  viewAllHref = "/faq",
+  defaultOpenFirst = false,
+}: FAQSectionHomepageProps = {}) => {
+  const landingFaqs = faqs ?? faqData.filter((item) => item.showOnLanding);
+  const [openId, setOpenId] = useState<string | null>(
+    defaultOpenFirst ? (landingFaqs[0]?.id ?? null) : null
+  );
 
   const toggleFaq = (id: string) => {
     setOpenId(openId === id ? null : id);
@@ -48,10 +73,7 @@ export const FAQSectionHomepage = () => {
               transition={{ duration: 0.5 }}
               className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight mb-4"
             >
-              Paling Sering{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-600">
-                Ditanyain
-              </span>
+              {title}
             </motion.h2>
 
             <motion.p
@@ -61,7 +83,7 @@ export const FAQSectionHomepage = () => {
               transition={{ duration: 0.5, delay: 0.1 }}
               className="text-base sm:text-lg text-slate-500 font-semibold"
             >
-              Punya pertanyaan lain? Tenang, semuanya sudah kami rangkum di sini.
+              {subtitle}
             </motion.p>
           </div>
 
@@ -117,21 +139,23 @@ export const FAQSectionHomepage = () => {
           </div>
 
           {/* CTA Button */}
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-40px" }}
-            transition={{ duration: 0.4, delay: 0.2 }}
-            className="mt-12 flex justify-center"
-          >
-            <Link
-              href="/faq"
-              className="group inline-flex items-center gap-2.5 px-7 py-3.5 rounded-md border-2 border-primary/30 text-primary font-bold text-sm hover:bg-primary hover:text-white hover:border-primary hover:shadow-lg hover:shadow-primary/20 transition-all duration-300"
+          {viewAllHref && (
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-40px" }}
+              transition={{ duration: 0.4, delay: 0.2 }}
+              className="mt-12 flex justify-center"
             >
-              Lihat Semua Pertanyaan
-              <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5" />
-            </Link>
-          </motion.div>
+              <Link
+                href={viewAllHref}
+                className="group inline-flex items-center gap-2.5 px-7 py-3.5 rounded-md border-2 border-primary/30 text-primary font-bold text-sm hover:bg-primary hover:text-white hover:border-primary hover:shadow-lg hover:shadow-primary/20 transition-all duration-300"
+              >
+                Lihat Semua Pertanyaan
+                <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5" />
+              </Link>
+            </motion.div>
+          )}
         </div>
       </section>
     </>

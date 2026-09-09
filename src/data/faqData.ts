@@ -10,7 +10,8 @@ export interface FAQItem {
     | "akun"
     | "shared-goals"
     | "collect-money"
-    | "wallet";
+    | "wallet"
+    | "split-bill-liburan";
   showOnLanding: boolean;
 }
 
@@ -254,5 +255,45 @@ export const faqData: FAQItem[] = [
       "Kamu bisa menyimpan sebanyak yang kamu butuhkan. Saat mengirim tagihan, kamu tinggal pilih akun mana yang ingin ditampilkan kepada teman yang akan transfer.",
     category: "wallet",
     showOnLanding: false,
+  },
+  {
+    id: "31",
+    question: "Bisa nambah struk bertahap selama liburan berhari-hari?",
+    answer:
+      "Bisa banget. Fitur Split Later emang dirancang buat itu, tinggal foto/upload struk kapan aja selama trip berlangsung, gak perlu langsung diitung di tempat. Struknya numpuk dulu, baru dibagi rincian pas udah santai di rumah.",
+    category: "split-bill-liburan",
+    showOnLanding: true,
+  },
+  {
+    id: "32",
+    question: "Support mata uang asing kalau liburan ke luar negeri?",
+    answer:
+      "Saat ini SplitBill fokus pada Rupiah (IDR). Kamu tetap bisa input nominal mata uang asing sebagai angka referensi, tapi konversi otomatis ke IDR belum tersedia.",
+    category: "split-bill-liburan",
+    showOnLanding: true,
+  },
+  {
+    id: "33",
+    question: "Data ilang gak kalau ganti HP di tengah trip?",
+    answer:
+      "Kalau kamu tidak login, data struk tersimpan lokal di browser HP tersebut. Jadi sebaiknya login dulu sebelum trip kalau khawatir ganti device di tengah jalan. Kalau login, semua struk yang udah dikumpulin otomatis tersimpan di cloud dan bisa dilanjutkan dari HP mana pun.",
+    category: "split-bill-liburan",
+    showOnLanding: true,
+  },
+  {
+    id: "34",
+    question: "Beneran gratis atau ada limit?",
+    answer:
+      "Fitur Split Later gratis dipakai tanpa perlu bikin akun. Kalau mau scan struk pakai AI, paket gratisan dapat 5x kuota scan, lebih dari cukup buat kumpulin beberapa struk selama liburan. Kalau butuh scan tanpa batas, ada opsi upgrade ke Premium.",
+    category: "split-bill-liburan",
+    showOnLanding: true,
+  },
+  {
+    id: "35",
+    question: "Setelah semua struk terkumpul, gimana cara bagi rata ke temen?",
+    answer:
+      "Setelah trip selesai, tinggal buka kumpulan struknya, assign siapa bayar/pakai apa (atau split rata aja), lalu generate rincian. Kamu bisa langsung share link hasilnya ke grup WhatsApp, temen tinggal lihat berapa yang harus ditransfer.",
+    category: "split-bill-liburan",
+    showOnLanding: true,
   },
 ];

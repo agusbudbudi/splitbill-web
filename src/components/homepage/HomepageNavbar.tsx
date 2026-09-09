@@ -12,7 +12,13 @@ import { usePWA } from "@/hooks/usePWA";
 import { toast } from "sonner";
 import { usePathname, useRouter } from "next/navigation";
 
-const navLinks = [
+interface NavLink {
+  label: string;
+  href: string;
+  badge?: string;
+}
+
+const DEFAULT_NAV_LINKS: NavLink[] = [
   { label: "Fitur", href: "#fitur" },
   { label: "Cara Pakai", href: "#cara-pakai" },
   { label: "Testimoni", href: "#testimoni" },
@@ -29,7 +35,20 @@ const FEATURE_SHORTCUTS = [
   { imageSrc: "/img/menu-wallet.png", title: "Wallet", href: "/wallet", bgLight: "bg-violet-100/90" },
 ];
 
-export const HomepageNavbar = () => {
+interface HomepageNavbarProps {
+  /** Nav links shown in desktop bar + mobile drawer. Defaults to the homepage's full link set. */
+  navLinks?: NavLink[];
+  /** Href for the "Mulai Gratis" CTA (desktop + mobile). Defaults to /split-bill. */
+  ctaHref?: string;
+  /** Path on which "#anchor" links should scroll-in-place instead of navigating there first. Defaults to "/" (homepage). */
+  scrollPath?: string;
+}
+
+export const HomepageNavbar = ({
+  navLinks = DEFAULT_NAV_LINKS,
+  ctaHref = "/split-bill",
+  scrollPath = "/",
+}: HomepageNavbarProps = {}) => {
   const pathname = usePathname();
   const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
@@ -166,7 +185,7 @@ export const HomepageNavbar = () => {
   ) => {
     if (href.startsWith("#")) {
       e.preventDefault();
-      if (pathname === "/") {
+      if (pathname === scrollPath) {
         const targetId = href.slice(1);
         const el = document.getElementById(targetId);
         if (el) {
@@ -195,7 +214,7 @@ export const HomepageNavbar = () => {
           }, 260); // 260ms matches Framer Motion's default height transition delay perfectly
         }
       } else {
-        router.push(`/${href}`);
+        router.push(`${scrollPath}${href}`);
       }
       setMenuOpen(false);
     }
@@ -371,7 +390,7 @@ export const HomepageNavbar = () => {
                 ) : (
                   <a
                     key={link.href}
-                    href={pathname === "/" ? link.href : `/${link.href}`}
+                    href={pathname === scrollPath ? link.href : `${scrollPath}${link.href}`}
                     onClick={(e) => handleNavClick(e, link.href)}
                     className="px-4 py-2 rounded-sm text-sm font-semibold text-slate-700 hover:text-primary hover:bg-slate-100 transition-all duration-200 cursor-pointer"
                   >
@@ -388,7 +407,7 @@ export const HomepageNavbar = () => {
 
                 {/* Desktop CTA (Mulai Gratis) */}
                 <Link
-                  href="/split-bill"
+                  href={ctaHref}
                   className="hidden lg:flex items-center gap-1.5 px-5 py-2.5 rounded-md bg-primary text-white text-sm font-bold shadow-lg shadow-primary/30 hover:bg-primary/90 hover:scale-105 active:scale-95 transition-all duration-200"
                 >
                   <Zap className="w-3.5 h-3.5 fill-white" />
@@ -535,7 +554,7 @@ export const HomepageNavbar = () => {
                 ) : (
                   <a
                     key={link.href}
-                    href={pathname === "/" ? link.href : `/${link.href}`}
+                    href={pathname === scrollPath ? link.href : `${scrollPath}${link.href}`}
                     onClick={(e) => handleNavClick(e, link.href)}
                     className="px-4 py-3 rounded-xl text-base font-semibold text-slate-700 hover:text-primary hover:bg-primary/5 transition-all duration-200 cursor-pointer"
                   >
@@ -583,7 +602,7 @@ export const HomepageNavbar = () => {
                 </Link>
               )}
               <Link
-                href="/split-bill"
+                href={ctaHref}
                 className="flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-primary text-white text-base font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all duration-200 mt-1"
                 onClick={() => setMenuOpen(false)}
               >

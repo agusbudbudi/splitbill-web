@@ -262,7 +262,23 @@ export const faqData: FAQItem[] = [
     answer:
       "Bisa banget. Fitur Split Later emang dirancang buat itu, tinggal foto/upload struk kapan aja selama trip berlangsung, gak perlu langsung diitung di tempat. Struknya numpuk dulu, baru dibagi rincian pas udah santai di rumah.",
     category: "split-bill-liburan",
-    showOnLanding: true,
+    showOnLanding: false,
+  },
+  {
+    id: "36",
+    question: "Bisa langsung dipakai tanpa daftar?",
+    answer:
+      "Bisa. Kamu bisa mulai kumpulin dan hitung struk tanpa harus daftar terlebih dahulu.",
+    category: "split-bill-liburan",
+    showOnLanding: false,
+  },
+  {
+    id: "37",
+    question: "Teman gue harus punya akun SplitBill juga?",
+    answer:
+      "Nggak perlu. Kamu bisa langsung share hasil perhitungan ke teman lewat WhatsApp.",
+    category: "split-bill-liburan",
+    showOnLanding: false,
   },
   {
     id: "32",
@@ -270,7 +286,7 @@ export const faqData: FAQItem[] = [
     answer:
       "Saat ini SplitBill fokus pada Rupiah (IDR). Kamu tetap bisa input nominal mata uang asing sebagai angka referensi, tapi konversi otomatis ke IDR belum tersedia.",
     category: "split-bill-liburan",
-    showOnLanding: true,
+    showOnLanding: false,
   },
   {
     id: "33",
@@ -278,7 +294,7 @@ export const faqData: FAQItem[] = [
     answer:
       "Kalau kamu tidak login, data struk tersimpan lokal di browser HP tersebut. Jadi sebaiknya login dulu sebelum trip kalau khawatir ganti device di tengah jalan. Kalau login, semua struk yang udah dikumpulin otomatis tersimpan di cloud dan bisa dilanjutkan dari HP mana pun.",
     category: "split-bill-liburan",
-    showOnLanding: true,
+    showOnLanding: false,
   },
   {
     id: "34",
@@ -286,7 +302,7 @@ export const faqData: FAQItem[] = [
     answer:
       "Fitur Split Later gratis dipakai tanpa perlu bikin akun. Kalau mau scan struk pakai AI, paket gratisan dapat 5x kuota scan, lebih dari cukup buat kumpulin beberapa struk selama liburan. Kalau butuh scan tanpa batas, ada opsi upgrade ke Premium.",
     category: "split-bill-liburan",
-    showOnLanding: true,
+    showOnLanding: false,
   },
   {
     id: "35",
@@ -294,6 +310,6 @@ export const faqData: FAQItem[] = [
     answer:
       "Setelah trip selesai, tinggal buka kumpulan struknya, assign siapa bayar/pakai apa (atau split rata aja), lalu generate rincian. Kamu bisa langsung share link hasilnya ke grup WhatsApp, temen tinggal lihat berapa yang harus ditransfer.",
     category: "split-bill-liburan",
-    showOnLanding: true,
+    showOnLanding: false,
   },
 ];

@@ -83,10 +83,11 @@ export const HomepagePageClient = () => {
 
   return (
     <div className="relative min-h-screen bg-[#f8f9fd] overflow-x-hidden selection:bg-primary selection:text-white">
-      {/* H1 – screen-reader accessible, visible to crawlers */}
-      <h1 className="sr-only">
+      {/* Keyword-rich blurb for crawlers/screen readers — kept as <p>, not <h1>,
+          since HeroSection already renders the page's one real H1. */}
+      <p className="sr-only">
         Split Bill Online Gratis — Scan Struk & Bagi Tagihan Instan
-      </h1>
+      </p>
 
       {/* Structured data — HowTo */}
       <script
@@ -158,34 +159,22 @@ export const HomepagePageClient = () => {
           </div>
         </section>
 
-        {/* Comparison Section */}
+        {/* Comparison, Testimonials, Pricing, Blog, FAQ, CTA — kept eager (not lazy-mounted)
+            so their headings/copy/schema land in the initial SSR HTML instead of being
+            gated behind client JS + IntersectionObserver, which crawlers may never run. */}
         <br className="hidden" />
-        <LazyMount minHeight={500}>
-          <ComparisonSection />
-        </LazyMount>
+        <ComparisonSection />
 
-        {/* Testimonials Masonry */}
-        <LazyMount minHeight={500}>
-          <TestimonialsSection />
-        </LazyMount>
+        <TestimonialsSection />
 
-        {/* Pricing/Membership Tiers */}
-        <LazyMount minHeight={500}>
-          <PricingSection />
-        </LazyMount>
+        {/* Pricing hidden for now — keep component, just not rendered */}
+        {/* <PricingSection /> */}
 
-        {/* Blog Section */}
-        <LazyMount minHeight={400}>
-          <BlogSectionHomepage />
-        </LazyMount>
+        <BlogSectionHomepage />
 
-        {/* FAQ Section — kept eager (not lazy-mounted) so schema/rich snippet content is in the initial SSR HTML */}
-        <FAQSectionHomepage />
+        <FAQSectionHomepage defaultOpenFirst />
 
-        {/* Final CTA Banner */}
-        <LazyMount minHeight={200}>
-          <CTABannerSection />
-        </LazyMount>
+        <CTABannerSection />
       </main>
 
       {/* Site Footer */}

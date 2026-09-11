@@ -307,3 +307,17 @@ export const trackChatBill = {
   closed: (params: { at_step: string }) =>
     trackEvent("bill_funnel_closed", { flow_type: "chat", at_step: params.at_step }),
 };
+
+/**
+ * Split Bill Liburan landing page (/split-bill-liburan) event trackers
+ */
+export const trackLiburanLP = {
+  view: (params: { utm_source?: string | null; utm_medium?: string | null; utm_campaign?: string | null }) =>
+    trackEvent("liburan_lp_view", {
+      utm_source: params.utm_source || undefined,
+      utm_medium: params.utm_medium || undefined,
+      utm_campaign: params.utm_campaign || undefined,
+    }),
+  ctaClick: (position: "hero" | "penutup" | "mockup") => trackEvent("liburan_lp_cta_click", { position }),
+  scrollDepth: (depth: 25 | 50 | 75 | 100) => trackEvent("liburan_lp_scroll_depth", { depth }),
+};

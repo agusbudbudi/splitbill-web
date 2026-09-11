@@ -123,39 +123,53 @@ export function HeroSplitCardCarousel() {
       onMouseEnter={() => timerRef.current && clearInterval(timerRef.current)}
       onMouseLeave={startAutoSlide}
     >
-      <div className="relative aspect-square rounded-xl overflow-hidden shadow-soft bg-slate-100">
-        {SLIDES.map((slide, index) => {
-          return (
-            <div
-              key={slide.id}
-              className={cn(
-                "absolute inset-0 transition-opacity duration-500",
-                index === activeIndex ? "opacity-100" : "opacity-0"
-              )}
-              aria-hidden={index !== activeIndex}
-            >
-              <Image
-                src={slide.image}
-                alt={slide.imageAlt}
-                fill
-                priority={index === 0}
-                className="object-cover"
-                sizes="(max-width: 1024px) 90vw, 512px"
-              />
-              {/* Category badge — pola sama dengan numbered badge di HowItWorksSection LP utama */}
-              <span className="absolute top-4 left-4 inline-flex items-center gap-2 rounded-xl bg-white/95 backdrop-blur-sm px-4 py-2 text-sm font-black text-slate-900 shadow-md">
-                <span className="text-base leading-none" aria-hidden="true">
-                  {slide.emoji}
+      <div className="relative aspect-square">
+        {/* Stacked deck illusion — dua kartu solid & miring di belakang kartu utama, asimetris (beda rotasi/jarak/skala kiri-kanan) */}
+        <div
+          className="absolute inset-0 z-0 -translate-x-[7%] translate-y-[3%] -rotate-[9deg] scale-[0.9] rounded-xl bg-gradient-to-br from-blue-100 to-blue-50"
+          aria-hidden="true"
+        />
+        <div
+          className="absolute inset-0 z-0 translate-x-[12%] translate-y-[8%] rotate-[5deg] scale-[0.85] rounded-xl bg-gradient-to-br from-primary/25 to-primary/10"
+          aria-hidden="true"
+        />
+
+        {/* Kartu utama */}
+        <div className="relative z-10 h-full w-full rounded-xl overflow-hidden shadow-soft bg-slate-100">
+          {SLIDES.map((slide, index) => {
+            const isActive = index === activeIndex;
+            return (
+              <div
+                key={slide.id}
+                className={cn(
+                  "absolute inset-0 transition-all duration-500 ease-out",
+                  isActive ? "opacity-100 scale-100" : "opacity-0 scale-[1.04]"
+                )}
+                aria-hidden={!isActive}
+              >
+                <Image
+                  src={slide.image}
+                  alt={slide.imageAlt}
+                  fill
+                  priority={index === 0}
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 90vw, 512px"
+                />
+                {/* Category badge — pola sama dengan numbered badge di HowItWorksSection LP utama */}
+                <span className="absolute top-4 left-4 inline-flex items-center gap-2 rounded-xl bg-white/95 backdrop-blur-sm px-4 py-2 text-sm font-black text-slate-900 shadow-md">
+                  <span className="text-base leading-none" aria-hidden="true">
+                    {slide.emoji}
+                  </span>
+                  {slide.category}
                 </span>
-                {slide.category}
-              </span>
-            </div>
-          );
-        })}
+              </div>
+            );
+          })}
+        </div>
       </div>
 
-      {/* Floating split-bill detail card — overlap batas bawah foto */}
-      <div className="relative -mt-14 mx-4 sm:mx-6">
+      {/* Floating split-bill detail card — overlap batas bawah foto, z-20 biar tetap di atas kartu belakang & gambar utama */}
+      <div className="relative z-20 -mt-14 mx-4 sm:mx-6">
         <div className="relative h-[128px] sm:h-[136px]">
           {SLIDES.map((slide, index) => {
             const activeParticipants = slide.participants.filter((p) => !p.skipped);

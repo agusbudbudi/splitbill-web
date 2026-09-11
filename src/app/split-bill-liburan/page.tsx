@@ -15,7 +15,6 @@ import Image from "next/image";
 import Link from "next/link";
 import {
   Camera,
-  ListChecks,
   Share2,
   Frown,
   Calculator,
@@ -36,6 +35,7 @@ import { LiburanPageTracker } from "./LiburanPageTracker";
 import { HeroSplitCardCarousel } from "./HeroSplitCardCarousel";
 import { HeroBackground } from "./HeroBackground";
 import { PenutupPromoBanner } from "./PenutupPromoBanner";
+import { CaraKerjaSteps } from "./CaraKerjaSteps";
 import { TestimonialsSection } from "@/components/homepage/TestimonialsSection";
 import { FAQSectionHomepage } from "@/components/homepage/FAQSectionHomepage";
 import { HomepageFooter } from "@/components/homepage/HomepageFooter";
@@ -117,27 +117,27 @@ export default function SplitBillLiburanPage() {
   const howToSchema = {
     "@context": "https://schema.org",
     "@type": "HowTo",
-    name: "Cara Kerja Split Bill Liburan Tanpa Ribet",
+    name: "Dari Struk Jadi Split dalam 3 Langkah",
     description:
-      "Ala Split Later, kumpulin struk dulu, itung-itungnya belakangan.",
+      "Kumpulin struk dulu selama liburan, split tagihannya belakangan pas udah santai.",
     step: [
       {
         "@type": "HowToStep",
         position: 1,
-        name: "Foto atau upload struk kapan aja",
-        text: "Selama liburan berlangsung, gak perlu langsung diitung di tempat. Simpan dulu, lanjut nongkrong.",
+        name: "Foto struknya",
+        text: "Upload kapan aja selama liburan.",
       },
       {
         "@type": "HowToStep",
         position: 2,
-        name: "Assign siapa bayar apa, atau split rata",
-        text: "Fleksibel, mau dibagi per item atau rata aja, tinggal pilih pas udah siap diitung.",
+        name: "Atur yang ikut bayar",
+        text: "Split rata atau assign item ke orang tertentu.",
       },
       {
         "@type": "HowToStep",
         position: 3,
-        name: "Generate rincian, share ke grup WA",
-        text: "Pas udah santai di rumah, tinggal generate rincian dan share link. Temen tinggal transfer.",
+        name: "Share hasilnya",
+        text: "Kirim rincian ke grup WhatsApp.",
       },
     ],
   };
@@ -182,8 +182,8 @@ export default function SplitBillLiburanPage() {
                     </span>
                   </h1>
                   <p className="mt-6 text-base sm:text-lg lg:text-xl text-slate-600 leading-relaxed max-w-lg mx-auto lg:mx-0">
-                    Kumpulin semua struk selama liburan, bagi tagihan otomatis, dan tahu siapa
-                    bayar berapa. Nggak perlu ribet ngitung manual.
+                    Kumpulin semua struk selama liburan, bagi tagihan otomatis, dan langsung tahu
+                    siapa bayar berapa. Nggak perlu ribet ngitung manual.
                   </p>
 
                   <div className="mt-8">
@@ -246,7 +246,7 @@ export default function SplitBillLiburanPage() {
                   },
                   {
                     icon: Calculator,
-                    quote: "Ini struk siapa?",
+                    quote: "Ini struk siapa, ya?",
                     bodyLine1: "Puluhan struk, banyak transaksi,",
                     bodyLine2: "ujung-ujungnya dihitung pakai kalkulator.",
                   },
@@ -273,7 +273,7 @@ export default function SplitBillLiburanPage() {
           </section>
 
           {/* Use Cases — perluas mental model: liburan ada banyak jenis pengeluaran, bukan cuma makan */}
-          <section className="py-16 sm:py-24 bg-gradient-to-b from-white to-[#f8f9fd] relative overflow-hidden">
+          <section className="py-16 sm:py-24 bg-[#F7FAFF] relative overflow-hidden">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-12">
                 <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight mb-4">
@@ -283,7 +283,7 @@ export default function SplitBillLiburanPage() {
                   </span>
                 </h2>
                 <p className="text-base sm:text-lg text-slate-500 font-medium">
-                  Satu liburan, banyak jenis pengeluaran, semua bisa langsung dicatat di sini.
+                  Satu liburan, puluhan pengeluaran. Semuanya bisa masuk ke satu perhitungan.
                 </p>
               </div>
 
@@ -401,7 +401,7 @@ export default function SplitBillLiburanPage() {
                 </div>
 
                 {/* Sebelum */}
-                <div className="rounded-md border border-rose-100 bg-gradient-to-b from-rose-50/60 to-white p-6 sm:p-8">
+                <div className="rounded-xl border border-rose-100 bg-gradient-to-b from-rose-50/60 to-white p-6 sm:p-8">
                   <h3 className="flex items-center gap-2 text-xl sm:text-2xl font-black text-rose-500">
                     <XCircle className="w-5 h-5 sm:w-6 sm:h-6" />
                     Sebelum SplitBill
@@ -413,16 +413,16 @@ export default function SplitBillLiburanPage() {
                       { icon: MessageCircle, label: "23 chat WhatsApp bolak-balik nagih" },
                     ].map((item) => (
                       <div key={item.label} className="flex items-center gap-3">
-                        <div className="flex-shrink-0 w-10 h-10 rounded-md bg-white border border-rose-100 flex items-center justify-center">
-                          <item.icon className="w-4 h-4 text-rose-400" strokeWidth={2} />
+                        <div className="flex-shrink-0 w-12 h-12 rounded-md bg-white border border-rose-100 flex items-center justify-center">
+                          <item.icon className="w-6 h-6 text-rose-400" strokeWidth={2.5} />
                         </div>
-                        <p className="text-sm sm:text-base font-semibold text-slate-600">
+                        <p className="text-base sm:text-lg font-semibold text-slate-600">
                           {item.label}
                         </p>
                       </div>
                     ))}
                     <div className="rounded-md bg-white border border-rose-100 px-4 py-3 mt-2">
-                      <p className="text-sm italic font-semibold text-slate-500">
+                      <p className="text-base italic font-semibold text-slate-500">
                         &ldquo;Bro, gue kurang transfer berapa?&rdquo;
                       </p>
                     </div>
@@ -434,7 +434,7 @@ export default function SplitBillLiburanPage() {
                 </div>
 
                 {/* Setelah */}
-                <div className="rounded-md border-2 border-primary/25 bg-gradient-to-b from-primary/5 to-white shadow-[0_4px_20px_-4px_rgba(71,159,234,0.12)] p-6 sm:p-8">
+                <div className="rounded-xl border-2 border-primary/25 bg-gradient-to-b from-primary/5 to-white shadow-[0_4px_20px_-4px_rgba(71,159,234,0.12)] p-6 sm:p-8">
                   <h3 className="flex items-center gap-2 text-xl sm:text-2xl font-black text-primary">
                     <CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6" />
                     Setelah SplitBill
@@ -448,10 +448,10 @@ export default function SplitBillLiburanPage() {
                     ].map((step) => (
                       <div key={step.label}>
                         <div className="flex items-center gap-3">
-                          <div className="flex-shrink-0 w-10 h-10 rounded-md bg-primary flex items-center justify-center">
-                            <step.icon className="w-4 h-4 text-white" strokeWidth={2} />
+                          <div className="flex-shrink-0 w-12 h-12 rounded-md bg-primary flex items-center justify-center">
+                            <step.icon className="w-6 h-6 text-white" strokeWidth={2.5} />
                           </div>
-                          <p className="text-sm sm:text-base font-bold text-slate-800">
+                          <p className="text-base sm:text-lg font-bold text-slate-800">
                             {step.label}
                           </p>
                         </div>
@@ -461,8 +461,8 @@ export default function SplitBillLiburanPage() {
                       </div>
                     ))}
                     <div className="flex items-center gap-3 bg-success/10 rounded-md px-4 py-3">
-                      <CheckCircle2 className="w-5 h-5 text-success flex-shrink-0" />
-                      <p className="text-sm sm:text-base font-black text-success">Beres!</p>
+                      <CheckCircle2 className="w-6 h-6 text-success flex-shrink-0" strokeWidth={2.5} />
+                      <p className="text-base sm:text-lg font-black text-success">Beres!</p>
                     </div>
                   </div>
                 </div>
@@ -470,68 +470,22 @@ export default function SplitBillLiburanPage() {
             </div>
           </section>
 
-          {/* 6.3 Cara kerja — layout beda dari LP utama (list vertikal), tapi text sizing ikutin skala LP utama */}
+          {/* 6.3 Cara kerja — product-focused (bukan lagi benefit kayak Before/After), tiap step dikasih screenshot UI biar konkret */}
           <section id="cara-pakai" className="py-16 sm:py-24 scroll-mt-20">
-            <div className="max-w-3xl mx-auto px-4 sm:px-6">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="text-center mb-10 sm:mb-12">
                 <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight mb-4">
-                  Cara Kerja Split Bill{" "}
+                  Dari Struk Jadi{" "}
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-600 to-primary">
-                    Tanpa Ribet
+                    Split dalam 3 Langkah
                   </span>
                 </h2>
                 <p className="text-base sm:text-lg text-slate-500 font-medium">
-                  Ala Split Later, kumpulin struk dulu, itung-itungnya belakangan.
+                  Simpel dan cepat, bisa kamu lakuin kapan aja selama liburan.
                 </p>
               </div>
 
-              <div className="space-y-8">
-                <div className="flex gap-5 items-start">
-                  <div className="flex-shrink-0 h-12 w-12 rounded-full bg-gradient-brand flex items-center justify-center text-white font-black text-lg">
-                    1
-                  </div>
-                  <div>
-                    <h3 className="text-base sm:text-xl font-black text-slate-800 flex items-center gap-2">
-                      <Camera className="h-5 w-5 text-primary" />
-                      Foto atau upload struk kapan aja
-                    </h3>
-                    <p className="text-sm font-medium text-slate-500 leading-relaxed mt-2">
-                      Selama liburan berlangsung, gak perlu langsung diitung di tempat. Simpan
-                      dulu, lanjut nongkrong.
-                    </p>
-                  </div>
-                </div>
-                <div className="flex gap-5 items-start">
-                  <div className="flex-shrink-0 h-12 w-12 rounded-full bg-gradient-brand flex items-center justify-center text-white font-black text-lg">
-                    2
-                  </div>
-                  <div>
-                    <h3 className="text-base sm:text-xl font-black text-slate-800 flex items-center gap-2">
-                      <ListChecks className="h-5 w-5 text-primary" />
-                      Assign siapa bayar apa, atau split rata
-                    </h3>
-                    <p className="text-sm font-medium text-slate-500 leading-relaxed mt-2">
-                      Fleksibel, mau dibagi per item atau rata aja, tinggal pilih pas udah siap
-                      diitung.
-                    </p>
-                  </div>
-                </div>
-                <div className="flex gap-5 items-start">
-                  <div className="flex-shrink-0 h-12 w-12 rounded-full bg-gradient-brand flex items-center justify-center text-white font-black text-lg">
-                    3
-                  </div>
-                  <div>
-                    <h3 className="text-base sm:text-xl font-black text-slate-800 flex items-center gap-2">
-                      <Share2 className="h-5 w-5 text-primary" />
-                      Generate rincian, share ke grup WA
-                    </h3>
-                    <p className="text-sm font-medium text-slate-500 leading-relaxed mt-2">
-                      Pas udah santai di rumah, tinggal generate rincian dan share link. Temen
-                      tinggal transfer.
-                    </p>
-                  </div>
-                </div>
-              </div>
+              <CaraKerjaSteps />
 
               <p className="text-sm text-slate-500 font-medium text-center mt-10">
                 Butuh split di tempat, bukan belakangan?{" "}
@@ -540,6 +494,59 @@ export default function SplitBillLiburanPage() {
                 </Link>
                 .
               </p>
+            </div>
+          </section>
+
+          {/* Product mockup showcase — nempel langsung ke atas Testimonials, mockup kiri/text kanan.
+              Image kolom sengaja gak dikasih py sendiri + `fill` + object-contain (bukan cover,
+              biar gambar gak pernah kepotong), rata bawah (object-bottom) biar kesan "berdiri"
+              nempel ke bawah section. Bg biru primary, jadi teks & CTA dipakein varian light. */}
+          <section className="bg-primary lg:bg-gradient-to-r lg:from-blue-50 lg:from-0% lg:to-primary lg:to-30% relative overflow-hidden">
+            {/* Fine grid — pola sama dengan HeroBackground, warna disesuaikan ke putih biar kelihatan di bg biru */}
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                backgroundImage:
+                  "linear-gradient(#ffffff14 1px, transparent 1px), linear-gradient(90deg, #ffffff14 1px, transparent 1px)",
+                backgroundSize: "72px 72px",
+                maskImage: "radial-gradient(ellipse 70% 55% at 50% 50%, black, transparent 75%)",
+                WebkitMaskImage: "radial-gradient(ellipse 70% 55% at 50% 50%, black, transparent 75%)",
+              }}
+            />
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+              <div className="grid lg:grid-cols-[55fr_45fr] gap-0 lg:gap-8">
+                <div className="relative order-2 lg:order-1 h-64 sm:h-80 lg:h-auto">
+                  <Image
+                    src="/img/split-bill-liburan/product-split-bill-liburan.png"
+                    alt="Tampilan aplikasi Split Later — daftar trip, rincian pengeluaran, dan siapa transfer ke siapa"
+                    fill
+                    className="object-contain object-bottom"
+                    sizes="(max-width: 1024px) 90vw, 600px"
+                  />
+                </div>
+
+                <div className="order-1 lg:order-2 py-10 sm:py-12 flex flex-col justify-center text-center lg:text-left">
+                  <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight leading-tight mb-3">
+                    Semua Jadi Lebih Rapi Langsung{" "}
+                    <span className="text-blue-100">di HP Kamu</span>
+                  </h2>
+                  <ul className="space-y-2 mt-5 mb-6 inline-block lg:block text-left">
+                    {[
+                      "Rincian otomatis siapa bayar berapa",
+                      "Riwayat semua trip liburan tersimpan",
+                      "Share hasil sekali klik ke WhatsApp",
+                    ].map((item) => (
+                      <li key={item} className="flex items-center gap-2.5 text-white font-semibold">
+                        <CheckCircle2 className="w-5 h-5 text-blue-100 shrink-0" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                  <div>
+                    <LiburanCTAButton position="mockup">Coba Split Later</LiburanCTAButton>
+                  </div>
+                </div>
+              </div>
             </div>
           </section>
 

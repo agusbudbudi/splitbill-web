@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { trackLiburanLP } from "@/lib/gtag";
 
 interface LiburanCTAButtonProps {
-  position: "hero" | "penutup";
+  position: "hero" | "penutup" | "mockup";
   children: React.ReactNode;
   className?: string;
 }

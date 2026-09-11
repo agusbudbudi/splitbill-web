@@ -73,6 +73,7 @@ export default function HomepagePage() {
     name: "Split Bill Online",
     url: "https://www.splitbill.my.id",
     logo: "https://www.splitbill.my.id/icon.png",
+    sameAs: ["https://www.instagram.com/splitbill.app/"],
   };
 
   return (

@@ -35,10 +35,12 @@ export const ResponsiveShell = ({ children }: ResponsiveShellProps) => {
   const isBlogDetail = pathname.startsWith("/blog/") && pathname.split("/").length > 2;
   const isAuthPage = ["/login", "/register", "/verify"].some(path => pathname.startsWith(path));
   const isMemberShell = pathname.startsWith("/member/") || pathname === "/member";
+  // Dedicated funnel microsite — kept distraction-free, sama kayak homepage
+  const isSplitBillLiburan = pathname === "/split-bill-liburan";
 
   return (
     <div className="w-full min-h-screen bg-background">
-      {isMounted && pathname !== "/" && !isBlogDetail && !isAuthPage && !isMemberShell && <MemberSidebar />}
+      {isMounted && pathname !== "/" && !isBlogDetail && !isAuthPage && !isMemberShell && !isSplitBillLiburan && <MemberSidebar />}
       {children}
     </div>
   );

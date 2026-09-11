@@ -75,7 +75,7 @@ const TestimonialCard = ({ review }: { review: Review }) => {
           {/* Content wrapper */}
           <div className="relative">
             <p
-              className={`text-sm font-semibold text-slate-600 leading-relaxed transition-all duration-300 ${isLongText && !isExpanded ? "line-clamp-2" : "line-clamp-none"
+              className={`text-base font-semibold text-slate-600 leading-relaxed transition-all duration-300 ${isLongText && !isExpanded ? "line-clamp-2" : "line-clamp-none"
                 }`}
             >
               "{review.review}"
@@ -93,9 +93,9 @@ const TestimonialCard = ({ review }: { review: Review }) => {
             />
           </div>
           <div>
-            <h4 className="text-sm font-black text-slate-800 leading-none mb-1">
+            <p className="text-sm font-black text-slate-800 leading-none mb-1">
               {review.name || "Anonim"}
-            </h4>
+            </p>
             <p className="text-xs font-semibold text-slate-400">
               {new Intl.DateTimeFormat("id-ID", {
                 day: "numeric",

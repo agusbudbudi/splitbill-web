@@ -10,13 +10,9 @@ export const metadata: Metadata = {
     "splitbill",
     "split bill online",
     "splitbill online",
-    "split bill online free",
-    "split bill online photo",
-    "split bill online scan",
     "splitbill app",
     "split bill app",
     "split bill free",
-    "split bill online with tax",
     "aplikasi bagi tagihan",
     "aplikasi split bill",
     "aplikasi patungan",
@@ -30,7 +26,6 @@ export const metadata: Metadata = {
     "split bill whatsapp",
     "alternatif split bill bonapp",
     "alternatif chatgpt split bill",
-    "split bill photo",
     "cara hitung split bill manual",
   ],
   authors: [{ name: "SplitBill Team" }],
@@ -78,6 +73,7 @@ export default function HomepagePage() {
     name: "Split Bill Online",
     url: "https://www.splitbill.my.id",
     logo: "https://www.splitbill.my.id/icon.png",
+    sameAs: ["https://www.instagram.com/splitbill.app/"],
   };
 
   return (

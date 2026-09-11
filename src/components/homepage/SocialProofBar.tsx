@@ -47,9 +47,9 @@ export const SocialProofBar = () => {
                   <Icon className={`w-3 h-3 md:w-5 md:h-5 ${hl.color}`} />
                 </div>
                 <div className="min-w-0">
-                  <h4 className="text-xs sm:text-sm md:text-base font-extrabold text-slate-800 tracking-tight leading-none">
+                  <p className="text-xs sm:text-sm md:text-base font-extrabold text-slate-800 tracking-tight leading-none">
                     {hl.title}
-                  </h4>
+                  </p>
                   <p className="hidden md:block text-xs text-slate-500 font-medium mt-0.5 leading-normal">
                     {hl.desc}
                   </p>

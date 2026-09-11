@@ -785,6 +785,34 @@ const SplitBillContent = () => {
     }
   };
 
+  // Native shell hides its own header on this page (the wizard has its own
+  // back/home buttons up top) and instead drives the native header's back
+  // button through this bridge, so it gets the exact same step/survey/
+  // sourceBucketId logic as the web back button instead of a generic pop.
+  const prevStepRef = useRef(prevStep);
+  prevStepRef.current = prevStep;
+
+  useEffect(() => {
+    const handleNativeMessage = (event: MessageEvent) => {
+      try {
+        const data = JSON.parse(event.data);
+        if (data?.type === "NATIVE_BACK") {
+          prevStepRef.current();
+        }
+      } catch {
+        // ignore non-JSON messages
+      }
+    };
+    // react-native-webview dispatches postMessage on `document` on iOS and
+    // `window` on Android — listen on both to cover either platform.
+    window.addEventListener("message", handleNativeMessage);
+    document.addEventListener("message", handleNativeMessage as EventListener);
+    return () => {
+      window.removeEventListener("message", handleNativeMessage);
+      document.removeEventListener("message", handleNativeMessage as EventListener);
+    };
+  }, []);
+
   const handleSurveyComplete = () => {
     localStorage.setItem("hasSeenDropOffSurvey", "true");
     setIsSurveyOpen(false);

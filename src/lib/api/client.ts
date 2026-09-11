@@ -147,7 +147,18 @@ class ApiClient {
 
       if (response.ok) {
         const data = await response.json();
-        setTokens(data.accessToken, data.refreshToken || refreshToken);
+        const newRefreshToken = data.refreshToken || refreshToken;
+        setTokens(data.accessToken, newRefreshToken);
+        // Tell the native shell so it holds the rotated tokens too — otherwise
+        // it keeps re-injecting the stale (possibly already-consumed) pair on
+        // every fresh webview navigation, breaking the next refresh.
+        (window as any).ReactNativeWebView?.postMessage(
+          JSON.stringify({
+            type: "TOKENS_REFRESHED",
+            accessToken: data.accessToken,
+            refreshToken: newRefreshToken,
+          }),
+        );
         return true;
       } else {
         clearTokens();

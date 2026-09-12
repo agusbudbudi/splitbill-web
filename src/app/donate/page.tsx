@@ -4,12 +4,6 @@ import DonateClientPage from "./DonateClientPage";
 export const metadata: Metadata = {
   title: "Support Developer - Dukung Pengembangan SplitBill Online",
   description: "Dukung pengembangan SplitBill Online agar terus gratis dan bebas iklan. Donasi darimu membantu biaya operasional server dan pengembangan fitur AI Scan terbaru.",
-  keywords: [
-    "donasi split bill",
-    "dukung developer",
-    "split bill gratis",
-    "traktir kopi developer",
-  ],
   alternates: {
     canonical: "https://www.splitbill.my.id/donate",
   },

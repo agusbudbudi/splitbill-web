@@ -6,14 +6,6 @@ export const metadata: Metadata = {
   title: "FAQ & Bantuan Split Bill — Pertanyaan Seputar Bagi Tagihan",
   description:
     "Temukan jawaban atas pertanyaan seputar cara split bill, scan struk dengan AI, bagi tagihan online, patungan, dan semua fitur SplitBill.my.id.",
-  keywords: [
-    "faq split bill",
-    "cara split bill",
-    "cara bagi tagihan",
-    "bantuan split bill",
-    "panduan patungan online",
-    "split bill itu apa",
-  ],
   alternates: {
     canonical: "https://www.splitbill.my.id/faq",
   },

@@ -4,13 +4,6 @@ import InvoiceClientPage from "./InvoiceClientPage";
 export const metadata: Metadata = {
   title: "Buat Invoice Online Gratis - Cepat & Profesional",
   description: "Buat invoice profesional secara online dan gratis. Cocok untuk freelancer, bisnis kecil, atau penagihan jasa. Mudah digunakan, bisa langsung download PDF.",
-  keywords: [
-    "buat invoice online",
-    "invoice gratis",
-    "invoice generator free",
-    "aplikasi penagihan online",
-    "invoice freelancer indonesia",
-  ],
   alternates: {
     canonical: "https://www.splitbill.my.id/invoice",
   },

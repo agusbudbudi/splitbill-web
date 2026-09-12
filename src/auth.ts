@@ -28,6 +28,25 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       }
       return session;
     },
+    // Default redirect callback drops the whole callbackUrl (path + ?redirect=
+    // query) whenever its origin doesn't exactly string-match baseUrl. The
+    // site is reachable on both the apex and www hosts, so a visitor who
+    // starts the Google flow on one while baseUrl resolves to the other
+    // (e.g. splitbill.my.id vs www.splitbill.my.id) would otherwise always
+    // land on bare "/" after login, losing where they meant to go (e.g.
+    // /split-later). Compare hostnames with "www." stripped instead.
+    async redirect({ url, baseUrl }) {
+      try {
+        const target = new URL(url, baseUrl);
+        const stripWww = (host: string) => host.replace(/^www\./, "");
+        if (stripWww(target.hostname) === stripWww(new URL(baseUrl).hostname)) {
+          return target.toString();
+        }
+      } catch {
+        // fall through to baseUrl below
+      }
+      return baseUrl;
+    },
   },
   pages: {
     signIn: "/login",

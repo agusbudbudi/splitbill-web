@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { User } from "@/lib/api/auth";
 import * as authApi from "@/lib/api/auth";
-import { hasTokens, clearTokens } from "@/lib/auth/tokens";
+import { hasTokens, clearTokens, consumeAuthExpiredGuard } from "@/lib/auth/tokens";
 import { identifyUser, clearUser } from "@/lib/gtag";
 import { useSplitBillStore } from "@/store/useSplitBillStore";
 
@@ -222,7 +222,17 @@ export const useAuthStore = create<AuthState>((set) => ({
 
     // Check if we have tokens first
     if (!hasTokens()) {
-      const loggedInWithGoogle = await checkGoogleSession();
+      // A real API call just rejected our token and forced this reload
+      // (client.ts handleTokenExpired). Skip the silent Google-session
+      // auto-relogin here — NextAuth's own session cookie can outlive our
+      // app tokens by weeks and carries an idToken that's never refreshed,
+      // so re-minting app tokens from it right now would just reproduce
+      // the same rejection on the next request, looping forever. Force a
+      // real manual re-login instead, which gets a fresh Google idToken.
+      const skipGoogleAutoRelogin = consumeAuthExpiredGuard();
+      const loggedInWithGoogle = skipGoogleAutoRelogin
+        ? false
+        : await checkGoogleSession();
       if (loggedInWithGoogle) return;
 
       // localStorage tokens are gone but a stale sb_session cookie may

@@ -30,6 +30,7 @@ export interface CalculationResult {
   balances: BillBalances;
   totalSpent: number;
   settlementInstructions: SettlementInstruction[];
+  pairwiseInstructions: SettlementInstruction[];
   badges: Record<string, string[]>;
 }
 
@@ -57,6 +58,16 @@ export const useBillCalculations = (
       return acc;
     }, {} as BillBalances);
 
+    // Raw per-pair debt matrix (debtor -> creditor -> amount owed),
+    // used for the "pairwise" settlement view (real transaction-level debts,
+    // not netted down to the minimum number of transfers).
+    const debtMatrix: Record<string, Record<string, number>> = {};
+    const addDebt = (debtor: string, creditor: string, amount: number) => {
+      if (debtor === creditor || amount <= 0) return;
+      if (!debtMatrix[debtor]) debtMatrix[debtor] = {};
+      debtMatrix[debtor][creditor] = (debtMatrix[debtor][creditor] || 0) + amount;
+    };
+
     // 1. Process Main Expenses
     expenses.forEach((exp) => {
       // Add to paid amount for the person who paid
@@ -76,6 +87,7 @@ export const useBillCalculations = (
             method: "equal",
             isAdditional: false,
           });
+          addDebt(person, exp.paidBy, share);
         }
       });
     });
@@ -120,6 +132,7 @@ export const useBillCalculations = (
               method: "prop",
               isAdditional: true,
             });
+            if (adx.paidBy) addDebt(person, adx.paidBy, proportionalShare);
           } else if (balances[person] && involvedBaseSubtotal === 0) {
             // Fallback to equal if no one has spent anything yet
             const share = adx.amount / adx.who.length;
@@ -130,6 +143,7 @@ export const useBillCalculations = (
               method: "equal",
               isAdditional: true,
             });
+            if (adx.paidBy) addDebt(person, adx.paidBy, share);
           }
         });
       } else {
@@ -144,6 +158,7 @@ export const useBillCalculations = (
               method: "equal",
               isAdditional: true,
             });
+            if (adx.paidBy) addDebt(person, adx.paidBy, share);
           }
         });
       }
@@ -195,6 +210,27 @@ export const useBillCalculations = (
       if (Math.abs(debtor.balance) < 0.01) debtorIdx++;
     }
 
+    // Pairwise Settlement (net debt per person-pair, no global minimization)
+    const pairwiseInstructions: SettlementInstruction[] = [];
+    const settledPairs = new Set<string>();
+    people.forEach((a) => {
+      people.forEach((b) => {
+        const pairKey = [a, b].sort().join("|");
+        if (a === b || settledPairs.has(pairKey)) return;
+        settledPairs.add(pairKey);
+
+        const aOwesB = debtMatrix[a]?.[b] || 0;
+        const bOwesA = debtMatrix[b]?.[a] || 0;
+        const net = aOwesB - bOwesA;
+
+        if (net > 0.01) {
+          pairwiseInstructions.push({ from: a, to: b, amount: net });
+        } else if (net < -0.01) {
+          pairwiseInstructions.push({ from: b, to: a, amount: -net });
+        }
+      });
+    });
+
     // Identify Badges
     const badges: Record<string, string[]> = {};
     people.forEach((name) => (badges[name] = []));
@@ -236,7 +272,7 @@ export const useBillCalculations = (
       }
     }
 
-    return { balances, totalSpent, settlementInstructions, badges };
+    return { balances, totalSpent, settlementInstructions, pairwiseInstructions, badges };
   };
 
   return calculateBalances();

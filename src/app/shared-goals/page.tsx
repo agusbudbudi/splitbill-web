@@ -4,14 +4,6 @@ import SharedGoalsClientPage from "./SharedGoalsClientPage";
 export const metadata: Metadata = {
   title: "Shared Goals - Patungan & Nabung Bareng Teman Online",
   description: "Wujudkan impian bareng teman! Gunakan fitur Shared Goals untuk nabung bareng, patungan kado, atau persiapan liburan kelompok. Pantau progress tabungan secara transparan.",
-  keywords: [
-    "shared goals online",
-    "nabung bareng teman",
-    "patungan online",
-    "aplikasi tabungan bersama",
-    "kumpul uang kado",
-    "budgeting kelompok",
-  ],
   alternates: {
     canonical: "https://www.splitbill.my.id/shared-goals",
   },

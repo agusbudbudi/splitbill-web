@@ -90,8 +90,11 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
       }
       : undefined;
 
-    const { balances, totalSpent, settlementInstructions, badges } =
+    const { balances, totalSpent, settlementInstructions, pairwiseInstructions, badges } =
       useBillCalculations(dataForCalc);
+    const [settlementMode, setSettlementMode] = useState<"simplified" | "pairwise">("simplified");
+    const activeInstructions =
+      settlementMode === "simplified" ? settlementInstructions : pairwiseInstructions;
 
     const people = billData ? billData.people : store.people;
     const expenses = billData ? billData.expenses : store.expenses;
@@ -156,8 +159,8 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
         const origin = typeof window !== "undefined" ? window.location.origin : "https://www.splitbill.my.id";
         const shareUrl = billData?.id ? `${origin}/history/split-bill/${billData.id}` : currentUrl;
 
-        const instructionsText = settlementInstructions.length > 0
-          ? "\n\nRincian Transfer:\n" + settlementInstructions.map(inst => `• ${inst.from} ➡️ ${inst.to}: ${formatToIDR(inst.amount)}`).join("\n")
+        const instructionsText = activeInstructions.length > 0
+          ? "\n\nRincian Transfer:\n" + activeInstructions.map(inst => `• ${inst.from} ➡️ ${inst.to}: ${formatToIDR(inst.amount)}`).join("\n")
           : "";
 
         const paymentMethodsText = selectedMethods.length > 0
@@ -230,8 +233,8 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
       const origin = typeof window !== "undefined" ? window.location.origin : "https://www.splitbill.my.id";
       const shareUrl = billData?.id ? `${origin}/history/split-bill/${billData.id}` : currentUrl;
 
-      const instructionsText = settlementInstructions.length > 0
-        ? "\n\nRincian Transfer:\n" + settlementInstructions.map(inst => `• ${inst.from} ➡️ ${inst.to}: ${formatToIDR(inst.amount)}`).join("\n")
+      const instructionsText = activeInstructions.length > 0
+        ? "\n\nRincian Transfer:\n" + activeInstructions.map(inst => `• ${inst.from} ➡️ ${inst.to}: ${formatToIDR(inst.amount)}`).join("\n")
         : "";
 
       const paymentMethodsText = selectedMethods.length > 0
@@ -414,18 +417,46 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
             </div>
 
             {/* Settlement Instructions Banner */}
-            {settlementInstructions.length > 0 && (
+            {(settlementInstructions.length > 0 || pairwiseInstructions.length > 0) && (
               <div className="p-3 bg-primary rounded-sm space-y-3 shadow-sm">
-                <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 bg-white/20 rounded-full flex items-center justify-center">
-                    <ArrowRight className="w-4 h-4 text-white" />
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 bg-white/20 rounded-full flex items-center justify-center">
+                      <ArrowRight className="w-4 h-4 text-white" />
+                    </div>
+                    <p className="text-sm font-black text-white tracking-tight">
+                      Instruksi Transfer
+                    </p>
                   </div>
-                  <p className="text-sm font-black text-white tracking-tight">
-                    Instruksi Transfer
-                  </p>
+                  <div className="flex items-center gap-0.5 p-0.5 bg-white/15 rounded-sm">
+                    <button
+                      type="button"
+                      onClick={() => setSettlementMode("simplified")}
+                      className={cn(
+                        "px-2 py-1 text-[11px] font-bold rounded-sm transition-colors",
+                        settlementMode === "simplified"
+                          ? "bg-white text-primary"
+                          : "text-white/80",
+                      )}
+                    >
+                      Simpel
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSettlementMode("pairwise")}
+                      className={cn(
+                        "px-2 py-1 text-[11px] font-bold rounded-sm transition-colors",
+                        settlementMode === "pairwise"
+                          ? "bg-white text-primary"
+                          : "text-white/80",
+                      )}
+                    >
+                      Per Transaksi
+                    </button>
+                  </div>
                 </div>
                 <div className="grid gap-2">
-                  {settlementInstructions.map((inst, idx) => (
+                  {activeInstructions.map((inst, idx) => (
                     <div
                       key={idx}
                       className="flex items-center justify-between p-3 bg-white border border-primary/10 rounded-sm"
@@ -863,7 +894,7 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
               people,
               activityName: activityName || "Laporan Keuangan Tongkrongan",
               totalSpent,
-              settlementInstructions,
+              settlementInstructions: activeInstructions,
               balances,
               badges,
               selectedMethods,

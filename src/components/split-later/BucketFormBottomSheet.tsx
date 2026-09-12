@@ -124,7 +124,7 @@ export const BucketFormBottomSheet = ({
     }
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!title.trim()) {
       toast.error("Nama Split Later tidak boleh kosong!");
       return;
@@ -135,27 +135,33 @@ export const BucketFormBottomSheet = ({
     }
 
     if (editBucketId) {
-      updateBucket(editBucketId, {
-        title: title.trim(),
-        emoji,
-        bucketType,
-        participants,
-      });
+      try {
+        await updateBucket(editBucketId, {
+          title: title.trim(),
+          emoji,
+          bucketType,
+          participants,
+        });
 
-      // Auto-save participants to Friend Store
-      participants.forEach((name) => {
-        const existingFriend = friends.find(
-          (f) => f.name.toLowerCase() === name.toLowerCase(),
-        );
-        if (!existingFriend) {
-          addFriend({ name });
-        } else {
-          trackFriendUsage(existingFriend.id);
-        }
-      });
+        // Auto-save participants to Friend Store
+        participants.forEach((name) => {
+          const existingFriend = friends.find(
+            (f) => f.name.toLowerCase() === name.toLowerCase(),
+          );
+          if (!existingFriend) {
+            addFriend({ name });
+          } else {
+            trackFriendUsage(existingFriend.id);
+          }
+        });
 
-      toast.success("Split Later berhasil diupdate! ✏️");
-      if (onDone) onDone(editBucketId);
+        toast.success("Split Later berhasil diupdate! ✏️");
+        if (onDone) onDone(editBucketId);
+      } catch (err) {
+        console.error(err);
+        toast.error("Gagal mengupdate Split Later.");
+        return;
+      }
     }
 
     resetForm();

@@ -10,7 +10,6 @@
 
 import type { Metadata } from "next";
 import SplitBillClientPage from "./SplitBillClientPage";
-import { faqData } from "@/data/faqData";
 
 export const metadata: Metadata = {
   title: "Split Bill Online Gratis — Kalkulator Bagi Tagihan Tanpa Aplikasi",
@@ -89,22 +88,6 @@ export default function SplitBillPage() {
     },
   };
 
-  // Reuse the same FAQ content bank as the homepage, scoped to split-bill
-  // questions, so this page earns its own FAQ rich-result eligibility.
-  const splitBillFaqs = faqData.filter((item) => item.category === "split-bill");
-  const faqSchema = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: splitBillFaqs.map((faq) => ({
-      "@type": "Question",
-      name: faq.question,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: faq.answer,
-      },
-    })),
-  };
-
   return (
     <>
       <script
@@ -115,42 +98,12 @@ export default function SplitBillPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareAppSchema) }}
       />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-      />
       {/* Visually hidden H1 — client page starts straight into the wizard UI,
           so the page had no top-level heading for Google to key off. */}
       <h1 className="sr-only">
         Split Bill Online Gratis — Kalkulator Bagi Tagihan Tanpa Aplikasi
       </h1>
       <SplitBillClientPage />
-      {/* Visible FAQ backing faqSchema above — structured data must mirror
-          on-page content, or Google won't grant (or may distrust) the
-          FAQ rich result. Native <details> needs no client JS. */}
-      <section className="max-w-3xl mx-auto px-4 sm:px-6 py-12">
-        <h2 className="text-2xl font-black text-slate-900 mb-6">
-          Pertanyaan Seputar Split Bill Online
-        </h2>
-        <div className="space-y-3">
-          {splitBillFaqs.map((faq) => (
-            <details
-              key={faq.id}
-              className="group bg-white border border-slate-100 rounded-md px-6 py-4 shadow-[0_4px_20px_-6px_rgba(0,0,0,0.02)]"
-            >
-              <summary className="cursor-pointer font-bold text-slate-800 marker:content-none list-none flex items-center justify-between">
-                {faq.question}
-                <span className="text-slate-400 group-open:rotate-180 transition-transform">
-                  ▾
-                </span>
-              </summary>
-              <p className="text-sm font-semibold text-slate-500 leading-relaxed mt-3">
-                {faq.answer}
-              </p>
-            </details>
-          ))}
-        </div>
-      </section>
     </>
   );
 }

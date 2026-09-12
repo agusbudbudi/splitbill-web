@@ -6,6 +6,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { useSplitLaterStore, BucketType } from "@/store/useSplitLaterStore";
 import { useFriendStore } from "@/lib/stores/friendStore";
+import { splitLaterLocalApi } from "@/lib/api/split-later";
 import { BucketCard } from "@/components/split-later/BucketCard";
 import { BucketFormBottomSheet } from "@/components/split-later/BucketFormBottomSheet";
 import { FeatureBanner } from "@/components/ui/FeatureBanner";
@@ -71,8 +72,14 @@ export default function SplitLaterClientPage() {
   const searchParams = useSearchParams();
   const step = parseInt(searchParams.get("step") || "0");
 
-  const { buckets, getBucketStats, createBucket, addReceipt } =
-    useSplitLaterStore();
+  const {
+    buckets,
+    getBucketStats,
+    createBucket,
+    addReceipt,
+    fetchBuckets,
+    migrateLegacyBuckets,
+  } = useSplitLaterStore();
   const { friends, groups, addFriend, trackFriendUsage, getFriendsInGroup } =
     useFriendStore();
 
@@ -80,6 +87,11 @@ export default function SplitLaterClientPage() {
   const [activeEditBucketId, setActiveEditBucketId] = useState<string | null>(
     null,
   );
+
+  useEffect(() => {
+    migrateLegacyBuckets().finally(() => fetchBuckets());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Local creation states
   const [title, setTitle] = useState("");
@@ -166,16 +178,7 @@ export default function SplitLaterClientPage() {
       if (!skipPhoto && receiptFile) {
         const toastId = toast.loading("Mengupload foto struk pertama...");
         try {
-          const formData = new FormData();
-          formData.append("file", receiptFile);
-
-          const res = await fetch("/api/split-later/upload", {
-            method: "POST",
-            body: formData,
-          });
-          const data = await res.json();
-
-          if (!data.success) throw new Error(data.error || "Upload gagal");
+          const data = await splitLaterLocalApi.uploadReceiptFile(receiptFile);
           uploadedUrl = data.url;
           toast.success("Struk pertama berhasil diupload! 📸", { id: toastId });
         } catch (err: any) {
@@ -187,7 +190,7 @@ export default function SplitLaterClientPage() {
       }
 
       // Create bucket
-      const bucketId = createBucket({
+      const bucketId = await createBucket({
         title: title.trim(),
         emoji,
         bucketType,
@@ -208,7 +211,7 @@ export default function SplitLaterClientPage() {
 
       // Add receipt if successfully uploaded
       if (uploadedUrl) {
-        addReceipt({
+        await addReceipt({
           bucketId,
           imageUrl: uploadedUrl,
           status: "pending",

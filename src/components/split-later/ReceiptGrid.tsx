@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { IllustratedEmptyState } from "@/components/ui/IllustratedEmptyState";
 import { Card, CardContent } from "@/components/ui/Card";
 import { ReceiptImagePicker } from "@/components/splitbill/ReceiptImagePicker";
+import { splitLaterLocalApi } from "@/lib/api/split-later";
 
 interface ReceiptGridProps {
   receipts: BucketReceipt[];
@@ -34,16 +35,12 @@ export const ReceiptGrid = ({
     if (receipts.length === 0) return;
     let cancelled = false;
 
-    fetch("/api/split-later/check-images", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ urls: receipts.map((r) => r.imageUrl) }),
-    })
-      .then((res) => res.json())
+    splitLaterLocalApi
+      .checkImages(receipts.map((r) => r.imageUrl))
       .then((data) => {
-        if (cancelled || !data.success) return;
+        if (cancelled) return;
         const missingUrls = new Set(
-          data.results.filter((r: { url: string; exists: boolean }) => !r.exists).map((r: { url: string }) => r.url),
+          data.results.filter((r) => !r.exists).map((r) => r.url),
         );
         setDeletedIds(
           new Set(

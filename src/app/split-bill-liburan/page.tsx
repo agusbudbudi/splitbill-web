@@ -49,13 +49,6 @@ export const metadata: Metadata = {
   title: "Split Bill Liburan - Kumpulin Struk, Bagi Nanti Aja | SplitBill",
   description:
     "Liburan bareng temen gak usah ribet itung-itung di tempat. Kumpulin struk selama trip, split tagihannya belakangan pas udah santai. Gratis & tanpa login.",
-  keywords: [
-    "split bill liburan",
-    "split later",
-    "patungan liburan",
-    "bagi tagihan trip",
-    "split bill online",
-  ],
   alternates: {
     canonical: PAGE_URL,
   },

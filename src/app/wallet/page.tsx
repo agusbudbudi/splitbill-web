@@ -1,16 +1,10 @@
 import type { Metadata } from "next";
 import WalletClientPage from "./WalletClientPage";
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 
 export const metadata: Metadata = {
   title: "Wallet & Metode Pembayaran - Atur Rekening Split Bill",
   description: "Kelola metode pembayaran favoritmu (BCA, Mandiri, GoPay, OVO, dll). Tambahkan detail rekening untuk memudahkan teman mentransfer hasil split bill secara instan.",
-  keywords: [
-    "metode pembayaran split bill",
-    "rekening bank online",
-    "dompet digital indonesia",
-    "atur pembayaran patungan",
-    "split bill wallet",
-  ],
   alternates: {
     canonical: "https://www.splitbill.my.id/wallet",
   },
@@ -43,7 +37,9 @@ export default function WalletPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
-      <WalletClientPage />
+      <ProtectedRoute>
+        <WalletClientPage />
+      </ProtectedRoute>
     </>
   );
 }

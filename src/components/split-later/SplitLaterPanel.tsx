@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSplitLaterStore } from "@/store/useSplitLaterStore";
 import { BucketCard } from "@/components/split-later/BucketCard";
@@ -10,7 +11,13 @@ import { Plus } from "lucide-react";
 
 export function SplitLaterPanel() {
   const router = useRouter();
-  const { buckets, getBucketStats } = useSplitLaterStore();
+  const { buckets, getBucketStats, fetchBuckets, migrateLegacyBuckets } =
+    useSplitLaterStore();
+
+  useEffect(() => {
+    migrateLegacyBuckets().finally(() => fetchBuckets());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const goToPublicCreate = () => router.push("/split-later?step=1");
 

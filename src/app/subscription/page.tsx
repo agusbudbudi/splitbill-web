@@ -4,11 +4,6 @@ import SubscriptionClientPage from "./SubscriptionClientPage";
 export const metadata: Metadata = {
   title: "Paket Langganan VIP - SplitBill Online",
   description: "Pilih paket langganan yang sesuai dengan kebutuhanmu. Mulai dari paket harian hingga tahunan dengan harga terjangkau untuk fitur bagi tagihan terbaik.",
-  keywords: [
-    "harga vip splitbill",
-    "paket langganan split bill",
-    "biaya upgrade splitbill",
-  ],
   alternates: {
     canonical: "https://www.splitbill.my.id/subscription",
   },

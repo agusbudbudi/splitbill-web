@@ -2,9 +2,18 @@ import { put } from "@vercel/blob";
 import { NextResponse } from "next/server";
 import fs from "fs/promises";
 import path from "path";
+import { requireAuthUser } from "@/lib/api/splitLaterAuth";
 
 export async function POST(request: Request) {
   try {
+    const user = await requireAuthUser(request);
+    if (!user) {
+      return NextResponse.json(
+        { success: false, error: "Unauthorized" },
+        { status: 401 },
+      );
+    }
+
     const formData = await request.formData();
     const file = formData.get("file") as File | null;
 

@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Menu, X, ArrowRight, Zap, ChevronDown } from "lucide-react";
-import { cn, getAvatarUrl } from "@/lib/utils";
+import { cn, getAvatarUrl, isNativeAppWebView } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
 import { useAuthStore } from "@/lib/stores/authStore";
@@ -64,10 +64,15 @@ export const HomepageNavbar = ({
   const { user, isAuthenticated, isInitialized, initialize } = useAuthStore();
   const { isInstallable, isStandalone, isIOS, installPWA } = usePWA();
   const [showPwaBanner, setShowPwaBanner] = useState(false);
+  const [isNativeApp, setIsNativeApp] = useState(false);
 
   useEffect(() => {
     initialize();
   }, [initialize]);
+
+  useEffect(() => {
+    setIsNativeApp(isNativeAppWebView());
+  }, []);
 
   // Check if we should show the install PWA banner
   useEffect(() => {
@@ -264,6 +269,9 @@ export const HomepageNavbar = ({
       )}
     </>
   );
+
+  // Native shell provides its own header + PWA is irrelevant inside it.
+  if (isNativeApp) return null;
 
   return (
     <>

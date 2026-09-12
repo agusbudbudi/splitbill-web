@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft, LogIn, MessageCircle, Crown, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { cn, getAvatarUrl } from "@/lib/utils";
+import { cn, getAvatarUrl, isNativeAppWebView } from "@/lib/utils";
 import { useAuthStore } from "@/lib/stores/authStore";
 import { useRouter } from "next/navigation";
 import { useUIStore } from "@/lib/stores/uiStore";
@@ -45,11 +45,20 @@ export const Header = ({
   const { user, isAuthenticated, initialize } = useAuthStore();
   const { isPWABannerVisible } = useUIStore();
   const [scrolled, setScrolled] = React.useState(false);
+  const [isNativeApp, setIsNativeApp] = React.useState(false);
 
   useEffect(() => {
     // Initialize auth state on mount (only runs once)
     initialize();
   }, []);
+
+  useEffect(() => {
+    setIsNativeApp(isNativeAppWebView());
+  }, []);
+
+  // Native shell renders its own header — avoid a duplicate here, on every
+  // page that uses this component (not just /member).
+  if (isNativeApp) return null;
 
   return (
     <header

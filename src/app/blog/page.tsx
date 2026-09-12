@@ -5,15 +5,6 @@ export const metadata: Metadata = {
   title: "Blog & Tips Split Bill — Kelola Keuangan & Patungan Lebih Hemat",
   description:
     "Temukan tips eksklusif seputar pengelolaan keuangan, cara split bill yang adil, update fitur SplitBill, dan panduan patungan online untuk Gen-Z dan Millennial.",
-  keywords: [
-    "tips split bill",
-    "blog keuangan",
-    "cara bagi tagihan",
-    "aplikasi patungan terbaik",
-    "manajemen uang grup",
-    "split bill hemat",
-    "tips hemat nongkrong",
-  ],
   alternates: {
     canonical: "https://www.splitbill.my.id/blog",
   },

@@ -50,7 +50,7 @@ export const ShareCollectionReceipt = React.forwardRef<
         <div className="flex items-center gap-4">
           <div className="w-16 h-16 bg-white rounded-md flex items-center justify-center border border-primary/5 p-2">
             <img
-              src="/img/footer-icon.png"
+              src="/img/split-bill-icon.png"
               alt="SplitBill Logo"
               className="w-full h-full object-contain"
             />

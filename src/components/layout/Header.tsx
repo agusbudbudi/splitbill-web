@@ -24,6 +24,7 @@ interface HeaderProps {
   sticky?: boolean;
   wide?: boolean;
   containerClassName?: string;
+  logoSrc?: string;
 }
 
 export const Header = ({
@@ -40,6 +41,7 @@ export const Header = ({
   sticky = true,
   wide = false,
   containerClassName,
+  logoSrc = "/img/split-bill-logo-basic.png",
 }: HeaderProps) => {
   const router = useRouter();
   const { user, isAuthenticated, initialize } = useAuthStore();
@@ -144,7 +146,7 @@ export const Header = ({
                   aria-label="SplitBill Home"
                 >
                   <Image
-                    src="/img/split-bill-logo-basic.png"
+                    src={logoSrc}
                     alt="SplitBill Logo"
                     width={130}
                     height={36}

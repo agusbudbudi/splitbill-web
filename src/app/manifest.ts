@@ -19,8 +19,8 @@ export default function manifest(): MetadataRoute.Manifest {
         purpose: "any",
       },
       {
-        src: "/img/footer-icon.png",
-        sizes: "512x512",
+        src: "/img/split-bill-icon.png",
+        sizes: "1000x1000",
         type: "image/png",
         purpose: "maskable",
       },

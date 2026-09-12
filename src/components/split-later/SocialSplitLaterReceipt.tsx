@@ -107,7 +107,7 @@ export const SocialSplitLaterReceipt = React.forwardRef<
         <div className="flex items-center gap-5">
           <div className="w-20 h-20 bg-white rounded-md flex items-center justify-center border border-primary/5 relative overflow-hidden">
             <img
-              src="/img/footer-icon.png"
+              src="/img/split-bill-icon.png"
               alt="SplitBill Logo"
               crossOrigin="anonymous"
               className="w-full h-full object-contain p-2"

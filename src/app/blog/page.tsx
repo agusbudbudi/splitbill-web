@@ -45,7 +45,7 @@ export default function BlogPage() {
       "name": "SplitBill",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://www.splitbill.my.id/img/footer-icon.png"
+        "url": "https://www.splitbill.my.id/img/split-bill-icon.png"
       }
     }
   };

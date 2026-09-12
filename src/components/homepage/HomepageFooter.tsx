@@ -24,7 +24,7 @@ export const HomepageFooter = () => {
             <div className="flex items-center gap-2">
               <div className="bg-white p-1.5 rounded-md shadow-sm">
                 <Image
-                  src="/img/footer-icon.png"
+                  src="/img/split-bill-icon.png"
                   alt="SplitBill"
                   width={24}
                   height={24}

@@ -61,6 +61,7 @@ export default function MemberV2Layout({ children }: { children: React.ReactNode
               <Header
                 wide
                 sticky={false}
+                logoSrc="/img/split-bill-logo-white.png"
                 containerClassName="max-w-[600px] lg:max-w-5xl px-4 sm:px-6 lg:px-8"
                 leftContent={
                   <button

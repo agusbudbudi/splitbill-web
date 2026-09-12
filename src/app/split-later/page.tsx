@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import SplitLaterClientPage from "./SplitLaterClientPage";
 import { LoadingIndicator } from "@/components/ui/LoadingIndicator";
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 
 export const metadata: Metadata = {
   title: "Split Later | Split Bill App",
@@ -14,12 +15,14 @@ export const metadata: Metadata = {
 
 export default function SplitLaterPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-background flex flex-col items-center justify-center">
-        <LoadingIndicator />
-      </div>
-    }>
-      <SplitLaterClientPage />
-    </Suspense>
+    <ProtectedRoute>
+      <Suspense fallback={
+        <div className="min-h-screen bg-background flex flex-col items-center justify-center">
+          <LoadingIndicator />
+        </div>
+      }>
+        <SplitLaterClientPage />
+      </Suspense>
+    </ProtectedRoute>
   );
 }

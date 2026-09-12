@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import WalletClientPage from "./WalletClientPage";
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 
 export const metadata: Metadata = {
   title: "Wallet & Metode Pembayaran - Atur Rekening Split Bill",
@@ -36,7 +37,9 @@ export default function WalletPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
-      <WalletClientPage />
+      <ProtectedRoute>
+        <WalletClientPage />
+      </ProtectedRoute>
     </>
   );
 }

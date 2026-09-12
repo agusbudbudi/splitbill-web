@@ -205,7 +205,18 @@ export const useAuthStore = create<AuthState>((set) => ({
     // Set loading state synchronously to block duplicate concurrent checks
     set({ isLoading: true });
 
+    // A real API call just rejected our token and forced this reload
+    // (client.ts handleTokenExpired). Skip every silent Google-session
+    // auto-relogin below for this one initialize() call — NextAuth's own
+    // session cookie can outlive our app tokens by weeks and carries an
+    // idToken that's never refreshed, so re-minting app tokens from it
+    // right now would just reproduce the same rejection on the next
+    // request, looping forever. Force a real manual re-login instead,
+    // which gets a fresh Google idToken.
+    const skipGoogleAutoRelogin = consumeAuthExpiredGuard();
+
     const checkGoogleSession = async () => {
+      if (skipGoogleAutoRelogin) return false;
       try {
         const { getSession } = await import("next-auth/react");
         const session = await getSession();
@@ -222,17 +233,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 
     // Check if we have tokens first
     if (!hasTokens()) {
-      // A real API call just rejected our token and forced this reload
-      // (client.ts handleTokenExpired). Skip the silent Google-session
-      // auto-relogin here — NextAuth's own session cookie can outlive our
-      // app tokens by weeks and carries an idToken that's never refreshed,
-      // so re-minting app tokens from it right now would just reproduce
-      // the same rejection on the next request, looping forever. Force a
-      // real manual re-login instead, which gets a fresh Google idToken.
-      const skipGoogleAutoRelogin = consumeAuthExpiredGuard();
-      const loggedInWithGoogle = skipGoogleAutoRelogin
-        ? false
-        : await checkGoogleSession();
+      const loggedInWithGoogle = await checkGoogleSession();
       if (loggedInWithGoogle) return;
 
       // localStorage tokens are gone but a stale sb_session cookie may

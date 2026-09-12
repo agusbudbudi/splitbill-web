@@ -77,7 +77,11 @@ export async function middleware(request: NextRequest) {
 
   const isAuthRoute = authRoutes.some((route) => pathname === route);
   if (isAuthRoute && session === "valid") {
-    return NextResponse.redirect(new URL("/", request.url));
+    const redirectParam = request.nextUrl.searchParams.get("redirect");
+    const isSafeRedirect =
+      !!redirectParam && redirectParam.startsWith("/") && !redirectParam.startsWith("//");
+    const target = isSafeRedirect ? redirectParam : "/";
+    return NextResponse.redirect(new URL(target, request.url));
   }
 
   return NextResponse.next();

@@ -225,6 +225,13 @@ export const useAuthStore = create<AuthState>((set) => ({
       const loggedInWithGoogle = await checkGoogleSession();
       if (loggedInWithGoogle) return;
 
+      // localStorage tokens are gone but a stale sb_session cookie may
+      // remain (middleware only checks the cookie) — clear it too so
+      // middleware doesn't keep treating this visitor as logged in and
+      // bouncing /login back into the protected route it can't access,
+      // which would loop forever against this isAuthenticated: false.
+      clearTokens();
+
       set({
         isAuthenticated: false,
         user: null,

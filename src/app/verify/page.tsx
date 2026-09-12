@@ -177,7 +177,7 @@ export default function VerifyPage() {
         <div className="text-center space-y-2 mb-8">
           <Link href="/" className="inline-block">
             <img
-              src="/img/logo-splitbill-black.png"
+              src="/img/split-bill-logo-basic.png"
               alt="SplitBill Logo"
               className="h-12 w-auto mx-auto cursor-pointer"
             />

@@ -118,7 +118,7 @@ export const Sidebar = () => {
                 className="inline-block hover:opacity-80 transition-opacity duration-300"
               >
                 <Image
-                  src="/img/logo-splitbill-black.png"
+                  src="/img/split-bill-logo-basic.png"
                   alt="SplitBill Logo"
                   width={180}
                   height={56}

@@ -144,7 +144,7 @@ export const Header = ({
                   aria-label="SplitBill Home"
                 >
                   <Image
-                    src="/img/logo.png"
+                    src="/img/split-bill-logo-basic.png"
                     alt="SplitBill Logo"
                     width={130}
                     height={36}

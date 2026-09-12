@@ -9,7 +9,7 @@ import { BlogContent } from "@/components/blog/BlogContent";
 import { Footer } from "@/components/layout/Footer";
 import { BlogCTA } from "@/components/blog/BlogCTA";
 import { HomepageFooter } from "@/components/homepage/HomepageFooter";
-import { formatDate } from "@/lib/utils/index";
+import { formatDate, slugify } from "@/lib/utils/index";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Clock, User, Calendar, Share2, ArrowLeft } from "lucide-react";
@@ -162,9 +162,11 @@ export default function BlogDetailClient({
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6 }}
                 >
-                  <Badge className="bg-primary text-white border-none px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest mb-4">
-                    {blog.category}
-                  </Badge>
+                  <Link href={`/blog/category/${slugify(blog.category)}`}>
+                    <Badge className="bg-primary text-white border-none px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest mb-4 hover:bg-primary/90 transition-colors">
+                      {blog.category}
+                    </Badge>
+                  </Link>
                   <h1 className="text-2xl md:text-3xl font-black mb-4 leading-tight tracking-tight">
                     {blog.title}
                   </h1>
@@ -239,12 +241,13 @@ export default function BlogDetailClient({
             {blog.tags && blog.tags.length > 0 && (
               <div className="mt-10 pt-8 border-t border-border flex flex-wrap gap-2">
                 {blog.tags.map((tag) => (
-                  <span
+                  <Link
                     key={tag}
+                    href={`/blog/tag/${slugify(tag)}`}
                     className="px-3 py-1 bg-muted rounded-[6px] text-sm font-medium text-muted-foreground hover:bg-secondary hover:text-primary transition-colors cursor-pointer"
                   >
                     #{tag}
-                  </span>
+                  </Link>
                 ))}
               </div>
             )}

@@ -64,15 +64,18 @@ export default async function BlogDetailPage({ params }: Props) {
   const { slug } = await params;
   
   try {
-    const [blog, recentBlogsRes] = await Promise.all([
+    const [blog, allBlogsRes] = await Promise.all([
       fetchBlogBySlug(slug),
-      fetchBlogs({ limit: 4 })
+      fetchBlogs({ limit: 1000, cache: "force-cache", next: { revalidate: 86400 } }),
     ]);
 
-    const recentBlogs = (recentBlogsRes.data || [])
-      .filter((b: Blog) => b.slug !== slug)
-      .slice(0, 3);
-    
+    const otherBlogs = (allBlogsRes.data || []).filter((b: Blog) => b.slug !== slug);
+    const sameCategory = otherBlogs.filter((b) => b.category === blog.category);
+    const relatedBlogs = [
+      ...sameCategory,
+      ...otherBlogs.filter((b) => !sameCategory.includes(b)),
+    ].slice(0, 3);
+
     // JSON-LD for SEO
     const jsonLd = {
       "@context": "https://schema.org",
@@ -103,13 +106,32 @@ export default async function BlogDetailPage({ params }: Props) {
       },
     };
 
+    const breadcrumbJsonLd = {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: "https://www.splitbill.my.id" },
+        { "@type": "ListItem", position: 2, name: "Blog", item: "https://www.splitbill.my.id/blog" },
+        {
+          "@type": "ListItem",
+          position: 3,
+          name: blog.title,
+          item: `https://www.splitbill.my.id/blog/${blog.slug}`,
+        },
+      ],
+    };
+
     return (
       <>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        <BlogDetailClient blog={blog} recentBlogs={recentBlogs} />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+        />
+        <BlogDetailClient blog={blog} recentBlogs={relatedBlogs} />
       </>
     );
   } catch (error) {

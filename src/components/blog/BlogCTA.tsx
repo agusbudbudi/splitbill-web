@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { Scan, Users, Send, ArrowRight } from "lucide-react";
 import Link from "next/link";

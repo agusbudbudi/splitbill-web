@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Instagram, Heart } from "lucide-react";
+import { Instagram, Heart, Lightbulb } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { isNativeAppWebView } from "@/lib/utils";
@@ -22,7 +22,7 @@ export const HomepageFooter = () => {
           {/* Brand Section */}
           <div className="space-y-4 lg:max-w-xs">
             <div className="flex items-center gap-2">
-              <div className="bg-white p-1.5 rounded-md shadow-sm">
+              <div className="bg-white p-1.5 rounded-sm shadow-sm">
                 <Image
                   src="/img/split-bill-icon.png"
                   alt="SplitBill"
@@ -153,9 +153,20 @@ export const HomepageFooter = () => {
                   <Link
                     href="https://www.instagram.com/splitbill.app/"
                     target="_blank"
+                    rel="noopener noreferrer"
                     className="flex items-center gap-2 text-sm font-medium hover:text-white transition-colors"
                   >
                     <Instagram className="w-4 h-4" /> Instagram
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="https://splitbill.fider.io/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-sm font-medium hover:text-white transition-colors"
+                  >
+                    <Lightbulb className="w-4 h-4" /> Request Fitur
                   </Link>
                 </li>
               </ul>

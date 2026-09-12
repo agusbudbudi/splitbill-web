@@ -112,8 +112,9 @@ class ApiClient {
       if (this.isRedirecting) return;
       this.isRedirecting = true;
 
-      const { clearTokens } = await import("@/lib/auth/tokens");
+      const { clearTokens, markAuthExpired } = await import("@/lib/auth/tokens");
       clearTokens();
+      markAuthExpired();
 
       const currentPath = window.location.pathname + window.location.search;
       const redirectParam =

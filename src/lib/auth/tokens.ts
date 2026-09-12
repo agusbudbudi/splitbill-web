@@ -50,3 +50,31 @@ export function clearTokens(): void {
 export function hasTokens(): boolean {
   return !!getAccessToken() && !!getRefreshToken();
 }
+
+// Set right before a hard redirect to /login after a real API call rejected
+// the token (see client.ts handleTokenExpired). authStore.initialize() reads
+// and clears it on the next /login load to skip the silent Google-session
+// auto-relogin — otherwise a stale, never-refreshed Google idToken cached in
+// NextAuth's own (longer-lived) session cookie keeps re-minting app tokens
+// that the backend rejects on the very next request, looping forever.
+const AUTH_EXPIRED_GUARD_KEY = "sb_auth_expired_guard";
+
+export function markAuthExpired(): void {
+  if (typeof window === "undefined") return;
+  try {
+    sessionStorage.setItem(AUTH_EXPIRED_GUARD_KEY, "1");
+  } catch {
+    // sessionStorage unavailable (private mode, etc) — guard is best-effort
+  }
+}
+
+export function consumeAuthExpiredGuard(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    const wasSet = sessionStorage.getItem(AUTH_EXPIRED_GUARD_KEY) === "1";
+    sessionStorage.removeItem(AUTH_EXPIRED_GUARD_KEY);
+    return wasSet;
+  } catch {
+    return false;
+  }
+}

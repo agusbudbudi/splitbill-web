@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/Button";
 import { SuccessSection } from "@/components/ui/SuccessSection";
 import { ReceiptImagePicker } from "@/components/splitbill/ReceiptImagePicker";
 import { useSplitLaterStore } from "@/store/useSplitLaterStore";
+import { splitLaterLocalApi } from "@/lib/api/split-later";
 
 export default function QuickCaptureClientPage() {
   const router = useRouter();
@@ -17,11 +18,23 @@ export default function QuickCaptureClientPage() {
   const step = searchParams.get("step") === "success" ? "success" : "upload";
   const bucketId = searchParams.get("bucketId");
 
-  const { createBucket, addReceipt, buckets, receipts, getBucketStats } =
-    useSplitLaterStore();
+  const {
+    createBucket,
+    addReceipt,
+    buckets,
+    receipts,
+    getBucketStats,
+    fetchBuckets,
+    migrateLegacyBuckets,
+  } = useSplitLaterStore();
   const [isUploading, setIsUploading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const uploadCancelledRef = useRef(false);
+
+  useEffect(() => {
+    migrateLegacyBuckets().finally(() => fetchBuckets());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (step === "success" && !bucketId) {
@@ -61,14 +74,7 @@ export default function QuickCaptureClientPage() {
     setPreviewUrl(URL.createObjectURL(file));
     setIsUploading(true);
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-      const res = await fetch("/api/split-later/upload", {
-        method: "POST",
-        body: formData,
-      });
-      const data = await res.json();
-      if (!data.success) throw new Error(data.error || "Upload gagal");
+      const data = await splitLaterLocalApi.uploadReceiptFile(file);
       if (uploadCancelledRef.current) return;
 
       let activeBucketId = bucketId;
@@ -79,7 +85,7 @@ export default function QuickCaptureClientPage() {
         });
         activeBucketId = pendingBucket
           ? pendingBucket.id
-          : createBucket({
+          : await createBucket({
               title: `Struk ${new Date().toLocaleDateString("id-ID", { day: "numeric", month: "short" })}`,
               emoji: "📦",
               bucketType: "other",
@@ -87,7 +93,7 @@ export default function QuickCaptureClientPage() {
             });
       }
 
-      addReceipt({ bucketId: activeBucketId, imageUrl: data.url, status: "pending" });
+      await addReceipt({ bucketId: activeBucketId, imageUrl: data.url, status: "pending" });
       toast.success("Struk kesimpen! 📸");
       router.replace(`/split-later/quick?step=success&bucketId=${activeBucketId}`);
     } catch (err: any) {

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSplitLaterStore, BucketReceipt } from "@/store/useSplitLaterStore";
@@ -10,8 +10,10 @@ import { BucketSettlement } from "@/components/split-later/BucketSettlement";
 import { BucketFormBottomSheet } from "@/components/split-later/BucketFormBottomSheet";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import { TabsUnderline } from "@/components/ui/TabsUnderline";
+import { LoadingIndicator } from "@/components/ui/LoadingIndicator";
 import { formatToIDR } from "@/lib/utils";
 import { toast } from "sonner";
+import { splitLaterLocalApi } from "@/lib/api/split-later";
 import {
   ArrowLeft,
   Camera,
@@ -33,11 +35,14 @@ export function BucketDetailPanel({ bucketId }: BucketDetailPanelProps) {
   const router = useRouter();
   const {
     buckets,
+    isLoaded,
     getBucketReceipts,
     getBucketStats,
     deleteBucket,
     removeReceipt,
     addReceipt,
+    fetchBuckets,
+    migrateLegacyBuckets,
   } = useSplitLaterStore();
   const {
     setSource,
@@ -53,6 +58,19 @@ export function BucketDetailPanel({ bucketId }: BucketDetailPanelProps) {
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
   const [deleteReceiptId, setDeleteReceiptId] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+
+  useEffect(() => {
+    migrateLegacyBuckets().finally(() => fetchBuckets());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  if (!bucket && !isLoaded) {
+    return (
+      <div className="w-full max-w-[600px] mx-auto flex flex-col items-center justify-center py-20 text-center">
+        <LoadingIndicator text="Memuat..." />
+      </div>
+    );
+  }
 
   if (!bucket) {
     return (
@@ -86,18 +104,9 @@ export function BucketDetailPanel({ bucketId }: BucketDetailPanelProps) {
     const toastId = toast.loading("Mengupload foto struk...");
 
     try {
-      const formData = new FormData();
-      formData.append("file", file);
+      const data = await splitLaterLocalApi.uploadReceiptFile(file);
 
-      const res = await fetch("/api/split-later/upload", {
-        method: "POST",
-        body: formData,
-      });
-      const data = await res.json();
-
-      if (!data.success) throw new Error(data.error || "Upload gagal");
-
-      addReceipt({
+      await addReceipt({
         bucketId,
         imageUrl: data.url,
         status: "pending",
@@ -138,35 +147,50 @@ export function BucketDetailPanel({ bucketId }: BucketDetailPanelProps) {
     );
   };
 
-  const deleteStoredImages = (urls: string[]) => {
+  // Must run BEFORE the backend bucket/receipt record is deleted — the
+  // delete route verifies ownership by checking the URL is still attached
+  // to one of the user's own buckets, so deleting the record first makes
+  // that check always fail and silently orphans the blob.
+  const deleteStoredImages = async (urls: string[]) => {
     if (urls.length === 0) return;
-    fetch("/api/split-later/delete", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ urls }),
-    }).catch((err) => console.error("Failed to clean up stored images:", err));
+    try {
+      await splitLaterLocalApi.deleteReceiptFiles(urls);
+    } catch (err) {
+      console.error("Failed to clean up stored images:", err);
+    }
   };
 
   const handleDeleteReceipt = (receiptId: string) => {
     setDeleteReceiptId(receiptId);
   };
 
-  const confirmDeleteReceipt = () => {
+  const confirmDeleteReceipt = async () => {
     if (deleteReceiptId) {
       const receipt = receipts.find((r) => r.id === deleteReceiptId);
-      removeReceipt(deleteReceiptId);
-      toast.success("Struk dihapus.");
-      setDeleteReceiptId(null);
-      if (receipt) deleteStoredImages([receipt.imageUrl]);
+      try {
+        if (receipt) await deleteStoredImages([receipt.imageUrl]);
+        await removeReceipt(deleteReceiptId);
+        toast.success("Struk dihapus.");
+      } catch (err) {
+        console.error(err);
+        toast.error("Gagal menghapus struk.");
+      } finally {
+        setDeleteReceiptId(null);
+      }
     }
   };
 
-  const handleDeleteBucket = () => {
+  const handleDeleteBucket = async () => {
     const bucketReceiptUrls = receipts.map((r) => r.imageUrl);
-    deleteStoredImages(bucketReceiptUrls);
-    deleteBucket(bucketId);
-    toast.success(`Split Later "${bucket.title}" dihapus.`);
-    router.push("/member/split-later");
+    try {
+      await deleteStoredImages(bucketReceiptUrls);
+      await deleteBucket(bucketId);
+      toast.success(`Split Later "${bucket.title}" dihapus.`);
+      router.push("/member/split-later");
+    } catch (err) {
+      console.error(err);
+      toast.error("Gagal menghapus Split Later.");
+    }
   };
 
   return (

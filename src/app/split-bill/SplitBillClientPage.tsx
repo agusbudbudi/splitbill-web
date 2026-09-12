@@ -587,7 +587,7 @@ const SplitBillContent = () => {
           recordId,
           activityName || "Struk Belanja",
           totalSpent
-        );
+        ).catch((err) => console.error("Failed to mark split-later receipt completed:", err));
       }
 
       clearDraftAfterFinalize();

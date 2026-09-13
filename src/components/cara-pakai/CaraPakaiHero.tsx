@@ -34,6 +34,19 @@ export function CaraPakaiHero({
 }: CaraPakaiHeroProps) {
   return (
     <div className="relative block w-full bg-gradient-to-r from-[#4b8df0] to-[#6bcbfa] overflow-hidden">
+      {/* Fine grid, sama pola dengan hero landing page utama — di sini pakai
+          garis putih transparan karena background hero gradient biru. */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          backgroundImage:
+            "linear-gradient(#ffffff1a 1px, transparent 1px), linear-gradient(90deg, #ffffff1a 1px, transparent 1px)",
+          backgroundSize: "72px 72px",
+          maskImage: "radial-gradient(ellipse 70% 55% at 50% 60%, black, transparent 75%)",
+          WebkitMaskImage: "radial-gradient(ellipse 70% 55% at 50% 60%, black, transparent 75%)",
+        }}
+      />
+
       {/* Desktop/tablet: image absolute di kanan, sejajar teks */}
       <div className="hidden sm:block absolute inset-y-0 right-0 pointer-events-none w-[65%] lg:w-[62%]">
         <Image

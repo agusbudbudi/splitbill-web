@@ -25,7 +25,7 @@ const features = [
     imageSrc: "/img/menu-split-later.png",
     title: "Split Later",
     description:
-      "Nongkrong sepuasnya dulu, kumpulin struknya, dan bagi tagihannya nanti pas udah santai.",
+      "Nongkrong sepuasnya, kumpulin struknya, bagi tagihannya nanti pas santai.",
     badge: "NEW ✨",
     color: "from-purple-500 to-indigo-500",
     bgLight: "bg-purple-100/90",
@@ -33,6 +33,7 @@ const features = [
     href: "/split-later",
     cta: "Coba Split Later Sekarang",
     caraPakaiHref: "/split-later/cara-pakai",
+    requiresLogin: true,
   },
   {
     imageSrc: "/img/menu-shared-goal.png",
@@ -61,7 +62,7 @@ const features = [
     imageSrc: "/img/menu-invoice.png",
     title: "Invoice",
     description:
-      "Kirim rincian tagihan digital yang rapi, transparan, dan estetik langsung ke WhatsApp.",
+      "Kirim rincian tagihan digital yang rapi, transparan, langsung ke WhatsApp.",
     color: "from-rose-500 to-pink-500",
     bgLight: "bg-rose-100/90",
     bgHover: "group-hover:bg-rose-200/90",
@@ -196,7 +197,15 @@ export const FeaturesSection = () => {
                         <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" />
                       </Link>
                     </div>
-                  ) : (
+                  ) : null}
+
+                  {feat.requiresLogin && (
+                    <p className="text-left italic text-[9px] sm:text-[10px] text-slate-400 font-semibold mt-3 sm:mt-4">
+                      Butuh login buat pakai fitur ini
+                    </p>
+                  )}
+
+                  {!feat.caraPakaiHref && (
                     <div className="flex items-center gap-1 mt-3 sm:mt-5 text-[11px] sm:text-xs font-bold text-primary group-hover:gap-1.5 transition-all duration-200">
                       <span>{feat.cta}</span>
                       <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" />

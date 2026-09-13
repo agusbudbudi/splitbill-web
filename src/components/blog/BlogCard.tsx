@@ -7,7 +7,6 @@ import { motion } from "framer-motion";
 import { Clock, ArrowRight } from "lucide-react";
 import { Blog } from "@/lib/types/blog";
 import { Card } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
 import { formatDate } from "@/lib/utils/index";
 
 interface BlogCardProps {
@@ -36,12 +35,10 @@ export const BlogCard = ({ blog, priority = false }: BlogCardProps) => {
               className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
               priority={priority}
             />
-            {/* Category Badge overlay */}
-            <div className="absolute top-2 left-2 z-10">
-              <Badge className="bg-primary/90 backdrop-blur-md text-white border-none px-3 py-1 text-[10px] font-bold uppercase tracking-wider">
-                {blog.category}
-              </Badge>
-            </div>
+            {/* Category Ribbon */}
+            <span className="absolute top-0 right-0 z-10 bg-primary text-white text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-bl-lg">
+              {blog.category}
+            </span>
           </div>
 
           {/* Content */}

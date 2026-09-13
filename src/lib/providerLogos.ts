@@ -25,7 +25,7 @@ export const BANK_LOGOS: Record<string, ProviderLogoInfo> = {
   BSI: { color: "#26A69A", slug: "bsi" },
   SeaBank: { color: "#FF7043", slug: "seabank" },
   /** Generic fallback — no idn-finlogos slug, uses local asset */
-  BankTransfer: { color: "#666", image: "/img/logo-splitbill-black.png" },
+  BankTransfer: { color: "#666", image: "/img/split-bill-logo-basic.png" },
 };
 
 
@@ -46,5 +46,5 @@ export function getProviderLogoInfo(
   if (type === "bank") {
     return BANK_LOGOS[providerName] ?? BANK_LOGOS["BankTransfer"];
   }
-  return EWALLET_LOGOS[providerName] ?? { color: "#666", image: "/img/logo-splitbill-black.png" };
+  return EWALLET_LOGOS[providerName] ?? { color: "#666", image: "/img/split-bill-logo-basic.png" };
 }

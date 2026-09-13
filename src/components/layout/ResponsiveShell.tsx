@@ -37,10 +37,13 @@ export const ResponsiveShell = ({ children }: ResponsiveShellProps) => {
   const isMemberShell = pathname.startsWith("/member/") || pathname === "/member";
   // Dedicated funnel microsite — kept distraction-free, sama kayak homepage
   const isSplitBillLiburan = pathname === "/split-bill-liburan";
+  // Marketing/edukasi page ("/[fitur]/cara-pakai") — full-width layout, gak
+  // butuh quick-access sidebar
+  const isCaraPakaiPage = pathname.endsWith("/cara-pakai");
 
   return (
     <div className="w-full min-h-screen bg-background">
-      {isMounted && pathname !== "/" && !isBlogDetail && !isAuthPage && !isMemberShell && !isSplitBillLiburan && <MemberSidebar />}
+      {isMounted && pathname !== "/" && !isBlogDetail && !isAuthPage && !isMemberShell && !isSplitBillLiburan && !isCaraPakaiPage && <MemberSidebar />}
       {children}
     </div>
   );

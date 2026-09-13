@@ -96,7 +96,7 @@ export default async function BlogDetailPage({ params }: Props) {
         name: "SplitBill Online",
         logo: {
           "@type": "ImageObject",
-          url: "https://www.splitbill.my.id/img/footer-icon.png",
+          url: "https://www.splitbill.my.id/img/split-bill-icon.png",
         },
       },
       description: blog.excerpt,

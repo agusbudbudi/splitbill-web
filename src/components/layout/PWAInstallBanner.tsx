@@ -77,7 +77,7 @@ export const PWAInstallBanner = () => {
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-sm bg-white backdrop-blur-md flex items-center justify-center overflow-hidden border border-white/20">
             <Image
-              src="/img/pwa-icon-192.png"
+              src="/img/split-bill-icon.png"
               alt="SplitBill Logo"
               width={32}
               height={32}

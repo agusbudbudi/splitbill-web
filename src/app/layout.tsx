@@ -61,10 +61,10 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       { url: "/favicon.ico", sizes: "any" },
-      { url: "/img/footer-icon.png", type: "image/png" }
+      { url: "/img/split-bill-icon.png", type: "image/png" }
     ],
     shortcut: "/favicon.ico",
-    apple: "/img/footer-icon.png",
+    apple: "/img/split-bill-icon.png",
   },
   alternates: {
     canonical: "https://www.splitbill.my.id",

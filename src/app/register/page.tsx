@@ -72,7 +72,7 @@ function RegisterPageContent() {
         <div className="relative z-10 flex justify-center w-full">
           <Link href="/" className="inline-block transition-opacity hover:opacity-85">
             <Image
-              src="/img/logo-splitbill-black.png"
+              src="/img/split-bill-logo-basic.png"
               alt="SplitBill Logo"
               width={140}
               height={36}
@@ -174,7 +174,7 @@ function RegisterPageContent() {
             <div className="flex justify-start relative z-10 px-4">
               <Link href="/" className="inline-block transition-opacity hover:opacity-85">
                 <Image
-                  src="/img/logo-splitbill-black.png"
+                  src="/img/split-bill-logo-basic.png"
                   alt="SplitBill Logo"
                   width={120}
                   height={30}

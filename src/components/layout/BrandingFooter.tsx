@@ -19,7 +19,7 @@ export const BrandingFooter = ({ className }: BrandingFooterProps) => {
     >
       <div className="flex items-center gap-0 opacity-40 grayscale group hover:grayscale-0 hover:opacity-100 transition-all duration-500">
         <Image
-          src="/img/footer-icon.png"
+          src="/img/split-bill-icon.png"
           alt="logo"
           width={32}
           height={32}

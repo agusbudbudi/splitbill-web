@@ -292,7 +292,7 @@ export const HomepageNavbar = ({
               aria-label="SplitBill Home"
             >
               <Image
-                src="/img/logo-splitbill-black.png"
+                src="/img/split-bill-logo-basic.png"
                 alt="SplitBill"
                 width={130}
                 height={36}

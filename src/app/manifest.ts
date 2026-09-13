@@ -13,14 +13,14 @@ export default function manifest(): MetadataRoute.Manifest {
     prefer_related_applications: false,
     icons: [
       {
-        src: "/img/pwa-icon-192.png",
-        sizes: "192x192",
+        src: "/img/split-bill-icon.png",
+        sizes: "1000x1000",
         type: "image/png",
         purpose: "any",
       },
       {
-        src: "/img/footer-icon.png",
-        sizes: "512x512",
+        src: "/img/split-bill-icon-maskable.png",
+        sizes: "1000x1000",
         type: "image/png",
         purpose: "maskable",
       },

@@ -16,8 +16,7 @@ export default function MemberV2Layout({ children }: { children: React.ReactNode
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const [isNativeApp, setIsNativeApp] = useState(false);
-  const [headerHeight, setHeaderHeight] = useState(0);
-  const [bannerHeight, setBannerHeight] = useState(0);
+  const rootRef = React.useRef<HTMLDivElement>(null);
   const headerWrapperRef = React.useRef<HTMLDivElement>(null);
   const bannerWrapperRef = React.useRef<HTMLDivElement>(null);
 
@@ -30,31 +29,37 @@ export default function MemberV2Layout({ children }: { children: React.ReactNode
     document.body.style.overflow = isMenuOpen ? "hidden" : "unset";
   }, [isMenuOpen]);
 
+  // Write measured heights straight to CSS variables instead of React state:
+  // every consumer below (banner top offset, spacer, sidebar top/height)
+  // reads the same live value with zero render-cycle lag, so they can never
+  // desync from each other or from the animating PWA install banner.
   useEffect(() => {
-    const el = headerWrapperRef.current;
-    if (!el) return;
-    const observer = new ResizeObserver((entries) => {
-      setHeaderHeight(entries[0].contentRect.height);
-    });
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
+    const headerEl = headerWrapperRef.current;
+    const bannerEl = bannerWrapperRef.current;
+    const rootEl = rootRef.current;
+    if (!headerEl || !bannerEl || !rootEl) return;
 
-  useEffect(() => {
-    const el = bannerWrapperRef.current;
-    if (!el) return;
-    const observer = new ResizeObserver((entries) => {
-      setBannerHeight(entries[0].contentRect.height);
+    const headerObserver = new ResizeObserver((entries) => {
+      rootEl.style.setProperty("--member-header-h", `${entries[0].contentRect.height}px`);
     });
-    observer.observe(el);
-    return () => observer.disconnect();
+    const bannerObserver = new ResizeObserver((entries) => {
+      rootEl.style.setProperty("--member-banner-h", `${entries[0].contentRect.height}px`);
+    });
+    headerObserver.observe(headerEl);
+    bannerObserver.observe(bannerEl);
+    return () => {
+      headerObserver.disconnect();
+      bannerObserver.disconnect();
+    };
   }, []);
-
-  const sidebarTop = headerHeight + bannerHeight;
 
   return (
     <ProtectedRoute>
-      <div className="min-h-screen bg-background flex flex-col items-center">
+      <div
+        ref={rootRef}
+        className="min-h-screen bg-background flex flex-col items-center"
+        style={{ "--member-header-h": "0px", "--member-banner-h": "0px" } as React.CSSProperties}
+      >
         {!isNativeApp && (
           <>
             <div ref={headerWrapperRef} className="fixed top-0 left-0 right-0 z-50">
@@ -78,15 +83,14 @@ export default function MemberV2Layout({ children }: { children: React.ReactNode
             <div
               ref={bannerWrapperRef}
               className="fixed left-0 right-0 z-40"
-              style={{ top: headerHeight }}
+              style={{ top: "var(--member-header-h)" }}
             >
               <PwaInstallBanner containerClassName="max-w-[600px] lg:max-w-5xl px-4 sm:px-6 lg:px-8" />
             </div>
 
             {/* Spacer: header + banner are fixed (out of flow), push content down by their measured height */}
             <div
-              className={headerHeight === 0 ? "h-14 lg:h-16" : undefined}
-              style={headerHeight > 0 ? { height: headerHeight + bannerHeight } : undefined}
+              style={{ height: "calc(var(--member-header-h) + var(--member-banner-h))" }}
             />
           </>
         )}
@@ -95,7 +99,10 @@ export default function MemberV2Layout({ children }: { children: React.ReactNode
           {/* Desktop persistent sidebar */}
           <aside
             className="hidden lg:block w-72 shrink-0 sticky overflow-y-auto py-6"
-            style={{ top: sidebarTop, height: `calc(100vh - ${sidebarTop}px)` }}
+            style={{
+              top: "calc(var(--member-header-h) + var(--member-banner-h))",
+              height: "calc(100vh - var(--member-header-h) - var(--member-banner-h))",
+            }}
           >
             <MemberSidebarNav />
           </aside>

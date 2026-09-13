@@ -36,14 +36,13 @@ export function LoadingIndicator({
             mask: "radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px))",
           }}
         />
-        <div className="relative rounded-full bg-background p-1.5 shadow-sm">
+        <div className="relative rounded-full p-1.5">
           <img
             src={LOADING_ICON_DATA_URI}
             alt="Loading"
-            width={size}
-            height={size}
-            style={{ width: size, height: size }}
-            className="drop-shadow-md"
+            width={size * 0.75}
+            height={size * 0.75}
+            style={{ width: size * 0.75, height: size * 0.75 }}
           />
         </div>
       </div>

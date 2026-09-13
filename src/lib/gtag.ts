@@ -321,3 +321,11 @@ export const trackLiburanLP = {
   ctaClick: (position: "hero" | "penutup" | "mockup") => trackEvent("liburan_lp_cta_click", { position }),
   scrollDepth: (depth: 25 | 50 | 75 | 100) => trackEvent("liburan_lp_scroll_depth", { depth }),
 };
+
+/**
+ * Split Bill "Cara Pakai" page (/split-bill/cara-pakai) event trackers
+ */
+export const trackCaraPakaiLP = {
+  ctaClick: (feature: string, position: "hero" | "killer-feature") =>
+    trackEvent("cara_pakai_lp_cta_click", { feature, position }),
+};

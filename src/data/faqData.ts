@@ -11,7 +11,8 @@ export interface FAQItem {
     | "shared-goals"
     | "collect-money"
     | "wallet"
-    | "split-bill-liburan";
+    | "split-bill-liburan"
+    | "split-later";
   showOnLanding: boolean;
 }
 
@@ -310,6 +311,38 @@ export const faqData: FAQItem[] = [
     answer:
       "Setelah trip selesai, tinggal buka kumpulan struknya, assign siapa bayar/pakai apa (atau split rata aja), lalu generate rincian. Kamu bisa langsung share link hasilnya ke grup WhatsApp, temen tinggal lihat berapa yang harus ditransfer.",
     category: "split-bill-liburan",
+    showOnLanding: false,
+  },
+  {
+    id: "38",
+    question: "Apa bedanya Split Later sama Split Bill biasa?",
+    answer:
+      "Split Bill biasa buat itung tagihan langsung di tempat. Split Later buat kumpulin banyak struk dulu (mis. selama liburan atau acara berhari-hari), baru diproses & disettle belakangan pas udah santai, semua struk dalam satu acara dihitung jadi satu rangkuman.",
+    category: "split-later",
+    showOnLanding: false,
+  },
+  {
+    id: "39",
+    question: "Harus login dulu buat pakai Split Later?",
+    answer:
+      "Iya, Split Later butuh login supaya struk dan progress bucket-nya kesimpen aman di akun kamu, gak hilang meskipun ganti device di tengah acara.",
+    category: "split-later",
+    showOnLanding: false,
+  },
+  {
+    id: "40",
+    question: "Kalau belum sempat proses struknya, gimana?",
+    answer:
+      "Santai aja, foto struk bisa langsung diupload kapan aja lewat menu Quick Capture tanpa harus diproses saat itu juga. Struk bakal nunggu di bucket sampai kamu sempat assign item & split-nya.",
+    category: "split-later",
+    showOnLanding: false,
+  },
+  {
+    id: "41",
+    question: "Settlement-nya ngitung dari berapa struk?",
+    answer:
+      "Semua struk yang statusnya sudah diproses dalam satu bucket digabung jadi satu rangkuman \"siapa bayar siapa\", jadi gak perlu transfer terpisah tiap struk.",
+    category: "split-later",
     showOnLanding: false,
   },
 ];

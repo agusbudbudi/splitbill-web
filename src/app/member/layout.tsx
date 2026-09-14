@@ -58,7 +58,14 @@ export default function MemberV2Layout({ children }: { children: React.ReactNode
       <div
         ref={rootRef}
         className="min-h-screen bg-background flex flex-col items-center"
-        style={{ "--member-header-h": "0px", "--member-banner-h": "0px" } as React.CSSProperties}
+        style={{
+          // Real height comes from the ResizeObserver below once mounted, but
+          // that fires a tick after first paint — without a non-zero fallback
+          // here the header (fixed, out of flow) briefly overlaps this
+          // spacer's content during hydration.
+          "--member-header-h": "calc(56px + env(safe-area-inset-top, 0px))",
+          "--member-banner-h": "0px",
+        } as React.CSSProperties}
       >
         {!isNativeApp && (
           <>

@@ -67,6 +67,27 @@ export const useBillCalculations = (
       if (!debtMatrix[debtor]) debtMatrix[debtor] = {};
       debtMatrix[debtor][creditor] = (debtMatrix[debtor][creditor] || 0) + amount;
     };
+    // A merchant discount (no specific payer) reduces a person's `spent`
+    // directly without going through addDebt, since there's no single
+    // creditor to attribute it to. Scale down their existing per-creditor
+    // debts by the same proportion so the pairwise view stays consistent
+    // with the simplified net-balance view. When the reduction is bigger
+    // than everything they owed (e.g. a flat discount on a cheap order),
+    // the ratio goes negative — that's intentional, not a bug: it flips
+    // the debt matrix entry negative, and the pairwise-instructions loop
+    // below already nets `aOwesB - bOwesA` per pair, so a negative entry
+    // correctly reverses into "creditor now owes debtor" instead of the
+    // excess silently disappearing (which a Math.max(0, ratio) clamp did).
+    const reduceDebtProportionally = (debtor: string, reduction: number) => {
+      const debts = debtMatrix[debtor];
+      if (!debts || reduction >= 0) return;
+      const total = Object.values(debts).reduce((a, b) => a + b, 0);
+      if (total <= 0) return;
+      const ratio = (total + reduction) / total;
+      Object.keys(debts).forEach((creditor) => {
+        debts[creditor] *= ratio;
+      });
+    };
 
     // 1. Process Main Expenses
     expenses.forEach((exp) => {
@@ -132,7 +153,8 @@ export const useBillCalculations = (
               method: "prop",
               isAdditional: true,
             });
-            if (adx.paidBy) addDebt(person, adx.paidBy, proportionalShare);
+            if (adx.paidBy && balances[adx.paidBy]) addDebt(person, adx.paidBy, proportionalShare);
+            else reduceDebtProportionally(person, proportionalShare);
           } else if (balances[person] && involvedBaseSubtotal === 0) {
             // Fallback to equal if no one has spent anything yet
             const share = adx.amount / adx.who.length;
@@ -143,7 +165,8 @@ export const useBillCalculations = (
               method: "equal",
               isAdditional: true,
             });
-            if (adx.paidBy) addDebt(person, adx.paidBy, share);
+            if (adx.paidBy && balances[adx.paidBy]) addDebt(person, adx.paidBy, share);
+            else reduceDebtProportionally(person, share);
           }
         });
       } else {
@@ -158,7 +181,8 @@ export const useBillCalculations = (
               method: "equal",
               isAdditional: true,
             });
-            if (adx.paidBy) addDebt(person, adx.paidBy, share);
+            if (adx.paidBy && balances[adx.paidBy]) addDebt(person, adx.paidBy, share);
+            else reduceDebtProportionally(person, share);
           }
         });
       }

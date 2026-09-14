@@ -22,7 +22,7 @@ interface UploadedStrukSectionProps {
 
 /** Backend may return a path relative to its own origin (e.g. "/api/split-bills/.../images/...");
  *  resolve it against the API host instead of letting the browser default to the frontend origin. */
-const resolveImageUrl = (url: string) =>
+export const resolveImageUrl = (url: string) =>
   url.startsWith("/") ? `${API_BASE_URL}${url}` : url;
 
 const getFileName = (url: string, mimeType: string, idx: number) => {

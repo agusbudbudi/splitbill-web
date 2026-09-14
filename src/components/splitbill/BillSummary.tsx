@@ -96,6 +96,20 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
     const activeInstructions =
       settlementMode === "simplified" ? settlementInstructions : pairwiseInstructions;
 
+    // Simplified & pairwise sering menghasilkan rincian yang identik (mis.
+    // cuma ada 1 pembayar/1 penerima), jadi toggle-nya cuma ditampilkan
+    // kalau hasilnya beneran beda.
+    const serializeInstructions = (list: SettlementInstruction[]) =>
+      list
+        // amount is an unrounded float (division/multiplication chains), so
+        // simplified vs pairwise can differ only by a fraction of a rupiah —
+        // round before comparing or the toggle shows up for "identical" results.
+        .map((inst) => `${inst.from}|${inst.to}|${Math.round(inst.amount)}`)
+        .sort()
+        .join(";");
+    const showSettlementModeToggle =
+      serializeInstructions(settlementInstructions) !== serializeInstructions(pairwiseInstructions);
+
     const people = billData ? billData.people : store.people;
     const expenses = billData ? billData.expenses : store.expenses;
     const additionalExpenses = billData
@@ -419,21 +433,21 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
             {/* Settlement Instructions Banner */}
             {(settlementInstructions.length > 0 || pairwiseInstructions.length > 0) && (
               <div className="p-3 bg-primary rounded-sm space-y-3 shadow-sm">
-                <div className="flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
-                    <div className="w-7 h-7 bg-white/20 rounded-full flex items-center justify-center">
-                      <ArrowRight className="w-4 h-4 text-white" />
-                    </div>
-                    <p className="text-sm font-black text-white tracking-tight">
-                      Instruksi Transfer
-                    </p>
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 bg-white/20 rounded-full flex items-center justify-center">
+                    <ArrowRight className="w-4 h-4 text-white" />
                   </div>
-                  <div className="flex items-center gap-0.5 p-0.5 bg-white/15 rounded-sm">
+                  <p className="text-sm font-black text-white tracking-tight">
+                    Instruksi Transfer
+                  </p>
+                </div>
+                {showSettlementModeToggle && (
+                  <div className="grid grid-cols-2 gap-1 p-0.5 bg-white/15 rounded-sm">
                     <button
                       type="button"
                       onClick={() => setSettlementMode("simplified")}
                       className={cn(
-                        "px-2 py-1 text-[11px] font-bold rounded-sm transition-colors",
+                        "py-2 text-xs font-bold rounded-xs transition-colors",
                         settlementMode === "simplified"
                           ? "bg-white text-primary"
                           : "text-white/80",
@@ -445,7 +459,7 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
                       type="button"
                       onClick={() => setSettlementMode("pairwise")}
                       className={cn(
-                        "px-2 py-1 text-[11px] font-bold rounded-sm transition-colors",
+                        "py-2 text-xs font-bold rounded-xs transition-colors",
                         settlementMode === "pairwise"
                           ? "bg-white text-primary"
                           : "text-white/80",
@@ -454,7 +468,7 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
                       Per Transaksi
                     </button>
                   </div>
-                </div>
+                )}
                 <div className="grid gap-2">
                   {activeInstructions.map((inst, idx) => (
                     <div

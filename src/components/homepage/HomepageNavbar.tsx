@@ -448,7 +448,7 @@ export const HomepageNavbar = ({
             >
               <Link href="/login" className="block w-full py-2 px-4 text-center hover:bg-slate-50/50 transition-colors">
                 <span className="text-xs sm:text-sm font-medium flex items-center justify-center gap-1.5 tracking-wide">
-                  ⚡ <span className="sm:hidden">Login & simpan catatan patunganmu!</span><span className="hidden sm:inline">Yuk login biar catatan patunganmu tersimpan otomatis!</span> <span className="font-black text-primary inline-flex items-center gap-1">Masuk Sekarang <ArrowRight className="w-3.5 h-3.5" /></span>
+                  ⚡ <span className="sm:hidden">Login & simpan catatan patunganmu!</span><span className="hidden sm:inline">Yuk login biar split billmu tersimpan otomatis!</span> <span className="font-black text-primary inline-flex items-center gap-1">Masuk Sekarang <ArrowRight className="w-3.5 h-3.5" /></span>
                 </span>
               </Link>
             </motion.div>

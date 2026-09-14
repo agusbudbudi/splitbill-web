@@ -5,6 +5,7 @@ import {
   splitBillApi,
   mapFrontendToBackend,
   mapBackendToFrontend,
+  BackendReceiptImage,
 } from "@/lib/api/split-bills";
 
 export type PaymentMethodType = "bank" | "ewallet";
@@ -27,6 +28,7 @@ export interface SavedBill {
   expenses: Expense[];
   additionalExpenses: AdditionalExpense[];
   selectedPaymentMethodIds?: string[];
+  receiptImages?: BackendReceiptImage[];
   // We could store the full state to restore it later if needed
 }
 

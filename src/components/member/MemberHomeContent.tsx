@@ -1,6 +1,8 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
+import { ChevronRight } from "lucide-react";
 import { FeatureHighlights } from "@/components/home/FeatureHighlights";
 import { OngoingSplitBillCard } from "@/components/home/OngoingSplitBillCard";
 import { SplitBillHeroCard } from "@/components/home/SplitBillHeroCard";
@@ -13,6 +15,7 @@ import { FAQCard } from "@/components/home/FAQCard";
 import { AIScanEncourageBanner } from "@/components/home/AIScanEncourageBanner";
 import { EntryPointSection } from "@/components/home/EntryPointSection";
 import { PromoBanner } from "@/components/ui/PromoBanner";
+import { SplitBillListCard } from "@/components/splitbill/SplitBillListCard";
 import { useSplitBillStore } from "@/store/useSplitBillStore";
 import { useWalletStore } from "@/store/useWalletStore";
 import { useUIStore } from "@/lib/stores/uiStore";
@@ -34,6 +37,10 @@ export function MemberHomeContent({ singleColumn = false }: MemberHomeContentPro
     (activityName && activityName.trim().length > 0) ||
     expenses.length > 0 ||
     people.length > 0;
+
+  const latestBills = [...savedBills]
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .slice(0, 2);
 
   return (
     <div
@@ -123,6 +130,28 @@ export function MemberHomeContent({ singleColumn = false }: MemberHomeContentPro
           <MemberGettingStarted />
         </section>
         */}
+
+        {latestBills.length > 0 && (
+          <section className="space-y-4">
+            <div className="flex items-center justify-between px-1">
+              <h2 className="text-sm font-bold text-foreground">
+                Split Bill Terbaru
+              </h2>
+              <Link
+                href="/member/history"
+                className="text-xs font-bold text-primary hover:underline flex items-center gap-0.5"
+              >
+                Lihat Lainnya
+                <ChevronRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+            <div className="space-y-3">
+              {latestBills.map((bill) => (
+                <SplitBillListCard key={bill.id} bill={bill} />
+              ))}
+            </div>
+          </section>
+        )}
 
         <EntryPointSection title="Rekomendasi Buat Kamu" />
 

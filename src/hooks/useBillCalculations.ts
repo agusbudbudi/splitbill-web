@@ -71,13 +71,19 @@ export const useBillCalculations = (
     // directly without going through addDebt, since there's no single
     // creditor to attribute it to. Scale down their existing per-creditor
     // debts by the same proportion so the pairwise view stays consistent
-    // with the simplified net-balance view.
+    // with the simplified net-balance view. When the reduction is bigger
+    // than everything they owed (e.g. a flat discount on a cheap order),
+    // the ratio goes negative — that's intentional, not a bug: it flips
+    // the debt matrix entry negative, and the pairwise-instructions loop
+    // below already nets `aOwesB - bOwesA` per pair, so a negative entry
+    // correctly reverses into "creditor now owes debtor" instead of the
+    // excess silently disappearing (which a Math.max(0, ratio) clamp did).
     const reduceDebtProportionally = (debtor: string, reduction: number) => {
       const debts = debtMatrix[debtor];
       if (!debts || reduction >= 0) return;
       const total = Object.values(debts).reduce((a, b) => a + b, 0);
       if (total <= 0) return;
-      const ratio = Math.max(0, (total + reduction) / total);
+      const ratio = (total + reduction) / total;
       Object.keys(debts).forEach((creditor) => {
         debts[creditor] *= ratio;
       });

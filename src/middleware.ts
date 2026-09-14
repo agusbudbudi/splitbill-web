@@ -10,6 +10,24 @@ import { SESSION_COOKIE_NAME } from "@/lib/auth/tokens";
 // that flow.
 const protectedRoutes = ["/wallet", "/history", "/split-later", "/member"];
 
+// Public pages nested under an otherwise-protected prefix — carved out of
+// the gate below so anonymous visitors (and crawlers, for the SEO ones)
+// aren't bounced to /login.
+const publicRoutesUnderProtectedPrefix = [
+  // Shareable split-bill result link (see its page.tsx: `isPublic =
+  // !isAuthenticated`, anon-viewer analytics, share CTAs for friends
+  // without an account). /history itself and /history/invoice/[id] stay
+  // protected.
+  "/history/split-bill",
+  // "Cara pakai" tutorial/SEO page — Server Component, no ProtectedRoute,
+  // has JSON-LD for search engines. /split-later itself stays protected.
+  "/split-later/cara-pakai",
+];
+const isPublicRouteUnderProtectedPrefix = (pathname: string) =>
+  publicRoutesUnderProtectedPrefix.some(
+    (route) => pathname === route || pathname.startsWith(`${route}/`),
+  );
+
 // Auth routes that should redirect to home if already logged in
 const authRoutes = ["/login", "/register"];
 
@@ -54,9 +72,11 @@ export async function middleware(request: NextRequest) {
 
   const session = await checkSession(request);
 
-  const isProtected = protectedRoutes.some(
-    (route) => pathname === route || pathname.startsWith(`${route}/`),
-  );
+  const isProtected =
+    !isPublicRouteUnderProtectedPrefix(pathname) &&
+    protectedRoutes.some(
+      (route) => pathname === route || pathname.startsWith(`${route}/`),
+    );
 
   // Missing/misconfigured JWT_REFRESH_SECRET makes every visitor look
   // logged-out — surface it as a loud 500 instead of silently redirecting

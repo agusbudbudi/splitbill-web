@@ -16,6 +16,7 @@ import { AIScanEncourageBanner } from "@/components/home/AIScanEncourageBanner";
 import { EntryPointSection } from "@/components/home/EntryPointSection";
 import { PromoBanner } from "@/components/ui/PromoBanner";
 import { SplitBillListCard } from "@/components/splitbill/SplitBillListCard";
+import { MyLevelCard } from "@/components/profile/MyLevelCard";
 import { useSplitBillStore } from "@/store/useSplitBillStore";
 import { useWalletStore } from "@/store/useWalletStore";
 import { useUIStore } from "@/lib/stores/uiStore";
@@ -130,6 +131,10 @@ export function MemberHomeContent({ singleColumn = false }: MemberHomeContentPro
           <MemberGettingStarted />
         </section>
         */}
+
+        <section className="space-y-4">
+          <MyLevelCard />
+        </section>
 
         {latestBills.length > 0 && (
           <section className="space-y-4">

@@ -21,4 +21,8 @@ export const API_ENDPOINTS = {
     LIST: "/api/orders",
     BY_ID: (id: string) => `/api/orders/${id}`,
   },
+  LEVELS: {
+    LIST: "/api/levels",
+    ME: "/api/levels/me",
+  },
 } as const;

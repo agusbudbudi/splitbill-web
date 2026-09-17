@@ -17,17 +17,14 @@ export const BrandingFooter = ({ className }: BrandingFooterProps) => {
         className,
       )}
     >
-      <div className="flex items-center gap-0 opacity-40 grayscale group hover:grayscale-0 hover:opacity-100 transition-all duration-500">
+      <div className="opacity-40 grayscale group hover:grayscale-0 hover:opacity-100 transition-all duration-500">
         <Image
-          src="/img/split-bill-icon.png"
-          alt="logo"
-          width={32}
-          height={32}
-          className="w-8 h-8 object-contain"
+          src="/img/split-bill-logo-basic.png"
+          alt="SplitBill"
+          width={130}
+          height={36}
+          className="h-8 w-auto object-contain"
         />
-        <span className="text-lg font-bold tracking-tighter text-foreground">
-          SplitBill
-        </span>
       </div>
 
       <p className="text-[11px] text-muted-foreground/70 leading-relaxed max-w-[400px]">

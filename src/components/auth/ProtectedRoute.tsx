@@ -36,8 +36,14 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   // Show loading state while checking auth
   if (isLoading || !isInitialized) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <LoadingIndicator text="Memuat..." />
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center text-center px-6">
+        <LoadingIndicator size={48} className="mb-6" />
+        <div className="space-y-2 animate-in fade-in slide-in-from-bottom-4 duration-700">
+          <h2 className="text-xl font-black text-foreground tracking-tight">Memuat...</h2>
+          <p className="text-sm text-muted-foreground font-medium max-w-[250px] mx-auto leading-relaxed">
+            Sabar ya, lagi siapin datanya! ✨
+          </p>
+        </div>
       </div>
     );
   }

@@ -45,7 +45,7 @@ export const Header = ({
 }: HeaderProps) => {
   const router = useRouter();
   const { user, isAuthenticated, initialize } = useAuthStore();
-  const { isPWABannerVisible } = useUIStore();
+  const { isPWABannerVisible, headerColor } = useUIStore();
   const [scrolled, setScrolled] = React.useState(false);
   const [isNativeApp, setIsNativeApp] = React.useState(false);
 
@@ -70,6 +70,7 @@ export const Header = ({
         wide ? "max-w-full" : "max-w-[600px]",
         className,
       )}
+      style={headerColor ? { backgroundColor: headerColor } : undefined}
     >
       {!wide && (
         <div className="hidden lg:flex w-full items-center justify-center gap-2 bg-amber-50 px-4 py-2 text-amber-800 text-xs font-medium">

@@ -1,24 +1,61 @@
 "use client";
 
-import React from "react";
-import { useWalletStore } from "@/store/useWalletStore";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { formatToIDR } from "@/lib/utils";
 import { useAuthStore } from "@/lib/stores/authStore";
+import { fetchMyLevel } from "@/lib/api/levels";
+import type { UserLevelStats } from "@/lib/types/level";
+
+const GREETINGS_BY_HOUR: [maxHour: number, word: string][] = [
+  [10, "Pagi"],
+  [15, "Siang"],
+  [18, "Sore"],
+  [24, "Malam"],
+];
 
 export const FeatureHighlights = () => {
-  const savedBills = useWalletStore((state) => state.savedBills);
   const { user } = useAuthStore();
+  const [stats, setStats] = useState<UserLevelStats | null>(null);
+  const [greetingWord, setGreetingWord] = useState("Halo");
 
-  // Compute storytelling statistics
-  const totalBills = Array.isArray(savedBills) ? savedBills.length : 0;
-  const totalAmount = Array.isArray(savedBills)
-    ? savedBills.reduce((sum, b) => sum + (b?.totalAmount || 0), 0)
-    : 0;
-  const totalFriends = Array.isArray(savedBills)
-    ? new Set(savedBills.flatMap((b) => b?.people || [])).size
-    : 0;
+  // Jam device beda antara server & client, jadi baru di-set setelah mount
+  // biar gak mismatch hydration — render pertama tetep pakai "Halo".
+  useEffect(() => {
+    const hour = new Date().getHours();
+    const match = GREETINGS_BY_HOUR.find(([maxHour]) => hour < maxHour);
+    setGreetingWord(match?.[1] ?? "Halo");
+  }, []);
+
+  // Sumber sama dengan stats di halaman level (GET /api/levels/me) biar
+  // angkanya konsisten — jangan hitung ulang dari savedBills lokal.
+  useEffect(() => {
+    let cancelled = false;
+    fetchMyLevel()
+      .then((res) => {
+        if (!cancelled) setStats(res.stats);
+      })
+      .catch((err) => {
+        console.warn("Failed to load level stats:", err);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const totalBills = stats?.splitCount ?? 0;
+  const totalAmount = stats?.totalAmount ?? 0;
+  const totalFriends = stats?.friendCount ?? 0;
   const firstName = user?.name ? user.name.split(" ")[0] : "Teman";
+  // Komponen ini cuma mount kalau user udah punya bill (lihat hasHistory di
+  // MemberHomeContent), jadi selama stats belum kebaca jangan klaim "belum
+  // mulai" — itu keliru kalau fetchMyLevel() gagal/lambat.
+  const headline =
+    stats === null
+      ? "Yuk selesain patungan tanpa drama hari ini"
+      : totalBills > 0
+        ? `Udah ${totalBills}x split bill kelar, makin auto-cair!`
+        : "Yuk mulai split bill pertama, no drama dari awal!";
 
   const metrics = [
     {
@@ -50,15 +87,12 @@ export const FeatureHighlights = () => {
         <div className="space-y-4">
           {/* Greeting row */}
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 shrink-0 rounded-full bg-white/10 sm:bg-primary/10 flex items-center justify-center text-xl">
-              👋
-            </div>
             <div className="min-w-0">
               <p className="text-[10px] font-bold text-white/80 sm:text-primary/70 uppercase tracking-widest leading-none">
-                Halo, {firstName}
+                {greetingWord}, {firstName}
               </p>
               <h2 className="text-white sm:text-foreground text-base sm:text-lg font-bold leading-snug tracking-tight mt-1">
-                Yuk selesain patungan tanpa drama hari ini
+                {headline}
               </h2>
             </div>
           </div>

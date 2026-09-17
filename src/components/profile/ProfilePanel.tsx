@@ -25,6 +25,7 @@ import { useAuthStore } from "@/lib/stores/authStore";
 import { useWalletStore } from "@/store/useWalletStore";
 import { PaymentMethodCard } from "@/components/wallet/PaymentMethodCard";
 import { BrandingFooter } from "@/components/layout/BrandingFooter";
+import { MyLevelCard } from "@/components/profile/MyLevelCard";
 
 // --- Reusable Components ---
 
@@ -270,6 +271,10 @@ export function ProfilePanel() {
               </div>
             </div>
           )}
+
+          <div className="mb-4">
+            <MyLevelCard />
+          </div>
 
           <MenuGroup title="Preferensi & Masukan">
             <MenuItem icon={Star} label="Ulasan & Feedback" href="/review" />

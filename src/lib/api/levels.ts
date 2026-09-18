@@ -1,9 +1,18 @@
 import { apiClient } from "./client";
 import { API_ENDPOINTS } from "@/lib/constants";
-import type { UserLevel, UserLevelMeResponse, UserLevelStats } from "@/lib/types/level";
+import type {
+  LevelAchievement,
+  UserLevel,
+  UserLevelMeResponse,
+  UserLevelStats,
+} from "@/lib/types/level";
 
 interface RawLevel extends Omit<UserLevel, "id"> {
   _id: string;
+}
+
+interface RawAchievement extends Omit<LevelAchievement, "levelId"> {
+  level: RawLevel | string | null;
 }
 
 interface LevelsListResponse {
@@ -17,7 +26,14 @@ interface MyLevelResponse {
     stats: UserLevelStats;
     currentLevel: RawLevel | null;
     nextLevel: RawLevel | null;
+    achievements: RawAchievement[];
   };
+}
+
+interface ClaimLevelResponse {
+  success: boolean;
+  data: RawAchievement;
+  message?: string;
 }
 
 function mapLevel(raw: RawLevel): UserLevel {
@@ -30,6 +46,17 @@ function mapLevel(raw: RawLevel): UserLevel {
     benefits: raw.benefits || [],
     rules: raw.rules || [],
     isActive: raw.isActive,
+  };
+}
+
+function mapAchievement(raw: RawAchievement): LevelAchievement {
+  const levelId = typeof raw.level === "string" ? raw.level : raw.level?._id ?? "";
+  return {
+    levelId,
+    achievedAt: raw.achievedAt,
+    claimed: raw.claimed,
+    claimedAt: raw.claimedAt,
+    rewardsSnapshot: raw.rewardsSnapshot || [],
   };
 }
 
@@ -57,10 +84,22 @@ export function fetchMyLevel(): Promise<UserLevelMeResponse> {
       stats: response.data.stats,
       currentLevel: response.data.currentLevel ? mapLevel(response.data.currentLevel) : null,
       nextLevel: response.data.nextLevel ? mapLevel(response.data.nextLevel) : null,
+      achievements: (response.data.achievements || []).map(mapAchievement),
     }))
     .finally(() => {
       inFlightMyLevel = null;
     });
 
   return inFlightMyLevel;
+}
+
+// Klaim reward dari level yang sudah tercapai. Server yang jadi sumber
+// kebenaran final soal boleh/tidaknya klaim (race-safe di sisi backend) —
+// di sini cuma nerusin request & lempar error message-nya kalau ditolak.
+export async function claimLevelReward(levelId: string): Promise<LevelAchievement> {
+  const response = await apiClient.request<ClaimLevelResponse>(
+    API_ENDPOINTS.LEVELS.CLAIM(levelId),
+    { method: "POST" },
+  );
+  return mapAchievement(response.data);
 }

@@ -12,9 +12,6 @@ export default function ReviewClientPage() {
       <Header title="Review" showBackButton />
 
       <div className="relative w-full max-w-[600px] flex-1 flex flex-col">
-        {/* Gradient background */}
-        <div className="absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-primary via-primary/50 to-transparent pointer-events-none z-0" />
-
         <main className="relative z-10 flex-1 w-full flex flex-col">
           {/* Banner Section */}
           <div className="w-full px-4 pt-4">

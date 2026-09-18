@@ -8,6 +8,7 @@ export interface User {
   name: string;
   email: string;
   freeScanCount?: number;
+  freeSplitBillCount?: number;
   subscriptionStatus?: "free" | "active" | "expired";
   subscriptionPlan?: string;
   subscriptionExpiry?: string;

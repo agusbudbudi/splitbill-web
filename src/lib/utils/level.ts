@@ -1,11 +1,22 @@
 import { formatToIDR } from "@/lib/utils";
-import type { LevelRule, UserLevelStats } from "@/lib/types/level";
+import type { LevelBenefitType, LevelReward, LevelRule, UserLevelStats } from "@/lib/types/level";
 
 export const LEVEL_METRIC_LABELS: Record<LevelRule["metric"], string> = {
   splitCount: "split bill",
   totalAmount: "total nominal",
   friendCount: "teman",
 };
+
+// Harus sinkron dengan BENEFIT_TYPE_CONFIG di splitbill-be/lib/levelRewards.js
+export const BENEFIT_TYPE_LABELS: Record<LevelBenefitType, string> = {
+  free_scan_ai: "Free Scan AI",
+  max_split_bill: "Kuota Split Bill",
+};
+
+export function formatRewardSentence(reward: LevelReward): string {
+  const label = BENEFIT_TYPE_LABELS[reward.benefitType] ?? reward.benefitType;
+  return `+${reward.amount} ${label}`;
+}
 
 export function formatRuleValue(rule: LevelRule): string {
   return rule.metric === "totalAmount"

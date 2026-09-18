@@ -24,5 +24,6 @@ export const API_ENDPOINTS = {
   LEVELS: {
     LIST: "/api/levels",
     ME: "/api/levels/me",
+    CLAIM: (levelId: string) => `/api/levels/${levelId}/claim`,
   },
 } as const;

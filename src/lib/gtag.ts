@@ -326,6 +326,6 @@ export const trackLiburanLP = {
  * Split Bill "Cara Pakai" page (/split-bill/cara-pakai) event trackers
  */
 export const trackCaraPakaiLP = {
-  ctaClick: (feature: string, position: "hero" | "killer-feature") =>
+  ctaClick: (feature: string, position: "hero" | "killer-feature" | "feature-card" | "cara-pakai-link") =>
     trackEvent("cara_pakai_lp_cta_click", { feature, position }),
 };

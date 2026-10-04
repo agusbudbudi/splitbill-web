@@ -4,7 +4,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, BookOpen } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 
 const features = [
@@ -13,12 +13,9 @@ const features = [
     title: "Split Bill",
     description:
       "Foto struk biar AI hitung otomatis (Scan AI) atau bagi rincian secara manual. Sat-set!",
-    badge: "Populer 🔥",
-    color: "from-blue-500 to-cyan-500",
-    bgLight: "bg-blue-100/90",
-    bgHover: "group-hover:bg-blue-200/90",
+    badge: "Populer",
     href: "/split-bill",
-    cta: "Coba Split Bill Sekarang",
+    cta: "Coba Split Bill",
     caraPakaiHref: "/split-bill/cara-pakai",
   },
   {
@@ -26,12 +23,9 @@ const features = [
     title: "Split Later",
     description:
       "Nongkrong sepuasnya, kumpulin struknya, bagi tagihannya nanti pas santai.",
-    badge: "NEW ✨",
-    color: "from-purple-500 to-indigo-500",
-    bgLight: "bg-purple-100/90",
-    bgHover: "group-hover:bg-purple-200/90",
+    badge: "Baru",
     href: "/split-later",
-    cta: "Coba Split Later Sekarang",
+    cta: "Coba Split Later",
     caraPakaiHref: "/split-later/cara-pakai",
     requiresLogin: true,
   },
@@ -40,11 +34,8 @@ const features = [
     title: "Shared Goals",
     description:
       "Nabung bareng squad buat rencana liburan, kado nikahan teman, atau impian bersama.",
-    color: "from-emerald-500 to-teal-500",
-    bgLight: "bg-emerald-100/90",
-    bgHover: "group-hover:bg-emerald-200/90",
     href: "/shared-goals",
-    cta: "Mulai Nabung Bareng",
+    cta: "Mulai Nabung",
     caraPakaiHref: "/shared-goals/cara-pakai",
   },
   {
@@ -52,33 +43,24 @@ const features = [
     title: "Collect Money (Patungan)",
     description:
       "Bikin link patungan uang kas, sewa lapangan futsal, atau donasi secara transparan.",
-    color: "from-amber-500 to-orange-500",
-    bgLight: "bg-amber-100/90",
-    bgHover: "group-hover:bg-amber-200/90",
     href: "/collect-money",
-    cta: "Bikin Patungan Sekarang",
+    cta: "Bikin Patungan",
   },
   {
     imageSrc: "/img/menu-invoice.png",
     title: "Invoice",
     description:
       "Kirim rincian tagihan digital yang rapi, transparan, langsung ke WhatsApp.",
-    color: "from-rose-500 to-pink-500",
-    bgLight: "bg-rose-100/90",
-    bgHover: "group-hover:bg-rose-200/90",
     href: "/invoice",
-    cta: "Buat Invoice Sekarang",
+    cta: "Buat Invoice",
   },
   {
     imageSrc: "/img/menu-wallet.png",
     title: "Wallet",
     description:
       "Kelola dana masuk dari teman, pantau saldo patungan squad, dan catat pengeluaran grup.",
-    color: "from-violet-500 to-fuchsia-500",
-    bgLight: "bg-violet-100/90",
-    bgHover: "group-hover:bg-violet-200/90",
     href: "/wallet",
-    cta: "Simpan E-Wallet Kamu",
+    cta: "Simpan Wallet",
   },
 ];
 
@@ -143,94 +125,61 @@ export const FeaturesSection = () => {
           viewport={{ once: true, margin: "-50px" }}
           className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 lg:gap-8"
         >
-          {features.map((feat) => {
-            const cardInner = (
-              <div
-                className="group relative bg-white rounded-md p-4 sm:p-6 lg:p-8 border border-slate-100/80 shadow-[0_4px_20px_-4px_rgba(71,159,234,0.08)] hover:shadow-[0_12px_30px_-6px_rgba(71,159,234,0.15)] hover:border-primary/20 hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between overflow-hidden h-full"
-              >
-                <div className="flex flex-col h-full justify-between">
+          {features.map((feat) => (
+            <motion.div
+              key={feat.title}
+              variants={cardVariants}
+              className="h-full"
+            >
+              <div className="relative flex flex-col h-full bg-white rounded-xl p-4 sm:p-6 border border-slate-100/80 shadow-[0_4px_20px_-4px_rgba(71,159,234,0.08)] hover:shadow-[0_12px_30px_-6px_rgba(71,159,234,0.15)] hover:border-primary/20 transition-all duration-300 overflow-hidden">
+                {feat.badge && (
+                  <span className="absolute top-0 right-0 bg-emerald-500 text-white text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-bl-lg">
+                    {feat.badge}
+                  </span>
+                )}
+                <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4 flex-1">
+                  <div className="relative shrink-0 w-14 h-14 sm:w-16 sm:h-16 rounded-md overflow-hidden bg-primary/10 p-2">
+                    <Image
+                      src={feat.imageSrc}
+                      alt={feat.title}
+                      fill
+                      className="object-contain p-2"
+                      sizes="64px"
+                    />
+                  </div>
                   <div>
-                    {/* Card Icon Container */}
-                    <div className="flex items-center justify-between mb-4 sm:mb-6">
-                      <div className={`w-12 h-12 sm:w-16 sm:h-16 ${feat.bgLight} ${feat.bgHover} rounded-xl sm:rounded-md flex items-center justify-center p-2 sm:p-2.5 transition-all duration-300 group-hover:scale-105 relative`}>
-                        <Image
-                          src={feat.imageSrc}
-                          alt={feat.title}
-                          width={64}
-                          height={64}
-                          className="w-full h-full object-contain"
-                        />
-                      </div>
-                      {feat.badge && (
-                        <span className={`text-[8px] sm:text-[10px] font-black px-2 py-0.5 sm:py-1 rounded-full uppercase tracking-wider ${feat.badge.toLowerCase().includes("new")
-                          ? "bg-emerald-100 text-emerald-800"
-                          : "bg-amber-100 text-amber-800"
-                          }`}>
-                          {feat.badge}
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Card Info */}
-                    <h3 className="text-sm sm:text-base lg:text-xl font-extrabold text-slate-800 mb-1.5 sm:mb-2.5 group-hover:text-primary transition-colors duration-200">
+                    <h3 className="text-sm sm:text-lg font-black text-slate-800 mb-1">
                       {feat.title}
                     </h3>
-                    <p className="text-[11px] sm:text-xs lg:text-sm font-semibold text-slate-500 leading-normal sm:leading-relaxed">
+                    <p className="text-xs sm:text-sm font-medium text-slate-500 leading-relaxed">
                       {feat.description}
                     </p>
+                    {feat.requiresLogin && (
+                      <p className="mt-2 text-xs font-bold text-amber-600">Perlu login</p>
+                    )}
                   </div>
+                </div>
 
-                  {feat.requiresLogin && (
-                    <p className="text-left italic text-[9px] sm:text-[10px] text-slate-400 font-semibold mt-3 sm:mt-4">
-                      Butuh login buat pakai fitur ini
-                    </p>
-                  )}
-
-                  {feat.caraPakaiHref ? (
-                    <div className="flex flex-col sm:flex-row items-stretch gap-1.5 sm:gap-2 mt-3 sm:mt-5">
-                      <Link
-                        href={feat.caraPakaiHref}
-                        className="flex-1 inline-flex items-center justify-center gap-1 text-[10px] sm:text-xs font-bold text-primary border border-primary/30 rounded-sm px-2 py-2.5 sm:px-3 sm:py-3 hover:bg-primary/5 transition-colors"
-                      >
-                        <BookOpen className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" />
-                        Cara Pakai
-                      </Link>
-                      <Link
-                        href={feat.href}
-                        className="flex-1 inline-flex items-center justify-center gap-1 text-[10px] sm:text-xs font-bold text-white bg-primary rounded-sm px-2 py-2.5 sm:px-3 sm:py-3 hover:bg-primary/90 transition-colors"
-                      >
-                        Coba Fitur
-                        <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" />
-                      </Link>
-                    </div>
-                  ) : null}
-
-                  {!feat.caraPakaiHref && (
-                    <div className="flex items-center gap-1 mt-3 sm:mt-5 text-[11px] sm:text-xs font-bold text-primary group-hover:gap-1.5 transition-all duration-200">
-                      <span>{feat.cta}</span>
-                      <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" />
-                    </div>
+                <div className="mt-4 sm:mt-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3">
+                  <Link
+                    href={feat.href}
+                    className="group inline-flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 sm:py-2.5 rounded-md bg-primary text-white font-black text-sm hover:bg-primary/90 active:scale-95 transition-all"
+                  >
+                    {feat.cta}
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </Link>
+                  {feat.caraPakaiHref && (
+                    <Link
+                      href={feat.caraPakaiHref}
+                      className="inline-flex items-center justify-center gap-1.5 text-xs sm:text-sm font-bold text-primary hover:underline"
+                    >
+                      Cara Pakai
+                    </Link>
                   )}
                 </div>
               </div>
-            );
-
-            return (
-              <motion.div
-                key={feat.title}
-                variants={cardVariants}
-                className="h-full"
-              >
-                {feat.caraPakaiHref ? (
-                  cardInner
-                ) : (
-                  <Link href={feat.href} className="block h-full cursor-pointer">
-                    {cardInner}
-                  </Link>
-                )}
-              </motion.div>
-            );
-          })}
+            </motion.div>
+          ))}
         </motion.div>
       </div>
     </section>

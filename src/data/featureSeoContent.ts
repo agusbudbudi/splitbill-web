@@ -32,6 +32,8 @@ export interface FeatureSeoContent {
   /** H1, split so the second part gets the brand gradient. */
   titlePrefix: string;
   titleHighlight: string;
+  /** Feature logo shown left of the H1. */
+  logo: string;
   lead: string;
   points: OverviewPoint[];
   stepsTitleHighlight: string;
@@ -41,7 +43,12 @@ export interface FeatureSeoContent {
   guideLabel?: string;
   featureName: string;
   faqs: FAQItem[];
+  /** Closing banner: cara-pakai hero illustration (split-bill's when the
+      feature has no cara-pakai page), title + highlighted tail, button. */
+  heroImage: string;
   ctaTitle: string;
+  ctaHighlight: string;
+  ctaIcon: LucideIcon;
   ctaLabel: string;
 }
 
@@ -52,6 +59,8 @@ const pickFaqs = (ids: string[]) =>
 // sync with what the tool actually does; never claim features that don't exist.
 export const featureSeoContent = {
   splitBill: {
+    heroImage: "/img/cara-pakai/split-bill/hero-split-bill-cara-pakai-new.png",
+    logo: "/img/feature-splitbill-scan.png",
     titlePrefix: "Split Bill Online Gratis:",
     titleHighlight: "Bagi Tagihan Tanpa Ribet",
     lead: "SplitBill adalah kalkulator split bill online gratis buat bagi tagihan makan, nongkrong, atau belanja bareng teman. Tinggal masukin siapa aja yang ikut, catat siapa pesan apa, dan SplitBill langsung ngitung berapa yang harus dibayar tiap orang, lengkap sama siapa transfer ke siapa.",
@@ -84,10 +93,14 @@ export const featureSeoContent = {
     guideLabel: "Lihat panduan lengkap Split Bill",
     featureName: "Split Bill",
     faqs: pickFaqs(["2", "12", "5", "4", "7"]),
-    ctaTitle: "Siap bagi tagihan tanpa drama?",
-    ctaLabel: "Mulai split bill",
+    ctaTitle: "Siap bagi tagihan",
+    ctaHighlight: "tanpa drama?",
+    ctaIcon: Camera,
+    ctaLabel: "Split Sekarang",
   },
   invoice: {
+    heroImage: "/img/cara-pakai/split-bill/hero-split-bill-cara-pakai-new.png",
+    logo: "/img/feature-invoice.png",
     titlePrefix: "Buat Invoice Online Gratis,",
     titleHighlight: "Rapi dan Siap Kirim",
     lead: "Butuh nagih klien, jualan online, atau minta ganti uang talangan ke teman? Invoice Builder dari SplitBill bantu kamu bikin invoice online gratis yang rapi dalam beberapa menit, tanpa install aplikasi dan tanpa harus jago desain.",
@@ -119,10 +132,14 @@ export const featureSeoContent = {
     ],
     featureName: "Invoice",
     faqs: pickFaqs(["16", "19", "18", "17"]),
-    ctaTitle: "Siap bikin invoice pertama kamu?",
-    ctaLabel: "Mulai bikin invoice",
+    ctaTitle: "Siap bikin invoice",
+    ctaHighlight: "pertama kamu?",
+    ctaIcon: FileText,
+    ctaLabel: "Buat Invoice",
   },
   collectMoney: {
+    heroImage: "/img/cara-pakai/split-bill/hero-split-bill-cara-pakai-new.png",
+    logo: "/img/feature-collect-money.png",
     titlePrefix: "Collect Money:",
     titleHighlight: "Kumpulin Iuran dan Patungan Online",
     lead: "Collect Money dari SplitBill bantu kamu ngumpulin uang bareng tanpa harus nagih satu-satu di grup chat. Pas buat iuran kas kelas atau kantor, patungan kado ulang tahun, sewa lapangan futsal, sampai donasi kecil-kecilan di komunitas.",
@@ -153,10 +170,14 @@ export const featureSeoContent = {
     ],
     featureName: "Collect Money",
     faqs: pickFaqs(["25", "26", "27"]),
-    ctaTitle: "Siap kumpulin iuran tanpa nagih satu-satu?",
-    ctaLabel: "Mulai kumpulin iuran",
+    ctaTitle: "Siap kumpulin iuran",
+    ctaHighlight: "tanpa nagih satu-satu?",
+    ctaIcon: HandCoins,
+    ctaLabel: "Kumpulin Iuran",
   },
   sharedGoals: {
+    heroImage: "/img/cara-pakai/shared-goals/hero-shared-goals-cara-pakai.png",
+    logo: "/img/feature-shared-goals.png",
     titlePrefix: "Shared Goals:",
     titleHighlight: "Nabung Bareng Teman Buat Tujuan Bersama",
     lead: "Rencana liburan bareng sering gagal karena dananya gak kekumpul? Shared Goals dari SplitBill bantu kamu dan circle nabung bareng menuju satu target, entah itu trip ke Bali, kado nikahan teman, atau makan-makan spesial akhir tahun.",
@@ -189,7 +210,9 @@ export const featureSeoContent = {
     guideLabel: "Lihat panduan lengkap Shared Goals",
     featureName: "Shared Goals",
     faqs: pickFaqs(["20", "21", "22", "24", "23"]),
-    ctaTitle: "Siap wujudin goal bareng circle kamu?",
-    ctaLabel: "Mulai nabung bareng",
+    ctaTitle: "Siap wujudin goal",
+    ctaHighlight: "bareng circle kamu?",
+    ctaIcon: PiggyBank,
+    ctaLabel: "Mulai Nabung",
   },
 } satisfies Record<string, FeatureSeoContent>;

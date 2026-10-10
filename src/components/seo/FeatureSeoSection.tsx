@@ -1,5 +1,6 @@
+import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, ArrowUp, BookOpen, ChevronDown } from "lucide-react";
+import { ArrowRight, BookOpen, ChevronDown } from "lucide-react";
 import type { FeatureSeoContent } from "@/data/featureSeoContent";
 import { cn } from "@/lib/utils";
 
@@ -7,29 +8,24 @@ const cardClass =
   "bg-white rounded-md border border-slate-100/80 shadow-[0_4px_20px_-4px_rgba(71,159,234,0.08)]";
 
 function SectionHeading({
-  as: Tag = "h2",
   prefix,
   highlight,
   gradient = "from-primary to-blue-600",
   subtitle,
-  id,
 }: {
-  as?: "h1" | "h2";
   prefix: string;
   highlight: string;
   gradient?: string;
   subtitle?: string;
-  id?: string;
 }) {
   return (
     <div className="text-center mb-6">
-      <Tag
-        id={id}
+      <h2
         className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight leading-tight text-balance mb-3"
       >
         {prefix}{" "}
         <span className={cn("text-transparent bg-clip-text bg-gradient-to-r", gradient)}>{highlight}</span>
-      </Tag>
+      </h2>
       {subtitle && (
         <p className="text-sm sm:text-base text-slate-500 font-medium leading-relaxed">{subtitle}</p>
       )}
@@ -48,6 +44,7 @@ function SectionHeading({
 export function FeatureSeoSection({
   titlePrefix,
   titleHighlight,
+  logo,
   lead,
   points,
   stepsTitleHighlight,
@@ -57,7 +54,10 @@ export function FeatureSeoSection({
   guideLabel,
   featureName,
   faqs,
+  heroImage,
   ctaTitle,
+  ctaHighlight,
+  ctaIcon: CtaIcon,
   ctaLabel,
   className,
 }: FeatureSeoContent & { className?: string }) {
@@ -66,16 +66,26 @@ export function FeatureSeoSection({
       aria-labelledby="feature-seo-title"
       className={cn("w-full bg-background flex justify-center border-t border-slate-100", className)}
     >
-      <div className="w-full max-w-[600px] px-4 pt-12 pb-20 space-y-14">
-        {/* Overview, carries the page H1 */}
+      <div className="w-full max-w-[600px] px-4 pt-12 pb-[calc(8rem+env(safe-area-inset-bottom))] lg:pb-20 space-y-14">
+        {/* Overview, carries the page H1: feature logo left, text left-aligned */}
         <div>
-          <SectionHeading
-            as="h1"
-            id="feature-seo-title"
-            prefix={titlePrefix}
-            highlight={titleHighlight}
-            subtitle={lead}
-          />
+          <div className="mb-6">
+            <div className="flex items-center gap-4 mb-3">
+              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-md bg-white border border-slate-100/80 shadow-[0_4px_20px_-4px_rgba(71,159,234,0.12)] flex items-center justify-center p-2.5 shrink-0">
+                <Image src={logo} alt="" width={96} height={96} sizes="96px" className="w-full h-full object-contain" />
+              </div>
+              <h1
+                id="feature-seo-title"
+                className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight leading-tight"
+              >
+                {titlePrefix}{" "}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-600">
+                  {titleHighlight}
+                </span>
+              </h1>
+            </div>
+            <p className="text-sm sm:text-base text-slate-500 font-medium leading-relaxed">{lead}</p>
+          </div>
           <div className="space-y-3">
             {points.map((point) => (
               <div key={point.title} className={cn(cardClass, "flex gap-4 p-4 sm:p-5")}>
@@ -160,21 +170,49 @@ export function FeatureSeoSection({
           </div>
         )}
 
-        {/* Closing CTA back up to the tool */}
-        <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-primary to-blue-600 px-6 py-10 text-center text-white shadow-xl shadow-primary/20">
-          <div className="absolute -top-16 -right-16 w-48 h-48 bg-white/10 rounded-full blur-2xl pointer-events-none" />
-          <div className="absolute -bottom-20 -left-12 w-56 h-56 bg-white/10 rounded-full blur-2xl pointer-events-none" />
-          <p className="relative text-xl sm:text-2xl font-black tracking-tight text-balance mb-2">{ctaTitle}</p>
-          <p className="relative text-sm text-white/80 font-medium mb-6">
-            Gratis dan langsung jalan dari browser, tanpa install aplikasi.
-          </p>
-          <a
-            href="#"
-            className="relative inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-md bg-white text-primary font-black text-sm shadow-lg hover:scale-105 active:scale-95 transition-all"
-          >
-            <ArrowUp className="w-4 h-4" />
-            {ctaLabel}
-          </a>
+        {/* Closing banner back up to the tool, styled like the
+            /split-bill-liburan product banner */}
+        <div className="relative overflow-hidden rounded-md bg-primary">
+          {/* Fine grid, same pattern as the liburan banner */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              backgroundImage:
+                "linear-gradient(#ffffff14 1px, transparent 1px), linear-gradient(90deg, #ffffff14 1px, transparent 1px)",
+              backgroundSize: "48px 48px",
+              maskImage: "radial-gradient(ellipse 80% 70% at 50% 50%, black, transparent 80%)",
+              WebkitMaskImage: "radial-gradient(ellipse 80% 70% at 50% 50%, black, transparent 80%)",
+            }}
+          />
+          {/* Landscape on every width: product mockup left (bottom-anchored), compact copy right */}
+          <div className="relative z-10 grid grid-cols-[55fr_45fr] sm:grid-cols-2 gap-2 sm:gap-5">
+            <div className="relative">
+              {/* Cara-pakai hero illustration. Mobile: fills the column at the
+                  card's full height (center-cropped). sm+: wider than its column
+                  (it has empty margins left/right), anchored to the top edge */}
+              <Image
+                src={heroImage}
+                alt=""
+                width={1920}
+                height={900}
+                sizes="(max-width: 600px) 60vw, 400px"
+                className="absolute inset-0 w-full h-full object-cover object-center sm:inset-auto sm:top-0 sm:left-1/2 sm:-translate-x-1/2 sm:w-[140%] sm:max-w-none sm:h-auto"
+              />
+            </div>
+            <div className="relative z-10 py-5 pr-4 sm:py-7 sm:pr-6">
+              <p className="text-base sm:text-xl font-black text-white tracking-tight leading-tight mb-4">
+                {ctaTitle} <span className="text-blue-100">{ctaHighlight}</span>
+              </p>
+              <a
+                href="#"
+                className="group inline-flex items-center justify-center gap-1.5 whitespace-nowrap px-3 py-2.5 sm:px-5 sm:py-3 rounded-md bg-white text-primary font-black text-xs sm:text-sm shadow-xl shadow-black/10 hover:scale-105 active:scale-95 transition-all"
+              >
+                <CtaIcon className="hidden sm:block w-4 h-4" />
+                {ctaLabel}
+                <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </section>

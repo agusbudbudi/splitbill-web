@@ -68,9 +68,11 @@ const ChatRoom = dynamic(
 interface HomepagePageClientProps {
   initialReviews?: Review[];
   initialBlogs?: Blog[];
+  /** Server-rendered use-case copy, shown below the feature cards. */
+  useCasesSection?: React.ReactNode;
 }
 
-export const HomepagePageClient = ({ initialReviews, initialBlogs }: HomepagePageClientProps) => {
+export const HomepagePageClient = ({ initialReviews, initialBlogs, useCasesSection }: HomepagePageClientProps) => {
   const { isAuthenticated } = useAuthStore();
   const [isMounted, setIsMounted] = useState(false);
   const [isChatReady, setIsChatReady] = useState(false);
@@ -140,6 +142,8 @@ export const HomepagePageClient = ({ initialReviews, initialBlogs }: HomepagePag
 
         {/* Features Bento Grid */}
         <FeaturesSection />
+
+        {useCasesSection}
 
         {/* How It Works Steps */}
         <HowItWorksSection />

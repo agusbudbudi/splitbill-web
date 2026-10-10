@@ -407,9 +407,12 @@ export const HeroSection = () => {
               initial="hidden"
               animate="visible"
               variants={fadeUp}
-              className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-slate-900 leading-[1.15] tracking-tight mb-6"
+              className="text-4xl sm:text-5xl lg:text-[40px] xl:text-[44px] font-bold text-slate-900 leading-[1.15] tracking-tight mb-6"
             >
-              Split Bill Online Gratis: Scan Struk, Bagi Tagihan{" "}
+              {/* Desktop: fixed 4 lines; font sized so the longest line fits the column */}
+              Split Bill Online <br className="hidden lg:inline" />
+              Gratis: Scan Struk, <br className="hidden lg:inline" />
+              Bagi Tagihan <br className="hidden lg:inline" />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-[#2563eb]">
                 dalam 5 Detik
               </span>

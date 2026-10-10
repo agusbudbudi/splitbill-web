@@ -69,10 +69,10 @@ export function UseCasesSection() {
               semua momen patungan
             </span>
           </h2>
-          <p className="text-base sm:text-lg text-slate-500 font-medium leading-relaxed text-balance">
-            Patungan itu urusan sehari-hari. Masalahnya, ngitung siapa bayar berapa sering bikin
-            canggung, apalagi kalau pesanannya beda-beda dan ada pajak plus service charge di struk.
-            SplitBill bantu kamu beresin semuanya langsung dari browser, tanpa install aplikasi.
+          <p className="text-base sm:text-lg text-slate-500 font-medium">
+            Dari nongkrong, patungan kos, sampai liburan,{" "}
+            <span className="text-primary font-bold">semua bisa di-split tanpa canggung</span>.
+            Langsung dari browser, <span className="text-primary font-bold">tanpa install aplikasi</span>!
           </p>
         </div>
 

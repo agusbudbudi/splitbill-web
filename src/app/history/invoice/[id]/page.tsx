@@ -20,7 +20,6 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
-import { downloadInvoicePDF } from "@/lib/utils/pdfGenerator";
 
 export default function InvoiceDetailPage() {
   const params = useParams();
@@ -36,6 +35,8 @@ export default function InvoiceDetailPage() {
     try {
       setIsDownloading(true);
       const fileName = `Invoice-${invoice.invoiceNo || "Draft"}.pdf`;
+      // @react-pdf/renderer is ~480 KB; load it only when the user downloads
+      const { downloadInvoicePDF } = await import("@/lib/utils/pdfGenerator");
       await downloadInvoicePDF(invoice, fileName);
       toast.success("Invoice berhasil didownload!");
     } catch (error) {

@@ -6,6 +6,7 @@
  * hero, grid fitur, overview, dan banner.
  */
 
+import { PromoBanner } from "@/components/ui/PromoBanner";
 import type { Metadata } from "next";
 import { buildMetadata } from "@/lib/seo";
 import Image from "next/image";
@@ -176,6 +177,12 @@ export default function AllFeaturePage() {
             description="Tiap fitur punya cara pakai sendiri. Klik Cara Pakai buat panduan lengkapnya."
             features={features}
           />
+
+          <section className="bg-white pb-4">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <PromoBanner href="/split-bill-liburan" />
+            </div>
+          </section>
 
           <CaraPakaiOverview
             titlePrefix="Kenapa pakai"

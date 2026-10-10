@@ -33,6 +33,8 @@ const FEATURE_SHORTCUTS = [
   { imageSrc: "/img/menu-collect-money.png", title: "Collect Money", href: "/collect-money", bgLight: "bg-amber-100/90" },
   { imageSrc: "/img/menu-invoice.png", title: "Invoice", href: "/invoice", bgLight: "bg-rose-100/90" },
   { imageSrc: "/img/menu-wallet.png", title: "Wallet", href: "/wallet", bgLight: "bg-violet-100/90" },
+  // Landing page, not a separate tool; full-width row so the 2-col grid stays even
+  { imageSrc: "/img/menu-split-later.png", title: "Split Bill Liburan", href: "/split-bill-liburan", bgLight: "bg-sky-100/90", wide: true },
 ];
 
 interface HomepageNavbarProps {
@@ -338,7 +340,10 @@ export const HomepageNavbar = ({
                                 key={feat.href}
                                 href={feat.href}
                                 onClick={closeFiturTray}
-                                className="group flex items-center gap-3 p-2.5 rounded-sm hover:bg-slate-50 transition-colors duration-150"
+                                className={cn(
+                                  "group flex items-center gap-3 p-2.5 rounded-sm hover:bg-slate-50 transition-colors duration-150",
+                                  feat.wide && "col-span-2"
+                                )}
                               >
                                 <div className={`w-10 h-10 shrink-0 ${feat.bgLight} rounded-sm flex items-center justify-center p-1.5`}>
                                   <Image
@@ -525,7 +530,10 @@ export const HomepageNavbar = ({
                                 key={feat.href}
                                 href={feat.href}
                                 onClick={() => setMenuOpen(false)}
-                                className="flex items-center gap-2.5 p-2.5 rounded-lg hover:bg-primary/5 transition-colors duration-150"
+                                className={cn(
+                                  "flex items-center gap-2.5 p-2.5 rounded-lg hover:bg-primary/5 transition-colors duration-150",
+                                  feat.wide && "col-span-2"
+                                )}
                               >
                                 <div className={`w-9 h-9 shrink-0 ${feat.bgLight} rounded-md flex items-center justify-center p-1.5`}>
                                   <Image

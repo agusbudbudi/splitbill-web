@@ -14,7 +14,7 @@ const useCases = [
     cta: "Coba Split Bill",
   },
   {
-    image: "/img/cara-pakai/split-bill/auto-track.png",
+    image: "/img/cara-pakai/split-bill/settlement.png",
     tint: "from-emerald-100 to-teal-50",
     feature: "Collect Money",
     title: "Patungan kos dan tagihan bulanan",
@@ -28,8 +28,8 @@ const useCases = [
     feature: "Split Later",
     title: "Liburan bareng",
     body: "Struk numpuk selama trip? Kumpulin dulu pakai Split Later, hitungnya belakangan pas udah pulang. Settlement dari semua struk digabung jadi satu, jadi transfernya cukup sekali per orang.",
-    href: "/split-later/cara-pakai",
-    cta: "Lihat Split Later",
+    href: "/split-bill-liburan",
+    cta: "Lihat Split Bill Liburan",
   },
 ];
 

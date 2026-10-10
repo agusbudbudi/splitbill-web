@@ -151,7 +151,7 @@ export const HomepagePageClient = ({ initialReviews, initialBlogs, useCasesSecti
         {/* Promo Banner */}
         <section className="bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <PromoBanner />
+            <PromoBanner href="/split-bill-liburan" />
           </div>
         </section>
 

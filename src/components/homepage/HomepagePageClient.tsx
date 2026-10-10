@@ -13,6 +13,8 @@ import { HomepageFooter } from "./HomepageFooter";
 import { useAuthStore } from "@/lib/stores/authStore";
 import { LazyMount } from "@/components/ui/LazyMount";
 import { Skeleton } from "@/components/ui/Skeleton";
+import type { Blog } from "@/lib/types/blog";
+import type { Review } from "@/hooks/useReview";
 
 // Local skeleton fallback so the lazy chunk's own <Suspense> resolves in place —
 // without a `loading` option, next/dynamic suspends to the nearest Suspense
@@ -63,7 +65,12 @@ const ChatRoom = dynamic(
   { ssr: false, loading: () => null }
 );
 
-export const HomepagePageClient = () => {
+interface HomepagePageClientProps {
+  initialReviews?: Review[];
+  initialBlogs?: Blog[];
+}
+
+export const HomepagePageClient = ({ initialReviews, initialBlogs }: HomepagePageClientProps) => {
   const { isAuthenticated } = useAuthStore();
   const [isMounted, setIsMounted] = useState(false);
   const [isChatReady, setIsChatReady] = useState(false);
@@ -165,12 +172,12 @@ export const HomepagePageClient = () => {
         <br className="hidden" />
         <ComparisonSection />
 
-        <TestimonialsSection />
+        <TestimonialsSection initialReviews={initialReviews} />
 
         {/* Pricing hidden for now — keep component, just not rendered */}
         {/* <PricingSection /> */}
 
-        <BlogSectionHomepage />
+        <BlogSectionHomepage initialBlogs={initialBlogs} />
 
         <FAQSectionHomepage defaultOpenFirst />
 

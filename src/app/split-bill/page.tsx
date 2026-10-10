@@ -10,6 +10,8 @@
 
 import type { Metadata } from "next";
 import SplitBillClientPage from "./SplitBillClientPage";
+import { FeatureSeoSection } from "@/components/seo/FeatureSeoSection";
+import { featureSeoContent } from "@/data/featureSeoContent";
 
 export const metadata: Metadata = {
   title: "Split Bill Online Gratis — Kalkulator Bagi Tagihan Tanpa Aplikasi",
@@ -98,12 +100,14 @@ export default function SplitBillPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareAppSchema) }}
       />
-      {/* Visually hidden H1 — client page starts straight into the wizard UI,
-          so the page had no top-level heading for Google to key off. */}
-      <h1 className="sr-only">
-        Split Bill Online Gratis — Kalkulator Bagi Tagihan Tanpa Aplikasi
-      </h1>
-      <SplitBillClientPage />
+      {/* SEO explainer first in the DOM (crawlers see H1 + intro before the
+          client-only tool), shown visually below the tool via order-*. */}
+      <div className="flex flex-col">
+        <FeatureSeoSection {...featureSeoContent.splitBill} className="order-2" />
+        <div className="order-1">
+          <SplitBillClientPage />
+        </div>
+      </div>
     </>
   );
 }

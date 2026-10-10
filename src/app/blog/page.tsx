@@ -1,5 +1,28 @@
 import type { Metadata } from "next";
-import BlogListClient from "@/app/blog/BlogListClient";
+import BlogListClient, { BLOGS_PER_PAGE } from "@/app/blog/BlogListClient";
+import { fetchBlogs } from "@/lib/api/blog";
+import type { Blog } from "@/lib/types/blog";
+
+// ISR: list is server-rendered for crawlers and refreshed hourly
+export const revalidate = 3600;
+
+async function getInitialBlogs(): Promise<{ blogs: Blog[]; totalPages: number }> {
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
+    const res = await fetchBlogs({
+      page: 1,
+      limit: BLOGS_PER_PAGE,
+      cache: "force-cache",
+      next: { revalidate: 3600 },
+      signal: controller.signal,
+    }).finally(() => clearTimeout(timeoutId));
+    return { blogs: res.data || [], totalPages: res.pagination?.totalPages || 1 };
+  } catch (error) {
+    console.error("Failed to prefetch blogs for /blog:", error);
+    return { blogs: [], totalPages: 1 };
+  }
+}
 
 export const metadata: Metadata = {
   title: "Blog & Tips Split Bill — Kelola Keuangan & Patungan Lebih Hemat",
@@ -33,7 +56,9 @@ export const metadata: Metadata = {
   },
 };
 
-export default function BlogPage() {
+export default async function BlogPage() {
+  const { blogs, totalPages } = await getInitialBlogs();
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Blog",
@@ -56,7 +81,7 @@ export default function BlogPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <BlogListClient />
+      <BlogListClient initialBlogs={blogs} initialTotalPages={totalPages} />
     </>
   );
 }

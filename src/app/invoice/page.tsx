@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import InvoiceClientPage from "./InvoiceClientPage";
+import { FeatureSeoSection } from "@/components/seo/FeatureSeoSection";
+import { featureSeoContent } from "@/data/featureSeoContent";
 
 export const metadata: Metadata = {
   title: "Buat Invoice Online Gratis - Cepat & Profesional",
@@ -44,7 +46,14 @@ export default function InvoicePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
-      <InvoiceClientPage />
+      {/* SEO explainer first in the DOM (crawlers see H1 + intro before the
+          client-only tool), shown visually below the tool via order-*. */}
+      <div className="flex flex-col">
+        <FeatureSeoSection {...featureSeoContent.invoice} className="order-2" />
+        <div className="order-1">
+          <InvoiceClientPage />
+        </div>
+      </div>
     </>
   );
 }

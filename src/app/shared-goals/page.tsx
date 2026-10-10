@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import SharedGoalsClientPage from "./SharedGoalsClientPage";
+import { FeatureSeoSection } from "@/components/seo/FeatureSeoSection";
+import { featureSeoContent } from "@/data/featureSeoContent";
 
 export const metadata: Metadata = {
   title: "Shared Goals - Patungan & Nabung Bareng Teman Online",
@@ -52,7 +54,14 @@ export default function SharedGoalsPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
-      <SharedGoalsClientPage />
+      {/* SEO explainer first in the DOM (crawlers see H1 + intro before the
+          client-only tool), shown visually below the tool via order-*. */}
+      <div className="flex flex-col">
+        <FeatureSeoSection {...featureSeoContent.sharedGoals} className="order-2" />
+        <div className="order-1">
+          <SharedGoalsClientPage />
+        </div>
+      </div>
     </>
   );
 }

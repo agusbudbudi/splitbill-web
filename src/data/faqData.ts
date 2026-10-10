@@ -16,6 +16,19 @@ export interface FAQItem {
   showOnLanding: boolean;
 }
 
+export const faqCategoryLabels: Record<FAQItem["category"], string> = {
+  umum: "Umum",
+  "split-bill": "Split Bill",
+  "split-later": "Split Later",
+  "split-bill-liburan": "Split Bill Liburan",
+  invoice: "Invoice",
+  "shared-goals": "Shared Goals",
+  "collect-money": "Collect Money",
+  wallet: "Wallet",
+  akun: "Akun",
+  privasi: "Privasi",
+};
+
 export const faqData: FAQItem[] = [
   {
     id: "1",

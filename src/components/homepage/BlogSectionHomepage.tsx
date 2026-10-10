@@ -9,12 +9,19 @@ import { fetchBlogs } from "@/lib/api/blog";
 import { BlogCard } from "@/components/blog/BlogCard";
 import { BlogCardSkeleton } from "@/components/blog/BlogCardSkeleton";
 
-export const BlogSectionHomepage = () => {
-  const [blogs, setBlogs] = useState<Blog[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+interface BlogSectionHomepageProps {
+  /** Latest posts fetched on the server so the links are in the initial HTML. */
+  initialBlogs?: Blog[];
+}
+
+export const BlogSectionHomepage = ({ initialBlogs }: BlogSectionHomepageProps) => {
+  const hasInitial = !!initialBlogs && initialBlogs.length > 0;
+  const [blogs, setBlogs] = useState<Blog[]>(initialBlogs ?? []);
+  const [isLoading, setIsLoading] = useState(!hasInitial);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (hasInitial) return;
     const loadLatestBlogs = async () => {
       try {
         const response = await fetchBlogs({ limit: 6 });
@@ -26,7 +33,7 @@ export const BlogSectionHomepage = () => {
       }
     };
     loadLatestBlogs();
-  }, []);
+  }, [hasInitial]);
 
   const scroll = (direction: "left" | "right") => {
     if (scrollRef.current) {

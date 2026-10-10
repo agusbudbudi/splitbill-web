@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import CollectMoneyClientPage from "./CollectMoneyClientPage";
+import { FeatureSeoSection } from "@/components/seo/FeatureSeoSection";
+import { featureSeoContent } from "@/data/featureSeoContent";
 
 export const metadata: Metadata = {
   title: "Collect Money - Kumpulkan Iuran & Kas Online Mudah",
@@ -52,7 +54,14 @@ export default function CollectMoneyPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
-      <CollectMoneyClientPage />
+      {/* SEO explainer first in the DOM (crawlers see H1 + intro before the
+          client-only tool), shown visually below the tool via order-*. */}
+      <div className="flex flex-col">
+        <FeatureSeoSection {...featureSeoContent.collectMoney} className="order-2" />
+        <div className="order-1">
+          <CollectMoneyClientPage />
+        </div>
+      </div>
     </>
   );
 }

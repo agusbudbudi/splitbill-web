@@ -101,6 +101,8 @@ const TestimonialCard = ({ review }: { review: Review }) => {
                 day: "numeric",
                 month: "long",
                 year: "numeric",
+                // Fixed zone: rendered on the server (UTC) and hydrated in the browser
+                timeZone: "Asia/Jakarta",
               }).format(new Date(review.createdAt))}
             </p>
           </div>
@@ -110,13 +112,20 @@ const TestimonialCard = ({ review }: { review: Review }) => {
   );
 };
 
-export const TestimonialsSection = () => {
+interface TestimonialsSectionProps {
+  /** Landing reviews fetched on the server so real text is in the initial HTML. */
+  initialReviews?: Review[];
+}
+
+export const TestimonialsSection = ({ initialReviews }: TestimonialsSectionProps) => {
   const { getReviews } = useReview();
-  const [reviews, setReviews] = useState<Review[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const hasInitial = !!initialReviews && initialReviews.length > 0;
+  const [reviews, setReviews] = useState<Review[]>(initialReviews ?? []);
+  const [isLoading, setIsLoading] = useState(!hasInitial);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (hasInitial) return;
     const fetchReviews = async () => {
       setIsLoading(true);
       try {
@@ -130,7 +139,7 @@ export const TestimonialsSection = () => {
       }
     };
     fetchReviews();
-  }, [getReviews]);
+  }, [getReviews, hasInitial]);
 
   const scroll = (direction: "left" | "right") => {
     if (scrollRef.current) {

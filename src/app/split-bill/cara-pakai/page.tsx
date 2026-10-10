@@ -11,6 +11,7 @@
  */
 
 import type { Metadata } from "next";
+import { buildMetadata } from "@/lib/seo";
 import {
   Users2,
   Calculator,
@@ -42,48 +43,19 @@ import { FAQSectionHomepage } from "@/components/homepage/FAQSectionHomepage";
 const PAGE_URL = "https://www.splitbill.my.id/split-bill/cara-pakai";
 const OG_IMAGE = "/img/cara-pakai/split-bill/hero-split-bill-cara-pakai-new.png";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildMetadata({
   title: "Cara Pakai Split Bill: Panduan Lengkap Bagi Tagihan | SplitBill",
-  description:
-    "Panduan lengkap cara pakai fitur Split Bill: tambah teman, scan struk pakai AI, assign item, atur pajak, sampai share hasil ke WhatsApp. Gratis & tanpa login.",
-  keywords: [
-    "cara pakai split bill",
-    "cara split bill online",
-    "tutorial split bill",
-    "panduan split bill",
-    "cara bagi tagihan online",
-    "cara scan struk split bill",
-    "cara hitung patungan",
-    "cara split bill dengan AI",
-  ],
-  alternates: {
-    canonical: PAGE_URL,
+  description: "Panduan lengkap cara pakai fitur Split Bill: tambah teman, scan struk pakai AI, assign item, atur pajak, sampai share hasil ke WhatsApp. Gratis & tanpa login.",
+  path: "/split-bill/cara-pakai",
+  socialTitle: "Cara Pakai Split Bill: Panduan Lengkap Bagi Tagihan",
+  socialDescription: "Tambah teman, scan struk, assign item, atur pajak, lalu share ke WhatsApp. Semua langkah split bill dijelaskan lengkap di sini.",
+  image: {
+    url: OG_IMAGE,
+    width: 1920,
+    height: 900,
+    alt: "Cara pakai Split Bill, scan struk lalu bagi tagihan otomatis",
   },
-  openGraph: {
-    title: "Cara Pakai Split Bill: Panduan Lengkap Bagi Tagihan",
-    description:
-      "Tambah teman, scan struk, assign item, atur pajak, lalu share ke WhatsApp. Semua langkah split bill dijelaskan lengkap di sini.",
-    url: PAGE_URL,
-    siteName: "Split Bill App",
-    images: [
-      {
-        url: OG_IMAGE,
-        width: 1920,
-        height: 900,
-        alt: "Cara pakai Split Bill, scan struk lalu bagi tagihan otomatis",
-      },
-    ],
-    locale: "id_ID",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Cara Pakai Split Bill: Panduan Lengkap Bagi Tagihan",
-    description:
-      "Tambah teman, scan struk, assign item, atur pajak, lalu share ke WhatsApp. Semua langkah split bill dijelaskan lengkap di sini.",
-    images: [OG_IMAGE],
-  },
-};
+});
 
 const splitBillFaqs = faqData.filter((item) => item.category === "split-bill");
 

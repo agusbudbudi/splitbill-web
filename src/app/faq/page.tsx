@@ -1,24 +1,15 @@
 import type { Metadata } from "next";
+import { buildMetadata } from "@/lib/seo";
 import FAQClientPage from "./FAQClientPage";
 import { faqData } from "@/data/faqData";
 
-export const metadata: Metadata = {
-  title: "FAQ & Bantuan Split Bill — Pertanyaan Seputar Bagi Tagihan",
-  description:
-    "Temukan jawaban atas pertanyaan seputar cara split bill, scan struk dengan AI, bagi tagihan online, patungan, dan semua fitur SplitBill.my.id.",
-  alternates: {
-    canonical: "https://www.splitbill.my.id/faq",
-  },
-  openGraph: {
-    title: "FAQ & Bantuan Split Bill — SplitBill.my.id",
-    description:
-      "Temukan jawaban atas pertanyaan seputar cara split bill, scan struk dengan AI, dan fitur patungan online lainnya.",
-    url: "https://www.splitbill.my.id/faq",
-    siteName: "Split Bill App",
-    locale: "id_ID",
-    type: "website",
-  },
-};
+export const metadata: Metadata = buildMetadata({
+  title: "FAQ & Bantuan Split Bill: Pertanyaan Seputar Bagi Tagihan",
+  description: "Temukan jawaban atas pertanyaan seputar cara split bill, scan struk dengan AI, bagi tagihan online, patungan, dan semua fitur SplitBill.",
+  path: "/faq",
+  socialTitle: "FAQ & Bantuan Split Bill | SplitBill",
+  socialDescription: "Temukan jawaban atas pertanyaan seputar cara split bill, scan struk dengan AI, dan fitur patungan online lainnya.",
+});
 
 export default function FAQPage() {
   // Generate FAQ Schema

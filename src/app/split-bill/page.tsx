@@ -9,50 +9,23 @@
  */
 
 import type { Metadata } from "next";
+import { buildMetadata } from "@/lib/seo";
 import SplitBillClientPage from "./SplitBillClientPage";
 import { FeatureSeoSection } from "@/components/seo/FeatureSeoSection";
 import { featureSeoContent } from "@/data/featureSeoContent";
 
-export const metadata: Metadata = {
-  title: "Split Bill Online Gratis — Kalkulator Bagi Tagihan Tanpa Aplikasi",
-  description:
-    "Kalkulator split bill online gratis, tanpa install aplikasi. Scan struk pakai AI, atur pajak & service charge otomatis, langsung tahu siapa bayar berapa. 100% gratis!",
-  keywords: [
-    "split bill online",
-    "split bill online gratis",
-    "split bill online free",
-    "split bill online scan",
-    "split bill online calculator",
-    "kalkulator split bill online",
-    "split bill tanpa aplikasi",
-    "cara split bill",
-    "bagi tagihan otomatis",
-    "hitung patungan",
-    "scan struk split bill",
-    "aplikasi bagi tagihan gratis",
-    "split bill dengan AI",
-  ],
-  alternates: {
-    canonical: "https://www.splitbill.my.id/split-bill",
+export const metadata: Metadata = buildMetadata({
+  title: "Split Bill Online Gratis: Kalkulator Bagi Tagihan Tanpa Aplikasi",
+  description: "Kalkulator split bill online gratis, tanpa install aplikasi. Scan struk pakai AI, atur pajak & service charge otomatis, langsung tahu siapa bayar berapa.",
+  path: "/split-bill",
+  socialDescription: "Mulai split bill online gratis! Scan struk, input pengeluaran, dan dapatkan rincian pembayaran otomatis. Cepat dan tanpa install.",
+  image: {
+    url: "/img/cara-pakai/split-bill/hero-split-bill-cara-pakai-new.png",
+    width: 1920,
+    height: 900,
+    alt: "Split bill dengan AI scan struk di SplitBill",
   },
-  openGraph: {
-    title: "Split Bill Online Gratis — Kalkulator Bagi Tagihan Tanpa Aplikasi",
-    description:
-      "Mulai split bill online gratis! Scan struk, input pengeluaran, dan dapatkan rincian pembayaran otomatis. Cepat & 100% free.",
-    url: "https://www.splitbill.my.id/split-bill",
-    siteName: "Split Bill App",
-    images: [
-      {
-        url: "/img/feature-splitbill-scan.png",
-        width: 1200,
-        height: 630,
-        alt: "Split Bill dengan AI Scan Struk",
-      },
-    ],
-    locale: "id_ID",
-    type: "website",
-  },
-};
+});
 
 export default function SplitBillPage() {
   // Generate Breadcrumb Schema

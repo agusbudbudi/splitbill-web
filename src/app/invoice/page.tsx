@@ -1,23 +1,16 @@
 import type { Metadata } from "next";
+import { buildMetadata } from "@/lib/seo";
 import InvoiceClientPage from "./InvoiceClientPage";
 import { FeatureSeoSection } from "@/components/seo/FeatureSeoSection";
 import { featureSeoContent } from "@/data/featureSeoContent";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildMetadata({
   title: "Buat Invoice Online Gratis - Cepat & Profesional",
   description: "Buat invoice profesional secara online dan gratis. Cocok untuk freelancer, bisnis kecil, atau penagihan jasa. Mudah digunakan, bisa langsung download PDF.",
-  alternates: {
-    canonical: "https://www.splitbill.my.id/invoice",
-  },
-  openGraph: {
-    title: "Buat Invoice Online Gratis - SplitBill.my.id",
-    description: "Buat invoice profesional secara online dan gratis. Cepat, mudah, dan bisa langsung download PDF.",
-    url: "https://www.splitbill.my.id/invoice",
-    siteName: "Split Bill App",
-    locale: "id_ID",
-    type: "website",
-  },
-};
+  path: "/invoice",
+  socialTitle: "Buat Invoice Online Gratis | SplitBill",
+  socialDescription: "Buat invoice profesional secara online dan gratis. Cepat, mudah, dan bisa langsung download PDF.",
+});
 
 export default function InvoicePage() {
   // Generate Breadcrumb Schema

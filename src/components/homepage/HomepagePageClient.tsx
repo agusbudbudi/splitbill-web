@@ -90,12 +90,6 @@ export const HomepagePageClient = ({ initialReviews, initialBlogs }: HomepagePag
 
   return (
     <div className="relative min-h-screen bg-[#f8f9fd] overflow-x-hidden selection:bg-primary selection:text-white">
-      {/* Keyword-rich blurb for crawlers/screen readers — kept as <p>, not <h1>,
-          since HeroSection already renders the page's one real H1. */}
-      <p className="sr-only">
-        Split Bill Online Gratis — Scan Struk & Bagi Tagihan Instan
-      </p>
-
       {/* Structured data — HowTo */}
       <script
         type="application/ld+json"

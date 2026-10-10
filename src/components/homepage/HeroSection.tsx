@@ -409,7 +409,7 @@ export const HeroSection = () => {
               variants={fadeUp}
               className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-slate-900 leading-[1.15] tracking-tight mb-6"
             >
-              Split Tagihan dari Foto Struk{" "}
+              Split Bill Online Gratis: Scan Struk, Bagi Tagihan{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-[#2563eb]">
                 dalam 5 Detik
               </span>

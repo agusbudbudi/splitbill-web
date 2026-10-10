@@ -7,6 +7,7 @@
  */
 
 import type { Metadata } from "next";
+import { buildMetadata } from "@/lib/seo";
 import Image from "next/image";
 import {
   Camera,
@@ -26,47 +27,19 @@ import {
 const PAGE_URL = "https://www.splitbill.my.id/all-feature";
 const OG_IMAGE = "/img/cara-pakai/split-bill/hero-split-bill-cara-pakai-new.png";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildMetadata({
   title: "Semua Fitur SplitBill: Split Bill, Split Later, Invoice & Lainnya",
-  description:
-    "Jelajahi semua fitur SplitBill Online: Split Bill dengan AI Scan, Split Later untuk patungan trip, Invoice, Shared Goals, Collect Money, dan Wallet. Gratis & tanpa install.",
-  keywords: [
-    "fitur splitbill",
-    "aplikasi split bill",
-    "split bill online",
-    "split later",
-    "invoice online",
-    "tabungan bersama",
-    "collect money patungan",
-  ],
-  alternates: {
-    canonical: PAGE_URL,
+  description: "Jelajahi semua fitur SplitBill: Split Bill dengan AI Scan, Split Later untuk patungan trip, Invoice, Shared Goals, Collect Money, dan Wallet. Gratis & tanpa install.",
+  path: "/all-feature",
+  socialTitle: "Semua Fitur SplitBill: Satu Tempat Buat Kelola Duit Bareng",
+  socialDescription: "Split Bill, Split Later, Invoice, Shared Goals, Collect Money, dan Wallet. Semua fitur SplitBill dalam satu halaman.",
+  image: {
+    url: OG_IMAGE,
+    width: 1920,
+    height: 900,
+    alt: "Semua fitur SplitBill",
   },
-  openGraph: {
-    title: "Semua Fitur SplitBill: Satu Tempat Buat Kelola Duit Bareng",
-    description:
-      "Split Bill, Split Later, Invoice, Shared Goals, Collect Money, dan Wallet. Semua fitur SplitBill dalam satu halaman.",
-    url: PAGE_URL,
-    siteName: "Split Bill App",
-    images: [
-      {
-        url: OG_IMAGE,
-        width: 1920,
-        height: 900,
-        alt: "Semua fitur SplitBill",
-      },
-    ],
-    locale: "id_ID",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Semua Fitur SplitBill: Satu Tempat Buat Kelola Duit Bareng",
-    description:
-      "Split Bill, Split Later, Invoice, Shared Goals, Collect Money, dan Wallet. Semua fitur SplitBill dalam satu halaman.",
-    images: [OG_IMAGE],
-  },
-};
+});
 
 const overviewPoints: OverviewPoint[] = [
   {

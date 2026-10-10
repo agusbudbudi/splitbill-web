@@ -1,31 +1,22 @@
 import type { Metadata } from "next";
+import { buildMetadata } from "@/lib/seo";
 import SharedGoalsClientPage from "./SharedGoalsClientPage";
 import { FeatureSeoSection } from "@/components/seo/FeatureSeoSection";
 import { featureSeoContent } from "@/data/featureSeoContent";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildMetadata({
   title: "Shared Goals - Patungan & Nabung Bareng Teman Online",
   description: "Wujudkan impian bareng teman! Gunakan fitur Shared Goals untuk nabung bareng, patungan kado, atau persiapan liburan kelompok. Pantau progress tabungan secara transparan.",
-  alternates: {
-    canonical: "https://www.splitbill.my.id/shared-goals",
+  path: "/shared-goals",
+  socialTitle: "Shared Goals - Patungan & Nabung Bareng Teman | SplitBill",
+  socialDescription: "Wujudkan impian bareng teman! Nabung bareng untuk liburan, kado, atau goals lainnya dengan transparan.",
+  image: {
+    url: "/img/cara-pakai/shared-goals/hero-shared-goals-cara-pakai.png",
+    width: 1920,
+    height: 900,
+    alt: "Shared Goals, nabung bareng teman di SplitBill",
   },
-  openGraph: {
-    title: "Shared Goals - Patungan & Nabung Bareng Teman | SplitBill.my.id",
-    description: "Wujudkan impian bareng teman! Nabung bareng untuk liburan, kado, atau goals lainnya dengan transparan.",
-    url: "https://www.splitbill.my.id/shared-goals",
-    siteName: "Split Bill App",
-    images: [
-      {
-        url: "/img/feature-shared-goals.png",
-        width: 1200,
-        height: 630,
-        alt: "Shared Goals - Nabung Bareng Teman",
-      },
-    ],
-    locale: "id_ID",
-    type: "website",
-  },
-};
+});
 
 export default function SharedGoalsPage() {
   // Generate Breadcrumb Schema

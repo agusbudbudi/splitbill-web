@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { buildMetadata } from "@/lib/seo";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { fetchBlogs } from "@/lib/api/blog";
@@ -35,24 +36,16 @@ async function getTagBlogs(slug: string) {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const result = await getTagBlogs(slug);
-  if (!result) return { title: "Tag Tidak Ditemukan — Blog SplitBill" };
+  if (!result) return { title: "Tag Tidak Ditemukan | Blog SplitBill" };
 
-  const title = `#${result.tagName} — Blog SplitBill`;
+  const title = `#${result.tagName} | Blog SplitBill`;
   const description = `Kumpulan artikel bertag ${result.tagName} dari Blog SplitBill.`;
 
-  return {
+  return buildMetadata({
     title,
     description,
-    alternates: { canonical: `${BASE_URL}/blog/tag/${slug}` },
-    openGraph: {
-      title,
-      description,
-      url: `${BASE_URL}/blog/tag/${slug}`,
-      siteName: "Split Bill App",
-      locale: "id_ID",
-      type: "website",
-    },
-  };
+    path: `/blog/tag/${slug}`,
+  });
 }
 
 export default async function BlogTagPage({ params }: Props) {

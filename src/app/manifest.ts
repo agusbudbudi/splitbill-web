@@ -2,7 +2,7 @@ import { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Split Bill App",
+    name: "SplitBill",
     short_name: "SplitBill",
     description: "Split bill gratis! Scan struk, hitung pajak, dan bagi tagihan praktis bareng teman.",
     start_url: "/",

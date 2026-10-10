@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { buildMetadata } from "@/lib/seo";
 import { HomepagePageClient } from "@/components/homepage/HomepagePageClient";
 import { apiClient } from "@/lib/api/client";
 import { fetchBlogs } from "@/lib/api/blog";
@@ -49,39 +50,13 @@ async function getLatestBlogs(): Promise<Blog[]> {
   }
 }
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildMetadata({
   title: "Split Bill Online - Aplikasi Bagi Tagihan & Patungan Gratis",
   description:
-    "Split bill online gratis! Scan struk, hitung pajak otomatis, dan bagi tagihan praktis bareng teman. Aplikasi patungan terbaik yang 100% free, cepat & akurat.",
-  authors: [{ name: "SplitBill Team" }],
-  openGraph: {
-    title: "Split Bill App - Bagi Tagihan Lebih Mudah",
-    description:
-      "Split bill online gratis! Scan struk, hitung pajak otomatis, dan bagi tagihan praktis bareng teman. 100% free!",
-    url: "https://www.splitbill.my.id",
-    siteName: "Split Bill Online",
-    images: [
-      {
-        url: "/img/pwa-banner.png",
-        width: 1200,
-        height: 630,
-        alt: "Split Bill App — Aplikasi Bagi Tagihan Online Gratis",
-      },
-    ],
-    locale: "id_ID",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Split Bill Online - Gratis & Mudah",
-    description:
-      "Split bill online gratis! Scan struk, hitung pajak otomatis, dan bagi tagihan praktis bareng teman.",
-    images: ["/img/pwa-banner.png"],
-  },
-  alternates: {
-    canonical: "https://www.splitbill.my.id",
-  },
-};
+    "Split bill online gratis: scan struk pakai AI, hitung pajak dan service charge otomatis, lalu bagi tagihan ke teman lewat WhatsApp. Tanpa install aplikasi.",
+  path: "/",
+  socialTitle: "SplitBill: Split Bill Online, Bagi Tagihan Lebih Mudah",
+});
 
 export default async function HomepagePage() {
   const [initialReviews, initialBlogs] = await Promise.all([getLandingReviews(), getLatestBlogs()]);

@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { buildMetadata } from "@/lib/seo";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { jsonLdGraph, organizationNode, webApplicationNode, websiteNode } from "@/lib/structuredData";
 import { HomepagePageClient } from "@/components/homepage/HomepagePageClient";
 import { apiClient } from "@/lib/api/client";
 import { fetchBlogs } from "@/lib/api/blog";
@@ -61,33 +63,20 @@ export const metadata: Metadata = buildMetadata({
 export default async function HomepagePage() {
   const [initialReviews, initialBlogs] = await Promise.all([getLandingReviews(), getLatestBlogs()]);
 
-  const websiteSchema = {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    name: "Split Bill Online",
-    alternateName: "SplitBill.my.id",
-    url: "https://www.splitbill.my.id",
-  };
-
-  const organizationSchema = {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    name: "Split Bill Online",
-    url: "https://www.splitbill.my.id",
-    logo: "https://www.splitbill.my.id/icon.png",
-    sameAs: ["https://www.instagram.com/splitbill.app/"],
-  };
+  const jsonLd = jsonLdGraph(
+    organizationNode,
+    websiteNode,
+    webApplicationNode({
+      name: "SplitBill",
+      path: "/",
+      description:
+        "Aplikasi split bill online gratis: scan struk dengan AI, hitung pajak dan service charge otomatis, bagikan tagihan ke WhatsApp.",
+    }),
+  );
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
-      />
+      <JsonLd data={jsonLd} />
       <HomepagePageClient initialReviews={initialReviews} initialBlogs={initialBlogs} />
     </>
   );

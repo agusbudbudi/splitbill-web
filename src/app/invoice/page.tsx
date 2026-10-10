@@ -3,6 +3,8 @@ import { buildMetadata } from "@/lib/seo";
 import InvoiceClientPage from "./InvoiceClientPage";
 import { FeatureSeoSection } from "@/components/seo/FeatureSeoSection";
 import { featureSeoContent } from "@/data/featureSeoContent";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { breadcrumbNode, jsonLdGraph, webApplicationNode } from "@/lib/structuredData";
 
 export const metadata: Metadata = buildMetadata({
   title: "Buat Invoice Online Gratis - Cepat & Profesional",
@@ -13,32 +15,22 @@ export const metadata: Metadata = buildMetadata({
 });
 
 export default function InvoicePage() {
-  // Generate Breadcrumb Schema
-  const breadcrumbSchema = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      {
-        "@type": "ListItem",
-        position: 1,
-        name: "Home",
-        item: "https://www.splitbill.my.id",
-      },
-      {
-        "@type": "ListItem",
-        position: 2,
-        name: "Invoice",
-        item: "https://www.splitbill.my.id/invoice",
-      },
-    ],
-  };
+  const jsonLd = jsonLdGraph(
+    breadcrumbNode([
+      { name: "Home", path: "/" },
+      { name: "Invoice", path: "/invoice" },
+    ]),
+    webApplicationNode({
+      name: "SplitBill Invoice",
+      path: "/invoice",
+      description:
+        "Buat invoice online gratis: isi item dan metode pembayaran, total dihitung otomatis, lalu download sebagai PDF.",
+    }),
+  );
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-      />
+      <JsonLd data={jsonLd} />
       {/* SEO explainer first in the DOM (crawlers see H1 + intro before the
           client-only tool), shown visually below the tool via order-*. */}
       <div className="flex flex-col">

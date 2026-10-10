@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { buildMetadata } from "@/lib/seo";
+import { buildMetadata, SITE_NAME } from "@/lib/seo";
+import { ORGANIZATION_ID } from "@/lib/structuredData";
 import BlogDetailClient from "@/app/blog/[slug]/BlogDetailClient";
 import { fetchBlogBySlug, fetchBlogs } from "@/lib/api/blog";
 import { Blog } from "@/lib/types/blog";
@@ -73,7 +74,8 @@ export default async function BlogDetailPage({ params }: Props) {
       ],
       publisher: {
         "@type": "Organization",
-        name: "SplitBill Online",
+        "@id": ORGANIZATION_ID,
+        name: SITE_NAME,
         logo: {
           "@type": "ImageObject",
           url: "https://www.splitbill.my.id/img/split-bill-icon.png",

@@ -31,7 +31,7 @@ export const featureSeoContent = {
     ],
     guideHref: "/split-bill/cara-pakai",
     guideLabel: "Lihat cara pakai Split Bill selengkapnya",
-    faqs: pickFaqs(faqData, ["1", "2", "12", "5", "7"]),
+    faqs: pickFaqs(faqData, ["2", "12", "5", "4", "7"]),
   },
   invoice: {
     title: "Buat Invoice Online Gratis, Rapi dan Siap Kirim",

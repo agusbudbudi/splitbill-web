@@ -3,6 +3,8 @@ import { buildMetadata } from "@/lib/seo";
 import CollectMoneyClientPage from "./CollectMoneyClientPage";
 import { FeatureSeoSection } from "@/components/seo/FeatureSeoSection";
 import { featureSeoContent } from "@/data/featureSeoContent";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { breadcrumbNode, jsonLdGraph, webApplicationNode } from "@/lib/structuredData";
 
 export const metadata: Metadata = buildMetadata({
   title: "Collect Money - Kumpulkan Iuran & Kas Online Mudah",
@@ -13,32 +15,22 @@ export const metadata: Metadata = buildMetadata({
 });
 
 export default function CollectMoneyPage() {
-  // Generate Breadcrumb Schema
-  const breadcrumbSchema = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      {
-        "@type": "ListItem",
-        position: 1,
-        name: "Home",
-        item: "https://www.splitbill.my.id",
-      },
-      {
-        "@type": "ListItem",
-        position: 2,
-        name: "Collect Money",
-        item: "https://www.splitbill.my.id/collect-money",
-      },
-    ],
-  };
+  const jsonLd = jsonLdGraph(
+    breadcrumbNode([
+      { name: "Home", path: "/" },
+      { name: "Collect Money", path: "/collect-money" },
+    ]),
+    webApplicationNode({
+      name: "SplitBill Collect Money",
+      path: "/collect-money",
+      description:
+        "Kumpulkan iuran dan patungan online: tandai siapa yang sudah bayar dan pantau progress dana terkumpul.",
+    }),
+  );
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-      />
+      <JsonLd data={jsonLd} />
       {/* SEO explainer first in the DOM (crawlers see H1 + intro before the
           client-only tool), shown visually below the tool via order-*. */}
       <div className="flex flex-col">

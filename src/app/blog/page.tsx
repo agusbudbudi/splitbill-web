@@ -39,7 +39,7 @@ export default async function BlogPage() {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Blog",
-    "name": "Blog SplitBill Online",
+    "name": "Blog SplitBill",
     "description": "Tips cerdas pengelolaan keuangan dan panduan bagi tagihan adil.",
     "url": "https://www.splitbill.my.id/blog",
     "publisher": {

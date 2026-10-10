@@ -199,7 +199,7 @@ export default function SplitBillCaraPakaiPage() {
   const softwareAppSchema = {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
-    name: "Split Bill Online",
+    name: "SplitBill Split Bill",
     applicationCategory: "FinanceApplication",
     operatingSystem: "Web",
     url: "https://www.splitbill.my.id/split-bill",

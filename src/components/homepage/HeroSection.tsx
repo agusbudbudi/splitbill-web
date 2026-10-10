@@ -381,7 +381,7 @@ export const HeroSection = () => {
       />
 
       {/* Content */}
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-12 lg:pt-28 lg:pb-16">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-12 lg:pt-28 lg:pb-16">
         <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
 
           {/* Left — Text */}
@@ -407,7 +407,7 @@ export const HeroSection = () => {
               initial="hidden"
               animate="visible"
               variants={fadeUp}
-              className="text-4xl sm:text-5xl lg:text-[40px] xl:text-[44px] font-bold text-slate-900 leading-[1.15] tracking-tight mb-6"
+              className="text-4xl sm:text-5xl lg:text-5xl xl:text-6xl font-bold text-slate-900 leading-[1.15] tracking-tight mb-6"
             >
               {/* Desktop: fixed 4 lines; font sized so the longest line fits the column */}
               Split Bill Online <br className="hidden lg:inline" />

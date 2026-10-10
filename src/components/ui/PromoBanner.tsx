@@ -6,6 +6,8 @@ import Image from "next/image";
 import Link from "next/link";
 
 interface PromoBannerProps {
+  /** Set when the banner is above the fold (LCP image). */
+  priority?: boolean;
   href?: string;
   image?: string;
   imageAlt?: string;
@@ -41,6 +43,7 @@ export const PromoBanner = ({
   onClick,
   rounded = true,
   contentPaddingClassName,
+  priority = false,
 }: PromoBannerProps) => {
   return (
     <Link
@@ -64,6 +67,7 @@ export const PromoBanner = ({
             src={image}
             alt={imageAlt}
             fill
+            priority={priority}
             sizes="(max-width: 1024px) 65vw, 55vw"
             className={isCompact
               ? "object-cover object-top-right"

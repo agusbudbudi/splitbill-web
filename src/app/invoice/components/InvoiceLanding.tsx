@@ -205,6 +205,8 @@ export const InvoiceLanding = () => {
         isCompact
         href="/invoice/create?step=1"
         image="/img/promoBanner-invoice.jpg"
+        imageAlt="Banner invoice online SplitBill, buat invoice profesional dan kirim ke klien"
+        priority
         titleText="Invoice Rapi,"
         titleHighlight="Kesan Profesional! 📄"
         description="Buat invoice profesional dalam sekejap, tinggal kirim ke klien."

@@ -35,6 +35,7 @@ const useCases = [
 
 // Worked example shown next to the tax copy, styled as a receipt: 4 people,
 // service 5% then tax 10% on (subtotal + service). "Kamu" ordered the least.
+// Only the subtotal and "Kamu" are printed; the rest just feed the math.
 const ORDERS = [
   { name: "Andi", amount: 150_000 },
   { name: "Budi", amount: 120_000 },
@@ -163,79 +164,59 @@ export function UseCasesSection() {
           </div>
 
           {/* Worked example, styled as a receipt */}
-          <div className="rounded-lg bg-slate-50 px-4 py-8 sm:px-10 flex justify-center">
+          <div className="rounded-lg bg-slate-50 px-4 py-6 sm:px-8 flex justify-center">
             <div className="w-full max-w-sm drop-shadow-[0_10px_20px_rgba(15,23,42,0.10)] lg:rotate-1">
               <div
-                className="bg-white px-6 pt-8 pb-9 font-mono text-[13px] text-slate-600"
+                className="bg-white px-5 pt-6 pb-7 font-mono text-[12px] text-slate-600"
                 style={{ mask: receiptEdgeMask, WebkitMask: receiptEdgeMask }}
               >
-                <div className="text-center">
-                  <p className="font-bold text-slate-800 tracking-widest">WARUNG NONGKRONG</p>
-                  <p className="text-[11px] text-slate-400">Contoh: makan berempat</p>
-                </div>
+                <p className="text-center font-bold text-slate-800 tracking-widest">
+                  WARUNG NONGKRONG
+                  <span className="block text-[10px] font-normal tracking-normal text-slate-400">
+                    Contoh: makan berempat
+                  </span>
+                </p>
 
-                <div className="border-t border-dashed border-slate-300 my-4" />
+                <div className="border-t border-dashed border-slate-300 my-3" />
 
-                <dl className="space-y-1.5">
-                  {ORDERS.map((o) => (
-                    <div key={o.name} className="flex justify-between">
-                      <dt>Pesanan {o.name}</dt>
-                      <dd className={o.name === "Kamu" ? "font-bold text-slate-800" : undefined}>
-                        {formatToIDR(o.amount)}
-                      </dd>
-                    </div>
-                  ))}
-                </dl>
-
-                <div className="border-t border-dashed border-slate-300 my-4" />
-
-                <dl className="space-y-1.5">
+                <dl className="space-y-1">
                   <div className="flex justify-between">
-                    <dt>Subtotal</dt>
+                    <dt>Subtotal ({ORDERS.length} orang)</dt>
                     <dd>{formatToIDR(subtotal)}</dd>
                   </div>
                   <div className="flex justify-between">
-                    <dt>Service 5%</dt>
-                    <dd>{formatToIDR(service)}</dd>
+                    <dt>Service 5% + Pajak 10%</dt>
+                    <dd>{formatToIDR(service + tax)}</dd>
                   </div>
-                  <div className="flex justify-between">
-                    <dt>Pajak 10%</dt>
-                    <dd>{formatToIDR(tax)}</dd>
+                  <div className="flex justify-between font-bold text-slate-800">
+                    <dt>TOTAL</dt>
+                    <dd>{formatToIDR(total)}</dd>
                   </div>
                 </dl>
 
-                <div className="border-t-4 border-double border-slate-300 my-4" />
+                <div className="border-t border-dashed border-slate-300 my-3" />
 
-                <div className="flex justify-between font-bold text-slate-800 text-sm">
-                  <span>TOTAL</span>
-                  <span>{formatToIDR(total)}</span>
+                <div className="flex justify-between font-bold text-slate-800">
+                  <span>Pesanan kamu</span>
+                  <span>{formatToIDR(yours)}</span>
                 </div>
 
-                <div className="border-t border-dashed border-slate-300 my-4" />
-
-                <p className="text-center text-[11px] font-bold tracking-widest text-slate-400 mb-3">
-                  BAGIAN KAMU
-                </p>
-                <div className="space-y-2">
-                  <div className="flex justify-between items-center px-3 py-2 text-slate-400">
-                    <span>Bagi rata</span>
-                    <span className="line-through">{formatToIDR(evenShare)}</span>
+                <div className="grid grid-cols-2 gap-2 mt-3">
+                  <div className="rounded-md border border-dashed border-slate-200 px-3 py-2 text-slate-400">
+                    <p className="text-[10px]">Bagi rata</p>
+                    <p className="line-through">{formatToIDR(evenShare)}</p>
                   </div>
-                  <div className="relative flex justify-between items-center px-3 py-2.5 rounded-md bg-primary/5 border border-dashed border-primary/40 text-primary font-bold">
-                    <span>Proporsional</span>
-                    <span className="text-base">{formatToIDR(proportionalShare)}</span>
-                    <span className="absolute -top-2.5 right-3 bg-emerald-500 text-white text-[10px] font-sans font-black px-2 py-0.5 rounded-full">
+                  <div className="relative rounded-md bg-primary/5 border border-dashed border-primary/40 px-3 py-2 text-primary font-bold">
+                    <p className="text-[10px] font-medium">Proporsional</p>
+                    <p className="text-sm">{formatToIDR(proportionalShare)}</p>
+                    <span className="absolute -top-2.5 right-2 bg-emerald-500 text-white text-[9px] font-sans font-black px-1.5 py-0.5 rounded-full">
                       Lebih adil
                     </span>
                   </div>
                 </div>
 
-                <div className="border-t border-dashed border-slate-300 my-4" />
-
-                <p className="text-center text-[11px] text-slate-400 leading-relaxed">
-                  Kamu hemat {formatToIDR(evenShare - proportionalShare)}
-                  <br />
-                  Terima kasih, sampai patungan berikutnya!
+                <p className="text-center text-[10px] text-slate-400 mt-3">
+                  Kamu hemat {formatToIDR(evenShare - proportionalShare)}. Makasih, sampai patungan lagi!
                 </p>
               </div>
             </div>

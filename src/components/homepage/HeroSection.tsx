@@ -7,7 +7,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowRight,
   Zap,
-  Star,
   Users,
   Check,
   Camera,
@@ -491,15 +490,6 @@ export const HeroSection = () => {
               variants={fadeUp}
               className="flex flex-wrap items-center gap-4 justify-center lg:justify-start mt-8"
             >
-              <div className="flex items-center gap-1.5 text-slate-600 text-sm font-semibold">
-                <div className="flex">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
-                  ))}
-                </div>
-                <span>4.9/5 rating</span>
-              </div>
-              <div className="w-px h-4 bg-slate-200" />
               <div className="flex items-center gap-1.5 text-slate-600 text-sm font-semibold">
                 <Users className="w-3.5 h-3.5 text-primary" />
                 <span>5.000+ Tagihan dibuat</span>

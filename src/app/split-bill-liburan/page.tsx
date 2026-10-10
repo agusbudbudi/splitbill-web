@@ -19,7 +19,6 @@ import {
   Share2,
   Frown,
   Calculator,
-  Star,
   UserX,
   MessageCircle,
   Sparkles,
@@ -168,11 +167,6 @@ export default function SplitBillLiburanPage() {
                   </div>
 
                   <div className="flex flex-wrap items-center gap-4 justify-center lg:justify-start mt-8">
-                    <div className="flex items-center gap-1.5 text-slate-600 text-sm font-semibold">
-                      <Star className="w-3.5 h-3.5 fill-warning text-warning" />
-                      <span>4.9/5 rating</span>
-                    </div>
-                    <div className="w-px h-4 bg-slate-200" />
                     <div className="text-slate-600 text-sm font-semibold">
                       5.000+ Tagihan dibuat
                     </div>

@@ -7,7 +7,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowRight,
   Zap,
-  Star,
   Users,
   Check,
   Camera,
@@ -72,7 +71,7 @@ const MockBillCard = ({ stage }: { stage: number }) => {
       <div className="flex items-center gap-2 mb-3">
         <Image
           src="/img/icon-splitbill.png"
-          alt="Split Bill"
+          alt=""
           width={22}
           height={22}
           className="w-[22px] h-[22px] object-contain shrink-0"
@@ -178,7 +177,7 @@ const MockBillCard = ({ stage }: { stage: number }) => {
           >
             <Image
               src="/img/mockup-struk.webp"
-              alt="Struk"
+              alt="Contoh struk restoran yang sedang discan AI SplitBill"
               fill
               sizes="300px"
               priority
@@ -381,7 +380,7 @@ export const HeroSection = () => {
       />
 
       {/* Content */}
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-12 lg:pt-28 lg:pb-16">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-12 lg:pt-28 lg:pb-16">
         <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
 
           {/* Left — Text */}
@@ -407,9 +406,12 @@ export const HeroSection = () => {
               initial="hidden"
               animate="visible"
               variants={fadeUp}
-              className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-slate-900 leading-[1.15] tracking-tight mb-6"
+              className="text-4xl sm:text-5xl lg:text-5xl xl:text-6xl font-bold text-slate-900 leading-[1.15] tracking-tight mb-6"
             >
-              Split Tagihan dari Foto Struk{" "}
+              {/* Desktop: fixed 4 lines; font sized so the longest line fits the column */}
+              Split Bill Online <br className="hidden lg:inline" />
+              Gratis: Scan Struk, <br className="hidden lg:inline" />
+              Bagi Tagihan <br className="hidden lg:inline" />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-[#2563eb]">
                 dalam 5 Detik
               </span>
@@ -489,15 +491,6 @@ export const HeroSection = () => {
               className="flex flex-wrap items-center gap-4 justify-center lg:justify-start mt-8"
             >
               <div className="flex items-center gap-1.5 text-slate-600 text-sm font-semibold">
-                <div className="flex">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
-                  ))}
-                </div>
-                <span>4.9/5 rating</span>
-              </div>
-              <div className="w-px h-4 bg-slate-200" />
-              <div className="flex items-center gap-1.5 text-slate-600 text-sm font-semibold">
                 <Users className="w-3.5 h-3.5 text-primary" />
                 <span>5.000+ Tagihan dibuat</span>
               </div>
@@ -509,9 +502,10 @@ export const HeroSection = () => {
             </motion.div>
           </div>
 
-          {/* Right — Mock UI Card */}
+          {/* Right — Mock UI Card. No opacity-0 start: the phone mockup is the
+              LCP image and must paint from the server HTML, before hydration. */}
           <motion.div
-            initial={{ opacity: 0, x: 40, scale: 0.96 }}
+            initial={{ x: 40, scale: 0.96 }}
             animate={{ opacity: 1, x: 0, scale: 1 }}
             transition={{ duration: 0.7, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
             className="flex-1 flex justify-center lg:justify-end relative"
@@ -523,11 +517,12 @@ export const HeroSection = () => {
               {/* Phone Mock behind the main card - shifted left */}
               <div className="absolute -z-10 pointer-events-none opacity-90 -translate-x-28 xs:-translate-x-32 sm:-translate-x-36 transition-transform w-[530px] xs:w-[510px] sm:w-[595px] h-auto">
                 <Image
-                  src="/img/mockup-phone.webp"
-                  alt="Phone Mockup"
-                  width={720}
-                  height={720}
-                  sizes="(max-width: 640px) 280px, 560px"
+                  src="/img/hero-mockup.webp"
+                  alt="Tampilan hasil split bill di aplikasi SplitBill dengan instruksi transfer dan rincian per orang"
+                  width={1440}
+                  height={1440}
+                  sizes="(max-width: 640px) 530px, 595px"
+                  priority
                   className="object-contain w-full h-auto"
                 />
               </div>

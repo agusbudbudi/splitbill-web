@@ -8,6 +8,10 @@ interface BlogContentProps {
   className?: string;
 }
 
+// The page already renders the post title as its only H1, so any H1 inside
+// the CMS body is demoted to H2.
+const demoteH1 = (html: string) => html.replace(/<(\/?)h1(?=[\s>])/gi, "<$1h2");
+
 export const BlogContent = ({ content, className }: BlogContentProps) => {
   return (
     <div
@@ -20,7 +24,7 @@ export const BlogContent = ({ content, className }: BlogContentProps) => {
         "blog-content-container",
         className
       )}
-      dangerouslySetInnerHTML={{ __html: content }}
+      dangerouslySetInnerHTML={{ __html: demoteH1(content) }}
     />
   );
 };

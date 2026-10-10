@@ -46,9 +46,9 @@ export const HomepageFooter = () => {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
             {/* Section 1: Layanan */}
             <div className="space-y-4">
-              <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/50">
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/50">
                 Layanan
-              </h3>
+              </p>
               <ul className="space-y-2.5">
                 <li>
                   <Link
@@ -87,9 +87,9 @@ export const HomepageFooter = () => {
 
             {/* Section 2: Resources */}
             <div className="space-y-4">
-              <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/50">
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/50">
                 Resources
-              </h3>
+              </p>
               <ul className="space-y-2.5">
                 <li>
                   <Link
@@ -120,9 +120,9 @@ export const HomepageFooter = () => {
 
             {/* Section 3: Legal */}
             <div className="space-y-4">
-              <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/50">
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/50">
                 Informasi
-              </h3>
+              </p>
               <ul className="space-y-2.5">
                 <li>
                   <Link
@@ -145,9 +145,9 @@ export const HomepageFooter = () => {
 
             {/* Section 4: Social */}
             <div className="space-y-4">
-              <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/50">
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/50">
                 Sosial Media
-              </h3>
+              </p>
               <ul className="space-y-2.5">
                 <li>
                   <Link

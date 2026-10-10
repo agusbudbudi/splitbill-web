@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { buildMetadata } from "@/lib/seo";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { fetchBlogs } from "@/lib/api/blog";
@@ -34,24 +35,16 @@ async function getCategoryBlogs(slug: string) {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const result = await getCategoryBlogs(slug);
-  if (!result) return { title: "Kategori Tidak Ditemukan — Blog SplitBill" };
+  if (!result) return { title: "Kategori Tidak Ditemukan | Blog SplitBill" };
 
-  const title = `${result.categoryName} — Blog SplitBill`;
+  const title = `${result.categoryName} | Blog SplitBill`;
   const description = `Kumpulan artikel seputar ${result.categoryName.toLowerCase()} dari Blog SplitBill.`;
 
-  return {
+  return buildMetadata({
     title,
     description,
-    alternates: { canonical: `${BASE_URL}/blog/category/${slug}` },
-    openGraph: {
-      title,
-      description,
-      url: `${BASE_URL}/blog/category/${slug}`,
-      siteName: "Split Bill App",
-      locale: "id_ID",
-      type: "website",
-    },
-  };
+    path: `/blog/category/${slug}`,
+  });
 }
 
 export default async function BlogCategoryPage({ params }: Props) {

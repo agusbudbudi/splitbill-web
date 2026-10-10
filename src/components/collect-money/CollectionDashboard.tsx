@@ -352,9 +352,9 @@ export const CollectionDashboard = ({
               )}
             </div>
 
-            <h1 className="text-4xl font-bold tracking-tight mb-4">
+            <p className="text-4xl font-bold tracking-tight mb-4">
               {formatToIDR(collection.totalAmount)}
-            </h1>
+            </p>
 
             <div className="flex flex-col items-center gap-3">
               {/* Stats Badges */}

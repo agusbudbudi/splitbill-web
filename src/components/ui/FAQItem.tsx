@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -29,6 +28,7 @@ export const FAQItem = ({
     >
       <button
         onClick={onToggle}
+        aria-expanded={isOpen}
         className={cn(
           "w-full px-5 py-4 flex items-center justify-between text-left font-bold gap-4 cursor-pointer transition-colors duration-200 group",
           isOpen ? "text-primary" : "text-foreground/80 hover:text-primary",
@@ -52,20 +52,21 @@ export const FAQItem = ({
         </div>
       </button>
 
-      <AnimatePresence initial={false}>
-        {isOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25, ease: "easeInOut" }}
-          >
-            <p className="px-5 pb-5 pt-1 text-xs lg:text-sm text-muted-foreground leading-relaxed border-t border-primary/5">
-              {answer}
-            </p>
-          </motion.div>
+      {/* Answer stays in the DOM when collapsed (crawlers index it); the
+          grid-rows trick animates height without measuring content. */}
+      <div
+        className={cn(
+          "grid transition-[grid-template-rows,opacity] duration-250 ease-in-out",
+          isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0",
         )}
-      </AnimatePresence>
+        aria-hidden={!isOpen}
+      >
+        <div className="overflow-hidden">
+          <p className="px-5 pb-5 pt-1 text-xs lg:text-sm text-muted-foreground leading-relaxed border-t border-primary/5">
+            {answer}
+          </p>
+        </div>
+      </div>
     </div>
   );
 };

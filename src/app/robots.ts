@@ -1,23 +1,15 @@
 import { MetadataRoute } from "next";
+import { SITE_URL } from "@/lib/seo";
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = "https://www.splitbill.my.id";
-  
   return {
     rules: {
       userAgent: "*",
-      allow: ["/", "/sitemap.xml"],
-      disallow: [
-        "/api/",       // Jangan indeks endpoint API
-        "/admin/",     // Folder admin (jika ada)
-        "/_next/",     // Folder internal Next.js
-        "/static/",    // Static files biasanya sudah di-handle
-        "/*.json$",    // File konfigurasi JSON
-        "/wallet",     // Protected route
-        "/history",    // Protected route
-        "/member",  // Protected route
-      ],
+      // /_next/ dan /static/ sengaja TIDAK di-block: Googlebot butuh JS, CSS
+      // dan /_next/image buat render halaman. /wallet tetap di-block karena
+      // cuma app yang butuh login (gak ada versi marketing-nya).
+      disallow: ["/api/", "/admin/", "/history", "/member", "/wallet"],
     },
-    sitemap: `${baseUrl}/sitemap.xml`,
+    sitemap: `${SITE_URL}/sitemap.xml`,
   };
 }

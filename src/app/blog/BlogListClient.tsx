@@ -16,17 +16,27 @@ import { HomepageFooter } from "@/components/homepage/HomepageFooter";
 import { HomepageNavbar } from "@/components/homepage/HomepageNavbar";
 import { IllustratedEmptyState } from "@/components/ui/IllustratedEmptyState";
 
-const BLOGS_PER_PAGE = 12;
+export const BLOGS_PER_PAGE = 12;
 
-export default function BlogListClient() {
-  const [blogs, setBlogs] = useState<Blog[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+interface BlogListClientProps {
+  /** First page fetched on the server so the post list is in the initial HTML. */
+  initialBlogs?: Blog[];
+  initialTotalPages?: number;
+}
+
+export default function BlogListClient({ initialBlogs, initialTotalPages = 1 }: BlogListClientProps) {
+  const hasInitial = !!initialBlogs && initialBlogs.length > 0;
+  const [blogs, setBlogs] = useState<Blog[]>(initialBlogs ?? []);
+  const [isLoading, setIsLoading] = useState(!hasInitial);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  const [totalPages, setTotalPages] = useState(hasInitial ? initialTotalPages : 1);
 
   useEffect(() => {
+    // Server already provided page 1; only fetch client-side as a fallback
+    // (e.g. the backend was unreachable at build/revalidate time).
+    if (hasInitial) return;
     const loadBlogs = async () => {
       try {
         const response = await fetchBlogs({ page: 1, limit: BLOGS_PER_PAGE });
@@ -40,7 +50,7 @@ export default function BlogListClient() {
       }
     };
     loadBlogs();
-  }, []);
+  }, [hasInitial]);
 
   const handleLoadMore = async () => {
     setIsLoadingMore(true);
@@ -71,9 +81,11 @@ export default function BlogListClient() {
       {/* Hero Banner Section */}
       <section className="w-full max-w-[600px] lg:max-w-7xl relative pt-12 pb-8 px-6">
         <div className="relative z-10 w-full mx-auto text-center">
+          {/* No opacity-0 start: the H1 is the LCP element and must paint
+              from the server HTML, before hydration. */}
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ y: 10 }}
+            animate={{ y: 0 }}
             transition={{ duration: 0.5 }}
           >
             <h1 className="text-4xl md:text-5xl font-black mb-4 tracking-tight leading-tight text-foreground">
@@ -102,6 +114,8 @@ export default function BlogListClient() {
 
       {/* Main Content */}
       <main className="w-full max-w-[600px] lg:max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 flex-1">
+        {/* Post list is the page's first section; promo CTA comes after it */}
+        <h2 className="sr-only">Artikel terbaru</h2>
         {isLoading ? (
           <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[1, 2, 3, 4, 5, 6].map((i) => (

@@ -5,8 +5,9 @@ import { LoadingIndicator } from "@/components/ui/LoadingIndicator";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 
 export const metadata: Metadata = {
-  title: "Foto Struk | Split Later | Split Bill App",
+  title: "Foto Struk | Split Later | SplitBill",
   description: "Foto struk sekarang, simpan ke Split Later, lanjutin itungannya kapan aja.",
+  robots: { index: false, follow: true },
 };
 
 export default function QuickCapturePage() {

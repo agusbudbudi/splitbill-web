@@ -86,7 +86,7 @@ export const HomepagePromoSlider = () => {
                       <div className="shrink-0 w-16 h-16 rounded-full flex items-center justify-center transition-transform group-hover/card:scale-110 overflow-hidden relative">
                         <Image
                           src="/img/menu-split-later.png"
-                          alt="Split Later"
+                          alt=""
                           width={64}
                           height={64}
                           className="w-full h-full object-contain"
@@ -128,7 +128,7 @@ export const HomepagePromoSlider = () => {
                       <div className="shrink-0 w-16 h-16 rounded-full flex items-center justify-center transition-transform group-hover/card:scale-110 overflow-hidden relative">
                         <Image
                           src="/img/icon-rewards.jpg"
-                          alt="Review Reward"
+                          alt=""
                           width={64}
                           height={64}
                           className="w-full h-full object-contain"

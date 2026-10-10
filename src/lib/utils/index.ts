@@ -23,6 +23,14 @@ export function formatToIDR(amount: number) {
   }).format(amount);
 }
 
+// Versi ringkas buat stat tile kecil (mis. "1.2Jt", "500Rb") — dipakai bareng
+// di FeatureHighlights (homepage) dan LevelDetailPanel biar formatnya konsisten.
+export function formatCompactIDR(amount: number) {
+  if (amount >= 1_000_000) return `${(amount / 1_000_000).toFixed(1)}Jt`;
+  if (amount >= 1_000) return `${Math.round(amount / 1_000)}Rb`;
+  return formatToIDR(amount);
+}
+
 export function formatRelativeTime(dateInput: string | Date | undefined) {
   if (!dateInput) return "";
   const date = typeof dateInput === "string" ? new Date(dateInput) : dateInput;

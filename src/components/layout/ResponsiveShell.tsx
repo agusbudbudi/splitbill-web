@@ -37,9 +37,9 @@ export const ResponsiveShell = ({ children }: ResponsiveShellProps) => {
   const isMemberShell = pathname.startsWith("/member/") || pathname === "/member";
   // Dedicated funnel microsite — kept distraction-free, sama kayak homepage
   const isSplitBillLiburan = pathname === "/split-bill-liburan";
-  // Marketing/edukasi page ("/[fitur]/cara-pakai") — full-width layout, gak
-  // butuh quick-access sidebar
-  const isCaraPakaiPage = pathname.endsWith("/cara-pakai");
+  // Marketing/edukasi page ("/[fitur]/cara-pakai" dan "/all-feature") —
+  // full-width layout, gak butuh quick-access sidebar
+  const isCaraPakaiPage = pathname.endsWith("/cara-pakai") || pathname === "/all-feature";
 
   return (
     <div className="w-full min-h-screen bg-background">

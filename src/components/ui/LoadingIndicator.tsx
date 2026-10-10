@@ -16,6 +16,8 @@ export function LoadingIndicator({
 }: LoadingIndicatorProps) {
   return (
     <div
+      role="status"
+      aria-label={text || "Memuat"}
       className={cn(
         "flex flex-col items-center justify-center gap-4",
         className,
@@ -39,7 +41,7 @@ export function LoadingIndicator({
         <div className="relative rounded-full p-1.5">
           <img
             src={LOADING_ICON_DATA_URI}
-            alt="Loading"
+            alt=""
             width={size * 0.75}
             height={size * 0.75}
             style={{ width: size * 0.75, height: size * 0.75 }}

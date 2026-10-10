@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { ChevronDown, ArrowRight } from "lucide-react";
 import { faqData, FAQItem } from "@/data/faqData";
 import Link from "next/link";
@@ -102,6 +102,7 @@ export const FAQSectionHomepage = ({
                 >
                   <button
                     onClick={() => toggleFaq(faq.id)}
+                    aria-expanded={isOpen}
                     className={`w-full px-6 py-5 flex items-center justify-between text-left font-bold transition-colors duration-200 group cursor-pointer ${isOpen ? "text-primary" : "text-slate-800 hover:text-primary"
                       }`}
                   >
@@ -119,20 +120,18 @@ export const FAQSectionHomepage = ({
                     </div>
                   </button>
 
-                  <AnimatePresence initial={false}>
-                    {isOpen && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.25, ease: "easeInOut" }}
-                      >
-                        <div className="px-6 pb-6 pt-1 text-sm font-semibold text-slate-500 leading-relaxed border-t border-slate-50">
-                          {faq.answer}
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                  {/* Answer stays in the DOM when collapsed so it matches the
+                      FAQPage schema above and crawlers can index it. */}
+                  <div
+                    className={`grid transition-[grid-template-rows,opacity] duration-250 ease-in-out ${isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}
+                    aria-hidden={!isOpen}
+                  >
+                    <div className="overflow-hidden">
+                      <div className="px-6 pb-6 pt-1 text-sm font-semibold text-slate-500 leading-relaxed border-t border-slate-50">
+                        {faq.answer}
+                      </div>
+                    </div>
+                  </div>
                 </motion.div>
               );
             })}

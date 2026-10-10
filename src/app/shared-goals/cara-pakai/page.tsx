@@ -8,6 +8,7 @@
  */
 
 import type { Metadata } from "next";
+import { buildMetadata } from "@/lib/seo";
 import {
   Users2,
   TrendingUp,
@@ -38,47 +39,19 @@ import { FAQSectionHomepage } from "@/components/homepage/FAQSectionHomepage";
 const PAGE_URL = "https://www.splitbill.my.id/shared-goals/cara-pakai";
 const OG_IMAGE = "/img/cara-pakai/shared-goals/hero-shared-goals-cara-pakai.png";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildMetadata({
   title: "Cara Pakai Shared Goals: Panduan Nabung Bareng | SplitBill",
-  description:
-    "Panduan lengkap cara pakai fitur Shared Goals: buat goal, tambah kontributor, setor tabungan, sampai pantau progress & leaderboard. Gratis & tanpa login.",
-  keywords: [
-    "cara pakai shared goals",
-    "cara nabung bareng online",
-    "tutorial shared goals",
-    "panduan nabung bareng",
-    "cara patungan nabung",
-    "aplikasi nabung bareng teman",
-    "tabungan bersama online",
-  ],
-  alternates: {
-    canonical: PAGE_URL,
+  description: "Panduan lengkap cara pakai fitur Shared Goals: buat goal, tambah kontributor, setor tabungan, sampai pantau progress & leaderboard. Gratis & tanpa login.",
+  path: "/shared-goals/cara-pakai",
+  socialTitle: "Cara Pakai Shared Goals: Panduan Nabung Bareng",
+  socialDescription: "Buat goal, tambah kontributor, setor tabungan, lalu pantau progress & leaderboard. Semua langkah nabung bareng dijelaskan lengkap di sini.",
+  image: {
+    url: OG_IMAGE,
+    width: 1920,
+    height: 900,
+    alt: "Cara pakai Shared Goals, nabung bareng menuju satu target",
   },
-  openGraph: {
-    title: "Cara Pakai Shared Goals: Panduan Nabung Bareng",
-    description:
-      "Buat goal, tambah kontributor, setor tabungan, lalu pantau progress & leaderboard. Semua langkah nabung bareng dijelaskan lengkap di sini.",
-    url: PAGE_URL,
-    siteName: "Split Bill App",
-    images: [
-      {
-        url: OG_IMAGE,
-        width: 1920,
-        height: 900,
-        alt: "Cara pakai Shared Goals, nabung bareng menuju satu target",
-      },
-    ],
-    locale: "id_ID",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Cara Pakai Shared Goals: Panduan Nabung Bareng",
-    description:
-      "Buat goal, tambah kontributor, setor tabungan, lalu pantau progress & leaderboard. Semua langkah nabung bareng dijelaskan lengkap di sini.",
-    images: [OG_IMAGE],
-  },
-};
+});
 
 const sharedGoalsFaqs = faqData.filter((item) => item.category === "shared-goals");
 

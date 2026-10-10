@@ -11,25 +11,28 @@ import {
   ChevronRight,
   Gift,
   HelpCircle,
-  Info,
   Lock,
   Sparkles,
   Star,
   Wallet,
 } from "lucide-react";
-import { cn, formatToIDR } from "@/lib/utils";
+import { toast } from "sonner";
+import { cn, formatCompactIDR, formatToIDR } from "@/lib/utils";
 import { BottomSheet } from "@/components/ui/BottomSheet";
+import { Button } from "@/components/ui/Button";
 import { useUIStore } from "@/lib/stores/uiStore";
-import { fetchLevels, fetchMyLevel } from "@/lib/api/levels";
+import { useAuthStore } from "@/lib/stores/authStore";
+import { claimLevelReward, fetchLevels, fetchMyLevel } from "@/lib/api/levels";
 import {
   computeAchievableProgress,
+  formatRewardSentence,
   getLevelThemeIndex,
   LEVEL_ICONS,
   LEVEL_METRIC_LABELS,
   LEVEL_THEMES,
   type RuleProgress,
 } from "@/lib/utils/level";
-import type { UserLevel, UserLevelMeResponse } from "@/lib/types/level";
+import type { LevelAchievement, UserLevel, UserLevelMeResponse } from "@/lib/types/level";
 
 type LevelStatus = "current" | "achieved" | "next" | "locked";
 
@@ -39,6 +42,11 @@ const METRIC_IMAGES = {
   splitCount: "/img/user-level/split-bill.png",
   totalAmount: "/img/user-level/total-nominal.png",
   friendCount: "/img/user-level/teman.png",
+} as const;
+
+const REWARD_ICONS = {
+  free_scan_ai: "/img/cara-pakai/split-bill/ai-scan-struk.png",
+  max_split_bill: "/img/user-level/split-bill.png",
 } as const;
 
 const SWIPE_THRESHOLD = 60;
@@ -245,7 +253,7 @@ function LevelHeroAlt({
               </span>
             )}
           </div>
-          <h2 className="mt-2 text-2xl font-black tracking-tight text-white">{level.name}</h2>
+          <h2 className="mt-2 text-xl font-bold tracking-tight text-white">{level.name}</h2>
           {level.description && (
             <p className="mt-1 text-sm text-white/85">{level.description}</p>
           )}
@@ -335,6 +343,9 @@ interface LevelStageProps {
   onSwipe: (info: PanInfo) => void;
   status: LevelStatus;
   stats: UserLevelMeResponse["stats"] | null;
+  achievement: LevelAchievement | null;
+  isClaiming: boolean;
+  onClaim: (levelId: string) => void;
 }
 
 function LevelStage({
@@ -348,6 +359,9 @@ function LevelStage({
   onSwipe,
   status,
   stats,
+  achievement,
+  isClaiming,
+  onClaim,
 }: LevelStageProps) {
   const isDone = status === "current" || status === "achieved";
   const isLocked = !isDone;
@@ -535,7 +549,7 @@ function LevelStage({
                 </div>
                 <div className="px-2">
                   <p className="text-lg font-black text-primary">
-                    {formatToIDR(stats.totalAmount)}
+                    {formatCompactIDR(stats.totalAmount)}
                   </p>
                   <p className="mt-1 text-[11px] text-muted-foreground uppercase tracking-wide">
                     Total Nominal
@@ -568,57 +582,106 @@ function LevelStage({
               </div>
             ) : null}
 
-            {level.benefits.length > 0 && (
-              <div className="space-y-4">
-                {newBenefits.length > 0 && (
-                  <div>
-                    <h3 className="text-sm font-bold text-foreground mb-3">
-                      {isDone ? "Yang Kamu Dapat" : "Benefit yang Kebuka"}
-                    </h3>
-                    <div className="rounded-sm bg-muted/60 divide-y divide-border/50">
-                      {newBenefits.map((benefit, idx) => {
-                        const Icon = BENEFIT_ICONS[idx % BENEFIT_ICONS.length];
-                        return (
-                          <div key={idx} className="flex items-center gap-3 px-3.5 py-3">
-                            <span className="w-9 h-9 rounded-xs bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                              <Icon className="w-4 h-4" />
-                            </span>
-                            <p className="text-sm font-semibold text-foreground/90 leading-snug">
+            {(level.benefits.length > 0 ||
+              (achievement && achievement.rewardsSnapshot.length > 0)) && (
+                <div className="space-y-4">
+                  {newBenefits.length > 0 && (
+                    <div>
+                      <h3 className="text-sm font-bold text-foreground mb-3">
+                        {isDone ? "Yang Kamu Dapat" : "Benefit yang Kebuka"}
+                      </h3>
+                      <div className="rounded-sm bg-muted/60 divide-y divide-border/50">
+                        {newBenefits.map((benefit, idx) => {
+                          const Icon = BENEFIT_ICONS[idx % BENEFIT_ICONS.length];
+                          return (
+                            <div key={idx} className="flex items-center gap-3 px-3.5 py-3">
+                              <span className="w-9 h-9 rounded-xs bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                                <Icon className="w-4 h-4" />
+                              </span>
+                              <p className="text-sm font-semibold text-foreground/90 leading-snug">
+                                {benefit}
+                              </p>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {achievement && achievement.rewardsSnapshot.length > 0 ? (
+                    achievement.claimed ? (
+                      <div className="flex items-start gap-2.5 rounded-sm bg-green-50 border border-green-100 px-3.5 py-3">
+                        <CheckCircle2 className="w-4 h-4 text-green-600 shrink-0 mt-0.5" />
+                        <p className="text-xs text-green-800 leading-relaxed">
+                          Reward level ini udah kamu klaim:{" "}
+                          {achievement.rewardsSnapshot.map(formatRewardSentence).join(", ")}.
+                        </p>
+                      </div>
+                    ) : (
+                      <div className={cn("relative overflow-hidden rounded-sm p-4 space-y-3", theme.accent)}>
+                        <div className="relative flex items-center gap-2.5">
+                          <span className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center shrink-0 p-1.5">
+                            <img
+                              src="/img/user-level/rewards-icon.png"
+                              alt=""
+                              className="w-full h-full object-contain"
+                            />
+                          </span>
+                          <div className="min-w-0">
+                            <p className="text-sm font-bold text-white">Reward menanti!</p>
+                            <p className="text-[11px] text-white/80">Klaim sekarang, langsung aktif</p>
+                          </div>
+                        </div>
+                        <div className="relative grid grid-cols-[repeat(auto-fit,minmax(140px,1fr))] gap-2">
+                          {achievement.rewardsSnapshot.map((reward, idx) => (
+                            <div
+                              key={idx}
+                              className="flex items-center gap-1.5 rounded-xs bg-white/15 px-2.5 py-2"
+                            >
+                              <img
+                                src={REWARD_ICONS[reward.benefitType]}
+                                alt=""
+                                className="w-8 h-8 shrink-0 object-contain"
+                              />
+                              <p className="text-xs font-bold text-white">
+                                {formatRewardSentence(reward)}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                        <Button
+                          type="button"
+                          variant="secondary"
+                          className="relative w-full bg-white hover:bg-white/90"
+                          style={{ color: theme.heroColor }}
+                          loading={isClaiming}
+                          onClick={() => onClaim(level.id)}
+                        >
+                          Klaim Reward
+                        </Button>
+                      </div>
+                    )
+                  ) : null}
+
+                  {carriedBenefits.length > 0 && (
+                    <div>
+                      <h3 className="text-sm font-bold text-muted-foreground mb-2">
+                        Sudah aktif sejak level sebelumnya
+                      </h3>
+                      <div className="rounded-sm divide-y divide-border/50">
+                        {carriedBenefits.map((benefit, idx) => (
+                          <div key={idx} className="flex items-center gap-3 px-3.5 py-3.5">
+                            <CheckCircle2 className="w-4 h-4 text-green-600 shrink-0" />
+                            <p className="text-sm font-medium text-muted-foreground leading-snug">
                               {benefit}
                             </p>
                           </div>
-                        );
-                      })}
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                )}
-
-                {carriedBenefits.length > 0 && (
-                  <div>
-                    <h3 className="text-sm font-bold text-muted-foreground mb-2">
-                      Sudah aktif sejak level sebelumnya
-                    </h3>
-                    <div className="rounded-sm divide-y divide-border/50">
-                      {carriedBenefits.map((benefit, idx) => (
-                        <div key={idx} className="flex items-center gap-3 px-3.5 py-3.5">
-                          <CheckCircle2 className="w-4 h-4 text-green-600 shrink-0" />
-                          <p className="text-sm font-medium text-muted-foreground leading-snug">
-                            {benefit}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                <div className="flex items-start gap-2.5 rounded-sm bg-amber-50 border border-amber-100 px-3.5 py-3">
-                  <Info className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-                  <p className="text-xs text-amber-800 leading-relaxed">
-                    Benefit-benefit ini lagi kami siapin dan bakal segera aktif otomatis di akunmu. Stay tuned ya!
-                  </p>
+                  )}
                 </div>
-              </div>
-            )}
+              )}
 
             {activeIndex + 1 < total && (
               <button
@@ -643,7 +706,9 @@ export function LevelDetailPanel() {
   const [loading, setLoading] = useState(true);
   const [activeIndex, setActiveIndex] = useState(0);
   const [direction, setDirection] = useState(0);
+  const [claimingLevelId, setClaimingLevelId] = useState<string | null>(null);
   const setHeaderColor = useUIStore((state) => state.setHeaderColor);
+  const getCurrentUser = useAuthStore((state) => state.getCurrentUser);
 
   useEffect(() => {
     let cancelled = false;
@@ -718,6 +783,23 @@ export function LevelDetailPanel() {
     }
   };
 
+  const handleClaim = async (levelId: string) => {
+    setClaimingLevelId(levelId);
+    try {
+      await claimLevelReward(levelId);
+      toast.success("Reward berhasil diklaim! 🎉");
+      const freshMe = await fetchMyLevel();
+      setMe(freshMe);
+      // Reward bisa nambah kuota (freeScanCount dll) yang ditampilkan di
+      // tempat lain (mis. home) lewat authStore — sinkronkan sekalian.
+      await getCurrentUser();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Gagal klaim reward");
+    } finally {
+      setClaimingLevelId(null);
+    }
+  };
+
   return (
     <div className="relative left-1/2 -mt-4 w-screen -translate-x-1/2 space-y-3 lg:left-0 lg:mt-0 lg:w-full lg:translate-x-0">
       {loading ? (
@@ -738,6 +820,11 @@ export function LevelDetailPanel() {
           onSwipe={handleSwipe}
           status={getStatus(levels[activeIndex], me)}
           stats={me?.stats ?? null}
+          achievement={
+            me?.achievements.find((a) => a.levelId === levels[activeIndex].id) ?? null
+          }
+          isClaiming={claimingLevelId === levels[activeIndex].id}
+          onClaim={handleClaim}
         />
       )}
     </div>

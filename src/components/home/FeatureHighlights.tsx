@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { formatToIDR } from "@/lib/utils";
+import { formatCompactIDR } from "@/lib/utils";
 import { useAuthStore } from "@/lib/stores/authStore";
 import { fetchMyLevel } from "@/lib/api/levels";
 import type { UserLevelStats } from "@/lib/types/level";
@@ -65,12 +65,7 @@ export const FeatureHighlights = () => {
     },
     {
       label: "Total",
-      value:
-        totalAmount >= 1_000_000
-          ? `${(totalAmount / 1_000_000).toFixed(1)}Jt`
-          : totalAmount >= 1_000
-            ? `${Math.round(totalAmount / 1_000)}Rb`
-            : formatToIDR(totalAmount),
+      value: formatCompactIDR(totalAmount),
       iconSrc: "/img/icon-total.png",
     },
     {

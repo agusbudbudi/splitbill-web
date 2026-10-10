@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { cn, formatToIDR } from "@/lib/utils";
 import { fetchMyLevel } from "@/lib/api/levels";
+import { useAuthStore } from "@/lib/stores/authStore";
 import {
   computeAchievableProgress,
   getLevelThemeIndex,
@@ -36,6 +37,10 @@ function buildProgressTeaser(data: UserLevelMeResponse): string | null {
 export function MyLevelCard() {
   const [data, setData] = useState<UserLevelMeResponse | null>(null);
   const [loading, setLoading] = useState(true);
+  const user = useAuthStore((state) => state.user);
+  const isSubscribed = user?.subscriptionStatus === "active";
+  const freeScanCount = user?.freeScanCount;
+  const freeSplitBillCount = user?.freeSplitBillCount;
 
   useEffect(() => {
     let cancelled = false;
@@ -106,7 +111,21 @@ export function MyLevelCard() {
           <p className="text-xl font-black tracking-tight truncate text-white">
             {data.currentLevel.name}
           </p>
-          <p className="text-base mt-0.5 truncate text-white/85">{subtitle}</p>
+          <p className="text-sm mt-0.5 truncate text-white/85">{subtitle}</p>
+          {!isSubscribed && (freeScanCount !== undefined || freeSplitBillCount !== undefined) && (
+            <div className="mt-1.5 flex flex-wrap gap-1.5">
+              {freeScanCount !== undefined && (
+                <span className="inline-flex items-center rounded-full bg-white/20 px-2 py-0.5 text-[11px] font-bold text-white">
+                  {freeScanCount}x scan gratis
+                </span>
+              )}
+              {freeSplitBillCount !== undefined && (
+                <span className="inline-flex items-center rounded-full bg-white/20 px-2 py-0.5 text-[11px] font-bold text-white">
+                  {freeSplitBillCount}x split bill
+                </span>
+              )}
+            </div>
+          )}
         </div>
         <ChevronRight className="w-5 h-5 shrink-0 self-center text-white/80" />
       </div>

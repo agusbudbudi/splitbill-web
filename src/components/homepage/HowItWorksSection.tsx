@@ -12,6 +12,7 @@ const steps = [
     title: "Foto / Upload Struk",
     description: "Tinggal cekrek struk makan-makan lo. Gak usah repot ketik ulang menu satu-satu.",
     image: "/img/step-scan.jpg",
+    alt: "Struk restoran sedang discan AI di layar SplitBill untuk membaca item dan harga",
     color: "from-blue-500 to-cyan-500",
     iconBg: "bg-primary",
   },
@@ -21,6 +22,7 @@ const steps = [
     title: "Pilih Teman & Menu",
     description: "Assign siapa aja yang makan menu apa. Biar AI yang kalkulasiin pembagian pajaknya.",
     image: "/img/step-add-friend.jpg",
+    alt: "Layar tambah teman di SplitBill dengan daftar teman yang ikut patungan",
     color: "from-[#EEA420] to-[#F5BE4E]",
     iconBg: "bg-[#EEA420]",
   },
@@ -30,6 +32,7 @@ const steps = [
     title: "Share Link Tagihan",
     description: "Kirim link rincian tagihan ke WhatsApp grup. Temen lo tinggal bayar via e-wallet/bank.",
     image: "/img/step-share.jpg",
+    alt: "Ringkasan tagihan split bill per orang yang dibagikan ke WhatsApp",
     color: "from-[#2EC866] to-[#4AD37A]",
     iconBg: "bg-[#2EC866]",
   },
@@ -93,110 +96,69 @@ export const HowItWorksSection = () => {
           </motion.p>
         </div>
 
-        {/* === Mobile Slider === */}
-        <div className="lg:hidden">
-          <div className="-mx-4 overflow-hidden">
-            <div
-              ref={scrollRef}
-              className="flex overflow-x-auto overflow-y-hidden snap-x snap-mandatory scrollbar-none px-4 pb-4"
-              style={{ scrollbarWidth: "none" }}
-            >
-              {steps.map((step, index) => {
-                const Icon = step.icon;
-                return (
-                  <motion.div
-                    key={step.number}
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-30px" }}
-                    transition={{ duration: 0.5, delay: index * 0.1, ease: "easeOut" }}
-                    className="flex-shrink-0 w-[82vw] snap-center flex flex-col items-center text-center"
-                  >
-                    {/* Image */}
-                    <div className="relative w-full max-w-[260px] aspect-square rounded-xl overflow-hidden mb-6">
-                      <Image
-                        src={step.image}
-                        alt={step.title}
-                        fill
-                        sizes="80vw"
-                        className="object-cover"
-                      />
-                      <span className="absolute top-3 left-3 w-11 h-11 rounded-xl bg-white/95 backdrop-blur-sm flex items-center justify-center text-base font-black text-slate-900 shadow-md">
-                        {step.number}
-                      </span>
-                    </div>
+        {/* One list for all breakpoints: horizontal snap slider on mobile,
+            3-column grid on desktop (rendering it twice duplicated the DOM). */}
+        <div className="-mx-4 overflow-hidden lg:mx-0 lg:overflow-visible">
+          <div
+            ref={scrollRef}
+            className="relative flex overflow-x-auto overflow-y-hidden snap-x snap-mandatory scrollbar-none px-4 pb-4 lg:grid lg:grid-cols-3 lg:gap-8 lg:overflow-visible lg:snap-none lg:px-0 lg:pb-0"
+            style={{ scrollbarWidth: "none" }}
+          >
+            {/* Connecting line (desktop) */}
+            <div className="hidden lg:block absolute top-[130px] left-[15%] right-[15%] h-0.5 border-t-2 border-dashed border-slate-200 -z-10" />
 
-                    {/* Step Circle Icon */}
-                    <div className={`w-12 h-12 rounded-full ${step.iconBg} text-white flex items-center justify-center mb-4 shadow-lg`}>
-                      <Icon className="w-5 h-5" />
-                    </div>
+            {steps.map((step, index) => {
+              const Icon = step.icon;
+              return (
+                <motion.div
+                  key={step.number}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-30px" }}
+                  transition={{ duration: 0.5, delay: index * 0.1, ease: "easeOut" }}
+                  className="flex-shrink-0 w-[82vw] snap-center lg:w-auto flex flex-col items-center text-center group"
+                >
+                  {/* Image */}
+                  <div className="relative w-full max-w-[260px] lg:max-w-[280px] aspect-square rounded-xl overflow-hidden mb-6 lg:mb-8 lg:border lg:border-slate-100 transition-transform duration-300 lg:group-hover:scale-105">
+                    <Image
+                      src={step.image}
+                      alt={step.alt}
+                      fill
+                      sizes="(min-width: 1024px) 280px, 80vw"
+                      className="object-cover"
+                    />
+                    <span className="absolute top-3 left-3 w-11 h-11 rounded-xl bg-white/95 backdrop-blur-sm flex items-center justify-center text-base lg:text-lg font-black text-slate-900 shadow-md">
+                      {step.number}
+                    </span>
+                  </div>
 
-                    {/* Info */}
-                    <h3 className="text-xl font-black text-slate-800 mb-2">{step.title}</h3>
-                    <p className="text-sm font-medium text-slate-500 max-w-xs leading-relaxed px-2">{step.description}</p>
-                  </motion.div>
-                );
-              })}
-            </div>
-          </div>
+                  {/* Step Circle Icon */}
+                  <div className={`w-12 h-12 rounded-full ${step.iconBg} text-white flex items-center justify-center mb-4 lg:mb-5 shadow-lg transition-all duration-300 lg:group-hover:scale-110`}>
+                    <Icon className="w-5 h-5" />
+                  </div>
 
-          {/* Dot indicators */}
-          <div className="flex justify-center gap-2 mt-5">
-            {steps.map((_, idx) => (
-              <button
-                key={idx}
-                onClick={() => scrollToIndex(idx)}
-                className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${activeIndex === idx
-                  ? "w-6 bg-primary"
-                  : "w-2 bg-slate-200 hover:bg-slate-300"
-                  }`}
-                aria-label={`Go to step ${idx + 1}`}
-              />
-            ))}
+                  {/* Info */}
+                  <h3 className="text-xl font-black text-slate-800 mb-2">{step.title}</h3>
+                  <p className="text-sm font-medium text-slate-500 max-w-xs leading-relaxed px-2 lg:px-0">{step.description}</p>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
 
-        {/* === Desktop Grid === */}
-        <div className="hidden lg:grid grid-cols-3 gap-8 relative">
-          {/* Connecting line */}
-          <div className="absolute top-[130px] left-[15%] right-[15%] h-0.5 border-t-2 border-dashed border-slate-200 -z-10" />
-
-          {steps.map((step, index) => {
-            const Icon = step.icon;
-            return (
-              <motion.div
-                key={step.number}
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.6, delay: index * 0.15 }}
-                className="flex flex-col items-center text-center group"
-              >
-                {/* Image Showcase */}
-                <div className="relative w-full max-w-[280px] aspect-square rounded-xl overflow-hidden border border-slate-100 mb-8 transition-transform duration-300 group-hover:scale-105">
-                  <Image
-                    src={step.image}
-                    alt={step.title}
-                    fill
-                    sizes="300px"
-                    className="object-cover"
-                  />
-                  <span className="absolute top-3 left-3 w-11 h-11 rounded-xl bg-white/95 backdrop-blur-sm flex items-center justify-center text-base sm:text-lg font-black text-slate-900 shadow-md">
-                    {step.number}
-                  </span>
-                </div>
-
-                {/* Step Circle Icon */}
-                <div className={`w-12 h-12 rounded-full ${step.iconBg} text-white flex items-center justify-center mb-5 shadow-lg transition-all duration-300 relative group-hover:scale-110`}>
-                  <Icon className="w-5 h-5" />
-                </div>
-
-                {/* Info */}
-                <h3 className="text-xl font-black text-slate-800 mb-2">{step.title}</h3>
-                <p className="text-sm font-medium text-slate-500 max-w-xs leading-relaxed">{step.description}</p>
-              </motion.div>
-            );
-          })}
+        {/* Dot indicators (mobile slider only) */}
+        <div className="flex justify-center gap-2 mt-5 lg:hidden">
+          {steps.map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => scrollToIndex(idx)}
+              className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${activeIndex === idx
+                ? "w-6 bg-primary"
+                : "w-2 bg-slate-200 hover:bg-slate-300"
+                }`}
+              aria-label={`Go to step ${idx + 1}`}
+            />
+          ))}
         </div>
       </div>
     </section>

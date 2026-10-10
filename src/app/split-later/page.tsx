@@ -5,12 +5,14 @@ import { LoadingIndicator } from "@/components/ui/LoadingIndicator";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 
 export const metadata: Metadata = {
-  title: "Split Later | Split Bill App",
+  title: "Split Later | SplitBill",
   description:
-    "Kumpulkan foto struk saat liburan atau acara, lalu split belakangan dengan mudah. Fitur Split Later dari Split Bill App.",
+    "Kumpulkan foto struk saat liburan atau acara, lalu split belakangan dengan mudah. Fitur Split Later dari SplitBill.",
   alternates: {
     canonical: "https://www.splitbill.my.id/split-later",
   },
+  // Login-only app screen; the public page is /split-later/cara-pakai
+  robots: { index: false, follow: true },
 };
 
 export default function SplitLaterPage() {

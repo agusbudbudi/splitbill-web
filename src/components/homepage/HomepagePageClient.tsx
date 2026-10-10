@@ -13,6 +13,8 @@ import { HomepageFooter } from "./HomepageFooter";
 import { useAuthStore } from "@/lib/stores/authStore";
 import { LazyMount } from "@/components/ui/LazyMount";
 import { Skeleton } from "@/components/ui/Skeleton";
+import type { Blog } from "@/lib/types/blog";
+import type { Review } from "@/hooks/useReview";
 
 // Local skeleton fallback so the lazy chunk's own <Suspense> resolves in place —
 // without a `loading` option, next/dynamic suspends to the nearest Suspense
@@ -63,7 +65,14 @@ const ChatRoom = dynamic(
   { ssr: false, loading: () => null }
 );
 
-export const HomepagePageClient = () => {
+interface HomepagePageClientProps {
+  initialReviews?: Review[];
+  initialBlogs?: Blog[];
+  /** Server-rendered use-case copy, shown below the feature cards. */
+  useCasesSection?: React.ReactNode;
+}
+
+export const HomepagePageClient = ({ initialReviews, initialBlogs, useCasesSection }: HomepagePageClientProps) => {
   const { isAuthenticated } = useAuthStore();
   const [isMounted, setIsMounted] = useState(false);
   const [isChatReady, setIsChatReady] = useState(false);
@@ -83,13 +92,7 @@ export const HomepagePageClient = () => {
 
   return (
     <div className="relative min-h-screen bg-[#f8f9fd] overflow-x-hidden selection:bg-primary selection:text-white">
-      {/* Keyword-rich blurb for crawlers/screen readers — kept as <p>, not <h1>,
-          since HeroSection already renders the page's one real H1. */}
-      <p className="sr-only">
-        Split Bill Online Gratis — Scan Struk & Bagi Tagihan Instan
-      </p>
-
-      {/* Structured data — HowTo */}
+      {/* Structured data — HowTo, mirrors the visible HowItWorksSection steps */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -98,25 +101,25 @@ export const HomepagePageClient = () => {
             "@type": "HowTo",
             name: "Cara Split Bill Online dengan Scan Struk AI",
             description:
-              "Panduan lengkap cara membagi tagihan secara online menggunakan AI Scan di SplitBill.my.id",
+              "3 langkah membagi tagihan secara online menggunakan AI Scan di SplitBill",
             step: [
               {
                 "@type": "HowToStep",
                 position: 1,
-                name: "Tambah Teman",
-                text: "Tambahkan nama teman-teman yang ikut patungan ke dalam daftar.",
+                name: "Foto / Upload Struk",
+                text: "Tinggal cekrek struk makan-makan lo. Gak usah repot ketik ulang menu satu-satu.",
               },
               {
                 "@type": "HowToStep",
                 position: 2,
-                name: "Foto atau Upload Struk",
-                text: "Upload foto struk belanja. AI otomatis membaca dan menghitung total tagihan per item.",
+                name: "Pilih Teman & Menu",
+                text: "Assign siapa aja yang makan menu apa. Biar AI yang kalkulasiin pembagian pajaknya.",
               },
               {
                 "@type": "HowToStep",
                 position: 3,
-                name: "Share Hasil ke WhatsApp",
-                text: "Bagikan hasil split bill lengkap dengan rincian siapa bayar berapa langsung ke grup WhatsApp.",
+                name: "Share Link Tagihan",
+                text: "Kirim link rincian tagihan ke WhatsApp grup. Temen lo tinggal bayar via e-wallet/bank.",
               },
             ],
           }),
@@ -140,13 +143,15 @@ export const HomepagePageClient = () => {
         {/* Features Bento Grid */}
         <FeaturesSection />
 
+        {useCasesSection}
+
         {/* How It Works Steps */}
         <HowItWorksSection />
 
         {/* Promo Banner */}
         <section className="bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <PromoBanner />
+            <PromoBanner href="/split-bill-liburan" />
           </div>
         </section>
 
@@ -165,12 +170,12 @@ export const HomepagePageClient = () => {
         <br className="hidden" />
         <ComparisonSection />
 
-        <TestimonialsSection />
+        <TestimonialsSection initialReviews={initialReviews} />
 
         {/* Pricing hidden for now — keep component, just not rendered */}
         {/* <PricingSection /> */}
 
-        <BlogSectionHomepage />
+        <BlogSectionHomepage initialBlogs={initialBlogs} />
 
         <FAQSectionHomepage defaultOpenFirst />
 

@@ -16,12 +16,25 @@ export interface FAQItem {
   showOnLanding: boolean;
 }
 
+export const faqCategoryLabels: Record<FAQItem["category"], string> = {
+  umum: "Umum",
+  "split-bill": "Split Bill",
+  "split-later": "Split Later",
+  "split-bill-liburan": "Split Bill Liburan",
+  invoice: "Invoice",
+  "shared-goals": "Shared Goals",
+  "collect-money": "Collect Money",
+  wallet: "Wallet",
+  akun: "Akun",
+  privasi: "Privasi",
+};
+
 export const faqData: FAQItem[] = [
   {
     id: "1",
     question: "Apakah SplitBill gratis digunakan?",
     answer:
-      "SplitBill tersedia dalam dua paket. Paket Gratisan (Rp 0/selamanya) sudah termasuk 5x quota scan struk AI, semua fitur split bill dasar, dan share rincian ke WhatsApp — lebih dari cukup untuk patungan sesekali. Upgrade ke Paket Premium (Rp 15K/bulan) untuk scan struk tanpa batas, OCR Pro yang lebih ngebut, invoice premium, statistik keuangan, dan bebas iklan.",
+      "SplitBill bisa dipakai gratis selamanya: semua fitur split bill dasar, 5x kuota scan struk AI, dan share rincian ke WhatsApp, lebih dari cukup buat patungan sesekali. Kalau butuh lebih, ada paket berbayar mulai Rp 19.000/bulan (Starter) dengan AI Scan unlimited dan tanpa iklan. Cek harga dan promo terbaru di halaman Langganan.",
     category: "umum",
     showOnLanding: true,
   },
@@ -59,9 +72,9 @@ export const faqData: FAQItem[] = [
   },
   {
     id: "6",
-    question: "Apa saja yang didapat di Paket Premium?",
+    question: "Apa saja paket berbayar di SplitBill?",
     answer:
-      "Paket Premium (Rp 15K/bulan) memberikan kamu: scan struk AI tanpa batas kuota, OCR Pro yang lebih cepat & akurat, desain link invoice premium yang bisa dikustomisasi, statistik keuangan & analisis pengeluaran bulanan, serta pengalaman bebas iklan. Cocok buat kamu yang sering nongkrong dan hobi kulineran bareng circle.",
+      "Ada tiga paket. Starter (Rp 19.000 untuk 1 bulan): split bill tanpa batas, riwayat transaksi, tanpa iklan, dan AI Scan unlimited. Pro (Rp 59.000 untuk 3 bulan): semua fitur Starter plus export PDF, share WhatsApp, dan AI processing lebih cepat. Ultimate (Rp 149.000 untuk 12 bulan): semua fitur Pro, AI Scan tercepat, dan early access fitur baru. Harga di atas harga normal, cek promo terbaru di halaman Langganan.",
     category: "umum",
     showOnLanding: true,
   },

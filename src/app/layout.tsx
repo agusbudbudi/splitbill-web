@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import { Toaster } from "sonner";
 import "./globals.css";
+import { buildMetadata, SITE_NAME, SITE_URL } from "@/lib/seo";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { AppEntryTracker } from "@/components/providers/AppEntryTracker";
@@ -16,46 +17,29 @@ export const viewport: Viewport = {
   themeColor: "#479fea",
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false, // Often desired for PWAs to feel like native apps
+  // No maximumScale/userScalable: blocking pinch zoom fails accessibility audits
   viewportFit: "cover",
   interactiveWidget: "resizes-content",
 };
 
+// Site-wide defaults. Pages override title/description/canonical/OG/Twitter
+// through buildMetadata() so none of them inherit the homepage's tags.
 export const metadata: Metadata = {
-  metadataBase: new URL("https://www.splitbill.my.id"),
-  title: "Split Bill Online - Aplikasi Bagi Tagihan & Patungan Gratis",
-  description:
-    "Split bill online gratis! Scan struk, hitung pajak otomatis, dan bagi tagihan praktis bareng teman. Aplikasi patungan terbaik yang 100% free, cepat & akurat.",
-  applicationName: "Split Bill Online",
-  authors: [{ name: "SplitBill Team" }],
-  openGraph: {
-    title: "Split Bill App - Bagi Tagihan Lebih Mudah",
+  metadataBase: new URL(SITE_URL),
+  ...buildMetadata({
+    title: "Split Bill Online - Aplikasi Bagi Tagihan & Patungan Gratis",
     description:
-      "Split bill online gratis! Scan struk, hitung pajak otomatis, dan bagi tagihan praktis bareng teman. 100% free!",
-    url: "https://www.splitbill.my.id",
-    siteName: "Split Bill Online",
-    images: [
-      {
-        url: "/img/pwa-banner.png",
-        width: 1200,
-        height: 630,
-        alt: "Split Bill App — Aplikasi Bagi Tagihan Online Gratis",
-      },
-    ],
-    locale: "id_ID",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Split Bill Online - Gratis & Mudah",
-    description:
-      "Split bill online gratis! Scan struk, hitung pajak otomatis, dan bagi tagihan praktis bareng teman.",
-    images: ["/img/pwa-banner.png"],
-  },
+      "Split bill online gratis: scan struk pakai AI, hitung pajak dan service charge otomatis, lalu bagi tagihan ke teman lewat WhatsApp. Tanpa install aplikasi.",
+    path: "/",
+  }),
+  // No site-wide canonical: a page without its own would otherwise claim the
+  // homepage as canonical.
+  alternates: undefined,
+  applicationName: SITE_NAME,
+  authors: [{ name: "Tim SplitBill" }],
   appleWebApp: {
     capable: true,
-    title: "Split Bill Online",
+    title: SITE_NAME,
     statusBarStyle: "black-translucent",
   },
   icons: {
@@ -65,9 +49,6 @@ export const metadata: Metadata = {
     ],
     shortcut: "/favicon.ico",
     apple: "/img/split-bill-icon.png",
-  },
-  alternates: {
-    canonical: "https://www.splitbill.my.id",
   },
 };
 

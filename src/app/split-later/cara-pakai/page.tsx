@@ -10,6 +10,7 @@
  */
 
 import type { Metadata } from "next";
+import { buildMetadata } from "@/lib/seo";
 import {
   Camera,
   ShieldCheck,
@@ -40,46 +41,19 @@ import { FAQSectionHomepage } from "@/components/homepage/FAQSectionHomepage";
 const PAGE_URL = "https://www.splitbill.my.id/split-later/cara-pakai";
 const OG_IMAGE = "/img/cara-pakai/split-later/hero-split-later-cara-kerja.png";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildMetadata({
   title: "Cara Pakai Split Later: Kumpul Struk, Split Belakangan | SplitBill",
-  description:
-    "Panduan lengkap cara pakai fitur Split Later: buat bucket acara, kumpulkan struk kapan aja, proses tiap struk, sampai lihat settlement gabungan.",
-  keywords: [
-    "cara pakai split later",
-    "tutorial split later",
-    "panduan split later",
-    "cara kumpulkan struk liburan",
-    "split tagihan belakangan",
-    "cara pakai split bill liburan",
-  ],
-  alternates: {
-    canonical: PAGE_URL,
+  description: "Panduan lengkap cara pakai fitur Split Later: buat bucket acara, kumpulkan struk kapan aja, proses tiap struk, sampai lihat settlement gabungan.",
+  path: "/split-later/cara-pakai",
+  socialTitle: "Cara Pakai Split Later: Kumpul Struk, Split Belakangan",
+  socialDescription: "Buat bucket acara, kumpulkan struk kapan aja, proses tiap struk, lalu lihat settlement gabungan. Semua langkah Split Later dijelaskan lengkap di sini.",
+  image: {
+    url: OG_IMAGE,
+    width: 1920,
+    height: 900,
+    alt: "Tampilan aplikasi Split Later: daftar bucket, struk, dan settlement",
   },
-  openGraph: {
-    title: "Cara Pakai Split Later: Kumpul Struk, Split Belakangan",
-    description:
-      "Buat bucket acara, kumpulkan struk kapan aja, proses tiap struk, lalu lihat settlement gabungan. Semua langkah Split Later dijelaskan lengkap di sini.",
-    url: PAGE_URL,
-    siteName: "Split Bill App",
-    images: [
-      {
-        url: OG_IMAGE,
-        width: 1920,
-        height: 900,
-        alt: "Tampilan aplikasi Split Later — daftar bucket, struk, dan settlement",
-      },
-    ],
-    locale: "id_ID",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Cara Pakai Split Later: Kumpul Struk, Split Belakangan",
-    description:
-      "Buat bucket acara, kumpulkan struk kapan aja, proses tiap struk, lalu lihat settlement gabungan. Semua langkah Split Later dijelaskan lengkap di sini.",
-    images: [OG_IMAGE],
-  },
-};
+});
 
 const splitLaterFaqs = faqData.filter((item) => item.category === "split-later");
 

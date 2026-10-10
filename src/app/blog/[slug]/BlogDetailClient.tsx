@@ -134,96 +134,66 @@ export default function BlogDetailClient({
 
         {/* Left Column: Hero Banner Image & Main Content */}
         <main className="w-full lg:flex-1 flex flex-col gap-6">
-          {/* Article Hero — Mobile: natural image height, no crop */}
-          <div className="lg:hidden w-[calc(100%+48px)] -mx-6 bg-muted overflow-hidden">
-            <img
-              src={blog.thumbnail || "/img/pwa-banner.png"}
-              alt={blog.thumbnailAlt || blog.title}
-              className="w-full h-auto"
-            />
-          </div>
+          {/* Article hero. One title block (single H1) for all breakpoints:
+              below the natural-height image on mobile, overlaid on the
+              cropped banner on desktop. */}
+          <section className="relative lg:rounded-lg lg:overflow-hidden lg:shadow-soft">
+            {/* Mobile: natural image height, no crop */}
+            <div className="lg:hidden w-[calc(100%+48px)] -mx-6 bg-muted overflow-hidden">
+              <img
+                src={blog.thumbnail || "/img/pwa-banner.png"}
+                alt={blog.thumbnailAlt || blog.title}
+                className="w-full h-auto"
+              />
+            </div>
 
-          {/* Article Hero — Desktop: cropped banner with overlay */}
-          <section className="hidden lg:block relative w-full rounded-lg aspect-[16/9] min-h-[300px] bg-muted overflow-hidden shadow-soft">
-            <Image
-              src={blog.thumbnail || "/img/pwa-banner.png"}
-              alt={blog.thumbnailAlt || blog.title}
-              fill
-              sizes="800px"
-              className="w-full h-full object-cover"
-              priority
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+            {/* Desktop: cropped banner with overlay */}
+            <div className="hidden lg:block relative w-full aspect-[16/9] min-h-[300px] bg-muted">
+              <Image
+                src={blog.thumbnail || "/img/pwa-banner.png"}
+                alt={blog.thumbnailAlt || blog.title}
+                fill
+                sizes="800px"
+                className="w-full h-full object-cover"
+                priority
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+            </div>
 
-            <div className="absolute bottom-0 left-0 w-full p-6 md:p-8 text-white">
-              <div className="w-full">
-                <motion.div
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6 }}
-                >
-                  <Link href={`/blog/category/${slugify(blog.category)}`}>
-                    <Badge className="bg-primary text-white border-none px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest mb-4 hover:bg-primary/90 transition-colors">
-                      {blog.category}
-                    </Badge>
-                  </Link>
-                  <h1 className="text-2xl md:text-3xl font-black mb-4 leading-tight tracking-tight">
-                    {blog.title}
-                  </h1>
+            <div className="pt-6 lg:pt-0 lg:absolute lg:bottom-0 lg:left-0 lg:w-full lg:p-8 lg:text-white">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+              >
+                <Link href={`/blog/category/${slugify(blog.category)}`}>
+                  <Badge className="bg-primary text-white border-none px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest mb-4 hover:bg-primary/90 transition-colors">
+                    {blog.category}
+                  </Badge>
+                </Link>
+                <h1 className="text-2xl lg:text-3xl font-black mb-4 leading-tight tracking-tight text-foreground lg:text-white">
+                  {blog.title}
+                </h1>
 
-                  <div className="flex flex-wrap items-center gap-6 text-xs text-white/80 font-medium">
-                    <div className="flex items-center gap-2">
-                      <div className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center">
-                        <User className="w-4 h-4" />
-                      </div>
-                      <span>{blog.author}</span>
+                <div className="flex flex-wrap items-center gap-6 text-xs text-muted-foreground lg:text-white/80 font-medium">
+                  <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-full bg-muted lg:bg-white/20 flex items-center justify-center">
+                      <User className="w-4 h-4" />
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Calendar className="w-4 h-4" />
-                      <span>{formatDate(blog.publishedAt || blog.createdAt)}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Clock className="w-4 h-4" />
-                      <span>{blog.readTime} mnt baca</span>
-                    </div>
+                    <span>{blog.author}</span>
                   </div>
-                </motion.div>
-              </div>
+                  <div className="flex items-center gap-2">
+                    <Calendar className="w-4 h-4" />
+                    <span>{formatDate(blog.publishedAt || blog.createdAt)}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4" />
+                    <span>{blog.readTime} mnt baca</span>
+                  </div>
+                </div>
+              </motion.div>
             </div>
           </section>
-
-          {/* Mobile: Category, Title & Meta below image */}
-          <div className="lg:hidden">
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <Badge className="bg-primary text-white border-none px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest mb-4">
-                {blog.category}
-              </Badge>
-              <h1 className="text-2xl font-black mb-4 leading-tight tracking-tight text-foreground">
-                {blog.title}
-              </h1>
-
-              <div className="flex flex-wrap items-center gap-6 text-xs text-muted-foreground font-medium">
-                <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-full bg-muted flex items-center justify-center">
-                    <User className="w-4 h-4" />
-                  </div>
-                  <span>{blog.author}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4" />
-                  <span>{formatDate(blog.publishedAt || blog.createdAt)}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Clock className="w-4 h-4" />
-                  <span>{blog.readTime} mnt baca</span>
-                </div>
-              </div>
-            </motion.div>
-          </div>
 
           <motion.div
             initial={{ opacity: 0 }}

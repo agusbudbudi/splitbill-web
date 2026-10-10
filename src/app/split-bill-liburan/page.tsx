@@ -10,6 +10,7 @@
  */
 
 import type { Metadata } from "next";
+import { buildMetadata } from "@/lib/seo";
 import { Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -18,7 +19,6 @@ import {
   Share2,
   Frown,
   Calculator,
-  Star,
   UserX,
   MessageCircle,
   Sparkles,
@@ -45,38 +45,19 @@ const PAGE_PATH = "/split-bill-liburan";
 const PAGE_URL = "https://www.splitbill.my.id/split-bill-liburan";
 const OG_IMAGE = "/img/promoBanner-split-later-new.jpg";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildMetadata({
   title: "Split Bill Liburan - Kumpulin Struk, Bagi Nanti Aja | SplitBill",
-  description:
-    "Liburan bareng temen gak usah ribet itung-itung di tempat. Kumpulin struk selama trip, split tagihannya belakangan pas udah santai. Gratis & tanpa login.",
-  alternates: {
-    canonical: PAGE_URL,
+  description: "Liburan bareng temen gak usah ribet itung-itung di tempat. Kumpulin struk selama trip, split tagihannya belakangan pas udah santai. Gratis & tanpa login.",
+  path: "/split-bill-liburan",
+  socialTitle: "Liburan Dulu. Urusan Patungan, Biar SplitBill",
+  socialDescription: "Kumpulin struk selama liburan, split tagihannya nanti pas udah santai. Gratis, tanpa login, langsung dari HP.",
+  image: {
+    url: OG_IMAGE,
+    width: 1920,
+    height: 900,
+    alt: "Split Bill Liburan, kumpulin struk selama trip lalu bagi tagihan belakangan",
   },
-  openGraph: {
-    title: "Liburan Dulu. Urusan Patungan, Biar SplitBill",
-    description:
-      "Kumpulin struk selama liburan, split tagihannya nanti pas udah santai. Gratis, tanpa login, langsung dari HP.",
-    url: PAGE_URL,
-    siteName: "Split Bill App",
-    images: [
-      {
-        url: OG_IMAGE,
-        width: 1200,
-        height: 630,
-        alt: "Split Bill Liburan, kumpulin struk selama trip lalu bagi tagihan belakangan",
-      },
-    ],
-    locale: "id_ID",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Liburan Dulu. Urusan Patungan, Biar SplitBill",
-    description:
-      "Kumpulin struk selama liburan, split tagihannya nanti pas udah santai. Gratis, tanpa login.",
-    images: [OG_IMAGE],
-  },
-};
+});
 
 const liburanFaqs = faqData.filter((item) => item.category === "split-bill-liburan");
 
@@ -186,11 +167,6 @@ export default function SplitBillLiburanPage() {
                   </div>
 
                   <div className="flex flex-wrap items-center gap-4 justify-center lg:justify-start mt-8">
-                    <div className="flex items-center gap-1.5 text-slate-600 text-sm font-semibold">
-                      <Star className="w-3.5 h-3.5 fill-warning text-warning" />
-                      <span>4.9/5 rating</span>
-                    </div>
-                    <div className="w-px h-4 bg-slate-200" />
                     <div className="text-slate-600 text-sm font-semibold">
                       5.000+ Tagihan dibuat
                     </div>

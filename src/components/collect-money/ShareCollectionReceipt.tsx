@@ -79,9 +79,9 @@ export const ShareCollectionReceipt = React.forwardRef<
           </div>
           <div className="absolute inset-0 bg-primary/20 blur-2xl opacity-40 animate-pulse rounded-full" />
         </div>
-        <h1 className="text-primary text-5xl font-black tracking-tight mb-4 max-w-[800px]">
+        <p className="text-primary text-5xl font-black tracking-tight mb-4 max-w-[800px]">
           {collection.title}
-        </h1>
+        </p>
         <div className="flex items-center gap-3 text-slate-500 text-2xl font-bold uppercase tracking-widest">
           <Wallet className="w-6 h-6 text-primary" />
           <span>Target: {formatCurrency(collection.totalAmount)}</span>

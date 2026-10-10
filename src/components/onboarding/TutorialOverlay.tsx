@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronRight, ChevronLeft, Sparkles, Rocket } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
-import { useOnboardingStore } from "@/store/useOnboardingStore";
 
 export interface TutorialStep {
   id: string;
@@ -110,9 +109,9 @@ export const TutorialOverlay = ({
     }
   };
 
-  const hasSeenTutorial = useOnboardingStore((state) => state.hasSeenTutorial);
-
-  if (!isOpen || hasSeenTutorial) return null;
+  // Opened on demand (header "?" button), so it must show even for users who
+  // already saw it once; the parent owns isOpen.
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-[200] pointer-events-none">

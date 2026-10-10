@@ -1,29 +1,25 @@
 "use client";
 
 import React, { Suspense, useState, useEffect, useRef } from "react";
+import dynamic from "next/dynamic";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { Header } from "@/components/layout/Header";
 import { PeopleList } from "@/components/splitbill/PeopleList";
 import { ManualInputForm } from "@/components/splitbill/ManualInputForm";
-import { AIScanForm } from "@/components/splitbill/AIScanForm";
 import { AIScanPromoBanner } from "@/components/splitbill/AIScanPromoBanner";
 import { ExpenseList } from "@/components/splitbill/ExpenseList";
 import { AdditionalExpenses } from "@/components/splitbill/AdditionalExpenses";
-import { BillSummary } from "@/components/splitbill/BillSummary";
-import { SaveBillNudge } from "@/components/splitbill/SaveBillNudge";
-import { VisualReceiptPreview } from "@/components/splitbill/VisualReceiptPreview";
 import { StepperV2 } from "@/components/splitbill/StepperV2";
 import { Card, CardContent } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
-import { LoadingIndicator } from "@/components/ui/LoadingIndicator";
+import { SplitBillShell } from "./SplitBillShell";
 import { useSplitBillStore } from "@/store/useSplitBillStore";
 import { useSplitBillChatStore } from "@/store/useSplitBillChatStore";
 import { useSplitLaterStore } from "@/store/useSplitLaterStore";
 import { useWalletStore, type PaymentMethod } from "@/store/useWalletStore";
 import { useBillCalculations } from "@/hooks/useBillCalculations";
 import { WalletSelectionCard } from "@/components/wallet/WalletSelectionCard";
-import { AddPaymentMethodBottomSheet } from "@/components/wallet/AddPaymentMethodBottomSheet";
 import { draftApi, splitBillApi, mapFrontendToBackend, receiptImageApi, parseDataUrlImages } from "@/lib/api/split-bills";
 import {
   Users,
@@ -37,36 +33,44 @@ import {
   Rocket,
   CheckCircle2,
   Home,
+  CircleHelp,
   History as HistoryIcon,
   RotateCcw,
   Calendar,
   Info,
 } from "lucide-react";
-import { SuccessSection } from "@/components/ui/SuccessSection";
 import { cn, formatToIDR, getDefaultActivityName, getFriendAvatarUrl } from "@/lib/utils";
 import { BottomSheet } from "@/components/ui/BottomSheet";
 
 import { SegmentedControl } from "@/components/ui/SegmentedControl";
-import confetti from "canvas-confetti";
 import { suggestEmoji } from "@/lib/emojiUtils";
 import { toast } from "sonner";
 import { useOnboardingStore } from "@/store/useOnboardingStore";
-import {
-  TutorialOverlay,
-  TutorialStep,
-} from "@/components/onboarding/TutorialOverlay";
+import type { TutorialStep } from "@/components/onboarding/TutorialOverlay";
 import { useAuthStore } from "@/lib/stores/authStore";
 import { trackSplitBill, trackSocial, trackWallet, trackAuth } from "@/lib/gtag";
-import { AuthModal } from "@/components/auth/AuthModal";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { useUIStore } from "@/lib/stores/uiStore";
-import { DropOffSurveyBottomSheet } from "@/components/splitbill/DropOffSurveyBottomSheet";
 import { getRandomAdCampaign, type AdCampaign } from "@/lib/ads/adsConfig";
-import { InterstitialAdModal } from "@/components/ads/InterstitialAdModal";
-import { ChatAgentFAB } from "@/components/splitbill/chat/ChatAgentFAB";
-import { ChatRoom } from "@/components/splitbill/chat/ChatRoom";
 import { AIScanQuotaBanner } from "@/components/ui/AIScanQuotaBanner";
 import { AgentBillyEntryCard } from "@/components/splitbill/chat/ChatAgentEntryCard";
+
+// Not needed for the first paint (later steps, modals, sheets, chat, ads):
+// load them after hydration so they don't delay the initial render (LCP).
+// (next/dynamic needs the options inline.) `loading: () => null` keeps next/dynamic from suspending to the page's
+// <Suspense> fallback and blanking the wizard while a chunk loads.
+const AIScanForm = dynamic(() => import("@/components/splitbill/AIScanForm").then((m) => m.AIScanForm), { ssr: false, loading: () => null });
+const BillSummary = dynamic(() => import("@/components/splitbill/BillSummary").then((m) => m.BillSummary), { ssr: false, loading: () => null });
+const SaveBillNudge = dynamic(() => import("@/components/splitbill/SaveBillNudge").then((m) => m.SaveBillNudge), { ssr: false, loading: () => null });
+const VisualReceiptPreview = dynamic(() => import("@/components/splitbill/VisualReceiptPreview").then((m) => m.VisualReceiptPreview), { ssr: false, loading: () => null });
+const AddPaymentMethodBottomSheet = dynamic(() => import("@/components/wallet/AddPaymentMethodBottomSheet").then((m) => m.AddPaymentMethodBottomSheet), { ssr: false, loading: () => null });
+const SuccessSection = dynamic(() => import("@/components/ui/SuccessSection").then((m) => m.SuccessSection), { ssr: false, loading: () => null });
+const TutorialOverlay = dynamic(() => import("@/components/onboarding/TutorialOverlay").then((m) => m.TutorialOverlay), { ssr: false, loading: () => null });
+const AuthModal = dynamic(() => import("@/components/auth/AuthModal").then((m) => m.AuthModal), { ssr: false, loading: () => null });
+const DropOffSurveyBottomSheet = dynamic(() => import("@/components/splitbill/DropOffSurveyBottomSheet").then((m) => m.DropOffSurveyBottomSheet), { ssr: false, loading: () => null });
+const InterstitialAdModal = dynamic(() => import("@/components/ads/InterstitialAdModal").then((m) => m.InterstitialAdModal), { ssr: false, loading: () => null });
+const ChatAgentFAB = dynamic(() => import("@/components/splitbill/chat/ChatAgentFAB").then((m) => m.ChatAgentFAB), { ssr: false, loading: () => null });
+const ChatRoom = dynamic(() => import("@/components/splitbill/chat/ChatRoom").then((m) => m.ChatRoom), { ssr: false, loading: () => null });
 
 const SplitBillContent = () => {
   const router = useRouter();
@@ -165,8 +169,10 @@ const SplitBillContent = () => {
   );
   const _hasHydrated = useOnboardingStore((state) => state._hasHydrated);
 
+  // Tutorial is opened on demand from the "?" button in the header and only
+  // covers the current step. It used to auto-open for first-time visitors,
+  // which made its popup the page's LCP element (~7s on mobile).
   const [isTutorialOpen, setIsTutorialOpen] = useState(false);
-  const hasTriggeredRef = useRef(false);
 
   useEffect(() => {
     if (step === 1) {
@@ -179,24 +185,6 @@ const SplitBillContent = () => {
       trackSplitBill.autofillView(activityName);
     }
   }, [step]);
-
-  useEffect(() => {
-    if (
-      _hasHydrated &&
-      !hasSeenTutorial &&
-      step === 1 &&
-      !hasTriggeredRef.current
-    ) {
-      const timer = setTimeout(() => {
-        // Triple check latest state to be absolutely sure
-        if (!useOnboardingStore.getState().hasSeenTutorial) {
-          setIsTutorialOpen(true);
-          hasTriggeredRef.current = true;
-        }
-      }, 1500);
-      return () => clearTimeout(timer);
-    }
-  }, [_hasHydrated, hasSeenTutorial, step]);
 
   const tutorialSteps: TutorialStep[] = [
     {
@@ -225,23 +213,20 @@ const SplitBillContent = () => {
     },
   ];
 
-  const handleTutorialStepChange = (index: number) => {
-    // index 0 -> step 1 (People)
-    // index 1 -> step 2 (Input)
-    // index 2 -> step 3 (Payment)
-    const targetAppStep = index + 1;
-    if (step !== targetAppStep) {
-      router.push(`/split-bill?step=${targetAppStep}`);
-    }
+  // tutorialSteps[i] belongs to wizard step i + 1; step 4 has none.
+  const currentTutorialStep = tutorialSteps[step - 1];
+
+  const openTutorial = () => setIsTutorialOpen(true);
+
+  // Mark as seen on close, not on open: hides the header hint dot afterwards.
+  const closeTutorial = () => {
+    setIsTutorialOpen(false);
+    setHasSeenTutorial(true);
   };
 
   const completeTutorial = () => {
-    setIsTutorialOpen(false);
-    setHasSeenTutorial(true);
+    closeTutorial();
     trackSocial.tutorialComplete();
-    // Reset back to Step 1 so user can start from the beginning
-    router.push("/split-bill?step=1");
-    toast.success("Keren! Sekarang kamu udah siap buat Split Bill kilat! 🚀");
   };
 
   // Initialize from search params to handle back navigation
@@ -281,7 +266,8 @@ const SplitBillContent = () => {
     }
   }, [searchParams]);
 
-  const triggerConfetti = () => {
+  const triggerConfetti = async () => {
+    const { default: confetti } = await import("canvas-confetti");
     const duration = 3 * 1000;
     const animationEnd = Date.now() + duration;
     const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 50 };
@@ -1343,13 +1329,32 @@ const SplitBillContent = () => {
         sticky={true}
         className="rounded-b-none shadow-none"
         rightContent={
-          <button
-            onClick={() => router.push(isAuthenticated ? "/member" : "/")}
-            className="w-10 h-10 rounded-full flex items-center justify-center text-white hover:bg-white/10 transition-colors cursor-pointer"
-            title={isAuthenticated ? "Ke Beranda Member" : "Ke Landing Page"}
-          >
-            <Home className="w-5 h-5 text-white" />
-          </button>
+          <div className="flex items-center">
+            {currentTutorialStep && !isSaved && (
+              <button
+                onClick={openTutorial}
+                className="relative w-10 h-10 rounded-full flex items-center justify-center text-white hover:bg-white/10 transition-colors cursor-pointer"
+                title="Lihat panduan step ini"
+                aria-label="Lihat panduan step ini"
+              >
+                <CircleHelp className="w-5 h-5 text-white" />
+                {/* Hint for first-time visitors until they open it once */}
+                {_hasHydrated && !hasSeenTutorial && (
+                  <span className="absolute top-2 right-2 flex h-2.5 w-2.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-300 opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-400" />
+                  </span>
+                )}
+              </button>
+            )}
+            <button
+              onClick={() => router.push(isAuthenticated ? "/member" : "/")}
+              className="w-10 h-10 rounded-full flex items-center justify-center text-white hover:bg-white/10 transition-colors cursor-pointer"
+              title={isAuthenticated ? "Ke Beranda Member" : "Ke Landing Page"}
+            >
+              <Home className="w-5 h-5 text-white" />
+            </button>
+          </div>
         }
       />
 
@@ -1686,16 +1691,16 @@ const SplitBillContent = () => {
         })()}
       />
 
-      <TutorialOverlay
-        steps={tutorialSteps}
-        isOpen={isTutorialOpen}
-        onClose={() => {
-          setIsTutorialOpen(false);
-          setHasSeenTutorial(true);
-        }}
-        onComplete={completeTutorial}
-        onStepChange={handleTutorialStepChange}
-      />
+      {currentTutorialStep && (
+        <TutorialOverlay
+          key={currentTutorialStep.id}
+          steps={[currentTutorialStep]}
+          isOpen={isTutorialOpen}
+          onClose={closeTutorial}
+          onComplete={completeTutorial}
+          onStepChange={() => {}}
+        />
+      )}
 
       {(step === 2 || step === 3) && (
         <VisualReceiptPreview
@@ -1725,13 +1730,7 @@ const SplitBillContent = () => {
 
 export default function SplitBillClientPage() {
   return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen flex items-center justify-center">
-          <LoadingIndicator />
-        </div>
-      }
-    >
+    <Suspense fallback={<SplitBillShell />}>
       <SplitBillContent />
     </Suspense>
   );

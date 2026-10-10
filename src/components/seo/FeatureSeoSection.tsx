@@ -93,7 +93,7 @@ export function FeatureSeoSection({
                   <point.icon className="w-full h-full text-white" strokeWidth={1.75} />
                 </div>
                 <div>
-                  <h3 className="text-base font-extrabold text-slate-800 mb-1">{point.title}</h3>
+                  <h2 className="text-base font-extrabold text-slate-800 mb-1">{point.title}</h2>
                   <p className="text-sm font-medium text-slate-500 leading-relaxed">{point.description}</p>
                 </div>
               </div>
@@ -111,7 +111,15 @@ export function FeatureSeoSection({
           />
           <ol className="space-y-3">
             {steps.map((step, i) => (
-              <li key={step.title} className={cn(cardClass, "relative flex items-center gap-4 p-4 overflow-hidden")}>
+              <li
+                key={step.title}
+                // Decorative step number via ::after so it isn't read or contrast-checked as text
+                data-step={String(i + 1).padStart(2, "0")}
+                className={cn(
+                  cardClass,
+                  "relative flex items-center gap-4 p-4 overflow-hidden after:content-[attr(data-step)] after:absolute after:right-4 after:top-1/2 after:-translate-y-1/2 after:text-4xl after:font-black after:text-primary/10 after:leading-none after:select-none",
+                )}
+              >
                 <div className="w-11 h-11 bg-primary/10 rounded-md flex items-center justify-center p-2.5 shrink-0">
                   <step.icon className="w-full h-full text-primary" strokeWidth={1.75} />
                 </div>
@@ -119,9 +127,6 @@ export function FeatureSeoSection({
                   <h3 className="text-sm sm:text-base font-extrabold text-slate-800">{step.title}</h3>
                   <p className="text-sm font-medium text-slate-500 leading-relaxed">{step.description}</p>
                 </div>
-                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-4xl font-black text-primary/10 leading-none select-none">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
               </li>
             ))}
           </ol>

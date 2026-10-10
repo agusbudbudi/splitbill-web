@@ -94,6 +94,7 @@ export const Header = ({
                       <Button
                         variant="ghost"
                         size="icon"
+                        aria-label="Kembali"
                         className="rounded-full h-10 w-10 hover:bg-white/10 transition-colors cursor-pointer"
                         onClick={onBack}
                       >
@@ -103,6 +104,7 @@ export const Header = ({
                       <Button
                         variant="ghost"
                         size="icon"
+                        aria-label="Kembali"
                         className="rounded-full h-10 w-10 hover:bg-white/10 transition-colors cursor-pointer"
                         onClick={() => router.back()}
                       >

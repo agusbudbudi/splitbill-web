@@ -264,7 +264,6 @@ export const Banner = () => {
                   "w-full h-full block object-cover transition-all duration-700 group-hover:scale-105",
                   !loadedImages[banner.id] ? "opacity-0" : "opacity-100",
                 )}
-                priority={index < visibleCards}
                 draggable={false}
                 onLoad={() =>
                   setLoadedImages((prev) => ({ ...prev, [banner.id]: true }))

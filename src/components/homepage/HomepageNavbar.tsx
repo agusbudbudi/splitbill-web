@@ -248,7 +248,7 @@ export const HomepageNavbar = ({
             <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-white rounded-full flex items-center justify-center shadow-sm border border-slate-100 z-10 p-[1px]">
               <Image
                 src="/img/icon-vip.png"
-                alt="VIP"
+                alt=""
                 width={14}
                 height={14}
                 className="w-full h-full object-contain"
@@ -297,7 +297,6 @@ export const HomepageNavbar = ({
                 width={130}
                 height={36}
                 className="h-7 lg:h-8 w-auto transition-all duration-300"
-                priority
               />
             </Link>
 
@@ -344,7 +343,7 @@ export const HomepageNavbar = ({
                                 <div className={`w-10 h-10 shrink-0 ${feat.bgLight} rounded-sm flex items-center justify-center p-1.5`}>
                                   <Image
                                     src={feat.imageSrc}
-                                    alt={feat.title}
+                                    alt=""
                                     width={40}
                                     height={40}
                                     className="w-full h-full object-contain"
@@ -531,7 +530,7 @@ export const HomepageNavbar = ({
                                 <div className={`w-9 h-9 shrink-0 ${feat.bgLight} rounded-md flex items-center justify-center p-1.5`}>
                                   <Image
                                     src={feat.imageSrc}
-                                    alt={feat.title}
+                                    alt=""
                                     width={36}
                                     height={36}
                                     className="w-full h-full object-contain"
@@ -590,7 +589,7 @@ export const HomepageNavbar = ({
                       <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-white rounded-full flex items-center justify-center shadow-xs border border-slate-100 z-10 p-[0.5px]">
                         <Image
                           src="/img/icon-vip.png"
-                          alt="VIP"
+                          alt=""
                           width={8}
                           height={8}
                           className="w-full h-full object-contain"

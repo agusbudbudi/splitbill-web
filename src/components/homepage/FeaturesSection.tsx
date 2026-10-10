@@ -141,7 +141,7 @@ export const FeaturesSection = () => {
                   <div className="relative shrink-0 w-14 h-14 sm:w-16 sm:h-16 rounded-md overflow-hidden bg-primary/10 p-2">
                     <Image
                       src={feat.imageSrc}
-                      alt={feat.title}
+                      alt=""
                       fill
                       className="object-contain p-2"
                       sizes="64px"

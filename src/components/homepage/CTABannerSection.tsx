@@ -151,7 +151,7 @@ export const CTABannerSection = () => {
                   <div className={`flex-shrink-0 w-12 h-12 rounded-sm ${card.bgLight} ${card.bgHover} flex items-center justify-center p-1 transition-all duration-300 group-hover:scale-105 relative`}>
                     <Image
                       src={card.imageSrc}
-                      alt={card.title}
+                      alt=""
                       width={48}
                       height={48}
                       className="w-full h-full object-contain"

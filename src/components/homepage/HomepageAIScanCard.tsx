@@ -36,7 +36,7 @@ export const HomepageAIScanCard = () => {
           <div className="shrink-0 w-16 h-16 rounded-full flex items-center justify-center transition-transform group-hover/card:scale-110">
             <Image
               src="/img/ai-icon.png"
-              alt="Ikon AI"
+              alt=""
               width={80}
               height={80}
               className="w-full h-full object-contain"

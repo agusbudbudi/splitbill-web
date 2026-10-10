@@ -108,9 +108,9 @@ export default function DonateClientPage() {
                 <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
                   <Coffee className="w-5 h-5" />
                 </div>
-                <h2 className="font-bold text-lg tracking-tight">
+                <h1 className="font-bold text-lg tracking-tight">
                   Traktir Kopi Developer
-                </h2>
+                </h1>
               </div>
 
               <div className="space-y-3 text-[13px] leading-relaxed text-muted-foreground/90 font-medium">

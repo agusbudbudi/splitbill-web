@@ -17,8 +17,7 @@ export const viewport: Viewport = {
   themeColor: "#479fea",
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false, // Often desired for PWAs to feel like native apps
+  // No maximumScale/userScalable: blocking pinch zoom fails accessibility audits
   viewportFit: "cover",
   interactiveWidget: "resizes-content",
 };

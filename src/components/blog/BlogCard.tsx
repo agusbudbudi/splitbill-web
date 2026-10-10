@@ -17,7 +17,9 @@ interface BlogCardProps {
 export const BlogCard = ({ blog, priority = false }: BlogCardProps) => {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      // The priority card is the LCP image: render it as-is from the server
+      // HTML instead of waiting for hydration to fade it in.
+      initial={priority ? false : { opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5 }}

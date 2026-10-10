@@ -72,7 +72,7 @@ const MockBillCard = ({ stage }: { stage: number }) => {
       <div className="flex items-center gap-2 mb-3">
         <Image
           src="/img/icon-splitbill.png"
-          alt="Split Bill"
+          alt=""
           width={22}
           height={22}
           className="w-[22px] h-[22px] object-contain shrink-0"
@@ -178,7 +178,7 @@ const MockBillCard = ({ stage }: { stage: number }) => {
           >
             <Image
               src="/img/mockup-struk.webp"
-              alt="Struk"
+              alt="Contoh struk restoran yang sedang discan AI SplitBill"
               fill
               sizes="300px"
               priority
@@ -509,9 +509,10 @@ export const HeroSection = () => {
             </motion.div>
           </div>
 
-          {/* Right — Mock UI Card */}
+          {/* Right — Mock UI Card. No opacity-0 start: the phone mockup is the
+              LCP image and must paint from the server HTML, before hydration. */}
           <motion.div
-            initial={{ opacity: 0, x: 40, scale: 0.96 }}
+            initial={{ x: 40, scale: 0.96 }}
             animate={{ opacity: 1, x: 0, scale: 1 }}
             transition={{ duration: 0.7, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
             className="flex-1 flex justify-center lg:justify-end relative"
@@ -524,7 +525,7 @@ export const HeroSection = () => {
               <div className="absolute -z-10 pointer-events-none opacity-90 -translate-x-28 xs:-translate-x-32 sm:-translate-x-36 transition-transform w-[530px] xs:w-[510px] sm:w-[595px] h-auto">
                 <Image
                   src="/img/hero-mockup.webp"
-                  alt="Phone Mockup"
+                  alt="Tampilan hasil split bill di aplikasi SplitBill dengan instruksi transfer dan rincian per orang"
                   width={1440}
                   height={1440}
                   sizes="(max-width: 640px) 530px, 595px"

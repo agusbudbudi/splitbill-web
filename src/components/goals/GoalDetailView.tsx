@@ -377,9 +377,9 @@ export const GoalDetailView = ({
                 <Pencil className="w-3.5 h-3.5" />
               </button>
             </div>
-            <h1 className="text-4xl font-bold tracking-tight mb-4">
+            <p className="text-4xl font-bold tracking-tight mb-4">
               {formatCurrency(goal.currentAmount)}
-            </h1>
+            </p>
 
             {goal.deadline && (
               <div className="flex items-center justify-center gap-2">

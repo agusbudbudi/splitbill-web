@@ -11,6 +11,8 @@ interface CaraPakaiOverviewProps {
   titleHighlight: string;
   description: string;
   points: OverviewPoint[];
+  /** Use "h1" when this section carries the page's main heading. */
+  headingLevel?: "h1" | "h2";
 }
 
 // Section "Apa itu [Fitur]?" — 3 poin overview dengan icon bg-primary solid.
@@ -21,17 +23,19 @@ export function CaraPakaiOverview({
   titleHighlight,
   description,
   points,
+  headingLevel = "h2",
 }: CaraPakaiOverviewProps) {
+  const Heading = headingLevel;
   return (
     <section id="overview" className="py-16 sm:py-24 bg-white scroll-mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight mb-4">
+          <Heading className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight mb-4 text-balance">
             {titlePrefix}{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-600">
               {titleHighlight}
             </span>
-          </h2>
+          </Heading>
           <p className="text-base sm:text-lg text-slate-500 font-medium">{description}</p>
         </div>
 

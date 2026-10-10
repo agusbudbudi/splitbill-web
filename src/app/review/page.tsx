@@ -7,6 +7,8 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://www.splitbill.my.id/review",
   },
+  // Form-only page (no review list), not worth indexing
+  robots: { index: false, follow: true },
 };
 
 export default function ReviewPage() {

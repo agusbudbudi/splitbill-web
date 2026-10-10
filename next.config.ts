@@ -30,8 +30,18 @@ const withPWA = require("@ducanh2912/next-pwa").default({
   },
 });
 
+// Private (login-only) areas. robots.txt blocks crawling, but a robots block
+// doesn't drop an already-known URL from the index, so send noindex too.
+const NOINDEX_PATHS = ["/wallet", "/history", "/member"];
+
 const nextConfig: NextConfig = {
   turbopack: {},
+  async headers() {
+    return NOINDEX_PATHS.flatMap((path) => [path, `${path}/:path*`]).map((source) => ({
+      source,
+      headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
+    }));
+  },
   // Enable Gzip/Brotli compression for CSS and JS — reduces 26KB CSS to ~6-8KB
   compress: true,
   images: {

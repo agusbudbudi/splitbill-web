@@ -11,6 +11,8 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://www.splitbill.my.id/split-later",
   },
+  // Login-only app screen; the public page is /split-later/cara-pakai
+  robots: { index: false, follow: true },
 };
 
 export default function SplitLaterPage() {

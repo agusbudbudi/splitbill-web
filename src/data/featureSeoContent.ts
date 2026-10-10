@@ -3,6 +3,9 @@ import { pickFaqs, type FeatureSeoFaq } from "@/components/seo/FeatureSeoSection
 
 export interface FeatureSeoContent {
   title: string;
+  eyebrow: string;
+  image: string;
+  ctaLabel: string;
   intro: string[];
   stepsTitle: string;
   steps: string[];
@@ -15,6 +18,9 @@ export interface FeatureSeoContent {
 // sync with what the tool actually does; never claim features that don't exist.
 export const featureSeoContent = {
   splitBill: {
+    eyebrow: "Split Bill Online",
+    image: "/img/feature-splitbill-scan.png",
+    ctaLabel: "Mulai split bill",
     title: "Split Bill Online Gratis: Bagi Tagihan Tanpa Ribet",
     intro: [
       "SplitBill adalah kalkulator split bill online gratis buat bagi tagihan makan, nongkrong, atau belanja bareng teman. Tinggal masukin siapa aja yang ikut, catat siapa pesan apa, dan SplitBill langsung ngitung berapa yang harus dibayar tiap orang, lengkap sama siapa transfer ke siapa.",
@@ -34,6 +40,9 @@ export const featureSeoContent = {
     faqs: pickFaqs(faqData, ["2", "12", "5", "4", "7"]),
   },
   invoice: {
+    eyebrow: "Invoice Online",
+    image: "/img/feature-invoice.png",
+    ctaLabel: "Mulai bikin invoice",
     title: "Buat Invoice Online Gratis, Rapi dan Siap Kirim",
     intro: [
       "Butuh nagih klien, jualan online, atau minta ganti uang talangan ke teman? Invoice Builder dari SplitBill bantu kamu bikin invoice online gratis yang rapi dalam beberapa menit, tanpa install aplikasi dan tanpa harus jago desain.",
@@ -52,6 +61,9 @@ export const featureSeoContent = {
     faqs: pickFaqs(faqData, ["16", "19", "18", "17"]),
   },
   collectMoney: {
+    eyebrow: "Collect Money",
+    image: "/img/feature-collect-money.png",
+    ctaLabel: "Mulai kumpulin iuran",
     title: "Collect Money: Kumpulin Iuran dan Patungan Online",
     intro: [
       "Collect Money dari SplitBill bantu kamu ngumpulin uang bareng tanpa harus nagih satu-satu di grup chat. Pas buat iuran kas kelas atau kantor, patungan kado ulang tahun, sewa lapangan futsal, sampai donasi kecil-kecilan di komunitas.",
@@ -69,6 +81,9 @@ export const featureSeoContent = {
     faqs: pickFaqs(faqData, ["25", "26", "27"]),
   },
   sharedGoals: {
+    eyebrow: "Shared Goals",
+    image: "/img/feature-shared-goals.png",
+    ctaLabel: "Mulai nabung bareng",
     title: "Shared Goals: Nabung Bareng Teman Buat Tujuan Bersama",
     intro: [
       "Rencana liburan bareng sering gagal karena dananya gak kekumpul? Shared Goals dari SplitBill bantu kamu dan circle nabung bareng menuju satu target, entah itu trip ke Bali, kado nikahan teman, atau makan-makan spesial akhir tahun.",

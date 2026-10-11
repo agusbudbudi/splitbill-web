@@ -1,0 +1,82 @@
+import { slugify } from "@/lib/utils/index";
+
+export interface BlogHeading {
+  id: string;
+  text: string;
+  level: 2 | 3;
+}
+
+// The page already renders the post title as its only H1, so any H1 inside
+// the CMS body is demoted to H2.
+const demoteH1 = (html: string) => html.replace(/<(\/?)h1(?=[\s>])/gi, "<$1h2");
+
+const NAMED_ENTITIES: Record<string, string> = {
+  amp: "&",
+  lt: "<",
+  gt: ">",
+  quot: '"',
+  apos: "'",
+  nbsp: " ",
+  hellip: "…",
+  ndash: "–",
+  mdash: "—",
+  lsquo: "‘",
+  rsquo: "’",
+  ldquo: "“",
+  rdquo: "”",
+};
+
+// Single pass, so an escaped "&amp;lt;" becomes "&lt;", not "<".
+const decodeEntities = (text: string) =>
+  text.replace(/&(#\d+|#x[0-9a-f]+|[a-z]+);/gi, (match, code: string) => {
+    if (code[0] === "#") {
+      const n = code[1].toLowerCase() === "x" ? parseInt(code.slice(2), 16) : parseInt(code.slice(1), 10);
+      return Number.isFinite(n) && n > 0 && n <= 0x10ffff ? String.fromCodePoint(n) : match;
+    }
+    return NAMED_ENTITIES[code.toLowerCase()] ?? match;
+  });
+
+const ID_ATTR = /\sid=["']([^"']+)["']/i;
+
+/**
+ * Normalises CMS HTML for the article page: demotes H1s and gives every H2/H3
+ * a unique id so the table of contents can link to it. A CMS-set heading id
+ * is kept unless an earlier heading already uses it; generated ids also avoid
+ * every id that appears anywhere else in the body.
+ */
+export const prepareBlogContent = (content: string): { html: string; headings: BlogHeading[] } => {
+  const source = demoteH1(content);
+  const headings: BlogHeading[] = [];
+  const reserved = new Set(Array.from(source.matchAll(/\sid=["']([^"']+)["']/gi), (m) => m[1]));
+  const used = new Set<string>();
+
+  const uniqueId = (base: string) => {
+    let id = base;
+    for (let n = 2; used.has(id) || reserved.has(id); n++) id = `${base}-${n}`;
+    return id;
+  };
+
+  const html = source.replace(
+    /<h([23])([^>]*)>([\s\S]*?)<\/h\1>/gi,
+    (match, level: string, attrs: string, inner: string) => {
+      const text = decodeEntities(inner.replace(/<[^>]+>/g, "")).trim();
+      if (!text) return match;
+
+      const existingId = attrs.match(ID_ATTR)?.[1];
+      let id: string;
+      let nextAttrs = attrs;
+      if (existingId && !used.has(existingId)) {
+        id = existingId;
+      } else {
+        id = uniqueId(slugify(text) || `bagian-${headings.length + 1}`);
+        nextAttrs = existingId ? attrs.replace(ID_ATTR, ` id="${id}"`) : ` id="${id}"${attrs}`;
+      }
+      used.add(id);
+      headings.push({ id, text, level: Number(level) as 2 | 3 });
+
+      return nextAttrs === attrs ? match : `<h${level}${nextAttrs}>${inner}</h${level}>`;
+    },
+  );
+
+  return { html, headings };
+};

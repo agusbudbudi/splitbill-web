@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { Blog } from "@/lib/types/blog";
 import { fetchBlogs } from "@/lib/api/blog";
@@ -13,6 +13,15 @@ export const LatestBlogSlider = () => {
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [canScrollPrev, setCanScrollPrev] = useState(false);
+  const [canScrollNext, setCanScrollNext] = useState(false);
+
+  const updateScrollState = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    setCanScrollPrev(el.scrollLeft > 4);
+    setCanScrollNext(el.scrollLeft + el.clientWidth < el.scrollWidth - 4);
+  }, []);
 
   useEffect(() => {
     fetchBlogs({ limit: 6 })
@@ -25,11 +34,34 @@ export const LatestBlogSlider = () => {
       .finally(() => setIsLoading(false));
   }, []);
 
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    updateScrollState();
+    el.addEventListener("scroll", updateScrollState, { passive: true });
+    const observer = new ResizeObserver(updateScrollState);
+    observer.observe(el);
+    return () => {
+      el.removeEventListener("scroll", updateScrollState);
+      observer.disconnect();
+    };
+  }, [isLoading, blogs.length, updateScrollState]);
+
+  const scroll = (direction: "prev" | "next") => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const amount = el.clientWidth * 0.8;
+    el.scrollBy({ left: direction === "prev" ? -amount : amount, behavior: "smooth" });
+  };
+
   if (!isLoading && blogs.length === 0) return null;
+
+  const arrowClass =
+    "w-9 h-9 rounded-full bg-card border border-border shadow-sm flex items-center justify-center text-foreground hover:bg-primary hover:text-white hover:border-primary active:scale-95 transition-all cursor-pointer disabled:opacity-40 disabled:pointer-events-none";
 
   return (
     <section className="space-y-4">
-      <div className="flex flex-col items-start px-1">
+      <div className="flex items-end justify-between gap-4 px-1">
         <div className="space-y-1">
           <h2 className="text-xl font-extrabold text-foreground tracking-tight">
             Tips Nongkrong & Split Bill 🍜
@@ -38,6 +70,28 @@ export const LatestBlogSlider = () => {
             Inspirasi patungan & info fitur terbaru
           </p>
         </div>
+        {!isLoading && (canScrollPrev || canScrollNext) && (
+          <div className="flex shrink-0 items-center gap-2">
+            <button
+              type="button"
+              onClick={() => scroll("prev")}
+              disabled={!canScrollPrev}
+              className={arrowClass}
+              aria-label="Artikel sebelumnya"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            <button
+              type="button"
+              onClick={() => scroll("next")}
+              disabled={!canScrollNext}
+              className={arrowClass}
+              aria-label="Artikel berikutnya"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="relative -mx-4 overflow-hidden">

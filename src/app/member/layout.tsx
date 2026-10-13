@@ -17,8 +17,6 @@ export default function MemberV2Layout({ children }: { children: React.ReactNode
   const [isMounted, setIsMounted] = useState(false);
   const [isNativeApp, setIsNativeApp] = useState(false);
   const rootRef = React.useRef<HTMLDivElement>(null);
-  const headerWrapperRef = React.useRef<HTMLDivElement>(null);
-  const bannerWrapperRef = React.useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setIsMounted(true);
@@ -33,25 +31,22 @@ export default function MemberV2Layout({ children }: { children: React.ReactNode
   // every consumer below (banner top offset, spacer, sidebar top/height)
   // reads the same live value with zero render-cycle lag, so they can never
   // desync from each other or from the animating PWA install banner.
-  useEffect(() => {
-    const headerEl = headerWrapperRef.current;
-    const bannerEl = bannerWrapperRef.current;
-    const rootEl = rootRef.current;
-    if (!headerEl || !bannerEl || !rootEl) return;
-
-    const headerObserver = new ResizeObserver((entries) => {
-      rootEl.style.setProperty("--member-header-h", `${entries[0].contentRect.height}px`);
-    });
-    const bannerObserver = new ResizeObserver((entries) => {
-      rootEl.style.setProperty("--member-banner-h", `${entries[0].contentRect.height}px`);
-    });
-    headerObserver.observe(headerEl);
-    bannerObserver.observe(bannerEl);
-    return () => {
-      headerObserver.disconnect();
-      bannerObserver.disconnect();
-    };
-  }, []);
+  // Callback refs, not a mount effect: ProtectedRoute shows a loader first,
+  // so these wrappers mount later and a one-shot effect would find them null
+  // and never observe, leaving the banner height stuck at 0.
+  const observeHeight = React.useCallback(
+    (cssVar: string) => (el: HTMLDivElement | null) => {
+      if (!el) return;
+      const observer = new ResizeObserver((entries) => {
+        rootRef.current?.style.setProperty(cssVar, `${entries[0].contentRect.height}px`);
+      });
+      observer.observe(el);
+      return () => observer.disconnect();
+    },
+    [],
+  );
+  const headerWrapperRef = React.useMemo(() => observeHeight("--member-header-h"), [observeHeight]);
+  const bannerWrapperRef = React.useMemo(() => observeHeight("--member-banner-h"), [observeHeight]);
 
   return (
     <ProtectedRoute>

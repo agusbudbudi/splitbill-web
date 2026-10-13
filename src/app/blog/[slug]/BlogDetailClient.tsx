@@ -1,220 +1,216 @@
 "use client";
 
-import React from "react";
+import React, { useRef } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { ChevronRight, Share2, User } from "lucide-react";
 import { Header } from "@/components/layout/Header";
+import { Footer } from "@/components/layout/Footer";
+import { HomepageFooter } from "@/components/homepage/HomepageFooter";
 import { Blog } from "@/lib/types/blog";
 import { BlogCard } from "@/components/blog/BlogCard";
 import { BlogContent } from "@/components/blog/BlogContent";
-import { Footer } from "@/components/layout/Footer";
 import { BlogCTA } from "@/components/blog/BlogCTA";
-import { HomepageFooter } from "@/components/homepage/HomepageFooter";
-import { formatDate, slugify } from "@/lib/utils/index";
-import { Badge } from "@/components/ui/Badge";
+import { BlogShareButtons, copyShareLink } from "@/components/blog/BlogShareButtons";
+import { BlogTableOfContents, useActiveHeading } from "@/components/blog/BlogTableOfContents";
+import type { BlogHeading } from "@/lib/utils/blogContent";
+import { ReadingProgressBar } from "@/components/blog/ReadingProgressBar";
+import { Badge, badgeVariants } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { Clock, User, Calendar, Share2, ArrowLeft } from "lucide-react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
-import { toast } from "sonner";
+import { cn, formatDate, slugify } from "@/lib/utils/index";
 import { canGoBackInApp } from "@/lib/utils/navigationHistory";
 
 interface BlogDetailClientProps {
+  /** `content` is already rewritten on the server (see prepareBlogContent). */
   blog: Blog;
+  headings: BlogHeading[];
   recentBlogs?: Blog[];
 }
 
+// Page content uses the same max-w-7xl + px-4/6/8 container as the header
+// bar and HomepageFooter so every section edge lines up.
+const PAGE_CONTAINER = "w-full max-w-[600px] lg:max-w-7xl mx-auto px-4 sm:px-6 lg:px-8";
+
+// Body grid: article text column + sticky sidebar.
+const ARTICLE_GRID = "lg:grid lg:grid-cols-[minmax(0,1fr)_300px] lg:gap-16";
+const ARTICLE_COLUMN = "min-w-0";
+
+const SplitBillPromo = ({ className }: { className?: string }) => (
+  <div
+    className={cn(
+      "relative overflow-hidden rounded-sm bg-primary px-5 pt-5 shadow-glow flex flex-col gap-4",
+      className,
+    )}
+  >
+    <div className="space-y-1.5">
+      <h3 className="text-lg font-bold text-white leading-tight">
+        Bagi Tagihan Lebih Praktis ⚡️
+      </h3>
+      <p className="text-xs text-white/80 leading-relaxed">
+        Scan struk & hitung nominal otomatis dengan AI. Gratis, cepat, dan
+        akurat.
+      </p>
+    </div>
+    <Button
+      asChild
+      size="sm"
+      className="w-full bg-white text-primary shadow-sm hover:opacity-90"
+    >
+      <Link href="/split-bill">Coba Split Bill Sekarang</Link>
+    </Button>
+    <div className="relative -mx-5">
+      <img
+        src="/img/hero-ads-blog.png"
+        alt="Ilustrasi Split Bill"
+        className="block w-[85%] h-auto mx-auto"
+      />
+      <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-primary to-transparent pointer-events-none" />
+    </div>
+  </div>
+);
+
 export default function BlogDetailClient({
   blog,
+  headings,
   recentBlogs = [],
 }: BlogDetailClientProps) {
   const router = useRouter();
+  const articleRef = useRef<HTMLDivElement>(null);
   const shareUrl = `https://www.splitbill.my.id/blog/${blog.slug}`;
+  const categoryHref = `/blog/category/${slugify(blog.category)}`;
+  const activeHeadingId = useActiveHeading(headings);
 
   const handleBack = () => {
-    canGoBackInApp() ? router.back() : router.push("/blog");
+    if (canGoBackInApp()) router.back();
+    else router.push("/blog");
   };
 
   const handleShare = () => {
     if (navigator.share) {
-      navigator.share({
-        title: blog.title,
-        text: blog.excerpt,
-        url: shareUrl,
-      });
+      navigator
+        .share({ title: blog.title, text: blog.excerpt, url: shareUrl })
+        .catch(() => {});
     } else {
-      navigator.clipboard.writeText(shareUrl);
-      toast.success("Link berhasil disalin! 🔗", {
-        description: "Tempel di chat atau media sosialmu.",
-      });
+      copyShareLink(shareUrl);
     }
   };
 
-  const shareToWhatsApp = () => {
-    const url = encodeURIComponent(shareUrl);
-    const text = encodeURIComponent(`Baca artikel menarik ini: ${blog.title}\n\n`);
-    window.open(`https://api.whatsapp.com/send?text=${text}${url}`, "_blank");
-  };
-
-  const shareToX = () => {
-    const url = encodeURIComponent(shareUrl);
-    const text = encodeURIComponent(`Baca artikel menarik ini: ${blog.title}`);
-    window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, "_blank");
-  };
-
-  const shareToFacebook = () => {
-    const url = encodeURIComponent(shareUrl);
-    window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, "_blank");
-  };
-
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center relative">
-      {/* Floating Left Social Share (Desktop only) */}
-      <div className="hidden lg:flex flex-col items-center gap-3.5 fixed left-8 top-1/2 -translate-y-1/2 z-40">
-        {/* WhatsApp */}
-        <button
-          onClick={shareToWhatsApp}
-          className="w-10 h-10 flex items-center justify-center rounded-full bg-[#25D366] text-white hover:bg-[#20ba59] transition-all shadow-md active:scale-95 group relative hover:scale-105 cursor-pointer"
-          title="Bagikan ke WhatsApp"
-        >
-          <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
-            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.458 5.704 1.459h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413" />
-          </svg>
-          <div className="absolute left-[125%] top-1/2 -translate-y-1/2 bg-slate-900 text-white text-[10px] font-bold py-1.5 px-3 rounded-lg opacity-0 scale-90 group-hover:opacity-100 group-hover:scale-100 transition-all pointer-events-none whitespace-nowrap shadow-md">
-            WhatsApp
-          </div>
-        </button>
-
-        {/* X (formerly Twitter) */}
-        <button
-          onClick={shareToX}
-          className="w-10 h-10 flex items-center justify-center rounded-full bg-black text-white hover:bg-zinc-800 transition-all shadow-md active:scale-95 group relative hover:scale-105 cursor-pointer"
-          title="Bagikan ke X"
-        >
-          <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
-            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-          </svg>
-          <div className="absolute left-[125%] top-1/2 -translate-y-1/2 bg-slate-900 text-white text-[10px] font-bold py-1.5 px-3 rounded-lg opacity-0 scale-90 group-hover:opacity-100 group-hover:scale-100 transition-all pointer-events-none whitespace-nowrap shadow-md">
-            Twitter / X
-          </div>
-        </button>
-
-        {/* Facebook */}
-        <button
-          onClick={shareToFacebook}
-          className="w-10 h-10 flex items-center justify-center rounded-full bg-[#1877F2] text-white hover:bg-[#166fe5] transition-all shadow-md active:scale-95 group relative hover:scale-105 cursor-pointer"
-          title="Bagikan ke Facebook"
-        >
-          <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
-            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-          </svg>
-          <div className="absolute left-[125%] top-1/2 -translate-y-1/2 bg-slate-900 text-white text-[10px] font-bold py-1.5 px-3 rounded-lg opacity-0 scale-90 group-hover:opacity-100 group-hover:scale-100 transition-all pointer-events-none whitespace-nowrap shadow-md">
-            Facebook
-          </div>
-        </button>
-      </div>
+    <div className="min-h-screen bg-card flex flex-col items-center">
+      <ReadingProgressBar target={articleRef} />
 
       <Header
         sticky
         showBackButton
         onBack={handleBack}
         wide
+        containerClassName={PAGE_CONTAINER}
         rightContent={
           <button
             onClick={handleShare}
-            className="w-10 h-10 flex items-center justify-center bg-white/10 backdrop-blur-md rounded-full text-white hover:bg-white/20 transition-all"
+            aria-label="Bagikan artikel"
+            className="w-10 h-10 flex items-center justify-center bg-white/10 backdrop-blur-md rounded-full text-white hover:bg-white/20 active:scale-95 transition-all cursor-pointer"
           >
             <Share2 className="w-5 h-5" />
           </button>
         }
       />
 
-      {/* Main Content & Sidebar Wrapper */}
-      <div className="w-full max-w-[600px] lg:max-w-7xl mx-auto px-6 pt-0 pb-8 lg:py-8 flex flex-col lg:flex-row gap-8 lg:gap-12 items-start lg:mt-8">
-
-        {/* Left Column: Hero Banner Image & Main Content */}
-        <main className="w-full lg:flex-1 flex flex-col gap-6">
-          {/* Article hero. One title block (single H1) for all breakpoints:
-              below the natural-height image on mobile, overlaid on the
-              cropped banner on desktop. */}
-          <section className="relative lg:rounded-lg lg:overflow-hidden lg:shadow-soft">
-            {/* Mobile: natural image height, no crop */}
-            <div className="lg:hidden w-[calc(100%+48px)] -mx-6 bg-muted overflow-hidden">
-              <img
-                src={blog.thumbnail || "/img/pwa-banner.png"}
-                alt={blog.thumbnailAlt || blog.title}
-                className="w-full h-auto"
-              />
-            </div>
-
-            {/* Desktop: cropped banner with overlay */}
-            <div className="hidden lg:block relative w-full aspect-[16/9] min-h-[300px] bg-muted">
-              <Image
-                src={blog.thumbnail || "/img/pwa-banner.png"}
-                alt={blog.thumbnailAlt || blog.title}
-                fill
-                sizes="800px"
-                className="w-full h-full object-cover"
-                priority
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
-            </div>
-
-            <div className="pt-6 lg:pt-0 lg:absolute lg:bottom-0 lg:left-0 lg:w-full lg:p-8 lg:text-white">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-              >
-                <Link href={`/blog/category/${slugify(blog.category)}`}>
-                  <Badge className="bg-primary text-white border-none px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest mb-4 hover:bg-primary/90 transition-colors">
+      <article className={cn(PAGE_CONTAINER, "pt-6 lg:pt-12 pb-4")}>
+        {/* Article header */}
+        <header>
+          <div className="flex flex-col gap-4">
+            <nav aria-label="Breadcrumb">
+              <ol className="flex flex-wrap items-center gap-1 text-xs font-medium text-muted-foreground">
+                <li>
+                  <Link
+                    href="/blog"
+                    className="hover:text-primary transition-colors"
+                  >
+                    Blog
+                  </Link>
+                </li>
+                <li aria-hidden>
+                  <ChevronRight className="w-3 h-3" />
+                </li>
+                <li>
+                  <Link
+                    href={categoryHref}
+                    className="hover:text-primary transition-colors"
+                  >
                     {blog.category}
-                  </Badge>
-                </Link>
-                <h1 className="text-2xl lg:text-3xl font-black mb-4 leading-tight tracking-tight text-foreground lg:text-white">
-                  {blog.title}
-                </h1>
+                  </Link>
+                </li>
+              </ol>
+            </nav>
 
-                <div className="flex flex-wrap items-center gap-6 text-xs text-muted-foreground lg:text-white/80 font-medium">
-                  <div className="flex items-center gap-2">
-                    <div className="w-7 h-7 rounded-full bg-muted lg:bg-white/20 flex items-center justify-center">
-                      <User className="w-4 h-4" />
-                    </div>
-                    <span>{blog.author}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Calendar className="w-4 h-4" />
-                    <span>{formatDate(blog.publishedAt || blog.createdAt)}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Clock className="w-4 h-4" />
-                    <span>{blog.readTime} mnt baca</span>
-                  </div>
-                </div>
-              </motion.div>
-            </div>
-          </section>
+            <Link href={categoryHref} className="w-fit">
+              <Badge className="uppercase tracking-wide text-[10px] font-bold hover:bg-primary/10">
+                {blog.category}
+              </Badge>
+            </Link>
 
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-          >
-            {/* Lead Paragraph / Excerpt */}
-            <p className="text-lg md:text-xl font-medium text-foreground/80 leading-relaxed mb-12 border-l-4 border-primary pl-6">
+            <h1 className="text-3xl lg:text-5xl font-bold leading-tight tracking-tight text-foreground">
+              {blog.title}
+            </h1>
+
+            <p className="text-base lg:text-lg text-muted-foreground leading-relaxed">
               {blog.excerpt}
             </p>
 
+            <div className="mt-2 py-4 border-y border-border flex flex-wrap items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                  <User className="w-5 h-5" />
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-sm font-bold text-foreground">
+                    {blog.author}
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    {formatDate(blog.publishedAt || blog.createdAt)} ·{" "}
+                    {blog.readTime} mnt baca
+                  </span>
+                </div>
+              </div>
+              <BlogShareButtons title={blog.title} url={shareUrl} />
+            </div>
+          </div>
+        </header>
+
+        {/* Body + sidebar */}
+        <div className={cn(ARTICLE_GRID, "mt-8")}>
+          <div ref={articleRef} className={ARTICLE_COLUMN}>
+            {/* Hero image: natural aspect ratio, no crop */}
+            <div className="mb-8 overflow-hidden rounded-sm bg-muted shadow-soft">
+              <Image
+                src={blog.thumbnail || "/img/pwa-banner.png"}
+                alt={blog.thumbnailAlt || blog.title}
+                width={1200}
+                height={630}
+                sizes="(max-width: 1024px) 100vw, 900px"
+                className="w-full h-auto"
+                priority
+              />
+            </div>
+
+            <div className="lg:hidden mb-8">
+              <BlogTableOfContents headings={headings} activeId={activeHeadingId} variant="collapsible" />
+            </div>
+
             <BlogContent content={blog.content} />
 
-            {/* Tags Section */}
             {blog.tags && blog.tags.length > 0 && (
-              <div className="mt-10 pt-8 border-t border-border flex flex-wrap gap-2">
+              <div className="mt-10 flex flex-wrap gap-2">
                 {blog.tags.map((tag) => (
                   <Link
                     key={tag}
                     href={`/blog/tag/${slugify(tag)}`}
-                    className="px-3 py-1 bg-muted rounded-[6px] text-sm font-medium text-muted-foreground hover:bg-secondary hover:text-primary transition-colors cursor-pointer"
+                    className={cn(
+                      badgeVariants({ variant: "outline" }),
+                      "px-3 py-1 text-sm font-medium text-muted-foreground hover:text-primary hover:border-primary/30 focus:ring-0 focus:ring-offset-0",
+                    )}
                   >
                     #{tag}
                   </Link>
@@ -222,79 +218,57 @@ export default function BlogDetailClient({
               </div>
             )}
 
-            {/* Bottom Footer / Navigation */}
-            <div className="mt-8 py-6 border-t border-border flex flex-wrap items-center justify-between gap-6">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-                  <User className="w-5 h-5" />
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
-                    Penulis
-                  </span>
-                  <span className="text-base font-bold text-foreground leading-none">
-                    {blog.author}
-                  </span>
-                </div>
+            <div className="mt-8 p-5 rounded-sm border border-border bg-background flex flex-wrap items-center justify-between gap-4">
+              <div className="flex flex-col gap-0.5">
+                <span className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
+                  Artikel ini bermanfaat?
+                </span>
+                <span className="text-sm font-semibold text-foreground">
+                  Bagikan ke teman patunganmu
+                </span>
               </div>
+              <BlogShareButtons title={blog.title} url={shareUrl} />
+            </div>
 
-              <Link href="/blog">
-                <button className="flex items-center gap-2 text-primary font-bold text-sm hover:underline transition-all cursor-pointer">
-                  <ArrowLeft className="w-4 h-4" />
-                  Kembali ke Blog
-                </button>
-              </Link>
-            </div>
-          </motion.div>
-        </main>
-
-        {/* Right Column: Sidebar */}
-        <aside className="w-full lg:w-[360px] shrink-0 flex flex-col gap-6">
-          {/* Ads Banner CTA to /split-bill */}
-          <div className="w-full bg-primary pt-6 px-6 rounded-md flex flex-col gap-4 relative overflow-hidden">
-            <div className="space-y-2 relative z-10">
-              <h3 className="font-bold text-xl text-white leading-tight">
-                Bagi Tagihan Lebih Praktis ⚡️
-              </h3>
-              <p className="text-xs text-white/80 leading-relaxed">
-                Scan struk belanja & hitung nominal secara otomatis dengan AI. Gratis, cepat, dan akurat.
-              </p>
-            </div>
-            <Link href="/split-bill" className="relative z-10">
-              <Button className="w-full py-2.5 text-xs font-bold rounded-sm bg-white text-primary shadow-sm hover:bg-white/90 hover:opacity-100 transition-all cursor-pointer">
-                Coba Split Bill Sekarang
-              </Button>
-            </Link>
-            <div className="relative mt-2 -mx-6">
-              <img
-                src="/img/hero-ads-blog.png"
-                alt="Ilustrasi Split Bill"
-                className="h-auto w-[90%] mx-auto block relative z-10"
-              />
-              <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-primary to-transparent pointer-events-none z-20" />
-            </div>
+            <SplitBillPromo className="lg:hidden mt-8" />
           </div>
 
-          {/* Sidebar: Read Next Section */}
-          {recentBlogs.length > 0 && (
-            <div className="w-full bg-gray-50/50 lg:bg-transparent lg:p-0 rounded-md">
-              <h2 className="text-xl font-black mb-6 tracking-tight text-foreground">
-                Baca Artikel Lainnya
-              </h2>
-              <div className="flex flex-col gap-6">
-                {recentBlogs.map((recentBlog) => (
-                  <BlogCard key={recentBlog._id} blog={recentBlog} />
-                ))}
-              </div>
+          <aside className="hidden lg:flex flex-col gap-8">
+            <SplitBillPromo />
+            {/* Only the TOC sticks, so it never gets pushed off-screen by the
+                promo when the list is long. */}
+            <div className="sticky top-24">
+              <BlogTableOfContents headings={headings} activeId={activeHeadingId} />
             </div>
-          )}
-        </aside>
-      </div>
+          </aside>
+        </div>
+      </article>
 
-      {/* CTA Section */}
+      {recentBlogs.length > 0 && (
+        <section className="w-full bg-background mt-12 py-12 lg:py-16">
+          <div className={cn(PAGE_CONTAINER, "flex flex-col gap-6")}>
+            <div className="flex items-end justify-between gap-4">
+              <h2 className="text-xl font-bold text-foreground">
+                Artikel Terkait
+              </h2>
+              <Link
+                href="/blog"
+                className="text-sm font-bold text-primary hover:opacity-80 transition-opacity"
+              >
+                Lihat Semua
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+              {recentBlogs.map((recentBlog) => (
+                <BlogCard key={recentBlog._id} blog={recentBlog} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       <BlogCTA />
 
-      {/* Reusable Footer */}
       <HomepageFooter />
 
       {/* Mobile Navigation Footer */}

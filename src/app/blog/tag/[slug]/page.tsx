@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
 import { buildMetadata } from "@/lib/seo";
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { fetchBlogs } from "@/lib/api/blog";
+import { fetchAllBlogs } from "@/lib/api/blog.server";
 import { slugify } from "@/lib/utils/index";
 import { BlogCard } from "@/components/blog/BlogCard";
 import { Footer } from "@/components/layout/Footer";
 import { BlogCTA } from "@/components/blog/BlogCTA";
 import { HomepageFooter } from "@/components/homepage/HomepageFooter";
 import { HomepageNavbar } from "@/components/homepage/HomepageNavbar";
+import { BlogHero } from "@/components/blog/BlogHero";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -17,12 +17,7 @@ interface Props {
 const BASE_URL = "https://www.splitbill.my.id";
 
 async function getTagBlogs(slug: string) {
-  const res = await fetchBlogs({
-    limit: 1000,
-    cache: "force-cache",
-    next: { revalidate: 86400 },
-  });
-  const posts = res.data || [];
+  const posts = await fetchAllBlogs();
   const tagName = posts
     .flatMap((b) => b.tags || [])
     .find((tag) => slugify(tag) === slug);
@@ -73,25 +68,15 @@ export default async function BlogTagPage({ params }: Props) {
       />
       <HomepageNavbar />
 
-      <section className="w-full max-w-[600px] lg:max-w-7xl relative pt-12 pb-8 px-6">
-        <div className="relative z-10 w-full mx-auto text-center">
-          <Link
-            href="/blog"
-            className="text-sm font-bold text-primary hover:underline mb-2 inline-block"
-          >
-            ← Semua Artikel
-          </Link>
-          <h1 className="text-3xl md:text-4xl font-black mb-3 tracking-tight leading-tight text-foreground">
-            #{tagName}
-          </h1>
-          <p className="text-muted-foreground text-sm font-medium leading-relaxed max-w-md mx-auto">
-            {posts.length} artikel bertag ini.
-          </p>
-        </div>
-      </section>
+      <BlogHero
+        eyebrow="Semua Artikel"
+        backHref="/blog"
+        title={<>#{tagName}</>}
+        description={`${posts.length} artikel bertag ini.`}
+      />
 
-      <main className="w-full max-w-[600px] lg:max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 flex-1">
-        <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <main className="w-full max-w-[600px] lg:max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex-1">
+        <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {posts.map((blog, index) => (
             <BlogCard key={blog._id} blog={blog} priority={index === 0} />
           ))}

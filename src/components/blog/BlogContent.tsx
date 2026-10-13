@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { memo, useMemo } from "react";
 import { cn } from "@/lib/utils";
 
 interface BlogContentProps {
@@ -8,23 +8,23 @@ interface BlogContentProps {
   className?: string;
 }
 
-// The page already renders the post title as its only H1, so any H1 inside
-// the CMS body is demoted to H2.
-const demoteH1 = (html: string) => html.replace(/<(\/?)h1(?=[\s>])/gi, "<$1h2");
-
-export const BlogContent = ({ content, className }: BlogContentProps) => {
+// Memoised so parent re-renders (e.g. TOC active heading on scroll) don't
+// re-apply innerHTML: that would swap every heading node and break anything
+// holding a reference to them.
+export const BlogContent = memo(function BlogContent({ content, className }: BlogContentProps) {
+  const html = useMemo(() => ({ __html: content }), [content]);
   return (
     <div
       className={cn(
         "prose prose-blue max-w-none dark:prose-invert",
         "prose-headings:font-bold prose-headings:tracking-tight",
         "prose-p:text-muted-foreground prose-p:leading-relaxed",
-        "prose-img:rounded-md prose-img:shadow-lg",
+        "prose-img:rounded-sm prose-img:shadow-soft",
         "prose-a:text-primary prose-a:no-underline hover:prose-a:underline",
         "blog-content-container",
         className
       )}
-      dangerouslySetInnerHTML={{ __html: demoteH1(content) }}
+      dangerouslySetInnerHTML={html}
     />
   );
-};
+});

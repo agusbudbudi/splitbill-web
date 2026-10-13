@@ -1,5 +1,5 @@
 import { MetadataRoute } from "next";
-import { fetchBlogs } from "@/lib/api/blog";
+import { fetchAllBlogs } from "@/lib/api/blog.server";
 import { absoluteUrl } from "@/lib/seo";
 
 // Revalidate sitemap every 24 hours — avoids dynamic server usage warning
@@ -47,29 +47,26 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     // Hard timeout so a slow/cold-starting backend can't hang this route
     // past the serverless function limit (Googlebot got "couldn't fetch" from this)
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 5000);
-    const blogsRes = await fetchBlogs({
-      limit: 1000,
-      cache: "force-cache",
-      next: { revalidate: 86400 },
-      signal: controller.signal,
-    }).finally(() => clearTimeout(timeoutId));
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
+    const timeout = new Promise<never>((_, reject) => {
+      timeoutId = setTimeout(() => reject(new Error("Blog fetch timed out")), 5000);
+    });
+    const posts = await Promise.race([fetchAllBlogs(), timeout]).finally(() =>
+      clearTimeout(timeoutId),
+    );
 
-    if (blogsRes && blogsRes.success && Array.isArray(blogsRes.data)) {
-      blogRoutes = blogsRes.data
-        .filter((blog) => blog.status === "published" && blog.slug)
-        .map((blog) => {
-          const lastModified = toDateString(blog.updatedAt || blog.publishedAt || blog.createdAt);
-          if (lastModified && (!newestBlogDate || lastModified > newestBlogDate)) {
-            newestBlogDate = lastModified;
-          }
-          return {
-            url: absoluteUrl(`/blog/${blog.slug}`),
-            ...(lastModified && { lastModified }),
-          };
-        });
-    }
+    blogRoutes = posts
+      .filter((blog) => blog.status === "published" && blog.slug)
+      .map((blog) => {
+        const lastModified = toDateString(blog.updatedAt || blog.publishedAt || blog.createdAt);
+        if (lastModified && (!newestBlogDate || lastModified > newestBlogDate)) {
+          newestBlogDate = lastModified;
+        }
+        return {
+          url: absoluteUrl(`/blog/${blog.slug}`),
+          ...(lastModified && { lastModified }),
+        };
+      });
   } catch (error) {
     console.error("Failed to fetch blogs for sitemap:", error);
     // Continue with just static routes

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { buildMetadata } from "@/lib/seo";
 import BlogListClient, { BLOGS_PER_PAGE } from "@/app/blog/BlogListClient";
 import { fetchBlogs } from "@/lib/api/blog";
+import { fetchAllBlogs } from "@/lib/api/blog.server";
 import type { Blog } from "@/lib/types/blog";
 
 // ISR: list is server-rendered for crawlers and refreshed hourly
@@ -25,6 +26,17 @@ async function getInitialBlogs(): Promise<{ blogs: Blog[]; totalPages: number }>
   }
 }
 
+// Same request the category/tag/detail pages make, so it shares their cache.
+async function getCategories(): Promise<string[]> {
+  try {
+    const posts = await fetchAllBlogs();
+    return Array.from(new Set(posts.map((b) => b.category).filter(Boolean)));
+  } catch (error) {
+    console.error("Failed to prefetch blog categories for /blog:", error);
+    return [];
+  }
+}
+
 export const metadata: Metadata = buildMetadata({
   title: "Blog & Tips Split Bill: Kelola Keuangan & Patungan Lebih Hemat",
   description: "Temukan tips seputar pengelolaan keuangan, cara split bill yang adil, update fitur SplitBill, dan panduan patungan online untuk Gen-Z dan Millennial.",
@@ -34,7 +46,7 @@ export const metadata: Metadata = buildMetadata({
 });
 
 export default async function BlogPage() {
-  const { blogs, totalPages } = await getInitialBlogs();
+  const [{ blogs, totalPages }, categories] = await Promise.all([getInitialBlogs(), getCategories()]);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -58,7 +70,7 @@ export default async function BlogPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <BlogListClient initialBlogs={blogs} initialTotalPages={totalPages} />
+      <BlogListClient initialBlogs={blogs} initialTotalPages={totalPages} categories={categories} />
     </>
   );
 }

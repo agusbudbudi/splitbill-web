@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { memo, useMemo } from "react";
 import { cn } from "@/lib/utils";
 
 interface BlogContentProps {
@@ -8,7 +8,11 @@ interface BlogContentProps {
   className?: string;
 }
 
-export const BlogContent = ({ content, className }: BlogContentProps) => {
+// Memoised so parent re-renders (e.g. TOC active heading on scroll) don't
+// re-apply innerHTML: that would swap every heading node and break anything
+// holding a reference to them.
+export const BlogContent = memo(function BlogContent({ content, className }: BlogContentProps) {
+  const html = useMemo(() => ({ __html: content }), [content]);
   return (
     <div
       className={cn(
@@ -20,7 +24,7 @@ export const BlogContent = ({ content, className }: BlogContentProps) => {
         "blog-content-container",
         className
       )}
-      dangerouslySetInnerHTML={{ __html: content }}
+      dangerouslySetInnerHTML={html}
     />
   );
-};
+});

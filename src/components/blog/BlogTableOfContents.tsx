@@ -21,14 +21,20 @@ export const useActiveHeading = (headings: BlogHeading[]) => {
   const [activeId, setActiveId] = useState<string | null>(null);
 
   useEffect(() => {
-    const elements = headings
-      .map((h) => document.getElementById(h.id))
-      .filter((el): el is HTMLElement => !!el);
-    if (elements.length === 0) return;
+    // Resolved on every update, not cached: the article body can be
+    // re-rendered, and a detached node reports top 0, which would mark the
+    // last heading active.
+    const getElements = () =>
+      headings
+        .map((h) => document.getElementById(h.id))
+        .filter((el): el is HTMLElement => !!el);
+    if (getElements().length === 0) return;
 
     let frame = 0;
     const update = () => {
       frame = 0;
+      const elements = getElements();
+      if (elements.length === 0) return;
       // Last heading above the line wins, so the section being read stays
       // highlighted in both scroll directions, not just as a heading passes.
       let current: string | null = null;

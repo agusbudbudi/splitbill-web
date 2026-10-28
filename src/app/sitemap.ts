@@ -1,6 +1,7 @@
 import { MetadataRoute } from "next";
 import { fetchAllBlogs } from "@/lib/api/blog.server";
 import { absoluteUrl } from "@/lib/seo";
+import { getLandingContent } from "@/lib/landing/content";
 
 // Revalidate sitemap every 24 hours — avoids dynamic server usage warning
 export const revalidate = 86400;
@@ -72,14 +73,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Continue with just static routes
   }
 
+  // Homepage copy is CMS-managed; its last save counts as a content change.
+  // getLandingContent never throws and has its own fetch timeout.
+  const { updatedAt: landingUpdatedAt } = await getLandingContent();
+  const landingDate = toDateString(landingUpdatedAt ?? undefined);
+
+  // YYYY-MM-DD strings compare correctly as plain strings.
+  const latest = (base: string, ...dates: (string | undefined)[]) =>
+    dates.reduce<string>((max, d) => (d && d > max ? d : max), base);
+
   const staticRoutes = routeConfigs.map(({ path, lastModified }) => ({
     url: absoluteUrl(path),
     // Blog listing and homepage show the latest posts, so they change
     // whenever a post does.
     lastModified:
-      (path === "/blog" || path === "/") && newestBlogDate && newestBlogDate > lastModified
-        ? newestBlogDate
-        : lastModified,
+      path === "/"
+        ? latest(lastModified, newestBlogDate, landingDate)
+        : path === "/blog"
+          ? latest(lastModified, newestBlogDate)
+          : lastModified,
   }));
 
   return [...staticRoutes, ...blogRoutes];

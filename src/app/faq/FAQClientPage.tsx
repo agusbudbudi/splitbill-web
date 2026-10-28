@@ -7,14 +7,14 @@ import { HomepageFooter } from "@/components/homepage/HomepageFooter";
 import { BlogCTA } from "@/components/blog/BlogCTA";
 import { Search, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { faqData, faqCategoryLabels, FAQItem as FAQItemType } from "@/data/faqData";
+import { faqCategoryLabels, FAQItem as FAQItemType } from "@/data/faqData";
 import { Input } from "@/components/ui/Input";
 import { FAQItem } from "@/components/ui/FAQItem";
 import { IllustratedEmptyState } from "@/components/ui/IllustratedEmptyState";
 
 const getCategoryLabel = (cat: FAQItemType["category"]) => faqCategoryLabels[cat] ?? cat;
 
-export default function FAQClientPage() {
+export default function FAQClientPage({ faqData }: { faqData: FAQItemType[] }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<FAQItemType["category"] | null>(null);
   const [openId, setOpenId] = useState<string | null>(null);

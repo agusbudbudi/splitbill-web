@@ -2,67 +2,14 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
+import { LandingLink } from "./LandingLink";
+import { RichText } from "@/lib/landing/RichText";
+import { isUnoptimizableSrc } from "@/lib/landing/image";
+import type { LandingContent } from "@/lib/landing/types";
+import { LandingTitle } from "./LandingTitle";
 
-
-const features = [
-  {
-    imageSrc: "/img/menu-split-bill.png",
-    title: "Split Bill",
-    description:
-      "Foto struk biar AI hitung otomatis (Scan AI) atau bagi rincian secara manual. Sat-set!",
-    badge: "Populer",
-    href: "/split-bill",
-    cta: "Coba Split Bill",
-    caraPakaiHref: "/split-bill/cara-pakai",
-  },
-  {
-    imageSrc: "/img/menu-split-later.png",
-    title: "Split Later",
-    description:
-      "Nongkrong sepuasnya, kumpulin struknya, bagi tagihannya nanti pas santai.",
-    badge: "Baru",
-    href: "/split-later",
-    cta: "Coba Split Later",
-    caraPakaiHref: "/split-later/cara-pakai",
-    requiresLogin: true,
-  },
-  {
-    imageSrc: "/img/menu-shared-goal.png",
-    title: "Shared Goals",
-    description:
-      "Nabung bareng squad buat rencana liburan, kado nikahan teman, atau impian bersama.",
-    href: "/shared-goals",
-    cta: "Mulai Nabung",
-    caraPakaiHref: "/shared-goals/cara-pakai",
-  },
-  {
-    imageSrc: "/img/menu-collect-money.png",
-    title: "Collect Money (Patungan)",
-    description:
-      "Bikin link patungan uang kas, sewa lapangan futsal, atau donasi secara transparan.",
-    href: "/collect-money",
-    cta: "Bikin Patungan",
-  },
-  {
-    imageSrc: "/img/menu-invoice.png",
-    title: "Invoice",
-    description:
-      "Kirim rincian tagihan digital yang rapi, transparan, langsung ke WhatsApp.",
-    href: "/invoice",
-    cta: "Buat Invoice",
-  },
-  {
-    imageSrc: "/img/menu-wallet.png",
-    title: "Wallet",
-    description:
-      "Kelola dana masuk dari teman, pantau saldo patungan squad, dan catat pengeluaran grup.",
-    href: "/wallet",
-    cta: "Simpan Wallet",
-  },
-];
 
 const containerVariants = {
   hidden: {},
@@ -82,9 +29,13 @@ const cardVariants = {
   },
 };
 
-export const FeaturesSection = () => {
+interface FeaturesSectionProps {
+  content: LandingContent["features"];
+}
+
+export const FeaturesSection = ({ content }: FeaturesSectionProps) => {
   return (
-    <section id="fitur" className="py-16 sm:py-24 bg-[#f8f9fd] relative overflow-hidden">
+    <section data-landing-section="features" className="py-16 bg-[#f8f9fd] relative overflow-hidden">
       {/* Decorative blurry gradients */}
       <div className="absolute top-1/4 right-0 w-80 h-80 bg-blue-400/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-1/4 left-0 w-80 h-80 bg-purple-400/10 rounded-full blur-3xl pointer-events-none" />
@@ -100,21 +51,20 @@ export const FeaturesSection = () => {
             transition={{ duration: 0.5 }}
             className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight mb-4"
           >
-            Semua yang lo butuhin buat{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-600">
-              split bill tanpa drama
-            </span>
+            <LandingTitle title={content.title} highlight={content.titleHighlight} />
           </motion.h2>
 
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-base sm:text-lg text-slate-500 font-medium"
-          >
-            Bagi tagihan <span className="text-primary font-bold">sat set</span>, hitung patungan <span className="text-primary font-bold">anti ribet & akurat</span>. Link pembayaran langsung spill!
-          </motion.p>
+          {content.subtitle && (
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="text-base sm:text-lg text-slate-500 font-medium"
+            >
+              <RichText text={content.subtitle} />
+            </motion.p>
+          )}
         </div>
 
         {/* Bento Grid — 2 Columns on Mobile, 3 Columns on Large Screens */}
@@ -125,9 +75,9 @@ export const FeaturesSection = () => {
           viewport={{ once: true, margin: "-50px" }}
           className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 lg:gap-8"
         >
-          {features.map((feat) => (
+          {content.items.map((feat, idx) => (
             <motion.div
-              key={feat.title}
+              key={idx}
               variants={cardVariants}
               className="h-full"
             >
@@ -140,11 +90,12 @@ export const FeaturesSection = () => {
                 <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4 flex-1">
                   <div className="relative shrink-0 w-14 h-14 sm:w-16 sm:h-16 rounded-md overflow-hidden bg-primary/10 p-2">
                     <Image
-                      src={feat.imageSrc}
+                      src={feat.imageUrl}
                       alt=""
                       fill
                       className="object-contain p-2"
                       sizes="64px"
+                      unoptimized={isUnoptimizableSrc(feat.imageUrl)}
                     />
                   </div>
                   <div>
@@ -161,20 +112,20 @@ export const FeaturesSection = () => {
                 </div>
 
                 <div className="mt-4 sm:mt-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3">
-                  <Link
+                  <LandingLink
                     href={feat.href}
                     className="group inline-flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 sm:py-2.5 rounded-md bg-primary text-white font-black text-sm hover:bg-primary/90 active:scale-95 transition-all"
                   >
-                    {feat.cta}
+                    {feat.ctaLabel}
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                  </Link>
-                  {feat.caraPakaiHref && (
-                    <Link
-                      href={feat.caraPakaiHref}
+                  </LandingLink>
+                  {feat.guideHref && (
+                    <LandingLink
+                      href={feat.guideHref}
                       className="inline-flex items-center justify-center gap-1.5 text-xs sm:text-sm font-bold text-primary hover:underline"
                     >
                       Cara Pakai
-                    </Link>
+                    </LandingLink>
                   )}
                 </div>
               </div>

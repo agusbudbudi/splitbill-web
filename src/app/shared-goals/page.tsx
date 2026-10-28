@@ -3,6 +3,7 @@ import { buildMetadata } from "@/lib/seo";
 import SharedGoalsClientPage from "./SharedGoalsClientPage";
 import { FeatureSeoSection } from "@/components/seo/FeatureSeoSection";
 import { featureSeoContent } from "@/data/featureSeoContent";
+import { getFaqs, resolveFaqs } from "@/lib/faq";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { breadcrumbNode, jsonLdGraph, webApplicationNode } from "@/lib/structuredData";
 
@@ -20,7 +21,8 @@ export const metadata: Metadata = buildMetadata({
   },
 });
 
-export default function SharedGoalsPage() {
+export default async function SharedGoalsPage() {
+  const faqs = resolveFaqs(await getFaqs(), featureSeoContent.sharedGoals.faqs);
   const jsonLd = jsonLdGraph(
     breadcrumbNode([
       { name: "Home", path: "/" },
@@ -40,7 +42,7 @@ export default function SharedGoalsPage() {
       {/* SEO explainer first in the DOM (crawlers see H1 + intro before the
           client-only tool), shown visually below the tool via order-*. */}
       <div className="flex flex-col">
-        <FeatureSeoSection {...featureSeoContent.sharedGoals} className="order-2" />
+        <FeatureSeoSection {...featureSeoContent.sharedGoals} faqs={faqs} className="order-2" />
         <div className="order-1">
           <SharedGoalsClientPage />
         </div>

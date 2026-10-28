@@ -2,10 +2,13 @@
 
 import React, { useRef } from "react";
 import dynamic from "next/dynamic";
-import Link from "next/link";
 import Image from "next/image";
-import { useAuthStore } from "@/lib/stores/authStore";
-import { ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { LandingLink } from "./LandingLink";
+import { LandingIcon } from "@/lib/landing/icons";
+import { getPromoTone } from "@/lib/landing/tones";
+import { isUnoptimizableSrc } from "@/lib/landing/image";
+import type { LandingContent } from "@/lib/landing/types";
 
 // loading: () => null — same reasoning as ChatAgentFAB in HomepagePageClient:
 // without it, next/dynamic suspends to the root app/loading.tsx instead of
@@ -18,8 +21,11 @@ const HomepageAIScanCard = dynamic(
   { ssr: false, loading: () => null },
 );
 
-export const HomepagePromoSlider = () => {
-  const { isAuthenticated } = useAuthStore();
+interface HomepagePromoSliderProps {
+  content: LandingContent["promoSlider"];
+}
+
+export const HomepagePromoSlider = ({ content }: HomepagePromoSliderProps) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const scroll = (direction: "left" | "right") => {
@@ -33,8 +39,10 @@ export const HomepagePromoSlider = () => {
     }
   };
 
+  if (!content.showAiScanCard && content.slides.length === 0) return null;
+
   return (
-    <section className="py-10 bg-white border-b border-slate-100 relative group/section overflow-hidden">
+    <section data-landing-section="promoSlider" className="py-10 bg-white border-b border-slate-100 relative group/section overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         {/* Navigation Buttons - Hidden on touch devices, shown on hover/desktop */}
         <div className="absolute top-1/2 -translate-y-1/2 left-2 z-20 opacity-0 group-hover/section:opacity-100 transition-opacity duration-300 pointer-events-none sm:block hidden">
@@ -64,94 +72,64 @@ export const HomepagePromoSlider = () => {
             className="flex gap-4 sm:gap-6 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide px-4 sm:px-0 scroll-pl-4 sm:scroll-pl-0 items-stretch"
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
-            {/* Card 1: AI Scan Quota */}
-            <div className="flex-shrink-0 w-[85vw] sm:w-[480px] snap-start h-auto flex">
-              <HomepageAIScanCard />
-            </div>
+            {/* AI Scan quota card — live per-visitor data, so only toggled from the CMS */}
+            {content.showAiScanCard && (
+              <div className="flex-shrink-0 w-[85vw] sm:w-[480px] snap-start h-auto flex">
+                <HomepageAIScanCard />
+              </div>
+            )}
 
-            {/* Card 2: Split Later Feature */}
-            <div className="flex-shrink-0 w-[85vw] sm:w-[480px] snap-start h-auto flex">
-              <Link href="/split-later" className="block w-full h-full group/card transition-all duration-300 hover:scale-[1.005] active:scale-[0.99]">
-                <div className="relative p-[1.5px] rounded-md bg-gradient-to-br from-blue-400 via-blue-500 to-primary shadow-lg shadow-primary/5 h-full flex flex-col overflow-hidden">
-                  {/* Stick Badge - Primary Blue Style */}
-                  <div className="absolute top-0 right-0 px-3 py-1.5 rounded-bl-xl flex items-center gap-1.5 text-[9px] font-black uppercase bg-primary text-white z-30 shadow-md transition-transform group-hover/card:scale-105 origin-top-right">
-                    <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-                    <span>NEW</span>
-                  </div>
+            {content.slides.map((slide, idx) => {
+              const theme = getPromoTone(slide.tone);
+              return (
+                <div key={idx} className="flex-shrink-0 w-[85vw] sm:w-[480px] snap-start h-auto flex">
+                  <LandingLink href={slide.href} className="block w-full h-full group/card transition-all duration-300 hover:scale-[1.005] active:scale-[0.99]">
+                    <div className={`relative p-[1.5px] rounded-md bg-gradient-to-br ${theme.slideFrame} shadow-lg h-full flex flex-col overflow-hidden`}>
+                      {slide.badge && (
+                        <div className={`absolute top-0 right-0 px-3 py-1.5 rounded-bl-xl flex items-center gap-1.5 text-[9px] font-black uppercase ${theme.slideBadge} text-white z-30 shadow-md transition-transform group-hover/card:scale-105 origin-top-right`}>
+                          {slide.badgeIcon ? (
+                            <LandingIcon name={slide.badgeIcon} className="w-3 h-3 fill-current" />
+                          ) : (
+                            <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                          )}
+                          <span>{slide.badge}</span>
+                        </div>
+                      )}
 
-                  <div className="bg-white rounded-[calc(var(--radius-md)-1.5px)] p-6 flex-grow flex flex-col justify-between relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full blur-2xl -mr-6 -mt-6 pointer-events-none" />
+                      <div className="bg-white rounded-[calc(var(--radius-md)-1.5px)] p-6 flex-grow flex flex-col justify-between relative overflow-hidden">
+                        <div className={`absolute top-0 right-0 w-24 h-24 ${theme.slideGlow} rounded-full blur-2xl -mr-6 -mt-6 pointer-events-none`} />
 
-                    <div className="flex items-center gap-4">
-                      <div className="shrink-0 w-16 h-16 rounded-full flex items-center justify-center transition-transform group-hover/card:scale-110 overflow-hidden relative">
-                        <Image
-                          src="/img/menu-split-later.png"
-                          alt=""
-                          width={64}
-                          height={64}
-                          className="w-full h-full object-contain"
-                        />
-                      </div>
+                        <div className="flex items-center gap-4">
+                          <div className="shrink-0 w-16 h-16 rounded-full flex items-center justify-center transition-transform group-hover/card:scale-110 overflow-hidden relative">
+                            <Image
+                              src={slide.imageUrl}
+                              alt=""
+                              width={64}
+                              height={64}
+                              unoptimized={isUnoptimizableSrc(slide.imageUrl)}
+                              className="w-full h-full object-contain"
+                            />
+                          </div>
 
-                      <div className="space-y-1">
-                        <h4 className="text-base sm:text-lg font-bold text-slate-800 tracking-tight leading-tight">
-                          Bayar Dulu, Bagi Kemudian dengan Split Later! 🕒
-                        </h4>
+                          <div className="space-y-1">
+                            <h4 className="text-base sm:text-lg font-bold text-slate-800 tracking-tight leading-tight">
+                              {slide.title}
+                            </h4>
+                          </div>
+                        </div>
+
+                        <div className="pt-5 mt-auto">
+                          <div className={`w-full flex items-center justify-center gap-2 h-12 bg-white ${theme.slideButton} border-1 hover:text-white font-bold text-sm rounded-sm transition-all cursor-pointer`}>
+                            {slide.ctaLabel}
+                            <ChevronRight className="w-4 h-4 group-hover/card:translate-x-0.5 transition-transform" />
+                          </div>
+                        </div>
                       </div>
                     </div>
-
-                    <div className="pt-5 mt-auto">
-                      <div className="w-full flex items-center justify-center gap-2 h-12 bg-white hover:bg-primary border-1 border-primary text-primary hover:text-white font-bold text-sm rounded-sm transition-all cursor-pointer">
-                        Coba Split Later
-                        <ChevronRight className="w-4 h-4 group-hover/card:translate-x-0.5 transition-transform" />
-                      </div>
-                    </div>
-                  </div>
+                  </LandingLink>
                 </div>
-              </Link>
-            </div>
-
-            {/* Card 3: Review Rewards */}
-            <div className="flex-shrink-0 w-[85vw] sm:w-[480px] snap-start h-auto flex">
-              <Link href="/review" className="block w-full h-full group/card transition-all duration-300 hover:scale-[1.005] active:scale-[0.99]">
-                <div className="relative p-[1.5px] rounded-md bg-gradient-to-br from-amber-200 via-orange-300 to-yellow-200 shadow-lg shadow-amber-200/5 h-full flex flex-col overflow-hidden">
-                  {/* Stick Badge - Pastel Orange Style */}
-                  <div className="absolute top-0 right-0 px-3 py-1.5 rounded-bl-xl flex items-center gap-1.5 text-[9px] font-black uppercase bg-orange-400 text-white z-30 shadow-md transition-transform group-hover/card:scale-105 origin-top-right">
-                    <Sparkles className="w-3 h-3 fill-current" />
-                    <span>REWARDS</span>
-                  </div>
-
-                  <div className="bg-white rounded-[calc(var(--radius-md)-1.5px)] p-6 flex-grow flex flex-col justify-between relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-24 h-24 bg-orange-500/5 rounded-full blur-2xl -mr-6 -mt-6 pointer-events-none" />
-
-                    <div className="flex items-center gap-4">
-                      <div className="shrink-0 w-16 h-16 rounded-full flex items-center justify-center transition-transform group-hover/card:scale-110 overflow-hidden relative">
-                        <Image
-                          src="/img/icon-rewards.jpg"
-                          alt=""
-                          width={64}
-                          height={64}
-                          className="w-full h-full object-contain"
-                        />
-                      </div>
-
-                      <div className="space-y-1">
-                        <h4 className="text-base sm:text-lg font-bold text-slate-800 tracking-tight leading-tight">
-                          Kasih Review Pertama & Dapetin Rewards Spesial! 🎁
-                        </h4>
-                      </div>
-                    </div>
-
-                    <div className="pt-5 mt-auto">
-                      <div className="w-full flex items-center justify-center gap-2 h-12 bg-white hover:bg-orange-500 border-1 border-orange-400 text-orange-600 hover:text-white font-bold text-sm rounded-sm transition-all cursor-pointer">
-                        Tulis Review Sekarang
-                        <ChevronRight className="w-4 h-4 group-hover/card:translate-x-0.5 transition-transform" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </Link>
-            </div>
+              );
+            })}
           </div>
         </div>
       </div>

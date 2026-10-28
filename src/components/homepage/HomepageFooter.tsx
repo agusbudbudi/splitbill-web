@@ -1,17 +1,13 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { Instagram, Heart, Lightbulb } from "lucide-react";
+import React from "react";
+import { Instagram, Lightbulb } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { isNativeAppWebView } from "@/lib/utils";
+import { useIsNativeApp } from "@/hooks/useClientOnly";
 
 export const HomepageFooter = () => {
-  const [isNativeApp, setIsNativeApp] = useState(false);
-
-  useEffect(() => {
-    setIsNativeApp(isNativeAppWebView());
-  }, []);
+  const isNativeApp = useIsNativeApp();
 
   if (isNativeApp) return null;
 

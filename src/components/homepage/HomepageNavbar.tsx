@@ -4,12 +4,13 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Menu, X, ArrowRight, Zap, ChevronDown } from "lucide-react";
-import { cn, getAvatarUrl, isNativeAppWebView } from "@/lib/utils";
+import { cn, getAvatarUrl } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
 import { useAuthStore } from "@/lib/stores/authStore";
 import { usePWA } from "@/hooks/usePWA";
-import { toast } from "sonner";
+import { useIsNativeApp, useSessionFlag } from "@/hooks/useClientOnly";
+import { scrollBelowHeader } from "@/lib/landing/scroll";
 import { usePathname, useRouter } from "next/navigation";
 
 interface NavLink {
@@ -36,6 +37,57 @@ const FEATURE_SHORTCUTS = [
   // Landing page, not a separate tool; full-width row so the 2-col grid stays even
   { imageSrc: "/img/menu-split-later.png", title: "Split Bill Liburan", href: "/split-bill-liburan", bgLight: "bg-sky-100/90", wide: true },
 ];
+
+interface AuthCTAProps {
+  user: ReturnType<typeof useAuthStore.getState>["user"];
+  isLoggedIn: boolean;
+  className?: string;
+}
+
+const AuthCTA = ({ user, isLoggedIn, className }: AuthCTAProps) => (
+  <>
+    {isLoggedIn ? (
+      <Link
+        href="/member"
+        className={cn(
+          "group relative flex items-center justify-center rounded-full transition-all duration-300 w-9 h-9 border-2 border-slate-200 hover:border-primary bg-slate-50 backdrop-blur-sm",
+          user?.subscriptionStatus === "active" && "p-[2px] bg-gradient-gold shadow-[0_0_10px_rgba(246,226,122,0.4)]",
+          className
+        )}
+        aria-label="Ke Dashboard Member"
+      >
+        <div className="w-full h-full rounded-full overflow-hidden bg-slate-100">
+          <img
+            src={getAvatarUrl(user)}
+            alt="Avatar Profil"
+            className="w-full h-full object-cover"
+          />
+        </div>
+        {user?.subscriptionStatus === "active" && (
+          <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-white rounded-full flex items-center justify-center shadow-sm border border-slate-100 z-10 p-[1px]">
+            <Image
+              src="/img/icon-vip.png"
+              alt=""
+              width={14}
+              height={14}
+              className="w-full h-full object-contain"
+            />
+          </div>
+        )}
+      </Link>
+    ) : (
+      <Link
+        href="/login"
+        className={cn(
+          "px-4 py-2 rounded-sm text-sm font-bold text-primary hover:bg-slate-100 transition-all duration-200",
+          className
+        )}
+      >
+        Masuk
+      </Link>
+    )}
+  </>
+);
 
 interface HomepageNavbarProps {
   /** Nav links shown in desktop bar + mobile drawer. Defaults to the homepage's full link set. */
@@ -65,29 +117,16 @@ export const HomepageNavbar = ({
   const fiturCloseTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { user, isAuthenticated, isInitialized, initialize } = useAuthStore();
   const { isInstallable, isStandalone, isIOS, installPWA } = usePWA();
-  const [showPwaBanner, setShowPwaBanner] = useState(false);
-  const [isNativeApp, setIsNativeApp] = useState(false);
+  const [pwaHidden, setPwaHidden] = useState(false);
+  const pwaDismissedThisSession = useSessionFlag("pwa_dismissed");
+  const isNativeApp = useIsNativeApp();
+  // Rely strictly on browser's native install readiness or iOS device flags
+  const showPwaBanner =
+    isAuthenticated && !isStandalone && (isInstallable || isIOS) && !pwaDismissedThisSession && !pwaHidden;
 
   useEffect(() => {
     initialize();
   }, [initialize]);
-
-  useEffect(() => {
-    setIsNativeApp(isNativeAppWebView());
-  }, []);
-
-  // Check if we should show the install PWA banner
-  useEffect(() => {
-    // Check if dismissed previously in this session
-    const isDismissed = sessionStorage.getItem("pwa_dismissed") === "true";
-
-    // Rely strictly on browser's native install readiness or iOS device flags
-    if (isAuthenticated && !isStandalone && (isInstallable || isIOS) && !isDismissed) {
-      setShowPwaBanner(true);
-    } else {
-      setShowPwaBanner(false);
-    }
-  }, [isInstallable, isStandalone, isIOS, isAuthenticated]);
 
   const handlePwaInstall = async () => {
     if (isIOS) {
@@ -97,7 +136,7 @@ export const HomepageNavbar = ({
     } else if (isInstallable) {
       const outcome = await installPWA();
       if (outcome === "accepted") {
-        setShowPwaBanner(false);
+        setPwaHidden(true);
       }
     } else {
       // Fallback for Desktop browser simulation / Localhost / Production where beforeinstallprompt hasn't fired yet
@@ -111,7 +150,7 @@ export const HomepageNavbar = ({
     e.preventDefault();
     e.stopPropagation();
     sessionStorage.setItem("pwa_dismissed", "true");
-    setShowPwaBanner(false);
+    setPwaHidden(true);
   };
 
   useEffect(() => {
@@ -143,16 +182,24 @@ export const HomepageNavbar = ({
     };
   }, [fiturOpen]);
 
-  useEffect(() => {
+  // Reset menus while rendering, not in an effect, so the stale open state
+  // never paints (React's "adjust state when a prop changes" pattern).
+  const [prevPathname, setPrevPathname] = useState(pathname);
+  if (pathname !== prevPathname) {
+    setPrevPathname(pathname);
     setFiturHover(false);
     setFiturPinned(false);
     setMobileFiturOpen(false);
-    if (fiturCloseTimeout.current) clearTimeout(fiturCloseTimeout.current);
-  }, [pathname]);
+  }
+  const [prevMenuOpen, setPrevMenuOpen] = useState(menuOpen);
+  if (menuOpen !== prevMenuOpen) {
+    setPrevMenuOpen(menuOpen);
+    if (!menuOpen) setMobileFiturOpen(false);
+  }
 
   useEffect(() => {
-    if (!menuOpen) setMobileFiturOpen(false);
-  }, [menuOpen]);
+    if (fiturCloseTimeout.current) clearTimeout(fiturCloseTimeout.current);
+  }, [pathname]);
 
   const handleFiturMouseEnter = () => {
     if (fiturCloseTimeout.current) {
@@ -196,29 +243,7 @@ export const HomepageNavbar = ({
         const targetId = href.slice(1);
         const el = document.getElementById(targetId);
         if (el) {
-          // 1. Calculate and scroll immediately (this will trigger scrolled=true and start rendering the banner)
-          const header = headerRef.current;
-          let headerHeight = header ? header.offsetHeight : 64;
-          let elementPosition = el.getBoundingClientRect().top;
-          let offsetPosition = elementPosition + window.scrollY - headerHeight - 2;
-
-          window.scrollTo({
-            top: offsetPosition,
-            behavior: "smooth",
-          });
-
-          // 2. Perform a secondary micro-adjustment after 200ms once the Framer Motion height animation of the banner completes
-          setTimeout(() => {
-            const updatedHeader = headerRef.current;
-            const updatedHeaderHeight = updatedHeader ? updatedHeader.offsetHeight : 64;
-            const updatedElementPosition = el.getBoundingClientRect().top;
-            const updatedOffset = updatedElementPosition + window.scrollY - updatedHeaderHeight - 2;
-
-            window.scrollTo({
-              top: updatedOffset,
-              behavior: "smooth",
-            });
-          }, 260); // 260ms matches Framer Motion's default height transition delay perfectly
+          scrollBelowHeader(el);
         }
       } else {
         router.push(`${scrollPath}${href}`);
@@ -226,51 +251,6 @@ export const HomepageNavbar = ({
       setMenuOpen(false);
     }
   };
-
-  const AuthCTA = ({ className }: { className?: string }) => (
-    <>
-      {isInitialized && isAuthenticated ? (
-        <Link
-          href="/member"
-          className={cn(
-            "group relative flex items-center justify-center rounded-full transition-all duration-300 w-9 h-9 border-2 border-slate-200 hover:border-primary bg-slate-50 backdrop-blur-sm",
-            user?.subscriptionStatus === "active" && "p-[2px] bg-gradient-gold shadow-[0_0_10px_rgba(246,226,122,0.4)]",
-            className
-          )}
-          aria-label="Ke Dashboard Member"
-        >
-          <div className="w-full h-full rounded-full overflow-hidden bg-slate-100">
-            <img
-              src={getAvatarUrl(user)}
-              alt="Avatar Profil"
-              className="w-full h-full object-cover"
-            />
-          </div>
-          {user?.subscriptionStatus === "active" && (
-            <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-white rounded-full flex items-center justify-center shadow-sm border border-slate-100 z-10 p-[1px]">
-              <Image
-                src="/img/icon-vip.png"
-                alt=""
-                width={14}
-                height={14}
-                className="w-full h-full object-contain"
-              />
-            </div>
-          )}
-        </Link>
-      ) : (
-        <Link
-          href="/login"
-          className={cn(
-            "px-4 py-2 rounded-sm text-sm font-bold text-primary hover:bg-slate-100 transition-all duration-200",
-            className
-          )}
-        >
-          Masuk
-        </Link>
-      )}
-    </>
-  );
 
   // Native shell provides its own header + PWA is irrelevant inside it.
   if (isNativeApp) return null;
@@ -286,7 +266,7 @@ export const HomepageNavbar = ({
         )}
       >
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 lg:h-18">
+          <div className="flex items-center justify-between h-14 lg:h-16">
             {/* Logo */}
             <Link
               href="/"
@@ -415,7 +395,7 @@ export const HomepageNavbar = ({
             {/* Mobile/Desktop Auth + Hamburger Wrapper */}
             <div className="flex items-center gap-2">
               <div className="flex items-center gap-4">
-                <AuthCTA />
+                <AuthCTA user={user} isLoggedIn={isInitialized && isAuthenticated} />
 
                 {/* Desktop CTA (Mulai Gratis) */}
                 <Link
@@ -451,8 +431,14 @@ export const HomepageNavbar = ({
               className="overflow-hidden bg-gradient-to-r from-primary/10 via-primary/5 to-white border-t border-slate-100 text-slate-700"
             >
               <Link href="/login" className="block w-full py-2 px-4 text-center hover:bg-slate-50/50 transition-colors">
-                <span className="text-xs sm:text-sm font-medium flex items-center justify-center gap-1.5 tracking-wide">
-                  ⚡ <span className="sm:hidden">Login & simpan catatan patunganmu!</span><span className="hidden sm:inline">Yuk login biar split billmu tersimpan otomatis!</span> <span className="font-black text-primary inline-flex items-center gap-1">Masuk Sekarang <ArrowRight className="w-3.5 h-3.5" /></span>
+                {/* Always one line: the message truncates, the CTA never wraps or shrinks */}
+                <span className="text-xs sm:text-sm font-medium flex items-center justify-center gap-1.5 tracking-wide whitespace-nowrap">
+                  <span className="min-w-0 truncate">
+                    ⚡ <span className="sm:hidden">Login & simpan catatan patunganmu!</span><span className="hidden sm:inline">Yuk login biar split billmu tersimpan otomatis!</span>
+                  </span>
+                  <span className="shrink-0 font-black text-primary inline-flex items-center gap-1">
+                    Masuk<span className="hidden sm:inline"> Sekarang</span> <ArrowRight className="w-3.5 h-3.5" />
+                  </span>
                 </span>
               </Link>
             </motion.div>
@@ -467,11 +453,11 @@ export const HomepageNavbar = ({
               transition={{ duration: 0.25, ease: "easeInOut" }}
               className="overflow-hidden bg-gradient-to-r from-primary/10 via-primary/5 to-white border-t border-slate-100 text-slate-700"
             >
-              <div className="w-full py-2 px-8 flex items-center justify-between max-w-7xl mx-auto">
-                <span className="text-xs sm:text-sm font-medium flex items-center gap-1.5 tracking-wide">
+              <div className="w-full py-2 px-4 sm:px-8 flex items-center justify-between gap-3 max-w-7xl mx-auto whitespace-nowrap">
+                <span className="min-w-0 truncate text-xs sm:text-sm font-medium tracking-wide">
                   📱 <span className="sm:hidden">Install SplitBill di Home Screen!</span><span className="hidden sm:inline">Install SplitBill App untuk akses lebih cepat langsung dari Home Screen!</span>
                 </span>
-                <div className="flex items-center gap-2">
+                <div className="shrink-0 flex items-center gap-2">
                   <button
                     onClick={handlePwaInstall}
                     className="cursor-pointer font-black text-primary text-xs flex items-center gap-1 hover:underline"

@@ -59,7 +59,7 @@ export const FAQSectionHomepage = ({
           }),
         }}
       />
-      <section id="faq" className="py-20 bg-white relative overflow-hidden">
+      <section id="faq" data-landing-section="faq" className="py-16 bg-white relative overflow-hidden">
         {/* Background radial gradient */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-slate-50 rounded-full blur-[100px] pointer-events-none" />
 

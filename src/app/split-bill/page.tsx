@@ -13,6 +13,7 @@ import { buildMetadata } from "@/lib/seo";
 import SplitBillClientPage from "./SplitBillClientPage";
 import { FeatureSeoSection } from "@/components/seo/FeatureSeoSection";
 import { featureSeoContent } from "@/data/featureSeoContent";
+import { getFaqs, resolveFaqs } from "@/lib/faq";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { breadcrumbNode, jsonLdGraph, webApplicationNode } from "@/lib/structuredData";
 
@@ -29,7 +30,8 @@ export const metadata: Metadata = buildMetadata({
   },
 });
 
-export default function SplitBillPage() {
+export default async function SplitBillPage() {
+  const faqs = resolveFaqs(await getFaqs(), featureSeoContent.splitBill.faqs);
   const jsonLd = jsonLdGraph(
     breadcrumbNode([
       { name: "Home", path: "/" },
@@ -49,7 +51,7 @@ export default function SplitBillPage() {
       {/* SEO explainer first in the DOM (crawlers see H1 + intro before the
           client-only tool), shown visually below the tool via order-*. */}
       <div className="flex flex-col">
-        <FeatureSeoSection {...featureSeoContent.splitBill} className="order-2" />
+        <FeatureSeoSection {...featureSeoContent.splitBill} faqs={faqs} className="order-2" />
         <div className="order-1">
           <SplitBillClientPage />
         </div>

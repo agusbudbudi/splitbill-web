@@ -51,6 +51,7 @@ public/swe-worker-*.js
 
 CLAUDE.md
 doc/
+.claude/
 
 # Local Uploads
 /public/uploads/

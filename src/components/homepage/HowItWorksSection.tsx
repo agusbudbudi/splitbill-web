@@ -3,42 +3,18 @@
 import React, { useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { UserPlus, Camera, Send } from "lucide-react";
+import { LandingIcon } from "@/lib/landing/icons";
+import { getTone } from "@/lib/landing/tones";
+import { isUnoptimizableSrc } from "@/lib/landing/image";
+import type { LandingContent } from "@/lib/landing/types";
+import { LandingTitle } from "./LandingTitle";
 
-const steps = [
-  {
-    number: "01",
-    icon: Camera,
-    title: "Foto / Upload Struk",
-    description: "Tinggal cekrek struk makan-makan lo. Gak usah repot ketik ulang menu satu-satu.",
-    image: "/img/step-scan.jpg",
-    alt: "Struk restoran sedang discan AI di layar SplitBill untuk membaca item dan harga",
-    color: "from-blue-500 to-cyan-500",
-    iconBg: "bg-primary",
-  },
-  {
-    number: "02",
-    icon: UserPlus,
-    title: "Pilih Teman & Menu",
-    description: "Assign siapa aja yang makan menu apa. Biar AI yang kalkulasiin pembagian pajaknya.",
-    image: "/img/step-add-friend.jpg",
-    alt: "Layar tambah teman di SplitBill dengan daftar teman yang ikut patungan",
-    color: "from-[#EEA420] to-[#F5BE4E]",
-    iconBg: "bg-[#EEA420]",
-  },
-  {
-    number: "03",
-    icon: Send,
-    title: "Share Link Tagihan",
-    description: "Kirim link rincian tagihan ke WhatsApp grup. Temen lo tinggal bayar via e-wallet/bank.",
-    image: "/img/step-share.jpg",
-    alt: "Ringkasan tagihan split bill per orang yang dibagikan ke WhatsApp",
-    color: "from-[#2EC866] to-[#4AD37A]",
-    iconBg: "bg-[#2EC866]",
-  },
-];
+interface HowItWorksSectionProps {
+  content: LandingContent["howItWorks"];
+}
 
-export const HowItWorksSection = () => {
+export const HowItWorksSection = ({ content }: HowItWorksSectionProps) => {
+  const { steps } = content;
   const scrollRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -55,7 +31,7 @@ export const HowItWorksSection = () => {
 
     el.addEventListener("scroll", onScroll, { passive: true });
     return () => el.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [steps.length]);
 
   const scrollToIndex = (idx: number) => {
     const el = scrollRef.current;
@@ -65,7 +41,7 @@ export const HowItWorksSection = () => {
   };
 
   return (
-    <section id="cara-pakai" className="py-16 sm:py-24 bg-white relative overflow-hidden">
+    <section id="cara-pakai" data-landing-section="howItWorks" className="py-16 bg-white relative overflow-hidden">
       {/* Background decoration */}
       <div className="absolute inset-0 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:24px_24px] opacity-30 pointer-events-none" />
 
@@ -79,21 +55,20 @@ export const HowItWorksSection = () => {
             transition={{ duration: 0.5 }}
             className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight mb-4"
           >
-            3 Langkah Gampang,{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-600 to-primary">
-              Sat-Set Beres!
-            </span>
+            <LandingTitle title={content.title} highlight={content.titleHighlight} />
           </motion.h2>
 
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-base sm:text-lg text-slate-500 font-medium"
-          >
-            Gak pake ribet instal aplikasi atau daftar akun. Langsung cobain lewat web.
-          </motion.p>
+          {content.subtitle && (
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="text-base sm:text-lg text-slate-500 font-medium"
+            >
+              {content.subtitle}
+            </motion.p>
+          )}
         </div>
 
         {/* One list for all breakpoints: horizontal snap slider on mobile,
@@ -108,10 +83,10 @@ export const HowItWorksSection = () => {
             <div className="hidden lg:block absolute top-[130px] left-[15%] right-[15%] h-0.5 border-t-2 border-dashed border-slate-200 -z-10" />
 
             {steps.map((step, index) => {
-              const Icon = step.icon;
+              const number = String(index + 1).padStart(2, "0");
               return (
                 <motion.div
-                  key={step.number}
+                  key={index}
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-30px" }}
@@ -121,20 +96,21 @@ export const HowItWorksSection = () => {
                   {/* Image */}
                   <div className="relative w-full max-w-[260px] lg:max-w-[280px] aspect-square rounded-xl overflow-hidden mb-6 lg:mb-8 lg:border lg:border-slate-100 transition-transform duration-300 lg:group-hover:scale-105">
                     <Image
-                      src={step.image}
-                      alt={step.alt}
+                      src={step.image.url}
+                      alt={step.image.alt}
                       fill
                       sizes="(min-width: 1024px) 280px, 80vw"
+                      unoptimized={isUnoptimizableSrc(step.image.url)}
                       className="object-cover"
                     />
                     <span className="absolute top-3 left-3 w-11 h-11 rounded-xl bg-white/95 backdrop-blur-sm flex items-center justify-center text-base lg:text-lg font-black text-slate-900 shadow-md">
-                      {step.number}
+                      {number}
                     </span>
                   </div>
 
                   {/* Step Circle Icon */}
-                  <div className={`w-12 h-12 rounded-full ${step.iconBg} text-white flex items-center justify-center mb-4 lg:mb-5 shadow-lg transition-all duration-300 lg:group-hover:scale-110`}>
-                    <Icon className="w-5 h-5" />
+                  <div className={`w-12 h-12 rounded-full ${getTone(step.tone).solidBg} text-white flex items-center justify-center mb-4 lg:mb-5 shadow-lg transition-all duration-300 lg:group-hover:scale-110`}>
+                    <LandingIcon name={step.icon} className="w-5 h-5" />
                   </div>
 
                   {/* Info */}

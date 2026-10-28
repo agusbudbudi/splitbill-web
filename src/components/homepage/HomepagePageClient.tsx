@@ -3,26 +3,35 @@
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { HomepageNavbar } from "./HomepageNavbar";
-import { HeroSection } from "./HeroSection";
+// Old HeroSection is no longer rendered but kept (it still hosts ScanFlow) until the new hero is final
+import { HeroExperimentSection } from "./HeroExperimentSection";
 import { SocialProofBar } from "./SocialProofBar";
 import { FeaturesSection } from "./FeaturesSection";
 import { HowItWorksSection } from "./HowItWorksSection";
 import { PromoBanner } from "../ui/PromoBanner";
 import { Banner } from "../home/Banner";
 import { HomepageFooter } from "./HomepageFooter";
+import { SeoContentSection } from "./SeoContentSection";
+import { FeatureShowcaseSection } from "./FeatureShowcaseSection";
 import { useAuthStore } from "@/lib/stores/authStore";
 import { LazyMount } from "@/components/ui/LazyMount";
 import { Skeleton } from "@/components/ui/Skeleton";
 import type { Blog } from "@/lib/types/blog";
 import type { Review } from "@/hooks/useReview";
+import type { LandingContent, LandingSectionKey } from "@/lib/landing/types";
+import { getPromoTone } from "@/lib/landing/tones";
+import type { FAQItem } from "@/data/faqData";
+import { LandingTitle } from "./LandingTitle";
+import { useIsHydrated } from "@/hooks/useClientOnly";
 
 // Local skeleton fallback so the lazy chunk's own <Suspense> resolves in place —
 // without a `loading` option, next/dynamic suspends to the nearest Suspense
 // boundary, which is the root app/loading.tsx, blanking the whole page instead
 // of just this section.
-const sectionSkeleton = (height: number) => () => (
-  <Skeleton className="w-full" style={{ height }} />
-);
+const sectionSkeleton = (height: number) => {
+  const SectionSkeleton = () => <Skeleton className="w-full" style={{ height }} />;
+  return SectionSkeleton;
+};
 
 // Dynamically import below-the-fold and heavy components
 const TestimonialsSection = dynamic(
@@ -66,20 +75,22 @@ const ChatRoom = dynamic(
 );
 
 interface HomepagePageClientProps {
+  /** CMS-managed copy (already merged with defaults by getLandingContent). */
+  content: LandingContent;
+  /** FAQs flagged showOnLanding (CMS, or static fallback). */
+  faqs: FAQItem[];
   initialReviews?: Review[];
   initialBlogs?: Blog[];
   /** Server-rendered use-case copy, shown below the feature cards. */
   useCasesSection?: React.ReactNode;
 }
 
-export const HomepagePageClient = ({ initialReviews, initialBlogs, useCasesSection }: HomepagePageClientProps) => {
+export const HomepagePageClient = ({ content, faqs, initialReviews, initialBlogs, useCasesSection }: HomepagePageClientProps) => {
   const { isAuthenticated } = useAuthStore();
-  const [isMounted, setIsMounted] = useState(false);
+  const isMounted = useIsHydrated();
   const [isChatReady, setIsChatReady] = useState(false);
 
   useEffect(() => {
-    setIsMounted(true);
-
     // Chat widget isn't needed for first paint — load it once the browser is idle
     // instead of racing the hero's own hydration/animation work.
     if ("requestIdleCallback" in window) {
@@ -90,8 +101,83 @@ export const HomepagePageClient = ({ initialReviews, initialBlogs, useCasesSecti
     return () => clearTimeout(t);
   }, []);
 
+  const renderSection = (key: LandingSectionKey): React.ReactNode => {
+    switch (key) {
+      case "socialProof":
+        return <SocialProofBar content={content.socialProof} />;
+      case "promoSlider":
+        // AI Scan card reads per-visitor quota, so the slider renders client-side only
+        return isMounted ? <HomepagePromoSlider content={content.promoSlider} /> : null;
+      case "featureShowcase":
+        return <FeatureShowcaseSection content={content.featureShowcase} items={content.features.items} />;
+      case "features":
+        return <FeaturesSection content={content.features} />;
+      case "useCases":
+        return useCasesSection;
+      case "howItWorks":
+        return <HowItWorksSection content={content.howItWorks} />;
+      case "promoBanner": {
+        const banner = content.promoBanner;
+        const tone = getPromoTone(banner.tone);
+        return (
+          <section data-landing-section="promoBanner" className="bg-white py-12 sm:py-16">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <PromoBanner
+                landing
+                href={banner.href}
+                image={banner.image.url}
+                imageAlt={banner.image.alt}
+                titleText={banner.titleText}
+                titleHighlight={banner.titleHighlight}
+                description={banner.description}
+                ctaText={banner.ctaLabel}
+                bgColorClass={tone.bannerBg}
+                gradientToClass={tone.bannerGradientTo}
+                ctaTextColorClass={tone.bannerText}
+              />
+            </div>
+          </section>
+        );
+      }
+      case "marketingBanner":
+        // Content managed in the admin's Banners menu
+        return (
+          <section data-landing-section="marketingBanner" className="bg-white py-12 sm:py-16">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <LazyMount minHeight={0}>
+                <Banner />
+              </LazyMount>
+            </div>
+          </section>
+        );
+      case "comparison":
+        return <ComparisonSection content={content.comparison} />;
+      case "testimonials":
+        return <TestimonialsSection header={content.testimonials} variant="white" initialReviews={initialReviews} />;
+      case "blog":
+        return <BlogSectionHomepage header={content.blog} initialBlogs={initialBlogs} />;
+      case "faq":
+        return (
+          <FAQSectionHomepage
+            faqs={faqs}
+            title={<LandingTitle title={content.faq.title} highlight={content.faq.titleHighlight} />}
+            subtitle={content.faq.subtitle}
+            defaultOpenFirst
+          />
+        );
+      case "seoContent":
+        return <SeoContentSection content={content.seoContent} />;
+      case "ctaBanner":
+        return <CTABannerSection content={content.ctaBanner} />;
+      default:
+        return null;
+    }
+  };
+
+  // overflow-x-clip, not -hidden: hidden makes this div a scroll container,
+  // which breaks position: sticky inside it (FeatureShowcaseSection pinning).
   return (
-    <div className="relative min-h-screen bg-[#f8f9fd] overflow-x-hidden selection:bg-primary selection:text-white">
+    <div className="relative min-h-screen bg-[#f8f9fd] overflow-x-clip selection:bg-primary selection:text-white">
       {/* Structured data — HowTo, mirrors the visible HowItWorksSection steps */}
       <script
         type="application/ld+json"
@@ -102,26 +188,12 @@ export const HomepagePageClient = ({ initialReviews, initialBlogs, useCasesSecti
             name: "Cara Split Bill Online dengan Scan Struk AI",
             description:
               "3 langkah membagi tagihan secara online menggunakan AI Scan di SplitBill",
-            step: [
-              {
-                "@type": "HowToStep",
-                position: 1,
-                name: "Foto / Upload Struk",
-                text: "Tinggal cekrek struk makan-makan lo. Gak usah repot ketik ulang menu satu-satu.",
-              },
-              {
-                "@type": "HowToStep",
-                position: 2,
-                name: "Pilih Teman & Menu",
-                text: "Assign siapa aja yang makan menu apa. Biar AI yang kalkulasiin pembagian pajaknya.",
-              },
-              {
-                "@type": "HowToStep",
-                position: 3,
-                name: "Share Link Tagihan",
-                text: "Kirim link rincian tagihan ke WhatsApp grup. Temen lo tinggal bayar via e-wallet/bank.",
-              },
-            ],
+            step: content.howItWorks.steps.map((step, index) => ({
+              "@type": "HowToStep",
+              position: index + 1,
+              name: step.title,
+              text: step.description,
+            })),
           }),
         }}
       />
@@ -132,54 +204,18 @@ export const HomepagePageClient = ({ initialReviews, initialBlogs, useCasesSecti
       {/* Main Content */}
       <main>
         {/* Hero Section */}
-        <HeroSection />
+        <HeroExperimentSection content={content.hero} />
 
-        {/* Social Proof Stripe */}
-        <SocialProofBar />
-
-        {/* AI Scan Banner / Login Encouragement Slider */}
-        {isMounted && <HomepagePromoSlider />}
-
-        {/* Features Bento Grid */}
-        <FeaturesSection />
-
-        {useCasesSection}
-
-        {/* How It Works Steps */}
-        <HowItWorksSection />
-
-        {/* Promo Banner */}
-        <section className="bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <PromoBanner href="/split-bill-liburan" />
-          </div>
-        </section>
-
-        {/* Marketing Banner */}
-        <section className="bg-white pt-2 sm:pt-6">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <LazyMount minHeight={0}>
-              <Banner />
-            </LazyMount>
-          </div>
-        </section>
-
-        {/* Comparison, Testimonials, Pricing, Blog, FAQ, CTA — kept eager (not lazy-mounted)
-            so their headings/copy/schema land in the initial SSR HTML instead of being
-            gated behind client JS + IntersectionObserver, which crawlers may never run. */}
-        <br className="hidden" />
-        <ComparisonSection />
-
-        <TestimonialsSection initialReviews={initialReviews} />
-
-        {/* Pricing hidden for now — keep component, just not rendered */}
-        {/* <PricingSection /> */}
-
-        <BlogSectionHomepage initialBlogs={initialBlogs} />
-
-        <FAQSectionHomepage defaultOpenFirst />
-
-        <CTABannerSection />
+        {/* Everything below the hero, in the CMS layout's order. Comparison,
+            Testimonials, Blog, FAQ and CTA stay eager (not lazy-mounted) so their
+            headings/copy/schema land in the initial SSR HTML instead of being gated
+            behind client JS + IntersectionObserver, which crawlers may never run.
+            Pricing is hidden for now — component kept, just not rendered. */}
+        {content.layout.sections
+          .filter((section) => section.visible)
+          .map((section) => (
+            <React.Fragment key={section.key}>{renderSection(section.key)}</React.Fragment>
+          ))}
       </main>
 
       {/* Site Footer */}

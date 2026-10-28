@@ -29,7 +29,7 @@ import {
   XCircle,
   Clock,
 } from "lucide-react";
-import { faqData } from "@/data/faqData";
+import { getFaqs } from "@/lib/faq";
 import { LiburanCTAButton } from "./LiburanCTAButton";
 import { LiburanPageTracker } from "./LiburanPageTracker";
 import { HeroSplitCardCarousel } from "./HeroSplitCardCarousel";
@@ -59,9 +59,9 @@ export const metadata: Metadata = buildMetadata({
   },
 });
 
-const liburanFaqs = faqData.filter((item) => item.category === "split-bill-liburan");
 
-export default function SplitBillLiburanPage() {
+export default async function SplitBillLiburanPage() {
+  const liburanFaqs = (await getFaqs()).filter((item) => item.category === "split-bill-liburan");
   const breadcrumbSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",

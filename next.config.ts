@@ -1,5 +1,7 @@
 import type { NextConfig } from "next";
 import { LEGACY_CATEGORY_SLUGS, LEGACY_TAG_SLUGS } from "./src/lib/blogLegacyRedirects";
+import { PREVIEW_FRAME_ANCESTORS } from "./src/lib/landing/preview";
+import { LANDING_ASSET_HOSTS } from "./src/lib/landing/image";
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const withPWA = require("@ducanh2912/next-pwa").default({
   dest: "public",
@@ -33,15 +35,22 @@ const withPWA = require("@ducanh2912/next-pwa").default({
 
 // Private (login-only) areas. robots.txt blocks crawling, but a robots block
 // doesn't drop an already-known URL from the index, so send noindex too.
-const NOINDEX_PATHS = ["/wallet", "/history", "/member"];
+const NOINDEX_PATHS = ["/wallet", "/history", "/member", "/preview"];
 
 const nextConfig: NextConfig = {
   turbopack: {},
   async headers() {
-    return NOINDEX_PATHS.flatMap((path) => [path, `${path}/:path*`]).map((source) => ({
-      source,
-      headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
-    }));
+    return [
+      ...NOINDEX_PATHS.flatMap((path) => [path, `${path}/:path*`]).map((source) => ({
+        source,
+        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
+      })),
+      {
+        // CMS live preview is embedded by the admin (splitbill-be) only.
+        source: "/preview/:path*",
+        headers: [{ key: "Content-Security-Policy", value: `frame-ancestors ${PREVIEW_FRAME_ANCESTORS}` }],
+      },
+    ];
   },
   async redirects() {
     return [
@@ -92,6 +101,14 @@ const nextConfig: NextConfig = {
         port: "",
         pathname: "/**",
       },
+      // CMS-uploaded landing page images (splitbill-be Netlify Blobs); other
+      // CMS image hosts render unoptimized (see isUnoptimizableSrc)
+      ...LANDING_ASSET_HOSTS.map((hostname) => ({
+        protocol: "https" as const,
+        hostname,
+        port: "",
+        pathname: "/api/landing-assets/**",
+      })),
       {
         protocol: "https",
         hostname: "*.public.blob.vercel-storage.com",

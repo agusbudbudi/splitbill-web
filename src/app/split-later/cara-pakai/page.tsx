@@ -35,7 +35,7 @@ import {
   type KillerFeature,
   type CaraPakaiStep,
 } from "@/components/cara-pakai";
-import { faqData } from "@/data/faqData";
+import { getFaqs } from "@/lib/faq";
 import { FAQSectionHomepage } from "@/components/homepage/FAQSectionHomepage";
 
 const PAGE_URL = "https://www.splitbill.my.id/split-later/cara-pakai";
@@ -55,7 +55,6 @@ export const metadata: Metadata = buildMetadata({
   },
 });
 
-const splitLaterFaqs = faqData.filter((item) => item.category === "split-later");
 
 const overviewPoints: OverviewPoint[] = [
   {
@@ -164,7 +163,8 @@ const steps: CaraPakaiStep[] = [
   },
 ];
 
-export default function SplitLaterCaraPakaiPage() {
+export default async function SplitLaterCaraPakaiPage() {
+  const splitLaterFaqs = (await getFaqs()).filter((item) => item.category === "split-later");
   const breadcrumbSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",

@@ -8,13 +8,18 @@ import { Blog } from "@/lib/types/blog";
 import { fetchBlogs } from "@/lib/api/blog";
 import { BlogCard } from "@/components/blog/BlogCard";
 import { BlogCardSkeleton } from "@/components/blog/BlogCardSkeleton";
+import type { LandingHeader } from "@/lib/landing/types";
+import { DEFAULT_LANDING_CONTENT } from "@/lib/landing/defaults";
+import { LandingTitle } from "./LandingTitle";
 
 interface BlogSectionHomepageProps {
+  /** CMS section heading; pages outside the homepage use the default copy. */
+  header?: LandingHeader;
   /** Latest posts fetched on the server so the links are in the initial HTML. */
   initialBlogs?: Blog[];
 }
 
-export const BlogSectionHomepage = ({ initialBlogs }: BlogSectionHomepageProps) => {
+export const BlogSectionHomepage = ({ header = DEFAULT_LANDING_CONTENT.blog, initialBlogs }: BlogSectionHomepageProps) => {
   const hasInitial = !!initialBlogs && initialBlogs.length > 0;
   const [blogs, setBlogs] = useState<Blog[]>(initialBlogs ?? []);
   const [isLoading, setIsLoading] = useState(!hasInitial);
@@ -48,7 +53,7 @@ export const BlogSectionHomepage = ({ initialBlogs }: BlogSectionHomepageProps) 
   }
 
   return (
-    <section className="py-16 sm:py-24 bg-white relative overflow-hidden group">
+    <section data-landing-section="blog" className="py-16 bg-white relative overflow-hidden group">
       {/* Background shape */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-slate-50 rounded-full blur-[100px] pointer-events-none" />
 
@@ -63,10 +68,7 @@ export const BlogSectionHomepage = ({ initialBlogs }: BlogSectionHomepageProps) 
               transition={{ duration: 0.5 }}
               className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight mb-4"
             >
-              Tips Nongkrong &{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-600">
-                Split Bill
-              </span>
+              <LandingTitle title={header.title} highlight={header.titleHighlight} />
             </motion.h2>
             <motion.p
               initial={{ opacity: 0, y: 20 }}
@@ -75,7 +77,7 @@ export const BlogSectionHomepage = ({ initialBlogs }: BlogSectionHomepageProps) 
               transition={{ duration: 0.5, delay: 0.1 }}
               className="text-base sm:text-lg text-slate-500 font-medium"
             >
-              Inspirasi patungan biar circle nongkrong lo tetap harmonis tanpa drama tagihan.
+              {header.subtitle}
             </motion.p>
           </div>
 

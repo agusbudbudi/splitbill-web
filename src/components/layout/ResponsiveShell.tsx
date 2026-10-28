@@ -40,10 +40,12 @@ export const ResponsiveShell = ({ children }: ResponsiveShellProps) => {
   // Marketing/edukasi page ("/[fitur]/cara-pakai" dan "/all-feature") —
   // full-width layout, gak butuh quick-access sidebar
   const isCaraPakaiPage = pathname.endsWith("/cara-pakai") || pathname === "/all-feature";
+  // CMS live preview, rendered inside the admin's phone frame
+  const isPreview = pathname.startsWith("/preview/");
 
   return (
     <div className="w-full min-h-screen bg-background">
-      {isMounted && pathname !== "/" && !isBlogDetail && !isAuthPage && !isMemberShell && !isSplitBillLiburan && !isCaraPakaiPage && <MemberSidebar />}
+      {isMounted && pathname !== "/" && !isBlogDetail && !isAuthPage && !isMemberShell && !isSplitBillLiburan && !isCaraPakaiPage && !isPreview && <MemberSidebar />}
       {children}
     </div>
   );

@@ -321,14 +321,14 @@ export const ScanFlow = ({ startDelay = 0 }: { startDelay?: number }) => {
             opacity: { duration: 0.25, delay: revealed ? 0.45 : 0 },
             scale: { type: "spring", stiffness: 350, damping: 16, delay: revealed ? 0.45 : 0 },
           }}
-          className="absolute -bottom-20 sm:-bottom-20 -left-16 sm:-left-20 bg-white rounded-md shadow-2xl shadow-primary/15 px-4 py-3 sm:px-4 sm:py-3 flex items-center gap-2.5 sm:gap-2.5 z-20 pointer-events-none"
+          className="absolute -bottom-24 -left-16 sm:-left-20 bg-white rounded-md shadow-2xl shadow-primary/15 px-4 py-3.5 flex items-center gap-3 z-20 pointer-events-none"
         >
-          <div className="w-10 h-10 sm:w-8 sm:h-8 bg-emerald-100 rounded-full flex items-center justify-center shrink-0">
-            <Check className="w-5 h-5 sm:w-4 sm:h-4 text-emerald-600" strokeWidth={3} />
+          <div className="w-10 h-10 bg-success rounded-full flex items-center justify-center shrink-0 shadow-md shadow-success/30">
+            <Check className="w-5 h-5 text-success-foreground" strokeWidth={3} />
           </div>
           <div>
-            <p className="text-xs sm:text-[10px] text-slate-400 font-medium">AI scan selesai</p>
-            <p className="text-sm sm:text-xs font-black text-slate-800">5 detik aja! ⚡</p>
+            <p className="text-xs text-slate-400 font-medium">AI scan selesai</p>
+            <p className="text-sm font-black text-slate-800">5 detik aja! ⚡</p>
           </div>
         </motion.div>
       </div>

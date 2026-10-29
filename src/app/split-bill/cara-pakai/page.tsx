@@ -115,7 +115,7 @@ const killerFeatures: KillerFeature[] = [
     icon: <CheckCircle2 className={killerFeatureIconClass} />,
     title: "Auto-track Pembayaran",
     description: "Sekali klik dari hasil settlement, langsung jadi tracker Collect Money buat pantau siapa udah bayar.",
-    image: "/img/cara-pakai/split-bill/Auto-track.png",
+    image: "/img/cara-pakai/split-bill/auto-track.png",
   },
 ];
 

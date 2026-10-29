@@ -108,7 +108,7 @@ const killerFeatures: KillerFeature[] = [
     icon: <MessageCircle className={killerFeatureIconClass} />,
     title: "Chat Bareng Agent Billy",
     description: "Bingung mulai dari mana? Tinggal chat, Agent Billy pandu dari tambah teman sampai selesai.",
-    image: "/img/cara-pakai/split-bill/agent-billy.png",
+    image: "/img/cara-pakai/split-bill/agent-billy.webp",
     isNew: true,
   },
   {

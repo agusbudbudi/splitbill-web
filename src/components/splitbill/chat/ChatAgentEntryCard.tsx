@@ -33,7 +33,7 @@ export const AgentBillyEntryCard = () => {
                 {/* Avatar */}
                 <div className="w-11 h-11 rounded-full overflow-hidden shrink-0">
                     <Image
-                        src="/img/agent-billy.png"
+                        src="/img/agent-billy.webp"
                         alt="Agent Billy"
                         width={44}
                         height={44}

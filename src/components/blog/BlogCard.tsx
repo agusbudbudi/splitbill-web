@@ -3,7 +3,6 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { motion } from "framer-motion";
 import { Clock, ArrowRight } from "lucide-react";
 import { Blog } from "@/lib/types/blog";
 import { Card } from "@/components/ui/Card";
@@ -44,14 +43,10 @@ export const BlogCard = ({ blog, priority = false, variant = "default" }: BlogCa
   const isFeatured = variant === "featured";
 
   return (
-    <motion.div
-      // The priority card is the LCP image: render it as-is from the server
-      // HTML instead of waiting for hydration to fade it in.
-      initial={priority ? false : { opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5 }}
-      className="h-full"
+    <div
+      // The priority card is the LCP image: no reveal, it paints as-is.
+      // Others use the CSS scroll reveal, visible in the server HTML.
+      className={cn("h-full", !priority && "reveal")}
     >
       <Link href={`/blog/${blog.slug}`} className="group/blog-card block h-full">
         <Card
@@ -116,6 +111,6 @@ export const BlogCard = ({ blog, priority = false, variant = "default" }: BlogCa
           </div>
         </Card>
       </Link>
-    </motion.div>
+    </div>
   );
 };

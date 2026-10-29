@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { motion } from "framer-motion";
 import { X, Check } from "lucide-react";
 import type { LandingContent } from "@/lib/landing/types";
 import { LandingTitle } from "./LandingTitle";
@@ -22,12 +21,8 @@ export const ComparisonSection = ({ content }: ComparisonSectionProps) => {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.5 }}
-            className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight leading-tight mb-4"
+          <h2
+            className="reveal text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight leading-tight mb-4"
           >
             {/* Highlight as a tilted white "sticker" — reads instantly on the blue */}
             <LandingTitle
@@ -35,28 +30,20 @@ export const ComparisonSection = ({ content }: ComparisonSectionProps) => {
               highlight={content.titleHighlight}
               highlightClassName="inline-block -rotate-1 rounded-md bg-white px-2.5 pb-0.5 text-primary shadow-[0_6px_16px_-8px_rgba(8,47,92,0.25)]"
             />
-          </motion.h2>
+          </h2>
 
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-base sm:text-lg text-white/85 font-medium"
+          <p
+            className="reveal text-base sm:text-lg text-white/85 font-medium"
           >
             {content.subtitle}
-          </motion.p>
+          </p>
         </div>
 
         {/* Comparison grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 items-stretch">
           {/* Before — muted glass card */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: "-50px" }}
-            transition={{ duration: 0.6 }}
-            className="rounded-lg bg-white/10 ring-1 ring-white/25 backdrop-blur-sm p-6 sm:p-8"
+          <div
+            className="reveal reveal-left rounded-lg bg-white/10 ring-1 ring-white/25 backdrop-blur-sm p-6 sm:p-8"
           >
             <div className="flex items-center gap-2.5 mb-6">
               {content.before.emoji && <span className="text-2xl">{content.before.emoji}</span>}
@@ -75,15 +62,11 @@ export const ComparisonSection = ({ content }: ComparisonSectionProps) => {
                 </li>
               ))}
             </ul>
-          </motion.div>
+          </div>
 
           {/* After — solid white, the winner */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: "-50px" }}
-            transition={{ duration: 0.6 }}
-            className="relative rounded-lg bg-white p-6 sm:p-8 shadow-[0_20px_50px_-24px_rgba(8,47,92,0.3)]"
+          <div
+            className="reveal reveal-right relative rounded-lg bg-white p-6 sm:p-8 shadow-[0_20px_50px_-24px_rgba(8,47,92,0.3)]"
           >
             {content.after.badge && (
               <span className="absolute top-4 right-4 sm:top-6 sm:right-6 bg-emerald-500 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider">
@@ -106,7 +89,7 @@ export const ComparisonSection = ({ content }: ComparisonSectionProps) => {
                 </li>
               ))}
             </ul>
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>

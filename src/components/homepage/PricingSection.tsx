@@ -2,7 +2,6 @@
 
 import React from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { Check } from "lucide-react";
 
 const freeFeatures = [
@@ -33,39 +32,27 @@ export const PricingSection = () => {
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
 
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.5 }}
-            className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight mb-4"
+          <h2
+            className="reveal text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight mb-4"
           >
             Pilih Paket Sesuai{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-600">
               Kebutuhan Circle-mu
             </span>
-          </motion.h2>
+          </h2>
 
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-base sm:text-lg text-slate-500 font-medium"
+          <p
+            className="reveal text-base sm:text-lg text-slate-500 font-medium"
           >
             Mulai gratis kapan saja. Upgrade ke premium untuk kepuasan split bill tanpa batas.
-          </motion.p>
+          </p>
         </div>
 
         {/* Pricing Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-8 max-w-4xl mx-auto items-stretch">
           {/* Free Card */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-50px" }}
-            transition={{ duration: 0.5 }}
-            className="group relative bg-white rounded-md p-8 border border-slate-100/80 shadow-[0_4px_20px_-4px_rgba(71,159,234,0.08)] hover:shadow-[0_12px_30px_-6px_rgba(71,159,234,0.15)] hover:border-primary/20 transition-all duration-300 flex flex-col justify-between overflow-hidden"
+          <div
+            className="reveal group relative bg-white rounded-md p-8 border border-slate-100/80 shadow-[0_4px_20px_-4px_rgba(71,159,234,0.08)] hover:shadow-[0_12px_30px_-6px_rgba(71,159,234,0.15)] hover:border-primary/20 transition-all duration-300 flex flex-col justify-between overflow-hidden"
           >
             <div>
               <div className="mb-6">
@@ -107,15 +94,11 @@ export const PricingSection = () => {
             >
               Mulai Sekarang - Gratis
             </Link>
-          </motion.div>
+          </div>
 
           {/* Premium Card */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-50px" }}
-            transition={{ duration: 0.5, delay: 0.15 }}
-            className="bg-gradient-to-br from-violet-600 to-primary rounded-md p-8 border border-transparent shadow-xl shadow-primary/20 flex flex-col justify-between relative overflow-hidden text-white"
+          <div
+            className="reveal bg-gradient-to-br from-violet-600 to-primary rounded-md p-8 border border-transparent shadow-xl shadow-primary/20 flex flex-col justify-between relative overflow-hidden text-white"
           >
             {/* Glow effect */}
             <div className="absolute top-[-30%] right-[-30%] w-[300px] h-[300px] bg-white/10 rounded-full blur-[60px] pointer-events-none" />
@@ -165,7 +148,7 @@ export const PricingSection = () => {
             >
               Langganan Sekarang ⚡
             </Link>
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>

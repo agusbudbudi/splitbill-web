@@ -2,7 +2,6 @@
 
 import React from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
 import { ArrowRight, Camera } from "lucide-react";
 import { LandingLink } from "./LandingLink";
 import { LandingIcon } from "@/lib/landing/icons";
@@ -20,12 +19,8 @@ export const CTABannerSection = ({ content }: CTABannerSectionProps) => {
   return (
     <section data-landing-section="ctaBanner" className="py-16 bg-[#f8f9fd]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.5 }}
-          className="grid gap-10 lg:grid-cols-2 lg:gap-16 items-center"
+        <div
+          className="reveal grid gap-10 lg:grid-cols-2 lg:gap-16 items-center"
         >
           {/* Copy + CTAs */}
           <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
@@ -67,13 +62,9 @@ export const CTABannerSection = ({ content }: CTABannerSectionProps) => {
             <div className="flex flex-col gap-3">
               {content.cards.map((card, idx) => {
                 return (
-                  <motion.div
+                  <div
                     key={idx}
-                    initial={{ opacity: 0, y: 16 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.4, delay: 0.1 * idx }}
-                    className="flex items-center gap-3 sm:gap-4 rounded-lg bg-white border border-slate-100/80 p-4 sm:p-5 shadow-[0_4px_20px_-4px_rgba(71,159,234,0.08)]"
+                    className="reveal flex items-center gap-3 sm:gap-4 rounded-lg bg-white border border-slate-100/80 p-4 sm:p-5 shadow-[0_4px_20px_-4px_rgba(71,159,234,0.08)]"
                   >
                     <div className="shrink-0 w-12 h-12">
                       <Image
@@ -89,12 +80,12 @@ export const CTABannerSection = ({ content }: CTABannerSectionProps) => {
                       <h3 className="text-sm sm:text-base font-black text-slate-800 leading-snug">{card.title}</h3>
                       <p className="text-xs sm:text-sm text-slate-500 font-medium leading-relaxed">{card.desc}</p>
                     </div>
-                  </motion.div>
+                  </div>
                 );
               })}
             </div>
           )}
-        </motion.div>
+        </div>
       </div>
     </section>
   );

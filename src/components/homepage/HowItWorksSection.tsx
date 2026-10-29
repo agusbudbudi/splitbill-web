@@ -2,7 +2,6 @@
 
 import React, { useRef, useState, useEffect } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
 import { LandingIcon } from "@/lib/landing/icons";
 import { getTone } from "@/lib/landing/tones";
 import { isUnoptimizableSrc } from "@/lib/landing/image";
@@ -48,26 +47,18 @@ export const HowItWorksSection = ({ content }: HowItWorksSectionProps) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.5 }}
-            className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight mb-4"
+          <h2
+            className="reveal text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight mb-4"
           >
             <LandingTitle title={content.title} highlight={content.titleHighlight} />
-          </motion.h2>
+          </h2>
 
           {content.subtitle && (
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className="text-base sm:text-lg text-slate-500 font-medium"
+            <p
+              className="reveal text-base sm:text-lg text-slate-500 font-medium"
             >
               {content.subtitle}
-            </motion.p>
+            </p>
           )}
         </div>
 
@@ -85,13 +76,9 @@ export const HowItWorksSection = ({ content }: HowItWorksSectionProps) => {
             {steps.map((step, index) => {
               const number = String(index + 1).padStart(2, "0");
               return (
-                <motion.div
+                <div
                   key={index}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-30px" }}
-                  transition={{ duration: 0.5, delay: index * 0.1, ease: "easeOut" }}
-                  className="flex-shrink-0 w-[82vw] snap-center lg:w-auto flex flex-col items-center text-center group"
+                  className="reveal flex-shrink-0 w-[82vw] snap-center lg:w-auto flex flex-col items-center text-center group"
                 >
                   {/* Image */}
                   <div className="relative w-full max-w-[260px] lg:max-w-[280px] aspect-square rounded-xl overflow-hidden mb-6 lg:mb-8 lg:border lg:border-slate-100 transition-transform duration-300 lg:group-hover:scale-105">
@@ -116,7 +103,7 @@ export const HowItWorksSection = ({ content }: HowItWorksSectionProps) => {
                   {/* Info */}
                   <h3 className="text-xl font-black text-slate-800 mb-2">{step.title}</h3>
                   <p className="text-sm font-medium text-slate-500 max-w-xs leading-relaxed px-2 lg:px-0">{step.description}</p>
-                </motion.div>
+                </div>
               );
             })}
           </div>

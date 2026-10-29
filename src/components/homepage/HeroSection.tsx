@@ -168,7 +168,9 @@ const MockBillCard = ({ stage }: { stage: number }) => {
       </div>
 
       {/* Overlay — actual receipt photo being "scanned", fades out once the bill is revealed */}
-      <AnimatePresence>
+      {/* initial={false}: first overlay paints from the server HTML instead of
+          waiting for hydration to fade in */}
+      <AnimatePresence initial={false}>
         {!revealed && (
           <motion.div
             key={`overlay-${stage}`}

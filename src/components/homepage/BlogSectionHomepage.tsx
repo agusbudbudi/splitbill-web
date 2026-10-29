@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Blog } from "@/lib/types/blog";
 import { fetchBlogs } from "@/lib/api/blog";
@@ -61,24 +60,16 @@ export const BlogSectionHomepage = ({ header = DEFAULT_LANDING_CONTENT.blog, ini
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-8 sm:mb-10">
           <div className="max-w-2xl">
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.5 }}
-              className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight mb-4"
+            <h2
+              className="reveal text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight mb-4"
             >
               <LandingTitle title={header.title} highlight={header.titleHighlight} />
-            </motion.h2>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className="text-base sm:text-lg text-slate-500 font-medium"
+            </h2>
+            <p
+              className="reveal text-base sm:text-lg text-slate-500 font-medium"
             >
               {header.subtitle}
-            </motion.p>
+            </p>
           </div>
 
           {/* "Lihat Semua" Button in header */}
@@ -127,17 +118,13 @@ export const BlogSectionHomepage = ({ header = DEFAULT_LANDING_CONTENT.blog, ini
                     <BlogCardSkeleton />
                   </div>
                 ))
-                : blogs.map((blog, idx) => (
-                  <motion.div
+                : blogs.map((blog) => (
+                  <div
                     key={blog._id}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-30px" }}
-                    transition={{ duration: 0.5, delay: idx * 0.05, ease: "easeOut" }}
-                    className="flex-shrink-0 w-[290px] sm:w-[350px] snap-start"
+                    className="reveal flex-shrink-0 w-[290px] sm:w-[350px] snap-start"
                   >
                     <BlogCard blog={blog} />
-                  </motion.div>
+                  </div>
                 ))}
 
               {/* View All Card at the end */}

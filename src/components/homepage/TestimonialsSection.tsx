@@ -220,29 +220,21 @@ export const TestimonialsSection = ({
         <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
 
 
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.5 }}
-            className={`text-3xl sm:text-4xl md:text-5xl font-black ${styles.title} tracking-tight mb-4`}
+          <h2
+            className={`reveal text-3xl sm:text-4xl md:text-5xl font-black ${styles.title} tracking-tight mb-4`}
           >
             <LandingTitle
               title={header.title}
               highlight={header.titleHighlight}
               highlightClassName={styles.highlight ? `text-transparent bg-clip-text bg-gradient-to-r ${styles.highlight}` : ""}
             />
-          </motion.h2>
+          </h2>
 
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className={`text-base sm:text-lg ${styles.subtitle} font-medium`}
+          <p
+            className={`reveal text-base sm:text-lg ${styles.subtitle} font-medium`}
           >
             {header.subtitle}
-          </motion.p>
+          </p>
         </div>
 
         {/* Slider Container */}

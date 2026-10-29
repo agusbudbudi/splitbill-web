@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import { motion } from "framer-motion";
 import { ChevronDown, ArrowRight } from "lucide-react";
 import { faqData, FAQItem } from "@/data/faqData";
 import Link from "next/link";
@@ -66,39 +65,27 @@ export const FAQSectionHomepage = ({
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           {/* Header */}
           <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.5 }}
-              className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight mb-4"
+            <h2
+              className="reveal text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight mb-4"
             >
               {title}
-            </motion.h2>
+            </h2>
 
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className="text-base sm:text-lg text-slate-500 font-semibold"
+            <p
+              className="reveal text-base sm:text-lg text-slate-500 font-semibold"
             >
               {subtitle}
-            </motion.p>
+            </p>
           </div>
 
           {/* FAQ List */}
           <div className="space-y-4 max-w-3xl mx-auto">
-            {landingFaqs.map((faq, index) => {
+            {landingFaqs.map((faq) => {
               const isOpen = openId === faq.id;
               return (
-                <motion.div
+                <div
                   key={faq.id}
-                  initial={{ opacity: 0, y: 15 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-50px" }}
-                  transition={{ duration: 0.4, delay: index * 0.08 }}
-                  className="bg-white border border-slate-100 rounded-md overflow-hidden shadow-[0_4px_20px_-6px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_24px_-6px_rgba(0,0,0,0.05)] hover:border-slate-200/80 transition-[box-shadow,border-color,background-color] duration-300"
+                  className="reveal bg-white border border-slate-100 rounded-md overflow-hidden shadow-[0_4px_20px_-6px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_24px_-6px_rgba(0,0,0,0.05)] hover:border-slate-200/80 transition-[box-shadow,border-color,background-color] duration-300"
                 >
                   <button
                     onClick={() => toggleFaq(faq.id)}
@@ -132,19 +119,15 @@ export const FAQSectionHomepage = ({
                       </div>
                     </div>
                   </div>
-                </motion.div>
+                </div>
               );
             })}
           </div>
 
           {/* CTA Button */}
           {viewAllHref && (
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-40px" }}
-              transition={{ duration: 0.4, delay: 0.2 }}
-              className="mt-12 flex justify-center"
+            <div
+              className="reveal mt-12 flex justify-center"
             >
               <Link
                 href={viewAllHref}
@@ -153,7 +136,7 @@ export const FAQSectionHomepage = ({
                 Lihat Semua Pertanyaan
                 <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5" />
               </Link>
-            </motion.div>
+            </div>
           )}
         </div>
       </section>

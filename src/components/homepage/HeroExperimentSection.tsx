@@ -6,19 +6,16 @@ import { motion } from "framer-motion";
 import { ArrowRight, Camera, CheckCheck } from "lucide-react";
 import { LandingLink } from "./LandingLink";
 import { LandingEyebrow } from "./LandingEyebrow";
-import { ScanFlow } from "./HeroSection";
+import { ScanFlow } from "./ScanFlow";
 import { LandingIcon } from "@/lib/landing/icons";
 import { getTone } from "@/lib/landing/tones";
 import { isUnoptimizableSrc } from "@/lib/landing/image";
 import type { LandingContent, LandingImage } from "@/lib/landing/types";
 import { LandingTitle } from "./LandingTitle";
 
-// Centered hero — replaces the old HeroSection, which is no longer rendered but kept for now
-// (ScanFlow still lives there; move it in here before deleting that file).
+// Centered hero.
 
-const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
-
-// Phone rises first, then the WA card and the scan card pop in together
+// Delay before the scan flow starts and the desktop WA card pops in
 const CARDS_DELAY = 0.9;
 
 // Same story as the ScanFlow card on the right (Makan Bareng Squad, Andi owes Budi) —
@@ -161,26 +158,26 @@ export const HeroExperimentSection = ({ content }: HeroExperimentSectionProps) =
     >
       {/* Soft wash — primary from the top, a hint of sky/emerald at the sides, fades to white */}
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(71,159,234,0.18),transparent_70%)]" />
-      <div className="absolute -z-10 top-[10%] -left-[10%] w-[40vw] h-[40vw] max-w-[520px] max-h-[520px] rounded-full bg-sky-200/35 blur-[110px]" />
-      <div className="absolute -z-10 top-[25%] -right-[8%] w-[34vw] h-[34vw] max-w-[460px] max-h-[460px] rounded-full bg-emerald-200/25 blur-[110px]" />
+      {/* Glows are radial gradients, not blur-[110px] filters: WebKit skipped painting the
+          hero text under those large filter layers until something else repainted it */}
+      <div className="absolute -z-10 top-[10%] -left-[10%] w-[40vw] h-[40vw] max-w-[520px] max-h-[520px] bg-[radial-gradient(closest-side,rgba(186,230,253,0.35),transparent)]" />
+      <div className="absolute -z-10 top-[25%] -right-[8%] w-[34vw] h-[34vw] max-w-[460px] max-h-[460px] bg-[radial-gradient(closest-side,rgba(167,243,208,0.25),transparent)]" />
 
       {/* Soft glow behind the phone stage */}
-      <div className="absolute -z-10 left-1/2 bottom-[-10%] -translate-x-1/2 w-[720px] h-[520px] rounded-full bg-primary/15 blur-[120px]" />
+      <div className="absolute -z-10 left-1/2 bottom-[-10%] -translate-x-1/2 w-[720px] h-[520px] bg-[radial-gradient(closest-side,rgba(71,159,234,0.15),transparent)]" />
 
       {/* Content */}
       <div className="relative max-w-6xl mx-auto px-5 sm:px-8 pt-20 sm:pt-24 text-center">
         {content.eyebrow.text && (
           <div
-            style={{ animationDelay: "0.00s" }}
-            className="animate-fade-up motion-reduce:animate-none mb-6"
+            className="mb-6"
           >
             <LandingEyebrow badge={content.eyebrow.badge}>{content.eyebrow.text}</LandingEyebrow>
           </div>
         )}
 
         <h1
-          style={{ animationDelay: "0.08s" }}
-          className="animate-fade-up motion-reduce:animate-none max-w-6xl mx-auto text-4xl sm:text-[2.75rem] lg:text-5xl font-black text-slate-900 leading-tight tracking-tight mb-6 text-balance"
+          className="max-w-6xl mx-auto text-4xl sm:text-[2.75rem] lg:text-5xl font-black text-slate-900 leading-tight tracking-tight mb-6 text-balance"
         >
           {/* CMS line breaks are ignored here — the title flows as one sentence and
               text-balance splits it evenly, so desktop lands on 2 lines */}
@@ -188,15 +185,13 @@ export const HeroExperimentSection = ({ content }: HeroExperimentSectionProps) =
         </h1>
 
         <p
-          style={{ animationDelay: "0.16s" }}
-          className="animate-fade-up motion-reduce:animate-none text-base sm:text-lg text-slate-500 font-medium leading-relaxed max-w-2xl mx-auto mb-8"
+          className="text-base sm:text-lg text-slate-500 font-medium leading-relaxed max-w-2xl mx-auto mb-8"
         >
           {content.description}
         </p>
 
         <div
-          style={{ animationDelay: "0.24s" }}
-          className="animate-fade-up motion-reduce:animate-none flex flex-col sm:flex-row gap-3 justify-center"
+          className="flex flex-col sm:flex-row gap-3 justify-center"
         >
           <LandingLink
             href={content.primaryCta.href}
@@ -216,8 +211,7 @@ export const HeroExperimentSection = ({ content }: HeroExperimentSectionProps) =
 
         {content.trustItems.length > 0 && (
           <div
-            style={{ animationDelay: "0.32s" }}
-            className="animate-fade-up motion-reduce:animate-none flex flex-wrap items-center justify-center gap-x-5 gap-y-2 mt-7"
+            className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 mt-7"
           >
             {content.trustItems.map((item, idx) => (
               <div key={idx} className="flex items-center gap-1.5 text-slate-600 text-sm font-semibold">
@@ -232,33 +226,19 @@ export const HeroExperimentSection = ({ content }: HeroExperimentSectionProps) =
       {/* Stage — phone centered (mobile: bigger, pushed left and cropped so the scan card fits whole), scan card + chips floating around it. Phone is cropped
           at the section's bottom edge and fades into white so it blends into the next section. */}
       <div className="relative mx-auto sm:mt-8 pt-8 sm:pt-0 w-full max-w-5xl h-[540px] sm:h-[500px] lg:h-[530px] overflow-hidden lg:overflow-visible">
-        {/* Phone — enters first. No opacity-0 start, it's the LCP image and must paint from SSR HTML */}
+        {/* Phone — static, it's the LCP image and must paint from SSR HTML at its final position */}
         {/* Mobile: mockup enlarged and pushed left (cropped) so the scan card fits whole */}
         <div className="absolute left-1/2 top-8 sm:top-0 -translate-x-[68%] sm:-translate-x-1/2 w-[580px] sm:w-[640px] lg:w-[700px] pointer-events-none">
-          <motion.div
-            initial={{ y: 60 }}
-            animate={{ y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2, ease: EASE }}
-          >
-            <HeroImage image={content.image} imageMobile={content.imageMobile} />
-          </motion.div>
+          <HeroImage image={content.image} imageMobile={content.imageMobile} />
         </div>
 
-        {/* Scan card — overlaps the phone's right side, pops in together with the WA card */}
+        {/* Scan card — overlaps the phone's right side. Painted from SSR HTML; only its inner flow animates after hydration */}
         {/* Mobile mirrors the old hero: card centered in the stage, nudged 64px right at 0.9 scale */}
         <div className="absolute z-10 inset-x-0 top-8 -bottom-[72px] flex items-center justify-center sm:block sm:inset-auto sm:top-[18%] sm:right-[4%] lg:right-[2%] xl:-right-[4%]">
           <div className="translate-x-16 scale-[0.9] sm:translate-x-0 lg:scale-100 sm:origin-top-right">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.85 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{
-              opacity: { duration: 0.3, delay: CARDS_DELAY },
-              scale: { type: "spring", stiffness: 320, damping: 18, delay: CARDS_DELAY },
-            }}
-            className="origin-top-right"
-          >
+          <div className="origin-top-right">
             <ScanFlow startDelay={CARDS_DELAY * 1000} />
-          </motion.div>
+          </div>
           </div>
         </div>
 

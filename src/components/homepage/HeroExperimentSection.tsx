@@ -3,7 +3,7 @@
 import React from "react";
 import Image, { getImageProps } from "next/image";
 import { motion } from "framer-motion";
-import { ArrowRight, Camera, CheckCheck, MessageCircle } from "lucide-react";
+import { ArrowRight, Camera, CheckCheck } from "lucide-react";
 import { LandingLink } from "./LandingLink";
 import { LandingEyebrow } from "./LandingEyebrow";
 import { ScanFlow } from "./HeroSection";
@@ -46,9 +46,13 @@ const WhatsAppShareCard = () => (
   >
     {/* Header — share target */}
     <div className="flex items-center gap-2 mb-3">
-      <span className="w-6 h-6 rounded-full bg-[#25D366] flex items-center justify-center shrink-0">
-        <MessageCircle className="w-3.5 h-3.5 text-white" fill="currentColor" />
-      </span>
+      <Image
+        src="/img/whatsApp-logo.png"
+        alt=""
+        width={24}
+        height={24}
+        className="w-6 h-6 rounded-full shrink-0"
+      />
       <span className="text-[11px] font-bold text-slate-500">Share ke WhatsApp</span>
     </div>
 

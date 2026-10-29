@@ -19,7 +19,10 @@ const ALLOWED_PATHS = new Set([
   "/collect-money",
   "/invoice",
 ]);
-const ALLOWED_TAGS = new Set([LANDING_CACHE_TAG, FAQ_CACHE_TAG]);
+// "blogs": the all-posts snapshot (fetchAllBlogs in lib/api/blog.server.ts)
+// behind /blog, category/tag pages, related posts and the sitemap.
+const BLOG_CACHE_TAG = "blogs";
+const ALLOWED_TAGS = new Set([LANDING_CACHE_TAG, FAQ_CACHE_TAG, BLOG_CACHE_TAG]);
 
 function isAuthorized(provided: string | null): boolean {
   const secret = process.env.REVALIDATE_SECRET;

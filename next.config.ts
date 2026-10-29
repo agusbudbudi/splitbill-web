@@ -8,10 +8,27 @@ const withPWA = require("@ducanh2912/next-pwa").default({
   reloadOnOnline: true,
   swMinify: true,
   disable: process.env.NODE_ENV === "development",
+  // Top-level next-pwa option (not a workbox one): keep the default caching
+  // rules and add ours on top
+  extendDefaultRuntimeCaching: true,
+  // Default precaches all of public/ (~48MB of images/video) on every first
+  // visit. Those are runtime-cached on demand instead.
+  publicExcludes: ["!noprecache/**/*", "!img/**/*", "!video/**/*", "!donate/**/*"],
   workboxOptions: {
     disableDevLogs: true,
-    extendDefaultRuntimeCaching: true,
+    // Same for build chunks (~5MB, every route incl. PDF libs): only what a
+    // visitor actually loads gets cached, via the default runtime rules.
+    exclude: [/./],
     runtimeCaching: [
+      {
+        // API responses (ours and splitbill-be's) carry per-user data and the
+        // cache ignores the Authorization header: never store them, or a
+        // slow/offline request could serve another account's data on a
+        // shared device. CMS images under /api/landing-assets/ stay cacheable.
+        urlPattern: ({ url }: { url: URL }) =>
+          url.pathname.startsWith("/api/") && !url.pathname.startsWith("/api/landing-assets/"),
+        handler: "NetworkOnly",
+      },
       {
         // Manifest must never be served stale/errored from cache — a bad
         // response (e.g. transient 403) would otherwise get cached and

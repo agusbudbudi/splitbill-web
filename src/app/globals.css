@@ -299,6 +299,12 @@ body {
   font-size: 1.75rem;
 }
 
+/* Keep TOC jump targets clear of the sticky header */
+.blog-content-container h2,
+.blog-content-container h3 {
+  scroll-margin-top: 6rem;
+}
+
 .blog-content-container h2 {
   font-size: 1.4rem;
   border-bottom: 1px solid var(--border);
@@ -337,7 +343,7 @@ body {
 }
 
 .blog-content-container img {
-  border-radius: 1rem;
+  border-radius: var(--radius-sm);
   margin: 2.5rem 0;
   max-width: 100%;
   height: auto;

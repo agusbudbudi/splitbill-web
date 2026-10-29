@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { LEGACY_CATEGORY_SLUGS, LEGACY_TAG_SLUGS } from "./src/lib/blogLegacyRedirects";
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const withPWA = require("@ducanh2912/next-pwa").default({
   dest: "public",
@@ -41,6 +42,20 @@ const nextConfig: NextConfig = {
       source,
       headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
     }));
+  },
+  async redirects() {
+    return [
+      ...Object.entries(LEGACY_TAG_SLUGS).map(([slug, next]) => ({
+        source: `/blog/tag/${slug}`,
+        destination: next ? `/blog/tag/${next}` : "/blog",
+        permanent: true,
+      })),
+      ...Object.entries(LEGACY_CATEGORY_SLUGS).map(([slug, next]) => ({
+        source: `/blog/category/${slug}`,
+        destination: `/blog/category/${next}`,
+        permanent: true,
+      })),
+    ];
   },
   // Enable Gzip/Brotli compression for CSS and JS — reduces 26KB CSS to ~6-8KB
   compress: true,

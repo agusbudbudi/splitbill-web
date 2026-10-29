@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { buildMetadata, SITE_NAME } from "@/lib/seo";
 import { ORGANIZATION_ID } from "@/lib/structuredData";
 import BlogDetailClient from "@/app/blog/[slug]/BlogDetailClient";
-import { fetchBlogBySlug, fetchBlogs } from "@/lib/api/blog";
+import { fetchBlogBySlug } from "@/lib/api/blog";
+import { fetchAllBlogs } from "@/lib/api/blog.server";
+import { prepareBlogContent } from "@/lib/utils/blogContent";
 import { Blog } from "@/lib/types/blog";
 import { notFound } from "next/navigation";
 
@@ -45,17 +47,24 @@ export default async function BlogDetailPage({ params }: Props) {
   const { slug } = await params;
   
   try {
-    const [blog, allBlogsRes] = await Promise.all([
+    const [blog, allBlogs] = await Promise.all([
       fetchBlogBySlug(slug),
-      fetchBlogs({ limit: 1000, cache: "force-cache", next: { revalidate: 86400 } }),
+      // Related posts are optional: a failed list fetch must not 404 the article.
+      fetchAllBlogs().catch((error) => {
+        console.error("Failed to fetch related blogs:", error);
+        return [] as Blog[];
+      }),
     ]);
+    // Rewrite the body once on the server (heading ids for the TOC) and
+    // ship only the rewritten HTML to the client.
+    const { html, headings } = prepareBlogContent(blog.content);
 
-    const otherBlogs = (allBlogsRes.data || []).filter((b: Blog) => b.slug !== slug);
+    const otherBlogs = allBlogs.filter((b: Blog) => b.slug !== slug);
     const sameCategory = otherBlogs.filter((b) => b.category === blog.category);
     const relatedBlogs = [
       ...sameCategory,
       ...otherBlogs.filter((b) => !sameCategory.includes(b)),
-    ].slice(0, 3);
+    ].slice(0, 4);
 
     // JSON-LD for SEO
     const jsonLd = {
@@ -113,7 +122,11 @@ export default async function BlogDetailPage({ params }: Props) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
         />
-        <BlogDetailClient blog={blog} recentBlogs={relatedBlogs} />
+        <BlogDetailClient
+          blog={{ ...blog, content: html }}
+          headings={headings}
+          recentBlogs={relatedBlogs}
+        />
       </>
     );
   } catch (error) {

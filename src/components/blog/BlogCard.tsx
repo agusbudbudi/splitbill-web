@@ -7,14 +7,42 @@ import { motion } from "framer-motion";
 import { Clock, ArrowRight } from "lucide-react";
 import { Blog } from "@/lib/types/blog";
 import { Card } from "@/components/ui/Card";
+import { Badge } from "@/components/ui/Badge";
+import { cn } from "@/lib/utils";
 import { formatDate } from "@/lib/utils/index";
 
 interface BlogCardProps {
   blog: Blog;
   priority?: boolean;
+  /** `featured`: wide 2-column hero card. */
+  variant?: "default" | "featured";
 }
 
-export const BlogCard = ({ blog, priority = false }: BlogCardProps) => {
+const FALLBACK_THUMBNAIL = "/img/pwa-banner.png";
+
+const BlogMeta = ({ blog, className }: { blog: Blog; className?: string }) => (
+  <div className={cn("flex items-center gap-2 text-xs font-medium text-muted-foreground", className)}>
+    <span>{formatDate(blog.publishedAt || blog.createdAt)}</span>
+    <span className="w-1 h-1 rounded-full bg-muted-foreground/30" />
+    <span className="flex items-center gap-1">
+      <Clock className="w-3 h-3" />
+      {blog.readTime} mnt baca
+    </span>
+  </div>
+);
+
+const CategoryBadge = ({ category }: { category: string }) => (
+  <Badge className="border-transparent bg-white/95 text-primary uppercase tracking-wide text-[10px] font-bold shadow-sm">
+    {category}
+  </Badge>
+);
+
+export const BlogCard = ({ blog, priority = false, variant = "default" }: BlogCardProps) => {
+  const thumbnail = blog.thumbnail || FALLBACK_THUMBNAIL;
+  const alt = blog.thumbnailAlt || blog.title;
+
+  const isFeatured = variant === "featured";
+
   return (
     <motion.div
       // The priority card is the LCP image: render it as-is from the server
@@ -25,46 +53,65 @@ export const BlogCard = ({ blog, priority = false }: BlogCardProps) => {
       transition={{ duration: 0.5 }}
       className="h-full"
     >
-      <Link href={`/blog/${blog.slug}`} className="block h-full card-wrapper">
-        <Card className="h-full flex flex-col overflow-hidden border-none shadow-soft hover:shadow-md transition-all duration-500 bg-white hover:bg-accent/5">
-          {/* Thumbnail Image */}
-          <div className="relative aspect-[16/9] overflow-hidden">
+      <Link href={`/blog/${blog.slug}`} className="group/blog-card block h-full">
+        <Card
+          className={cn(
+            "h-full flex flex-col overflow-hidden transition-all duration-300 group-hover/blog-card:shadow-lg group-hover/blog-card:border-primary/20",
+            isFeatured && "lg:grid lg:grid-cols-2",
+          )}
+        >
+          <div
+            className={cn(
+              "relative aspect-[16/9] overflow-hidden bg-muted",
+              isFeatured && "lg:aspect-auto lg:min-h-[340px]",
+            )}
+          >
             <Image
-              src={blog.thumbnail || "/img/pwa-banner.png"}
-              alt={blog.thumbnailAlt || blog.title}
+              src={thumbnail}
+              alt={alt}
               fill
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
+              sizes={
+                isFeatured
+                  ? "(max-width: 1024px) 100vw, 640px"
+                  : "(max-width: 768px) 100vw, (max-width: 1280px) 33vw, 25vw"
+              }
+              className="object-cover transition-transform duration-500 group-hover/blog-card:scale-[1.03]"
               priority={priority}
             />
-            {/* Category Ribbon */}
-            <span className="absolute top-0 right-0 z-10 bg-primary text-white text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-bl-lg">
-              {blog.category}
-            </span>
+            <div className="absolute top-3 left-3 z-10">
+              <CategoryBadge category={blog.category} />
+            </div>
           </div>
 
-          {/* Content */}
-          <div className="flex-1 p-5 flex flex-col">
-            <div className="flex items-center gap-3 text-muted-foreground text-xs mb-3 font-medium">
-              <span>{formatDate(blog.publishedAt || blog.createdAt)}</span>
-              <span className="w-1 h-1 rounded-full bg-muted-foreground/30" />
-              <div className="flex items-center gap-1">
-                <Clock className="w-3 h-3" />
-                <span>{blog.readTime} mnt baca</span>
-              </div>
-            </div>
+          <div className={cn("flex-1 flex flex-col p-5", isFeatured && "lg:p-10 lg:justify-center")}>
+            {isFeatured && (
+              <span className="text-xs font-bold uppercase tracking-wide text-primary mb-3">
+                Artikel Pilihan
+              </span>
+            )}
+            <BlogMeta blog={blog} className="mb-3" />
 
-            <h3 className="text-md font-bold text-foreground mb-3 line-clamp-2 hover:text-primary transition-colors leading-tight">
+            <h3
+              className={cn(
+                "font-bold text-foreground leading-snug group-hover/blog-card:text-primary transition-colors line-clamp-2 mb-2",
+                isFeatured ? "text-xl lg:text-3xl lg:leading-tight lg:mb-4" : "text-base",
+              )}
+            >
               {blog.title}
             </h3>
 
-            <p className="text-muted-foreground text-sm line-clamp-2 mb-6 leading-relaxed">
+            <p
+              className={cn(
+                "text-sm text-muted-foreground leading-relaxed mb-6",
+                isFeatured ? "line-clamp-3 lg:text-base" : "line-clamp-2",
+              )}
+            >
               {blog.excerpt}
             </p>
 
-            <div className="mt-auto flex items-center text-primary font-bold text-sm gap-1">
+            <div className="mt-auto flex items-center gap-1 text-sm font-bold text-primary">
               <span>Baca Selengkapnya</span>
-              <ArrowRight className="w-4 h-4 transition-transform duration-300 hover:translate-x-1" />
+              <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover/blog-card:translate-x-1" />
             </div>
           </div>
         </Card>

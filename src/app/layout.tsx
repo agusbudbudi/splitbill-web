@@ -5,7 +5,7 @@ import { Toaster } from "sonner";
 import "./globals.css";
 import { buildMetadata, SITE_NAME, SITE_URL } from "@/lib/seo";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
-import { GoogleAnalytics } from "@next/third-parties/google";
+import { DeferredGoogleAnalytics } from "@/components/providers/DeferredGoogleAnalytics";
 import { AppEntryTracker } from "@/components/providers/AppEntryTracker";
 
 const inter = Inter({
@@ -96,7 +96,7 @@ export default function RootLayout({
         className={`${inter.variable} antialiased`}
         suppressHydrationWarning={true}
       >
-        {GA_ID && <GoogleAnalytics gaId={GA_ID} />}
+        {GA_ID && <DeferredGoogleAnalytics gaId={GA_ID} />}
         <AppEntryTracker />
         <ThemeProvider>
           <ResponsiveShell>

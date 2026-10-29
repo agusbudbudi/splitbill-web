@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { LandingIcon } from "@/lib/landing/icons";
 import { getTone } from "@/lib/landing/tones";

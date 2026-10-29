@@ -54,7 +54,7 @@ export const BlogSectionHomepage = ({ header = DEFAULT_LANDING_CONTENT.blog, ini
   return (
     <section data-landing-section="blog" className="py-16 bg-white relative overflow-hidden group">
       {/* Background shape */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-slate-50 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[radial-gradient(closest-side,#f8fafc,transparent)] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}

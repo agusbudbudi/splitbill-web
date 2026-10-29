@@ -1,12 +1,10 @@
 import { cache } from "react";
 import { apiClient } from "@/lib/api/client";
 import { faqData, faqCategoryLabels, type FAQItem } from "@/data/faqData";
-import { CMS_FETCH_CACHE } from "@/lib/landing/content";
+import { CMS_FETCH_CACHE, requestCms } from "@/lib/landing/content";
 
 /** Cache tag on the CMS fetch; splitbill-be hits /api/revalidate with it after every FAQ change. */
 export const FAQ_CACHE_TAG = "faqs";
-
-const FETCH_TIMEOUT_MS = 5000;
 
 // Validates one CMS FAQ and coerces `showOnLanding`: pages filter on it, so a
 // missing field or a stringly-typed "true" must not silently hide the FAQ.
@@ -32,11 +30,13 @@ const toFaq = (f: unknown): FAQItem | null => {
  */
 export const getFaqs = cache(async (): Promise<FAQItem[]> => {
   try {
-    const json = await apiClient.request<{ data?: unknown; configured?: boolean }>("/api/faqs", {
-      skipAuth: true,
-      ...CMS_FETCH_CACHE(FAQ_CACHE_TAG),
-      signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
-    });
+    const json = await requestCms((signal) =>
+      apiClient.request<{ data?: unknown; configured?: boolean }>("/api/faqs", {
+        skipAuth: true,
+        ...CMS_FETCH_CACHE(FAQ_CACHE_TAG),
+        signal,
+      }),
+    );
     const faqs = Array.isArray(json?.data)
       ? json.data.map(toFaq).filter((f): f is FAQItem => f !== null)
       : [];

@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { motion } from "framer-motion";
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import { LandingLink } from "./LandingLink";
@@ -10,24 +9,6 @@ import { isUnoptimizableSrc } from "@/lib/landing/image";
 import type { LandingContent } from "@/lib/landing/types";
 import { LandingTitle } from "./LandingTitle";
 
-
-const containerVariants = {
-  hidden: {},
-  visible: {
-    transition: {
-      staggerChildren: 0.1,
-    },
-  },
-};
-
-const cardVariants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] },
-  },
-};
 
 interface FeaturesSectionProps {
   content: LandingContent["features"];
@@ -44,42 +25,29 @@ export const FeaturesSection = ({ content }: FeaturesSectionProps) => {
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
 
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.5 }}
-            className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight mb-4"
+          <h2
+            className="reveal text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight mb-4"
           >
             <LandingTitle title={content.title} highlight={content.titleHighlight} />
-          </motion.h2>
+          </h2>
 
           {content.subtitle && (
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className="text-base sm:text-lg text-slate-500 font-medium"
+            <p
+              className="reveal text-base sm:text-lg text-slate-500 font-medium"
             >
               <RichText text={content.subtitle} />
-            </motion.p>
+            </p>
           )}
         </div>
 
         {/* Bento Grid — 2 Columns on Mobile, 3 Columns on Large Screens */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-50px" }}
+        <div
           className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 lg:gap-8"
         >
           {content.items.map((feat, idx) => (
-            <motion.div
+            <div
               key={idx}
-              variants={cardVariants}
-              className="h-full"
+              className="reveal h-full"
             >
               <div className="relative flex flex-col h-full bg-white rounded-xl p-4 sm:p-6 border border-slate-100/80 shadow-[0_4px_20px_-4px_rgba(71,159,234,0.08)] hover:shadow-[0_12px_30px_-6px_rgba(71,159,234,0.15)] hover:border-primary/20 transition-all duration-300 overflow-hidden">
                 {feat.badge && (
@@ -129,9 +97,9 @@ export const FeaturesSection = ({ content }: FeaturesSectionProps) => {
                   )}
                 </div>
               </div>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );

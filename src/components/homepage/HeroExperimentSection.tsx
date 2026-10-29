@@ -18,15 +18,6 @@ import { LandingTitle } from "./LandingTitle";
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 24 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { delay: i * 0.08, duration: 0.55, ease: EASE },
-  }),
-};
-
 // Phone rises first, then the WA card and the scan card pop in together
 const CARDS_DELAY = 0.9;
 
@@ -179,45 +170,33 @@ export const HeroExperimentSection = ({ content }: HeroExperimentSectionProps) =
       {/* Content */}
       <div className="relative max-w-6xl mx-auto px-5 sm:px-8 pt-20 sm:pt-24 text-center">
         {content.eyebrow.text && (
-          <motion.div
-            custom={0}
-            initial="hidden"
-            animate="visible"
-            variants={fadeUp}
-            className="mb-6"
+          <div
+            style={{ animationDelay: "0.00s" }}
+            className="animate-fade-up motion-reduce:animate-none mb-6"
           >
             <LandingEyebrow badge={content.eyebrow.badge}>{content.eyebrow.text}</LandingEyebrow>
-          </motion.div>
+          </div>
         )}
 
-        <motion.h1
-          custom={1}
-          initial="hidden"
-          animate="visible"
-          variants={fadeUp}
-          className="max-w-6xl mx-auto text-4xl sm:text-[2.75rem] lg:text-5xl font-black text-slate-900 leading-tight tracking-tight mb-6 text-balance"
+        <h1
+          style={{ animationDelay: "0.08s" }}
+          className="animate-fade-up motion-reduce:animate-none max-w-6xl mx-auto text-4xl sm:text-[2.75rem] lg:text-5xl font-black text-slate-900 leading-tight tracking-tight mb-6 text-balance"
         >
           {/* CMS line breaks are ignored here — the title flows as one sentence and
               text-balance splits it evenly, so desktop lands on 2 lines */}
           <LandingTitle title={title} highlight={content.titleHighlight} />
-        </motion.h1>
+        </h1>
 
-        <motion.p
-          custom={2}
-          initial="hidden"
-          animate="visible"
-          variants={fadeUp}
-          className="text-base sm:text-lg text-slate-500 font-medium leading-relaxed max-w-2xl mx-auto mb-8"
+        <p
+          style={{ animationDelay: "0.16s" }}
+          className="animate-fade-up motion-reduce:animate-none text-base sm:text-lg text-slate-500 font-medium leading-relaxed max-w-2xl mx-auto mb-8"
         >
           {content.description}
-        </motion.p>
+        </p>
 
-        <motion.div
-          custom={3}
-          initial="hidden"
-          animate="visible"
-          variants={fadeUp}
-          className="flex flex-col sm:flex-row gap-3 justify-center"
+        <div
+          style={{ animationDelay: "0.24s" }}
+          className="animate-fade-up motion-reduce:animate-none flex flex-col sm:flex-row gap-3 justify-center"
         >
           <LandingLink
             href={content.primaryCta.href}
@@ -233,15 +212,12 @@ export const HeroExperimentSection = ({ content }: HeroExperimentSectionProps) =
           >
             {content.secondaryCta.label}
           </LandingLink>
-        </motion.div>
+        </div>
 
         {content.trustItems.length > 0 && (
-          <motion.div
-            custom={4}
-            initial="hidden"
-            animate="visible"
-            variants={fadeUp}
-            className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 mt-7"
+          <div
+            style={{ animationDelay: "0.32s" }}
+            className="animate-fade-up motion-reduce:animate-none flex flex-wrap items-center justify-center gap-x-5 gap-y-2 mt-7"
           >
             {content.trustItems.map((item, idx) => (
               <div key={idx} className="flex items-center gap-1.5 text-slate-600 text-sm font-semibold">
@@ -249,7 +225,7 @@ export const HeroExperimentSection = ({ content }: HeroExperimentSectionProps) =
                 <span>{item.text}</span>
               </div>
             ))}
-          </motion.div>
+          </div>
         )}
       </div>
 

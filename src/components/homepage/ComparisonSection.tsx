@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { X, Check } from "lucide-react";
 import type { LandingContent } from "@/lib/landing/types";

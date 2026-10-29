@@ -3,68 +3,48 @@
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { HomepageNavbar } from "./HomepageNavbar";
-// Old HeroSection is no longer rendered but kept (it still hosts ScanFlow) until the new hero is final
 import { HeroExperimentSection } from "./HeroExperimentSection";
-import { SocialProofBar } from "./SocialProofBar";
-import { FeaturesSection } from "./FeaturesSection";
 import { HowItWorksSection } from "./HowItWorksSection";
 import { PromoBanner } from "../ui/PromoBanner";
 import { Banner } from "../home/Banner";
 import { HomepageFooter } from "./HomepageFooter";
-import { SeoContentSection } from "./SeoContentSection";
 import { FeatureShowcaseSection } from "./FeatureShowcaseSection";
+// Below-the-fold sections are imported statically: they're SSR'd anyway, and a
+// next/dynamic wrapper emits a Suspense boundary whose reveal WebKit delays until
+// window `load`, leaving a skeleton in place of real content on iPhones.
+import { TestimonialsSection } from "./TestimonialsSection";
+import { FAQSectionHomepage } from "./FAQSectionHomepage";
+import { BlogSectionHomepage } from "./BlogSectionHomepage";
 import { useAuthStore } from "@/lib/stores/authStore";
 import { LazyMount } from "@/components/ui/LazyMount";
 import { Skeleton } from "@/components/ui/Skeleton";
 import type { Blog } from "@/lib/types/blog";
 import type { Review } from "@/hooks/useReview";
-import type { LandingContent, LandingSectionKey } from "@/lib/landing/types";
+import type { LandingSectionKey } from "@/lib/landing/types";
+import type { HomepageClientContent, StaticSections } from "./staticSections";
 import { getPromoTone } from "@/lib/landing/tones";
 import type { FAQItem } from "@/data/faqData";
 import { LandingTitle } from "./LandingTitle";
 import { useIsHydrated } from "@/hooks/useClientOnly";
 
-// Local skeleton fallback so the lazy chunk's own <Suspense> resolves in place —
-// without a `loading` option, next/dynamic suspends to the nearest Suspense
-// boundary, which is the root app/loading.tsx, blanking the whole page instead
-// of just this section.
+// Local skeleton fallback so the lazy chunk's own <Suspense> resolves in place
+// instead of suspending to the nearest Suspense boundary.
 const sectionSkeleton = (height: number) => {
   const SectionSkeleton = () => <Skeleton className="w-full" style={{ height }} />;
   return SectionSkeleton;
 };
 
-// Dynamically import below-the-fold and heavy components
-const TestimonialsSection = dynamic(
-  () => import("./TestimonialsSection").then((mod) => mod.TestimonialsSection),
-  { ssr: true, loading: sectionSkeleton(500) }
-);
-const ComparisonSection = dynamic(
-  () => import("./ComparisonSection").then((mod) => mod.ComparisonSection),
-  { ssr: true, loading: sectionSkeleton(500) }
-);
+// Pricing is hidden for now; the promo slider only renders after mount (per-visitor quota).
 const PricingSection = dynamic(
   () => import("./PricingSection").then((mod) => mod.PricingSection),
   { ssr: true, loading: sectionSkeleton(500) }
-);
-const FAQSectionHomepage = dynamic(
-  () => import("./FAQSectionHomepage").then((mod) => mod.FAQSectionHomepage),
-  { ssr: true, loading: sectionSkeleton(400) }
-);
-const BlogSectionHomepage = dynamic(
-  () => import("./BlogSectionHomepage").then((mod) => mod.BlogSectionHomepage),
-  { ssr: true, loading: sectionSkeleton(400) }
-);
-const CTABannerSection = dynamic(
-  () => import("./CTABannerSection").then((mod) => mod.CTABannerSection),
-  { ssr: true, loading: sectionSkeleton(200) }
 );
 const HomepagePromoSlider = dynamic(
   () => import("./HomepagePromoSlider").then((mod) => mod.HomepagePromoSlider),
   { ssr: true, loading: sectionSkeleton(320) }
 );
 // loading: () => null — no fallback UI needed, but required so next/dynamic wraps
-// its own local Suspense instead of suspending to the root app/loading.tsx and
-// blanking the whole page while the chunk fetches (same bug as HomepagePromoSlider).
+// its own local Suspense instead of suspending to a parent boundary.
 const ChatAgentFAB = dynamic(
   () => import("@/components/splitbill/chat/ChatAgentFAB").then((mod) => mod.ChatAgentFAB),
   { ssr: false, loading: () => null }
@@ -74,18 +54,22 @@ const ChatRoom = dynamic(
   { ssr: false, loading: () => null }
 );
 
+// Sections rendered without content-visibility. FeatureShowcaseSection pins
+// content with position: sticky, which the paint containment would clip.
+const PAINT_EAGER_SECTIONS = new Set<LandingSectionKey>(["featureShowcase"]);
+
 interface HomepagePageClientProps {
   /** CMS-managed copy (already merged with defaults by getLandingContent). */
-  content: LandingContent;
+  content: HomepageClientContent;
   /** FAQs flagged showOnLanding (CMS, or static fallback). */
   faqs: FAQItem[];
   initialReviews?: Review[];
   initialBlogs?: Blog[];
-  /** Server-rendered use-case copy, shown below the feature cards. */
-  useCasesSection?: React.ReactNode;
+  /** Sections with no client state (see staticSections.tsx), rendered by the caller. */
+  staticSections: StaticSections;
 }
 
-export const HomepagePageClient = ({ content, faqs, initialReviews, initialBlogs, useCasesSection }: HomepagePageClientProps) => {
+export const HomepagePageClient = ({ content, faqs, initialReviews, initialBlogs, staticSections }: HomepagePageClientProps) => {
   const { isAuthenticated } = useAuthStore();
   const isMounted = useIsHydrated();
   const [isChatReady, setIsChatReady] = useState(false);
@@ -102,18 +86,13 @@ export const HomepagePageClient = ({ content, faqs, initialReviews, initialBlogs
   }, []);
 
   const renderSection = (key: LandingSectionKey): React.ReactNode => {
+    if (key in staticSections) return staticSections[key];
     switch (key) {
-      case "socialProof":
-        return <SocialProofBar content={content.socialProof} />;
       case "promoSlider":
         // AI Scan card reads per-visitor quota, so the slider renders client-side only
         return isMounted ? <HomepagePromoSlider content={content.promoSlider} /> : null;
       case "featureShowcase":
         return <FeatureShowcaseSection content={content.featureShowcase} items={content.features.items} />;
-      case "features":
-        return <FeaturesSection content={content.features} />;
-      case "useCases":
-        return useCasesSection;
       case "howItWorks":
         return <HowItWorksSection content={content.howItWorks} />;
       case "promoBanner": {
@@ -150,8 +129,6 @@ export const HomepagePageClient = ({ content, faqs, initialReviews, initialBlogs
             </div>
           </section>
         );
-      case "comparison":
-        return <ComparisonSection content={content.comparison} />;
       case "testimonials":
         return <TestimonialsSection header={content.testimonials} variant="white" initialReviews={initialReviews} />;
       case "blog":
@@ -165,10 +142,6 @@ export const HomepagePageClient = ({ content, faqs, initialReviews, initialBlogs
             defaultOpenFirst
           />
         );
-      case "seoContent":
-        return <SeoContentSection content={content.seoContent} />;
-      case "ctaBanner":
-        return <CTABannerSection content={content.ctaBanner} />;
       default:
         return null;
     }
@@ -214,7 +187,16 @@ export const HomepagePageClient = ({ content, faqs, initialReviews, initialBlogs
         {content.layout.sections
           .filter((section) => section.visible)
           .map((section) => (
-            <React.Fragment key={section.key}>{renderSection(section.key)}</React.Fragment>
+            PAINT_EAGER_SECTIONS.has(section.key) ? (
+              <React.Fragment key={section.key}>{renderSection(section.key)}</React.Fragment>
+            ) : (
+              // Off-screen sections skip layout/paint until they near the viewport,
+              // so slower phones spend first-load time on the hero. `auto` in the
+              // intrinsic size remembers each section's real height once rendered.
+              <div key={section.key} className="[content-visibility:auto] [contain-intrinsic-size:auto_600px]">
+                {renderSection(section.key)}
+              </div>
+            )
           ))}
       </main>
 

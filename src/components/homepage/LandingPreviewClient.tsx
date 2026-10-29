@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { HomepagePageClient } from "./HomepagePageClient";
-import { UseCasesSection } from "./UseCasesSection";
+import { renderStaticSections } from "./staticSections";
 import type { FAQItem } from "@/data/faqData";
 import { mergeWithDefaults } from "@/lib/landing/normalize";
 import { scrollBelowHeader } from "@/lib/landing/scroll";
@@ -112,12 +112,12 @@ export const LandingPreviewClient = ({ faqs, initialContent, initialIsFallback =
         </div>
       )}
       <PreviewErrorBoundary resetKey={version}>
-        {/* Use cases render client-side here (server-side on the live page) so
-            they follow the draft too. */}
+        {/* Static sections render client-side here (server-side on the live page)
+            so they follow the draft too. */}
         <HomepagePageClient
           content={content}
           faqs={faqs}
-          useCasesSection={<UseCasesSection content={content.useCases} />}
+          staticSections={renderStaticSections(content)}
         />
       </PreviewErrorBoundary>
     </div>

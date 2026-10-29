@@ -3,7 +3,7 @@ import { buildMetadata } from "@/lib/seo";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { jsonLdGraph, organizationNode, webApplicationNode, websiteNode } from "@/lib/structuredData";
 import { HomepagePageClient } from "@/components/homepage/HomepagePageClient";
-import { UseCasesSection } from "@/components/homepage/UseCasesSection";
+import { renderStaticSections, toClientContent } from "@/components/homepage/staticSections";
 import { apiClient } from "@/lib/api/client";
 import { fetchBlogs } from "@/lib/api/blog";
 import { API_ENDPOINTS } from "@/lib/constants";
@@ -97,11 +97,11 @@ export default async function HomepagePage() {
     <>
       <JsonLd data={jsonLd} />
       <HomepagePageClient
-        content={content}
+        content={toClientContent(content)}
         faqs={faqs.filter((faq) => faq.showOnLanding)}
         initialReviews={initialReviews}
         initialBlogs={initialBlogs}
-        useCasesSection={<UseCasesSection content={content.useCases} />}
+        staticSections={renderStaticSections(content)}
       />
     </>
   );

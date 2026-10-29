@@ -17,6 +17,9 @@ interface BlogTableOfContentsProps {
 // below the sticky header), matching the h2/h3 scroll-margin in globals.css.
 const ACTIVE_OFFSET = 120;
 
+/** Fewer headings than this renders no TOC (callers skip its wrapper too). */
+export const MIN_TOC_HEADINGS = 2;
+
 export const useActiveHeading = (headings: BlogHeading[]) => {
   const [activeId, setActiveId] = useState<string | null>(null);
 
@@ -82,7 +85,7 @@ export const BlogTableOfContents = ({ headings, activeId, variant = "sidebar" }:
     }
   }, [activeId]);
 
-  if (headings.length < 2) return null;
+  if (headings.length < MIN_TOC_HEADINGS) return null;
 
   const list = (
     <ol className="flex flex-col border-l border-border">

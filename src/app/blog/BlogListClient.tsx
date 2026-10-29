@@ -20,36 +20,41 @@ import { Button } from "@/components/ui/Button";
 
 export const BLOGS_PER_PAGE = 12;
 
+// Backend caps `limit` at 50
+const FALLBACK_PAGE_SIZE = 50;
+
+// Client-side fallback for when the server had no posts (backend unreachable
+// at build time): same walk as fetchAllBlogs, without the server cache.
+async function fetchEveryBlog(): Promise<Blog[]> {
+  const first = await fetchBlogs({ page: 1, limit: FALLBACK_PAGE_SIZE });
+  const totalPages = first.pagination?.totalPages || 1;
+  const rest = await Promise.all(
+    Array.from({ length: totalPages - 1 }, (_, i) => fetchBlogs({ page: i + 2, limit: FALLBACK_PAGE_SIZE })),
+  );
+  const seen = new Set<string>();
+  return [first, ...rest]
+    .flatMap((res) => res.data || [])
+    .filter((blog) => !seen.has(blog._id) && !!seen.add(blog._id));
+}
+
 interface BlogListClientProps {
-  /** First page fetched on the server so the post list is in the initial HTML. */
+  /** Every published post (newest first), rendered on the server for crawlers. */
   initialBlogs?: Blog[];
-  initialTotalPages?: number;
   categories?: string[];
 }
 
-export default function BlogListClient({
-  initialBlogs,
-  initialTotalPages = 1,
-  categories = [],
-}: BlogListClientProps) {
+export default function BlogListClient({ initialBlogs, categories = [] }: BlogListClientProps) {
   const hasInitial = !!initialBlogs && initialBlogs.length > 0;
   const [blogs, setBlogs] = useState<Blog[]>(initialBlogs ?? []);
   const [isLoading, setIsLoading] = useState(!hasInitial);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(hasInitial ? initialTotalPages : 1);
+  const [visibleCount, setVisibleCount] = useState(BLOGS_PER_PAGE);
 
   useEffect(() => {
-    // Server already provided page 1; only fetch client-side as a fallback
-    // (e.g. the backend was unreachable at build/revalidate time).
     if (hasInitial) return;
     const loadBlogs = async () => {
       try {
-        const response = await fetchBlogs({ page: 1, limit: BLOGS_PER_PAGE });
-        setBlogs(response.data || []);
-        setPage(response.pagination?.page || 1);
-        setTotalPages(response.pagination?.totalPages || 1);
+        setBlogs(await fetchEveryBlog());
       } catch (error) {
         console.error("Failed to fetch blogs:", error);
       } finally {
@@ -59,29 +64,21 @@ export default function BlogListClient({
     loadBlogs();
   }, [hasInitial]);
 
-  const handleLoadMore = async () => {
-    setIsLoadingMore(true);
-    try {
-      const nextPage = page + 1;
-      const response = await fetchBlogs({ page: nextPage, limit: BLOGS_PER_PAGE });
-      setBlogs((prev) => [...prev, ...(response.data || [])]);
-      setPage(response.pagination?.page || nextPage);
-      setTotalPages(response.pagination?.totalPages || totalPages);
-    } catch (error) {
-      console.error("Failed to fetch more blogs:", error);
-    } finally {
-      setIsLoadingMore(false);
-    }
-  };
+  const navCategories =
+    categories.length > 0 ? categories : Array.from(new Set(blogs.map((b) => b.category).filter(Boolean)));
 
+  // Search runs over every post, not just the ones revealed so far.
   const query = searchQuery.trim().toLowerCase();
   const isSearching = query.length > 0;
-  const filteredBlogs = blogs.filter(
-    (blog) =>
-      blog.title.toLowerCase().includes(query) ||
-      blog.excerpt.toLowerCase().includes(query) ||
-      blog.category.toLowerCase().includes(query),
-  );
+  const filteredBlogs = isSearching
+    ? blogs.filter(
+        (blog) =>
+          blog.title.toLowerCase().includes(query) ||
+          blog.excerpt.toLowerCase().includes(query) ||
+          blog.category.toLowerCase().includes(query),
+      )
+    : blogs.slice(0, visibleCount);
+  const hasMore = !isSearching && visibleCount < blogs.length;
 
   // Newest post gets the featured slot only on the unfiltered list.
   const featuredBlog = isSearching ? undefined : filteredBlogs[0];
@@ -123,7 +120,7 @@ export default function BlogListClient({
               </button>
             )}
           </div>
-          <BlogCategoryNav categories={categories} />
+          <BlogCategoryNav categories={navCategories} />
         </div>
       </BlogHero>
 
@@ -158,10 +155,14 @@ export default function BlogListClient({
               </section>
             )}
 
-            {!isSearching && page < totalPages && (
+            {hasMore && (
               <div className="flex justify-center">
-                <Button variant="outline" onClick={handleLoadMore} loading={isLoadingMore} className="bg-card">
-                  {isLoadingMore ? "Memuat..." : "Muat Lebih Banyak"}
+                <Button
+                  variant="outline"
+                  onClick={() => setVisibleCount((n) => n + BLOGS_PER_PAGE)}
+                  className="bg-card"
+                >
+                  Muat Lebih Banyak
                 </Button>
               </div>
             )}

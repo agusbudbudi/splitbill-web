@@ -1,38 +1,23 @@
 import type { Metadata } from "next";
 import { buildMetadata } from "@/lib/seo";
-import BlogListClient, { BLOGS_PER_PAGE } from "@/app/blog/BlogListClient";
-import { fetchBlogs } from "@/lib/api/blog";
-import { fetchAllBlogs } from "@/lib/api/blog.server";
+import BlogListClient from "@/app/blog/BlogListClient";
+import { fetchAllBlogs, getBlogCategories, IS_BUILD_PHASE } from "@/lib/api/blog.server";
 import type { Blog } from "@/lib/types/blog";
 
 // ISR: list is server-rendered for crawlers and refreshed hourly
 export const revalidate = 3600;
 
-async function getInitialBlogs(): Promise<{ blogs: Blog[]; totalPages: number }> {
+// The snapshot the category/tag/detail pages use, so they all agree on which
+// post is newest. The whole list goes to the client: search then covers every
+// post, and "load more" just reveals more of it.
+async function getPosts(): Promise<Blog[]> {
   try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 5000);
-    const res = await fetchBlogs({
-      page: 1,
-      limit: BLOGS_PER_PAGE,
-      cache: "force-cache",
-      next: { revalidate: 3600 },
-      signal: controller.signal,
-    }).finally(() => clearTimeout(timeoutId));
-    return { blogs: res.data || [], totalPages: res.pagination?.totalPages || 1 };
+    return await fetchAllBlogs();
   } catch (error) {
     console.error("Failed to prefetch blogs for /blog:", error);
-    return { blogs: [], totalPages: 1 };
-  }
-}
-
-// Same request the category/tag/detail pages make, so it shares their cache.
-async function getCategories(): Promise<string[]> {
-  try {
-    const posts = await fetchAllBlogs();
-    return Array.from(new Set(posts.map((b) => b.category).filter(Boolean)));
-  } catch (error) {
-    console.error("Failed to prefetch blog categories for /blog:", error);
+    // Throw on revalidation so ISR keeps the last good page; at build time
+    // render empty and let the client fetch instead.
+    if (!IS_BUILD_PHASE) throw error;
     return [];
   }
 }
@@ -46,7 +31,7 @@ export const metadata: Metadata = buildMetadata({
 });
 
 export default async function BlogPage() {
-  const [{ blogs, totalPages }, categories] = await Promise.all([getInitialBlogs(), getCategories()]);
+  const posts = await getPosts();
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -70,7 +55,7 @@ export default async function BlogPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <BlogListClient initialBlogs={blogs} initialTotalPages={totalPages} categories={categories} />
+      <BlogListClient initialBlogs={posts} categories={getBlogCategories(posts)} />
     </>
   );
 }

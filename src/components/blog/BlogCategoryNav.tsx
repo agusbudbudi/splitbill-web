@@ -24,7 +24,7 @@ export const BlogCategoryNav = ({ categories, activeSlug }: BlogCategoryNavProps
 
   return (
     <nav aria-label="Kategori artikel" className="-mx-4 sm:mx-0">
-      <ul className="flex gap-2 overflow-x-auto px-4 sm:px-0 sm:flex-wrap sm:justify-center scrollbar-none" style={{ scrollbarWidth: "none" }}>
+      <ul className="flex gap-2 overflow-x-auto px-4 sm:px-0 sm:flex-wrap sm:justify-center scrollbar-hide">
         {items.map((item) => (
           <li key={item.href} className="shrink-0">
             <Link

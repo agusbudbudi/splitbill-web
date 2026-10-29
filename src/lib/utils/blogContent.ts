@@ -38,16 +38,22 @@ const decodeEntities = (text: string) =>
 
 const ID_ATTR = /\sid=["']([^"']+)["']/i;
 
+// Ids are compared decoded: the DOM id (what the TOC href and getElementById
+// match) is the attribute value with its entities resolved.
+const idsIn = (html: string) =>
+  Array.from(html.matchAll(/\sid=["']([^"']+)["']/gi), (m) => decodeEntities(m[1]));
+
 /**
  * Normalises CMS HTML for the article page: demotes H1s and gives every H2/H3
  * a unique id so the table of contents can link to it. A CMS-set heading id
- * is kept unless an earlier heading already uses it; generated ids also avoid
- * every id that appears anywhere else in the body.
+ * is kept unless an earlier heading or any non-heading element already uses
+ * it; generated ids also avoid every id that appears anywhere in the body.
  */
 export const prepareBlogContent = (content: string): { html: string; headings: BlogHeading[] } => {
   const source = demoteH1(content);
   const headings: BlogHeading[] = [];
-  const reserved = new Set(Array.from(source.matchAll(/\sid=["']([^"']+)["']/gi), (m) => m[1]));
+  const reserved = new Set(idsIn(source));
+  const nonHeadingIds = new Set(idsIn(source.replace(/<h[23](?=[\s>])[^>]*>/gi, "")));
   const used = new Set<string>();
 
   const uniqueId = (base: string) => {
@@ -62,10 +68,11 @@ export const prepareBlogContent = (content: string): { html: string; headings: B
       const text = decodeEntities(inner.replace(/<[^>]+>/g, "")).trim();
       if (!text) return match;
 
-      const existingId = attrs.match(ID_ATTR)?.[1];
+      const rawId = attrs.match(ID_ATTR)?.[1];
+      const existingId = rawId ? decodeEntities(rawId) : undefined;
       let id: string;
       let nextAttrs = attrs;
-      if (existingId && !used.has(existingId)) {
+      if (existingId && !used.has(existingId) && !nonHeadingIds.has(existingId)) {
         id = existingId;
       } else {
         id = uniqueId(slugify(text) || `bagian-${headings.length + 1}`);

@@ -97,8 +97,7 @@ export const LatestBlogSlider = () => {
       <div className="relative -mx-4 overflow-hidden">
         <div
           ref={scrollRef}
-          className="flex gap-6 overflow-x-auto overflow-y-hidden snap-x snap-mandatory scrollbar-none px-4 pb-2 pt-2 scroll-pl-4 scroll-smooth"
-          style={{ scrollbarWidth: "none" }}
+          className="flex gap-6 overflow-x-auto overflow-y-hidden snap-x snap-mandatory scrollbar-hide px-4 pb-2 pt-2 scroll-pl-4 scroll-smooth"
         >
           {isLoading
             ? [1, 2, 3].map((i) => (

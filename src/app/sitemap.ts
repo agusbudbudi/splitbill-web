@@ -1,9 +1,11 @@
 import { MetadataRoute } from "next";
-import { fetchAllBlogs } from "@/lib/api/blog.server";
+import { fetchAllBlogs, IS_BUILD_PHASE } from "@/lib/api/blog.server";
 import { absoluteUrl } from "@/lib/seo";
 
 // Revalidate sitemap every 24 hours — avoids dynamic server usage warning
 export const revalidate = 86400;
+
+const BLOG_FETCH_TIMEOUT_MS = 8000;
 
 interface RouteConfig {
   path: string;
@@ -46,10 +48,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let newestBlogDate: string | undefined;
   try {
     // Hard timeout so a slow/cold-starting backend can't hang this route
-    // past the serverless function limit (Googlebot got "couldn't fetch" from this)
+    // past the serverless function limit (Googlebot got "couldn't fetch" from
+    // this). Covers the whole multi-page walk (each page retried once).
     let timeoutId: ReturnType<typeof setTimeout> | undefined;
     const timeout = new Promise<never>((_, reject) => {
-      timeoutId = setTimeout(() => reject(new Error("Blog fetch timed out")), 5000);
+      timeoutId = setTimeout(() => reject(new Error("Blog fetch timed out")), BLOG_FETCH_TIMEOUT_MS);
     });
     const posts = await Promise.race([fetchAllBlogs(), timeout]).finally(() =>
       clearTimeout(timeoutId),
@@ -69,7 +72,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       });
   } catch (error) {
     console.error("Failed to fetch blogs for sitemap:", error);
-    // Continue with just static routes
+    // On revalidation, throw so ISR keeps serving the last good sitemap
+    // instead of caching a blog-less one for a day. Only the build (no last
+    // good copy yet) continues with just the static routes.
+    if (!IS_BUILD_PHASE) throw error;
   }
 
   const staticRoutes = routeConfigs.map(({ path, lastModified }) => ({

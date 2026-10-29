@@ -13,7 +13,7 @@ import { BlogCard } from "@/components/blog/BlogCard";
 import { BlogContent } from "@/components/blog/BlogContent";
 import { BlogCTA } from "@/components/blog/BlogCTA";
 import { BlogShareButtons, copyShareLink } from "@/components/blog/BlogShareButtons";
-import { BlogTableOfContents, useActiveHeading } from "@/components/blog/BlogTableOfContents";
+import { BlogTableOfContents, MIN_TOC_HEADINGS, useActiveHeading } from "@/components/blog/BlogTableOfContents";
 import type { BlogHeading } from "@/lib/utils/blogContent";
 import { ReadingProgressBar } from "@/components/blog/ReadingProgressBar";
 import { Badge, badgeVariants } from "@/components/ui/Badge";
@@ -195,9 +195,11 @@ export default function BlogDetailClient({
               />
             </div>
 
-            <div className="lg:hidden mb-8">
-              <BlogTableOfContents headings={headings} activeId={activeHeadingId} variant="collapsible" />
-            </div>
+            {headings.length >= MIN_TOC_HEADINGS && (
+              <div className="lg:hidden mb-8">
+                <BlogTableOfContents headings={headings} activeId={activeHeadingId} variant="collapsible" />
+              </div>
+            )}
 
             <BlogContent content={blog.content} />
 

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { buildMetadata } from "@/lib/seo";
 import { notFound } from "next/navigation";
-import { fetchAllBlogs } from "@/lib/api/blog.server";
+import { fetchAllBlogs, getBlogCategories } from "@/lib/api/blog.server";
 import { slugify } from "@/lib/utils/index";
 import { BlogCard } from "@/components/blog/BlogCard";
 import { Footer } from "@/components/layout/Footer";
@@ -24,7 +24,7 @@ async function getCategoryBlogs(slug: string) {
   if (!categoryName) return null;
   return {
     categoryName,
-    categories: Array.from(new Set(posts.map((b) => b.category).filter(Boolean))),
+    categories: getBlogCategories(posts),
     posts: posts.filter((b) => slugify(b.category) === slug),
   };
 }

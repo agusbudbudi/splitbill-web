@@ -24,7 +24,7 @@ const premiumFeatures = [
 
 export const PricingSection = () => {
   return (
-    <section className="py-16 sm:py-24 bg-gradient-to-b from-white to-[#f8f9fd] relative overflow-hidden">
+    <section className="py-16 bg-gradient-to-b from-white to-[#f8f9fd] relative overflow-hidden">
       {/* Background decoration */}
       <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-violet-600/5 rounded-full blur-[100px] pointer-events-none" />

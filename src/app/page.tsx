@@ -9,6 +9,8 @@ import { fetchBlogs } from "@/lib/api/blog";
 import { API_ENDPOINTS } from "@/lib/constants";
 import type { Review } from "@/hooks/useReview";
 import type { Blog } from "@/lib/types/blog";
+import { getLandingContent } from "@/lib/landing/content";
+import { getFaqs } from "@/lib/faq";
 
 // ISR: testimonials and latest posts are server-rendered for crawlers and
 // refreshed hourly.
@@ -53,19 +55,35 @@ async function getLatestBlogs(): Promise<Blog[]> {
   }
 }
 
-export const metadata: Metadata = buildMetadata({
-  title: "Split Bill Online - Aplikasi Bagi Tagihan & Patungan Gratis",
-  description:
-    "Split bill online gratis: scan struk pakai AI, hitung pajak dan service charge otomatis, lalu bagi tagihan ke teman lewat WhatsApp. Tanpa install aplikasi.",
-  path: "/",
-  socialTitle: "SplitBill: Split Bill Online, Bagi Tagihan Lebih Mudah",
-});
+export async function generateMetadata(): Promise<Metadata> {
+  const { content } = await getLandingContent();
+  const { seo } = content;
+  return buildMetadata({
+    title: seo.title,
+    description: seo.description,
+    path: "/",
+    socialTitle: seo.socialTitle || seo.title,
+    socialDescription: seo.socialDescription || seo.description,
+    image: {
+      url: seo.ogImage.url,
+      alt: seo.ogImage.alt,
+      width: seo.ogImage.width || 1200,
+      height: seo.ogImage.height || 630,
+    },
+  });
+}
 
 export default async function HomepagePage() {
-  const [initialReviews, initialBlogs] = await Promise.all([getLandingReviews(), getLatestBlogs()]);
+  const [initialReviews, initialBlogs, { content }, faqs] = await Promise.all([
+    getLandingReviews(),
+    getLatestBlogs(),
+    getLandingContent(),
+    getFaqs(),
+  ]);
 
   const jsonLd = jsonLdGraph(
-    organizationNode,
+    // Homepage carries the CMS-managed social profiles for the brand entity
+    content.seo.sameAs.length > 0 ? { ...organizationNode, sameAs: content.seo.sameAs } : organizationNode,
     websiteNode,
     webApplicationNode({
       name: "SplitBill",
@@ -79,9 +97,11 @@ export default async function HomepagePage() {
     <>
       <JsonLd data={jsonLd} />
       <HomepagePageClient
+        content={content}
+        faqs={faqs.filter((faq) => faq.showOnLanding)}
         initialReviews={initialReviews}
         initialBlogs={initialBlogs}
-        useCasesSection={<UseCasesSection />}
+        useCasesSection={<UseCasesSection content={content.useCases} />}
       />
     </>
   );

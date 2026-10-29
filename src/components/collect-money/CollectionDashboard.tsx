@@ -31,6 +31,7 @@ import { toPng } from "html-to-image";
 import { toast } from "sonner";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import Link from "next/link";
+import Image from "next/image";
 import { Header } from "@/components/layout/Header";
 import { Card, CardContent } from "@/components/ui/Card";
 import { IllustratedEmptyState } from "@/components/ui/IllustratedEmptyState";
@@ -46,9 +47,11 @@ const AVATAR_BASE_URL =
   "https://api.dicebear.com/9.x/personas/svg?backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf&size=64&scale=100&seed=";
 
 const WhatsAppIcon = ({ className }: { className?: string }) => (
-  <img
+  <Image
     src="/img/whatsApp-logo.png"
     alt="WhatsApp"
+    width={24}
+    height={24}
     className={cn("rounded-full object-cover", className)}
   />
 );

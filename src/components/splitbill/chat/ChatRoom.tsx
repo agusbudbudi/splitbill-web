@@ -389,7 +389,7 @@ export function ChatRoom() {
                 >
                   <div className="relative shrink-0">
                     <div className="w-9 h-9 rounded-full overflow-hidden flex items-center justify-center shadow-md shadow-black/10 bg-slate-100">
-                      <img src="/img/agent-billy.png" alt="Agent Billy" className="w-full h-full object-cover" />
+                      <img src="/img/agent-billy.webp" alt="Agent Billy" className="w-full h-full object-cover" />
                     </div>
                     {/* Online indicator dot */}
                     <span className="absolute bottom-0 right-0 block h-2 w-2 rounded-full bg-emerald-500 ring-2 ring-white" />

@@ -89,7 +89,7 @@ export function ChatMessage({
         <div className="flex items-end gap-2 max-w-[88%]">
           {/* Agent avatar */}
           <div className="w-6 h-6 rounded-full overflow-hidden flex items-center justify-center shrink-0 bg-slate-100">
-            <img src="/img/agent-billy.png" alt="Agent Billy" className="w-full h-full object-cover" />
+            <img src="/img/agent-billy.webp" alt="Agent Billy" className="w-full h-full object-cover" />
           </div>
           <div className="bg-slate-100 rounded-md rounded-bl-xs overflow-hidden max-w-full">
             {message.imageUrl && (
@@ -126,7 +126,7 @@ export function ChatMessage({
       <div className="flex items-start gap-2 w-full">
         {/* Agent avatar */}
         <div className="w-6 h-6 rounded-full overflow-hidden flex items-center justify-center shrink-0 mt-0.5 bg-slate-100">
-          <img src="/img/agent-billy.png" alt="Agent Billy" className="w-full h-full object-cover" />
+          <img src="/img/agent-billy.webp" alt="Agent Billy" className="w-full h-full object-cover" />
         </div>
 
         <div className="flex-1 space-y-2">
@@ -229,7 +229,7 @@ export function TypingIndicator() {
   return (
     <div className="flex items-center gap-2">
       <div className="w-6 h-6 rounded-full overflow-hidden flex items-center justify-center shrink-0 bg-slate-100">
-        <img src="/img/agent-billy.png" alt="Agent Billy" className="w-full h-full object-cover" />
+        <img src="/img/agent-billy.webp" alt="Agent Billy" className="w-full h-full object-cover" />
       </div>
       <div className="bg-slate-100 rounded-md rounded-bl-sm px-4 py-3 flex items-center gap-1">
         <span className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce" style={{ animationDelay: "0ms" }} />

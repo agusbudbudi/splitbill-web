@@ -2,36 +2,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { formatToIDR } from "@/lib/utils";
-
-const useCases = [
-  {
-    image: "/img/cara-pakai/split-bill/ai-scan-struk.png",
-    tint: "from-sky-100 to-blue-50",
-    feature: "AI Scan",
-    title: "Makan di restoran",
-    body: "Foto struknya, AI Scan baca item dan harga, lalu kamu tinggal pilih siapa makan apa. Yang pesan steak gak perlu dibayarin sama yang cuma pesan es teh, semua bayar sesuai pesanannya sendiri.",
-    href: "/split-bill",
-    cta: "Coba Split Bill",
-  },
-  {
-    image: "/img/cara-pakai/split-bill/settlement.png",
-    tint: "from-emerald-100 to-teal-50",
-    feature: "Collect Money",
-    title: "Patungan kos dan tagihan bulanan",
-    body: "Listrik, wifi, galon, sampai iuran kebersihan bisa dibagi rata ke semua penghuni dalam hitungan detik. Pakai Collect Money buat nandain siapa yang udah transfer, biar gak ada yang lupa bayar.",
-    href: "/collect-money",
-    cta: "Coba Collect Money",
-  },
-  {
-    image: "/img/cara-pakai/split-later/quick-capture.png",
-    tint: "from-amber-100 to-orange-50",
-    feature: "Split Later",
-    title: "Liburan bareng",
-    body: "Struk numpuk selama trip? Kumpulin dulu pakai Split Later, hitungnya belakangan pas udah pulang. Settlement dari semua struk digabung jadi satu, jadi transfernya cukup sekali per orang.",
-    href: "/split-bill-liburan",
-    cta: "Lihat Split Bill Liburan",
-  },
-];
+import { RichText } from "@/lib/landing/RichText";
+import { LandingEyebrow } from "./LandingEyebrow";
+import { getTone } from "@/lib/landing/tones";
+import { isUnoptimizableSrc } from "@/lib/landing/image";
+import type { LandingContent } from "@/lib/landing/types";
+import { LandingTitle } from "./LandingTitle";
 
 // Worked example shown next to the tax copy, styled as a receipt: 4 people,
 // service 5% then tax 10% on (subtotal + service). "Kamu" ordered the least.
@@ -58,59 +34,64 @@ const receiptEdgeMask =
 /**
  * Server-rendered explainer below the feature cards: real use cases plus how
  * tax and service charge are split. Passed into HomepagePageClient as a slot
- * so the copy is plain HTML, not part of the client bundle.
+ * so the copy is plain HTML, not part of the client bundle. Header and cards
+ * come from the CMS; the tax explainer below stays static.
  */
-export function UseCasesSection() {
+export function UseCasesSection({ content }: { content: LandingContent["useCases"] }) {
   return (
-    <section className="relative py-16 sm:py-24 bg-[#f8f9fd] overflow-hidden">
+    <section data-landing-section="useCases" className="relative py-16 bg-white overflow-hidden">
       {/* Background decoration */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-primary/5 rounded-full blur-3xl pointer-events-none" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="max-w-3xl mx-auto text-center mb-10 sm:mb-14">
-          <span className="inline-flex items-center gap-2 border border-primary/20 bg-white text-primary text-xs font-bold px-4 py-2 rounded-full mb-5">
-            🍜 Nongkrong · 🏠 Kos · ✈️ Liburan
-          </span>
+          {content.eyebrow && (
+            <LandingEyebrow className="mb-5">{content.eyebrow}</LandingEyebrow>
+          )}
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight mb-4">
-            Split bill buat{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-600">
-              semua momen patungan
-            </span>
+            <LandingTitle title={content.title} highlight={content.titleHighlight} />
           </h2>
-          <p className="text-base sm:text-lg text-slate-500 font-medium">
-            Dari nongkrong, patungan kos, sampai liburan,{" "}
-            <span className="text-primary font-bold">semua bisa di-split tanpa canggung</span>.
-            Langsung dari browser, <span className="text-primary font-bold">tanpa install aplikasi</span>!
-          </p>
+          {content.subtitle && (
+            <p className="text-base sm:text-lg text-slate-500 font-medium">
+              <RichText text={content.subtitle} />
+            </p>
+          )}
         </div>
 
         {/* Use case cards */}
         <div className="grid gap-4 sm:gap-6 md:grid-cols-3">
-          {useCases.map((uc) => (
+          {content.cards.map((uc, idx) => (
             <Link
-              key={uc.title}
+              key={idx}
               href={uc.href}
               className="group flex md:flex-col bg-white rounded-xl border border-slate-100/80 shadow-[0_4px_20px_-4px_rgba(71,159,234,0.08)] hover:shadow-[0_12px_30px_-6px_rgba(71,159,234,0.18)] hover:border-primary/20 hover:-translate-y-1 transition-all duration-300 overflow-hidden"
             >
-              <div className={`relative w-24 shrink-0 md:w-auto md:h-40 bg-gradient-to-br ${uc.tint} flex items-center justify-center`}>
-                <span className="hidden md:inline-block absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-slate-700 text-[11px] font-bold px-2.5 py-1 rounded-full shadow-sm">
-                  {uc.feature}
-                </span>
+              {/* Tinted image panel inset from the card edges, flush with the copy —
+                  same treatment as the feature showcase cards */}
+              <div className="shrink-0 pl-3 py-3 md:px-4 md:pt-4 md:pb-0">
+              <div className={`relative w-20 h-full md:w-auto md:h-40 rounded-tl-lg rounded-bl-lg md:rounded-bl-none md:rounded-tr-lg overflow-hidden bg-gradient-to-br ${getTone(uc.tone).tint} flex items-center justify-center`}>
+                {uc.feature && (
+                  <span className="hidden md:inline-block absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-slate-700 text-[11px] font-bold px-2.5 py-1 rounded-full shadow-[0_2px_8px_-2px_rgba(15,23,42,0.08)]">
+                    {uc.feature}
+                  </span>
+                )}
                 <Image
-                  src={uc.image}
+                  src={uc.imageUrl}
+                  unoptimized={isUnoptimizableSrc(uc.imageUrl)}
                   alt=""
                   width={128}
                   height={128}
                   sizes="128px"
-                  className="w-16 h-16 md:w-28 md:h-28 object-contain drop-shadow-xl transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-3"
+                  className="w-14 h-14 md:w-28 md:h-28 object-contain drop-shadow-xl transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-3"
                 />
+              </div>
               </div>
               <div className="flex flex-col flex-1 p-4 md:p-6">
                 <h3 className="text-base md:text-lg font-black text-slate-800 mb-1.5 md:mb-2">{uc.title}</h3>
                 <p className="text-sm font-medium text-slate-500 leading-relaxed mb-3 md:mb-5">{uc.body}</p>
                 <span className="mt-auto inline-flex items-center gap-1.5 text-sm font-bold text-primary">
-                  {uc.cta}
+                  {uc.ctaLabel}
                   <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                 </span>
               </div>
@@ -119,8 +100,10 @@ export function UseCasesSection() {
         </div>
 
         {/* Tax & service charge explainer + worked example */}
-        <div className="mt-8 sm:mt-10 bg-white rounded-xl border border-slate-100/80 shadow-[0_4px_20px_-4px_rgba(71,159,234,0.08)] p-6 sm:p-10 grid gap-8 lg:grid-cols-2 lg:gap-12 items-center">
-          <div>
+        <div className="mt-8 sm:mt-10 bg-white rounded-xl border border-slate-100/80 shadow-[0_4px_20px_-4px_rgba(71,159,234,0.08)] overflow-hidden px-4 pt-4 sm:px-8 sm:pt-8 grid gap-8 lg:grid-cols-2 lg:gap-12 items-center">
+          {/* No bottom padding on the card: the receipt panel sits flush with its bottom edge
+              (like the feature showcase image panels), so the copy carries its own on desktop */}
+          <div className="px-1 pt-1 sm:px-0 sm:pt-0 lg:pb-8">
             <div className="flex items-center gap-3 mb-4">
               <Image
                 src="/img/cara-pakai/split-bill/tax.png"
@@ -164,7 +147,7 @@ export function UseCasesSection() {
           </div>
 
           {/* Worked example, styled as a receipt */}
-          <div className="rounded-lg bg-slate-50 px-4 py-6 sm:px-8 flex justify-center">
+          <div className="self-stretch rounded-t-2xl md:rounded-t-3xl bg-gradient-to-br from-primary/10 to-primary/[0.03] px-4 py-6 sm:px-8 flex items-center justify-center">
             <div className="w-full max-w-sm drop-shadow-[0_10px_20px_rgba(15,23,42,0.10)] lg:rotate-1">
               <div
                 className="bg-white px-5 pt-6 pb-7 font-mono text-[12px] text-slate-600"

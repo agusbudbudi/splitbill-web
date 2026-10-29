@@ -37,7 +37,7 @@ import {
   type KillerFeature,
   type CaraPakaiStep,
 } from "@/components/cara-pakai";
-import { faqData } from "@/data/faqData";
+import { getFaqs } from "@/lib/faq";
 import { FAQSectionHomepage } from "@/components/homepage/FAQSectionHomepage";
 
 const PAGE_URL = "https://www.splitbill.my.id/split-bill/cara-pakai";
@@ -57,7 +57,6 @@ export const metadata: Metadata = buildMetadata({
   },
 });
 
-const splitBillFaqs = faqData.filter((item) => item.category === "split-bill");
 
 const overviewPoints: OverviewPoint[] = [
   {
@@ -109,7 +108,7 @@ const killerFeatures: KillerFeature[] = [
     icon: <MessageCircle className={killerFeatureIconClass} />,
     title: "Chat Bareng Agent Billy",
     description: "Bingung mulai dari mana? Tinggal chat, Agent Billy pandu dari tambah teman sampai selesai.",
-    image: "/img/cara-pakai/split-bill/agent-billy.png",
+    image: "/img/cara-pakai/split-bill/agent-billy.webp",
     isNew: true,
   },
   {
@@ -167,7 +166,8 @@ const steps: CaraPakaiStep[] = [
   },
 ];
 
-export default function SplitBillCaraPakaiPage() {
+export default async function SplitBillCaraPakaiPage() {
+  const splitBillFaqs = (await getFaqs()).filter((item) => item.category === "split-bill");
   const breadcrumbSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",

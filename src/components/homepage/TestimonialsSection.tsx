@@ -4,6 +4,17 @@ import React, { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { Star, ArrowLeft, ArrowRight, ChevronDown, ChevronUp } from "lucide-react";
 import { useReview, Review } from "@/hooks/useReview";
+import type { LandingHeader } from "@/lib/landing/types";
+import { DEFAULT_LANDING_CONTENT } from "@/lib/landing/defaults";
+import { LandingTitle } from "./LandingTitle";
+
+// Pages without CMS copy (light variant, e.g. /split-bill-liburan) keep the
+// original split title with its green highlight.
+const LIGHT_DEFAULT_HEADER: LandingHeader = {
+  title: "Kata Mereka yang",
+  titleHighlight: "Udah Bebas Drama",
+  subtitle: DEFAULT_LANDING_CONTENT.testimonials.subtitle,
+};
 
 // Skeleton card for loading state
 const SkeletonCard = () => (
@@ -40,8 +51,9 @@ const TestimonialCard = ({ review }: { review: Review }) => {
     >
       <div className="h-full bg-white rounded-md p-6 border border-slate-100/80 shadow-[0_4px_20px_-4px_rgba(71,159,234,0.08)] hover:shadow-[0_12px_30px_-6px_rgba(71,159,234,0.15)] hover:border-primary/20 transition-all duration-300 flex flex-col justify-between cursor-pointer">
         <div>
-          {/* Rating & Expand Button Row */}
-          <div className="flex items-center justify-between mb-4">
+          {/* Rating & Expand Button Row — min-h matches the expand button, so
+              cards without one aren't 8px shorter */}
+          <div className="flex items-center justify-between min-h-6 mb-4">
             <div className="flex gap-0.5">
               {[1, 2, 3, 4, 5].map((star) => (
                 <Star
@@ -72,23 +84,30 @@ const TestimonialCard = ({ review }: { review: Review }) => {
             )}
           </div>
 
-          {/* Content wrapper */}
+          {/* Content wrapper — always at least 2 lines tall (2 × leading-relaxed
+              1.625em), so one-line reviews match the clamped 2-line ones */}
           <div className="relative">
             <p
-              className={`text-base font-semibold text-slate-600 leading-relaxed transition-all duration-300 ${isLongText && !isExpanded ? "line-clamp-2" : "line-clamp-none"
+              className={`min-h-[3.25em] text-base font-semibold text-slate-600 leading-relaxed transition-all duration-300 ${isLongText && !isExpanded ? "line-clamp-2" : "line-clamp-none"
                 }`}
             >
-              "{review.review}"
+              &quot;{review.review}&quot;
             </p>
           </div>
         </div>
 
         {/* User Info */}
-        <div className={`flex items-center gap-3 border-t border-slate-50 pt-4 ${isLongText && !isExpanded ? "mt-4" : "mt-6"}`}>
+        <div className={`flex items-center gap-3 border-t border-slate-50 pt-4 ${isExpanded ? "mt-6" : "mt-4"}`}>
           <div className="w-10 h-10 rounded-full overflow-hidden bg-slate-100 shrink-0">
             <img
               src={`https://api.dicebear.com/9.x/personas/svg?backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf&size=64&scale=100&seed=${encodeURIComponent(review.name || "Anonim")}`}
               alt={review.name || "Anonim"}
+              width={40}
+              height={40}
+              // Far below the fold: lazy keeps React from emitting a <head>
+              // preload per avatar that would compete with the hero LCP image
+              loading="lazy"
+              decoding="async"
               className="w-full h-full object-cover"
             />
           </div>
@@ -113,11 +132,51 @@ const TestimonialCard = ({ review }: { review: Review }) => {
 };
 
 interface TestimonialsSectionProps {
+  /** CMS section heading; pages outside the homepage use the default copy. */
+  header?: LandingHeader;
+  /** "white" = plain white (homepage); "light" = original light background; "primary" = solid brand blue. */
+  variant?: "light" | "white" | "primary";
   /** Landing reviews fetched on the server so real text is in the initial HTML. */
   initialReviews?: Review[];
 }
 
-export const TestimonialsSection = ({ initialReviews }: TestimonialsSectionProps) => {
+// Header/background classes per variant; cards stay white on both.
+// `fade` matches the section background so edge cards dissolve into it.
+const VARIANT_STYLES = {
+  light: {
+    section: "bg-[#f8f9fd]",
+    fade: "from-[#f8f9fd]",
+    glow: "bg-primary/5",
+    title: "text-slate-900",
+    highlight: "from-emerald-500 to-teal-600",
+    subtitle: "text-slate-500",
+  },
+  white: {
+    section: "bg-white",
+    fade: "from-white",
+    glow: null,
+    title: "text-slate-900",
+    highlight: "from-emerald-500 to-teal-600",
+    subtitle: "text-slate-500",
+  },
+  primary: {
+    section: "bg-primary",
+    fade: "from-primary",
+    // Flat brand blue, no center glow
+    glow: null,
+    title: "text-white",
+    // Whole title in plain white; no accent color on the blue background
+    highlight: null,
+    subtitle: "text-white/90",
+  },
+};
+
+export const TestimonialsSection = ({
+  header = LIGHT_DEFAULT_HEADER,
+  variant = "light",
+  initialReviews,
+}: TestimonialsSectionProps) => {
+  const styles = VARIANT_STYLES[variant];
   const { getReviews } = useReview();
   const hasInitial = !!initialReviews && initialReviews.length > 0;
   const [reviews, setReviews] = useState<Review[]>(initialReviews ?? []);
@@ -150,9 +209,11 @@ export const TestimonialsSection = ({ initialReviews }: TestimonialsSectionProps
   };
 
   return (
-    <section id="testimoni" className="py-16 sm:py-24 bg-[#f8f9fd] relative overflow-hidden group">
+    <section id="testimoni" data-landing-section="testimonials" className={`py-16 ${styles.section} relative overflow-hidden group`}>
       {/* Decorative blurry gradients */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+      {styles.glow && (
+        <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] ${styles.glow} rounded-full blur-3xl pointer-events-none`} />
+      )}
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}
@@ -164,12 +225,13 @@ export const TestimonialsSection = ({ initialReviews }: TestimonialsSectionProps
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.5 }}
-            className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight mb-4"
+            className={`text-3xl sm:text-4xl md:text-5xl font-black ${styles.title} tracking-tight mb-4`}
           >
-            Kata Mereka yang{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-teal-600">
-              Udah Bebas Drama
-            </span>
+            <LandingTitle
+              title={header.title}
+              highlight={header.titleHighlight}
+              highlightClassName={styles.highlight ? `text-transparent bg-clip-text bg-gradient-to-r ${styles.highlight}` : ""}
+            />
           </motion.h2>
 
           <motion.p
@@ -177,9 +239,9 @@ export const TestimonialsSection = ({ initialReviews }: TestimonialsSectionProps
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-base sm:text-lg text-slate-500 font-medium"
+            className={`text-base sm:text-lg ${styles.subtitle} font-medium`}
           >
-            Udah ribuan circle nongkrong terbantu dengan SplitBill. Cek review jujur dari mereka!
+            {header.subtitle}
           </motion.p>
         </div>
 
@@ -206,7 +268,10 @@ export const TestimonialsSection = ({ initialReviews }: TestimonialsSectionProps
           )}
 
           {/* Horizontal Slider Area */}
-          <div className="-mx-4 sm:-mx-8 overflow-hidden">
+          <div className="relative -mx-4 sm:-mx-8 overflow-hidden">
+            {/* Edge fades — the leftmost/rightmost cards dissolve into the background */}
+            <div className={`absolute inset-y-0 left-0 w-10 sm:w-24 bg-gradient-to-r ${styles.fade} to-transparent pointer-events-none z-20`} />
+            <div className={`absolute inset-y-0 right-0 w-10 sm:w-24 bg-gradient-to-l ${styles.fade} to-transparent pointer-events-none z-20`} />
             <div
               ref={scrollRef}
               className="flex gap-4 sm:gap-6 overflow-x-auto overflow-y-hidden snap-x snap-mandatory scrollbar-hide px-4 sm:px-8 pt-2 pb-4 scroll-pl-4 sm:scroll-pl-8 scroll-smooth"

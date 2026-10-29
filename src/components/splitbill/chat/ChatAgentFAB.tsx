@@ -78,7 +78,7 @@ export function ChatAgentFAB({ bottomClass = "bottom-24" }: ChatAgentFABProps) {
           <span className="absolute inset-0 rounded-full bg-primary/30 animate-ping" />
         )}
 
-        <img src="/img/agent-billy.png" alt="Agent Billy" className="w-full h-full object-cover relative z-10 rounded-full" />
+        <img src="/img/agent-billy.webp" alt="Agent Billy" className="w-full h-full object-cover relative z-10 rounded-full" />
 
         {/* Session dot */}
         {hasActiveSession && (

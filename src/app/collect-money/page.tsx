@@ -3,6 +3,7 @@ import { buildMetadata } from "@/lib/seo";
 import CollectMoneyClientPage from "./CollectMoneyClientPage";
 import { FeatureSeoSection } from "@/components/seo/FeatureSeoSection";
 import { featureSeoContent } from "@/data/featureSeoContent";
+import { getFaqs, resolveFaqs } from "@/lib/faq";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { breadcrumbNode, jsonLdGraph, webApplicationNode } from "@/lib/structuredData";
 
@@ -14,7 +15,8 @@ export const metadata: Metadata = buildMetadata({
   socialDescription: "Kumpulkan uang iuran kas atau dana sosial dengan praktis. Transparan dan otomatis!",
 });
 
-export default function CollectMoneyPage() {
+export default async function CollectMoneyPage() {
+  const faqs = resolveFaqs(await getFaqs(), featureSeoContent.collectMoney.faqs);
   const jsonLd = jsonLdGraph(
     breadcrumbNode([
       { name: "Home", path: "/" },
@@ -34,7 +36,7 @@ export default function CollectMoneyPage() {
       {/* SEO explainer first in the DOM (crawlers see H1 + intro before the
           client-only tool), shown visually below the tool via order-*. */}
       <div className="flex flex-col">
-        <FeatureSeoSection {...featureSeoContent.collectMoney} className="order-2" />
+        <FeatureSeoSection {...featureSeoContent.collectMoney} faqs={faqs} className="order-2" />
         <div className="order-1">
           <CollectMoneyClientPage />
         </div>

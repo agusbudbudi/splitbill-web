@@ -43,12 +43,15 @@ export const metadata: Metadata = {
     statusBarStyle: "black-translucent",
   },
   icons: {
+    // Small dedicated icons: browsers fetch these on every page at high
+    // priority, so the 1000px split-bill-icon.png (kept for the PWA manifest
+    // and share images) would waste ~100 KB per first visit.
     icon: [
-      { url: "/favicon.ico", sizes: "any" },
-      { url: "/img/split-bill-icon.png", type: "image/png" }
+      { url: "/favicon.ico", sizes: "16x16 32x32 48x48" },
+      { url: "/img/icon-192.png", sizes: "192x192", type: "image/png" }
     ],
     shortcut: "/favicon.ico",
-    apple: "/img/split-bill-icon.png",
+    apple: { url: "/img/apple-touch-icon.png", sizes: "180x180" },
   },
 };
 

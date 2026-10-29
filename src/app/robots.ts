@@ -8,7 +8,7 @@ export default function robots(): MetadataRoute.Robots {
       // /_next/ dan /static/ sengaja TIDAK di-block: Googlebot butuh JS, CSS
       // dan /_next/image buat render halaman. /wallet tetap di-block karena
       // cuma app yang butuh login (gak ada versi marketing-nya).
-      disallow: ["/api/", "/admin/", "/history", "/member", "/wallet"],
+      disallow: ["/api/", "/admin/", "/history", "/member", "/wallet", "/preview/"],
     },
     sitemap: `${SITE_URL}/sitemap.xml`,
   };

@@ -33,7 +33,7 @@ import {
   type KillerFeature,
   type CaraPakaiStep,
 } from "@/components/cara-pakai";
-import { faqData } from "@/data/faqData";
+import { getFaqs } from "@/lib/faq";
 import { FAQSectionHomepage } from "@/components/homepage/FAQSectionHomepage";
 
 const PAGE_URL = "https://www.splitbill.my.id/shared-goals/cara-pakai";
@@ -53,7 +53,6 @@ export const metadata: Metadata = buildMetadata({
   },
 });
 
-const sharedGoalsFaqs = faqData.filter((item) => item.category === "shared-goals");
 
 const killerFeatureIconClass = "w-4 h-4 sm:w-5 sm:h-5 text-primary shrink-0";
 const stepIconClass = "h-5 w-5 text-primary";
@@ -148,7 +147,8 @@ const steps: CaraPakaiStep[] = [
   },
 ];
 
-export default function SharedGoalsCaraPakaiPage() {
+export default async function SharedGoalsCaraPakaiPage() {
+  const sharedGoalsFaqs = (await getFaqs()).filter((item) => item.category === "shared-goals");
   const breadcrumbSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",

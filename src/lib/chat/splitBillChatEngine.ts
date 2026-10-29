@@ -29,7 +29,7 @@ export function userText(content: string): MessagePayload {
 export const GREETING_MESSAGES: MessagePayload[] = [
   agentText(
     "Halo! 👋 Kenalin, aku **Agent Billy**, asisten pribadi kamu buat urusan bagi-bagi tagihan (split bill) biar nggak ribet!",
-    "/img/greetings-agent-billy.png"
+    "/img/greetings-agent-billy.webp"
   ),
   agentText(
     "Di sini, kita bakal selesaikan bareng-bareng secara santai: mulai dari nambahin temen, scan struk belanjaan/makanan pake AI, bagi-bagi itemnya, sampai ketahuan siapa bayar berapa. Praktis banget kan? ✨"
@@ -151,7 +151,7 @@ export function reviewPromptMessages(): MessagePayload[] {
     agentCard(
       "Bayar makan habis begadang...<br>Pake Split Bill bikin tenang...<br>Kalau ada masukan atau bintang...<br>Kasih ke Billy ya, biar makin cemerlang...😎👇",
       "review_input",
-      "/img/review-agent-billy.png"
+      "/img/review-agent-billy.webp"
     ),
   ];
 }

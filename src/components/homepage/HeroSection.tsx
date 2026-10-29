@@ -1,16 +1,19 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowRight,
-  Zap,
   Users,
   Check,
   Camera,
 } from "lucide-react";
+import { LandingLink } from "./LandingLink";
+import { LandingIcon } from "@/lib/landing/icons";
+import { getTone } from "@/lib/landing/tones";
+import { isUnoptimizableSrc } from "@/lib/landing/image";
+import type { LandingContent } from "@/lib/landing/types";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 28 },
@@ -180,8 +183,9 @@ const MockBillCard = ({ stage }: { stage: number }) => {
               alt="Contoh struk restoran yang sedang discan AI SplitBill"
               fill
               sizes="300px"
-              priority
-              fetchPriority="high"
+              // Eager but not priority: the card only appears ~0.9s in, so a
+              // high-priority preload would compete with the hero LCP image
+              loading="eager"
               className="object-cover object-top"
             />
             <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/20 to-black/60" />
@@ -268,7 +272,8 @@ const MockBillCard = ({ stage }: { stage: number }) => {
 
 // One-shot micro-demo on page load: photo -> scanning -> checkmark -> bill appears, then stays put.
 // Card frame is always mounted — MockBillCard swaps its internal content per stage, no card-shape jumps.
-const ScanFlow = () => {
+// startDelay holds the first stage longer, for when the card itself enters late
+export const ScanFlow = ({ startDelay = 0 }: { startDelay?: number }) => {
   const [stage, setStage] = React.useState(0);
   const revealed = stage === STAGE_DURATIONS.length - 1;
 
@@ -276,10 +281,10 @@ const ScanFlow = () => {
     if (revealed) return;
     const t = setTimeout(
       () => setStage((s) => s + 1),
-      STAGE_DURATIONS[stage]
+      STAGE_DURATIONS[stage] + (stage === 0 ? startDelay : 0)
     );
     return () => clearTimeout(t);
-  }, [stage]);
+  }, [stage, revealed, startDelay]);
 
   return (
     <div className="flex flex-col items-center gap-3">
@@ -298,10 +303,10 @@ const ScanFlow = () => {
             opacity: { duration: 0.25, delay: revealed ? 0.1 : 0 },
             scale: { type: "spring", stiffness: 350, damping: 16, delay: revealed ? 0.1 : 0 },
           }}
-          className="absolute -top-12 sm:-top-14 left-1/2 -translate-x-1/2 bg-emerald-500 text-white rounded-md shadow-xl px-3 py-2 flex items-center gap-1.5 sm:gap-2 z-20 whitespace-nowrap pointer-events-none"
+          className="absolute -top-12 sm:-top-14 left-1/2 -translate-x-1/2 bg-emerald-500 text-white rounded-md shadow-xl px-3 py-1.5 flex items-center gap-1.5 z-20 whitespace-nowrap pointer-events-none"
         >
           <Camera className="w-3.5 h-3.5" />
-          <span className="text-xs sm:text-[10px] font-black">Struk Kebaca Otomatis!</span>
+          <span className="text-[13px] font-bold">Struk Kebaca Otomatis!</span>
         </motion.div>
 
         {/* Floating success card (AI scan selesai) — pops in a beat after the badge above, so the reveal feels sequential rather than synced */}
@@ -316,14 +321,14 @@ const ScanFlow = () => {
             opacity: { duration: 0.25, delay: revealed ? 0.45 : 0 },
             scale: { type: "spring", stiffness: 350, damping: 16, delay: revealed ? 0.45 : 0 },
           }}
-          className="absolute -bottom-20 sm:-bottom-20 -left-16 sm:-left-20 bg-white rounded-md shadow-xl px-4 py-3 sm:px-4 sm:py-3 flex items-center gap-2.5 sm:gap-2.5 z-20 pointer-events-none"
+          className="absolute -bottom-24 -left-16 sm:-left-20 bg-white rounded-md shadow-2xl shadow-primary/15 px-4 py-3.5 flex items-center gap-3 z-20 pointer-events-none"
         >
-          <div className="w-10 h-10 sm:w-8 sm:h-8 bg-emerald-100 rounded-full flex items-center justify-center shrink-0">
-            <Check className="w-5 h-5 sm:w-4 sm:h-4 text-emerald-600" strokeWidth={3} />
+          <div className="w-10 h-10 bg-success rounded-full flex items-center justify-center shrink-0 shadow-md shadow-success/30">
+            <Check className="w-5 h-5 text-success-foreground" strokeWidth={3} />
           </div>
           <div>
-            <p className="text-xs sm:text-[10px] text-slate-400 font-medium">AI scan selesai</p>
-            <p className="text-sm sm:text-xs font-black text-slate-800">5 detik aja! ⚡</p>
+            <p className="text-xs text-slate-400 font-medium">AI scan selesai</p>
+            <p className="text-sm font-black text-slate-800">5 detik aja! ⚡</p>
           </div>
         </motion.div>
       </div>
@@ -331,9 +336,15 @@ const ScanFlow = () => {
   );
 };
 
-export const HeroSection = () => {
+interface HeroSectionProps {
+  content: LandingContent["hero"];
+}
+
+export const HeroSection = ({ content }: HeroSectionProps) => {
+  const titleLines = content.title.split("\n").map((line) => line.trim()).filter(Boolean);
+
   return (
-    <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-white">
+    <section data-landing-section="hero" className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-white">
       {/* Soft top spotlight — depth without a heavy corner gradient */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-10%,rgba(71,159,234,0.16),transparent)]" />
 
@@ -387,18 +398,22 @@ export const HeroSection = () => {
           <div className="flex-1 text-center lg:text-left">
 
             {/* Eyebrow pill */}
-            <motion.div
-              custom={0}
-              initial="hidden"
-              animate="visible"
-              variants={fadeUp}
-              className="inline-flex items-center gap-2 border border-primary/20 text-primary text-xs font-bold px-2 py-2 pl-4 rounded-full mb-6"
-            >
-              ⚡ Foto Struk → Tagihan Jadi
-              <span className="ml-1 bg-emerald-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full">
-                NEW
-              </span>
-            </motion.div>
+            {content.eyebrow.text && (
+              <motion.div
+                custom={0}
+                initial="hidden"
+                animate="visible"
+                variants={fadeUp}
+                className="inline-flex items-center gap-2 border border-primary/20 text-primary text-xs font-bold px-2 py-2 pl-4 rounded-full mb-6"
+              >
+                {content.eyebrow.text}
+                {content.eyebrow.badge && (
+                  <span className="ml-1 bg-emerald-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full">
+                    {content.eyebrow.badge}
+                  </span>
+                )}
+              </motion.div>
+            )}
 
             {/* H1 — dark text on white bg, high contrast */}
             <motion.h1
@@ -408,13 +423,22 @@ export const HeroSection = () => {
               variants={fadeUp}
               className="text-4xl sm:text-5xl lg:text-5xl xl:text-6xl font-bold text-slate-900 leading-[1.15] tracking-tight mb-6"
             >
-              {/* Desktop: fixed 4 lines; font sized so the longest line fits the column */}
-              Split Bill Online <br className="hidden lg:inline" />
-              Gratis: Scan Struk, <br className="hidden lg:inline" />
-              Bagi Tagihan <br className="hidden lg:inline" />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-[#2563eb]">
-                dalam 5 Detik
-              </span>
+              {/* Desktop: one line per CMS line; on mobile the breaks collapse
+                  to spaces and the text wraps naturally */}
+              {titleLines.map((line, idx) => (
+                <React.Fragment key={idx}>
+                  {idx > 0 && <br className="hidden lg:inline" />}
+                  {line}{" "}
+                </React.Fragment>
+              ))}
+              {content.titleHighlight && (
+                <>
+                  <br className="hidden lg:inline" />
+                  <span className="text-primary">
+                    {content.titleHighlight}
+                  </span>
+                </>
+              )}
             </motion.h1>
 
             {/* Subheadline — slate-600 for comfortable reading on white */}
@@ -425,7 +449,7 @@ export const HeroSection = () => {
               variants={fadeUp}
               className="text-base sm:text-lg lg:text-xl text-slate-600 leading-relaxed max-w-lg mx-auto lg:mx-0 mb-8"
             >
-              Foto struk, AI otomatis membaca total belanja dan langsung membagi tagihan dengan adil. Gratis tanpa login.
+              {content.description}
             </motion.p>
 
             {/* CTAs */}
@@ -436,70 +460,44 @@ export const HeroSection = () => {
               variants={fadeUp}
               className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start"
             >
-              <Link
-                href="/split-bill"
+              <LandingLink
+                href={content.primaryCta.href}
                 className="group flex items-center justify-center gap-2 px-7 py-4 rounded-md bg-primary text-white font-black text-base shadow-xl shadow-primary/30 hover:bg-primary/90 hover:scale-105 active:scale-95 transition-all duration-200"
               >
-                <Camera className="w-5 h-5" />
-                Scan Struk Gratis
+                <LandingIcon name={content.primaryCta.icon} fallback={Camera} className="w-5 h-5" />
+                {content.primaryCta.label}
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </Link>
-              <a
-                href="#cara-pakai"
-                onClick={(e) => {
-                  e.preventDefault();
-                  // Find the target element
-                  const target = document.getElementById("cara-pakai");
-                  if (target) {
-                    // 1. Calculate and scroll immediately (this will trigger scrolled=true and start rendering the banner)
-                    const header = document.querySelector("header");
-                    let headerHeight = header ? header.offsetHeight : 64;
-                    let elementPosition = target.getBoundingClientRect().top;
-                    let offsetPosition = elementPosition + window.scrollY - headerHeight - 2;
-
-                    window.scrollTo({
-                      top: offsetPosition,
-                      behavior: "smooth",
-                    });
-
-                    // 2. Perform a secondary adjustment after 260ms once the banner height animation finishes
-                    setTimeout(() => {
-                      const updatedHeader = document.querySelector("header");
-                      const updatedHeaderHeight = updatedHeader ? updatedHeader.offsetHeight : 64;
-                      const updatedElementPosition = target.getBoundingClientRect().top;
-                      const updatedOffset = updatedElementPosition + window.scrollY - updatedHeaderHeight - 2;
-
-                      window.scrollTo({
-                        top: updatedOffset,
-                        behavior: "smooth",
-                      });
-                    }, 260);
-                  }
-                }}
+              </LandingLink>
+              <LandingLink
+                href={content.secondaryCta.href}
                 className="flex items-center justify-center gap-2 px-7 py-4 rounded-md border border-primary/10 text-primary font-bold text-base hover:bg-primary/5 hover:border-primary/60 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer"
               >
-                Lihat Cara Pakainya
-              </a>
+                {content.secondaryCta.label}
+              </LandingLink>
             </motion.div>
 
             {/* Trust micro-row — dark text on white */}
-            <motion.div
-              custom={4}
-              initial="hidden"
-              animate="visible"
-              variants={fadeUp}
-              className="flex flex-wrap items-center gap-4 justify-center lg:justify-start mt-8"
-            >
-              <div className="flex items-center gap-1.5 text-slate-600 text-sm font-semibold">
-                <Users className="w-3.5 h-3.5 text-primary" />
-                <span>5.000+ Tagihan dibuat</span>
-              </div>
-              <div className="w-px h-4 bg-slate-200" />
-              <div className="flex items-center gap-1.5 text-slate-600 text-sm font-semibold">
-                <Zap className="w-3.5 h-3.5 text-emerald-500 fill-emerald-500" />
-                <span>No login needed</span>
-              </div>
-            </motion.div>
+            {content.trustItems.length > 0 && (
+              <motion.div
+                custom={4}
+                initial="hidden"
+                animate="visible"
+                variants={fadeUp}
+                className="flex flex-wrap items-center gap-4 justify-center lg:justify-start mt-8"
+              >
+                {content.trustItems.map((item, idx) => {
+                  return (
+                    <React.Fragment key={idx}>
+                      {idx > 0 && <div className="w-px h-4 bg-slate-200" />}
+                      <div className="flex items-center gap-1.5 text-slate-600 text-sm font-semibold">
+                        <LandingIcon name={item.icon} className={`w-3.5 h-3.5 ${getTone(item.tone).text}`} />
+                        <span>{item.text}</span>
+                      </div>
+                    </React.Fragment>
+                  );
+                })}
+              </motion.div>
+            )}
           </div>
 
           {/* Right — Mock UI Card. No opacity-0 start: the phone mockup is the
@@ -517,12 +515,13 @@ export const HeroSection = () => {
               {/* Phone Mock behind the main card - shifted left */}
               <div className="absolute -z-10 pointer-events-none opacity-90 -translate-x-28 xs:-translate-x-32 sm:-translate-x-36 transition-transform w-[530px] xs:w-[510px] sm:w-[595px] h-auto">
                 <Image
-                  src="/img/hero-mockup.webp"
-                  alt="Tampilan hasil split bill di aplikasi SplitBill dengan instruksi transfer dan rincian per orang"
-                  width={1440}
-                  height={1440}
+                  src={content.image.url}
+                  alt={content.image.alt}
+                  width={content.image.width || 1440}
+                  height={content.image.height || 1440}
                   sizes="(max-width: 640px) 530px, 595px"
                   priority
+                  unoptimized={isUnoptimizableSrc(content.image.url)}
                   className="object-contain w-full h-auto"
                 />
               </div>

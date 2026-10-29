@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { buildMetadata } from "@/lib/seo";
 import FAQClientPage from "./FAQClientPage";
-import { faqData } from "@/data/faqData";
+import { getFaqs } from "@/lib/faq";
 
 export const metadata: Metadata = buildMetadata({
   title: "FAQ & Bantuan Split Bill: Pertanyaan Seputar Bagi Tagihan",
@@ -11,7 +11,8 @@ export const metadata: Metadata = buildMetadata({
   socialDescription: "Temukan jawaban atas pertanyaan seputar cara split bill, scan struk dengan AI, dan fitur patungan online lainnya.",
 });
 
-export default function FAQPage() {
+export default async function FAQPage() {
+  const faqData = await getFaqs();
   // Generate FAQ Schema
   const faqSchema = {
     "@context": "https://schema.org",
@@ -56,7 +57,7 @@ export default function FAQPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
-      <FAQClientPage />
+      <FAQClientPage faqData={faqData} />
     </>
   );
 }

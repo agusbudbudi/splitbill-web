@@ -2,45 +2,39 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { XCircle, CheckCircle } from "lucide-react";
+import { X, Check } from "lucide-react";
+import type { LandingContent } from "@/lib/landing/types";
+import { LandingTitle } from "./LandingTitle";
 
-const withoutSplitBill = [
-  "Pusing hitung manual pake kalkulator HP pas kasir udah nungguin",
-  "Bingung bagi nominal pajak, service charge, sama diskon persenan",
-  "Sungkan atau canggung buat nagih temen yang belum bayar",
-  "Salah transfer gara-gara gak ada rincian rekening/e-wallet",
-  "Catatan patungan hilang karena nyampur di chat WhatsApp",
-];
+interface ComparisonSectionProps {
+  content: LandingContent["comparison"];
+}
 
-const withSplitBill = [
-  "Cukup foto struk belanjaan, AI kelar hitung dalam 5 detik!",
-  "Pajak & service charge otomatis kebagi presisi per item menu",
-  "Link tagihan transparan dikirim ke grup, otomatis pada sadar diri",
-  "Info rekening & e-wallet langsung tertera, tinggal salin & transfer",
-  "History patungan tersimpan aman, rapi, dan mudah diakses kapan aja",
-];
-
-export const ComparisonSection = () => {
+export const ComparisonSection = ({ content }: ComparisonSectionProps) => {
   return (
-    <section className="py-16 sm:py-24 bg-white relative overflow-hidden">
-      {/* Background shape */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-slate-50 rounded-full blur-[120px] pointer-events-none" />
+    <section
+      data-landing-section="comparison"
+      className="relative isolate overflow-hidden py-16 bg-[linear-gradient(160deg,#5aaef0_0%,#479fea_45%,#2b86d9_100%)]"
+    >
+      {/* Top spotlight */}
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,rgba(255,255,255,0.28),transparent_70%)]" />
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
-
+        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.5 }}
-            className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight mb-4"
+            className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight leading-tight mb-4"
           >
-            Kenapa Harus Pakai{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-600">
-              SplitBill?
-            </span>
+            {/* Highlight as a tilted white "sticker" — reads instantly on the blue */}
+            <LandingTitle
+              title={content.title}
+              highlight={content.titleHighlight}
+              highlightClassName="inline-block -rotate-1 rounded-md bg-white px-2.5 pb-0.5 text-primary shadow-[0_6px_16px_-8px_rgba(8,47,92,0.25)]"
+            />
           </motion.h2>
 
           <motion.p
@@ -48,35 +42,34 @@ export const ComparisonSection = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-base sm:text-lg text-slate-500 font-medium"
+            className="text-base sm:text-lg text-white/85 font-medium"
           >
-            Udah gak zaman ribet bagi tagihan. Liat bedanya kehidupan lo sebelum vs sesudah pakai SplitBill.
+            {content.subtitle}
           </motion.p>
         </div>
 
         {/* Comparison grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-8">
-          {/* Without SplitBill Card */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 items-stretch">
+          {/* Before — muted glass card */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: "-50px" }}
             transition={{ duration: 0.6 }}
-            whileHover={{ y: -6 }}
-            className="bg-rose-50/50 border border-rose-100/80 rounded-md p-6 sm:p-8 hover:shadow-[0_12px_30px_-6px_rgba(244,63,94,0.15)] hover:border-rose-400/70 transition-[box-shadow,border-color,background-color] duration-300 cursor-pointer"
+            className="rounded-lg bg-white/10 ring-1 ring-white/25 backdrop-blur-sm p-6 sm:p-8"
           >
-            <div className="flex items-center gap-2 mb-6">
-              <span className="text-2xl">😩</span>
-              <h3 className="text-lg sm:text-xl font-black text-rose-900">
-                Sebelum pake SplitBill
-              </h3>
+            <div className="flex items-center gap-2.5 mb-6">
+              {content.before.emoji && <span className="text-2xl">{content.before.emoji}</span>}
+              <h3 className="text-lg sm:text-xl font-black text-white">{content.before.title}</h3>
             </div>
 
             <ul className="space-y-4">
-              {withoutSplitBill.map((item, idx) => (
+              {content.before.points.map((item, idx) => (
                 <li key={idx} className="flex items-start gap-3">
-                  <XCircle className="w-5 h-5 text-rose-500 shrink-0 mt-0.5" />
-                  <span className="text-sm font-semibold text-rose-800 leading-relaxed">
+                  <span className="mt-0.5 w-5 h-5 rounded-full bg-rose-500 flex items-center justify-center shrink-0">
+                    <X className="w-3 h-3 text-white" strokeWidth={3.5} />
+                  </span>
+                  <span className="text-sm sm:text-base font-semibold text-white/85 leading-relaxed">
                     {item}
                   </span>
                 </li>
@@ -84,34 +77,32 @@ export const ComparisonSection = () => {
             </ul>
           </motion.div>
 
-          {/* With SplitBill Card */}
+          {/* After — solid white, the winner */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: "-50px" }}
             transition={{ duration: 0.6 }}
-            whileHover={{ y: -6 }}
-            className="bg-emerald-50/50 border border-emerald-300 rounded-md p-6 sm:p-8 hover:shadow-[0_12px_30px_-6px_rgba(16,185,129,0.15)] hover:border-emerald-400 transition-[box-shadow,border-color,background-color] duration-300 relative overflow-hidden cursor-pointer"
+            className="relative rounded-lg bg-white p-6 sm:p-8 shadow-[0_20px_50px_-24px_rgba(8,47,92,0.3)]"
           >
-            {/* Glow badge */}
-            <div className="absolute top-0 right-0 bg-emerald-500 text-white text-[10px] font-black px-4 py-1.5 rounded-bl-md uppercase tracking-wider">
-              Solusi Terbaik ✨
-            </div>
+            {content.after.badge && (
+              <span className="absolute top-4 right-4 sm:top-6 sm:right-6 bg-emerald-500 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider">
+                {content.after.badge}
+              </span>
+            )}
 
-            <div className="flex items-center gap-2 mb-6">
-              <span className="text-2xl">😎</span>
-              <h3 className="text-lg sm:text-xl font-black text-emerald-900">
-                Setelah pake SplitBill
-              </h3>
+            <div className="flex items-center gap-2.5 mb-6 pr-20">
+              {content.after.emoji && <span className="text-2xl">{content.after.emoji}</span>}
+              <h3 className="text-lg sm:text-xl font-black text-slate-900">{content.after.title}</h3>
             </div>
 
             <ul className="space-y-4">
-              {withSplitBill.map((item, idx) => (
+              {content.after.points.map((item, idx) => (
                 <li key={idx} className="flex items-start gap-3">
-                  <CheckCircle className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" strokeWidth={2.5} />
-                  <span className="text-sm font-semibold text-emerald-800 leading-relaxed">
-                    {item}
+                  <span className="mt-0.5 w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center shrink-0">
+                    <Check className="w-3 h-3 text-white" strokeWidth={3.5} />
                   </span>
+                  <span className="text-sm sm:text-base font-semibold text-slate-700 leading-relaxed">{item}</span>
                 </li>
               ))}
             </ul>

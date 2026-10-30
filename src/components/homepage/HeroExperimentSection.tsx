@@ -2,7 +2,6 @@
 
 import React from "react";
 import Image, { getImageProps } from "next/image";
-import { motion } from "framer-motion";
 import { ArrowRight, Camera, CheckCheck } from "lucide-react";
 import { LandingLink } from "./LandingLink";
 import { LandingEyebrow } from "./LandingEyebrow";
@@ -15,22 +14,18 @@ import { LandingTitle } from "./LandingTitle";
 
 // Centered hero.
 
-// Delay before the scan flow starts and the desktop WA card pops in
+// Delay before the scan card and the desktop WA card pop in together, and the scan flow starts
 const CARDS_DELAY = 0.9;
+const CARDS_ENTRANCE = { animationDelay: `${CARDS_DELAY}s` };
 
 // Same story as the ScanFlow card on the right (Makan Bareng Squad, Andi owes Budi) —
 // this is the "share the result" step that follows the scan.
 
 // WhatsApp share preview — desktop only, mobile keeps the stage uncluttered
 const WhatsAppShareCard = () => (
-  <motion.div
-    initial={{ opacity: 0, scale: 0.85 }}
-    animate={{ opacity: 1, scale: 1 }}
-    transition={{
-      opacity: { duration: 0.3, delay: CARDS_DELAY },
-      scale: { type: "spring", stiffness: 320, damping: 18, delay: CARDS_DELAY },
-    }}
-    className="absolute hidden lg:block left-0 xl:-left-[4%] top-[4%] w-[280px] rounded-lg bg-white p-4 border-[5px] border-white shadow-2xl shadow-primary/15 pointer-events-none z-20 text-left"
+  <div
+    style={CARDS_ENTRANCE}
+    className="animate-pop-in motion-reduce:animate-none absolute hidden lg:block left-0 xl:-left-[4%] top-[4%] w-[280px] rounded-lg bg-white p-4 border-[5px] border-white shadow-2xl shadow-primary/15 pointer-events-none z-20 text-left"
   >
     {/* Header — share target */}
     <div className="flex items-center gap-2 mb-3">
@@ -83,7 +78,7 @@ const WhatsAppShareCard = () => (
         </div>
       </div>
     </div>
-  </motion.div>
+  </div>
 );
 
 const PHONE_IMAGE_CLASS = "object-contain w-full h-auto drop-shadow-[0_30px_50px_rgba(15,23,42,0.18)]";
@@ -232,11 +227,11 @@ export const HeroExperimentSection = ({ content }: HeroExperimentSectionProps) =
           <HeroImage image={content.image} imageMobile={content.imageMobile} />
         </div>
 
-        {/* Scan card — overlaps the phone's right side. Painted from SSR HTML; only its inner flow animates after hydration */}
+        {/* Scan card — overlaps the phone's right side. Pops in with the WA card from SSR HTML; its inner flow animates after hydration */}
         {/* Mobile mirrors the old hero: card centered in the stage, nudged 64px right at 0.9 scale */}
         <div className="absolute z-10 inset-x-0 top-8 -bottom-[72px] flex items-center justify-center sm:block sm:inset-auto sm:top-[18%] sm:right-[4%] lg:right-[2%] xl:-right-[4%]">
           <div className="translate-x-16 scale-[0.9] sm:translate-x-0 lg:scale-100 sm:origin-top-right">
-          <div className="origin-top-right">
+          <div style={CARDS_ENTRANCE} className="animate-pop-in motion-reduce:animate-none origin-top-right">
             <ScanFlow startDelay={CARDS_DELAY * 1000} />
           </div>
           </div>

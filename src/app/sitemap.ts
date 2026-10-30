@@ -1,6 +1,7 @@
 import { MetadataRoute } from "next";
 import { fetchAllBlogs, IS_BUILD_PHASE } from "@/lib/api/blog.server";
 import { absoluteUrl } from "@/lib/seo";
+import { canonicalPostSlug } from "@/lib/blogCanonical";
 import { getLandingContent } from "@/lib/landing/content";
 
 // Revalidate sitemap every 24 hours — avoids dynamic server usage warning
@@ -29,7 +30,9 @@ const routeConfigs: RouteConfig[] = [
   { path: "/shared-goals", lastModified: "2026-10-10" },
   { path: "/shared-goals/cara-pakai", lastModified: "2026-09-14" },
   { path: "/collect-money", lastModified: "2026-10-10" },
+  { path: "/collect-money/cara-pakai", lastModified: "2026-10-30" },
   { path: "/invoice", lastModified: "2026-10-10" },
+  { path: "/invoice/cara-pakai", lastModified: "2026-10-30" },
   { path: "/subscription", lastModified: "2026-09-12" },
   { path: "/faq", lastModified: "2026-10-10" },
   { path: "/donate", lastModified: "2026-09-12" },
@@ -60,7 +63,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     );
 
     blogRoutes = posts
-      .filter((blog) => blog.status === "published" && blog.slug)
+      .filter((blog) => blog.status === "published" && blog.slug && canonicalPostSlug(blog.slug) === blog.slug)
       .map((blog) => {
         const lastModified = toDateString(blog.updatedAt || blog.publishedAt || blog.createdAt);
         if (lastModified && (!newestBlogDate || lastModified > newestBlogDate)) {

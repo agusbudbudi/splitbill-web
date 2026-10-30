@@ -17,7 +17,9 @@ const ALLOWED_PATHS = new Set([
   "/shared-goals",
   "/shared-goals/cara-pakai",
   "/collect-money",
+  "/collect-money/cara-pakai",
   "/invoice",
+  "/invoice/cara-pakai",
 ]);
 // "blogs": the all-posts snapshot (fetchAllBlogs in lib/api/blog.server.ts)
 // behind /blog, category/tag pages, related posts and the sitemap.

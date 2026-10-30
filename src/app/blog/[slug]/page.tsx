@@ -5,6 +5,7 @@ import BlogDetailClient from "@/app/blog/[slug]/BlogDetailClient";
 import { fetchBlogBySlug } from "@/lib/api/blog";
 import { fetchAllBlogs } from "@/lib/api/blog.server";
 import { prepareBlogContent } from "@/lib/utils/blogContent";
+import { canonicalPostSlug } from "@/lib/blogCanonical";
 import { Blog } from "@/lib/types/blog";
 import { notFound } from "next/navigation";
 
@@ -21,9 +22,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return buildMetadata({
       title: blog.metaTitle || `${blog.title} | Blog SplitBill`,
       description: blog.metaDescription || blog.excerpt,
-      path: `/blog/${blog.slug}`,
-      // Always self-referencing: some posts carry a CMS canonicalUrl of the
-      // bare homepage, which would tell Google the article is a duplicate of /.
+      path: `/blog/${canonicalPostSlug(blog.slug)}`,
+      // Ignores the CMS canonicalUrl: some posts carry the bare homepage, which
+      // would tell Google the article is a duplicate of /.
       socialTitle: blog.title,
       socialDescription: blog.excerpt,
       image: blog.thumbnail

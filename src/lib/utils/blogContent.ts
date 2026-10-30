@@ -36,6 +36,34 @@ const decodeEntities = (text: string) =>
     return NAMED_ENTITIES[code.toLowerCase()] ?? match;
   });
 
+// Links to this site as pasted into the CMS: bare or http domains, and a
+// relative link that picked up the Markdown previewer's domain on paste.
+const SITE_ORIGIN = /^(?:https?:)?\/\/(?:(?:www\.)?splitbill\.my\.id|markdownlivepreview\.com)(?=[/?#]|$)/i;
+const NEW_TAB_ATTRS = /\s(?:target|rel)=(?:"[^"]*"|'[^']*')/gi;
+
+const toSitePath = (href: string): string | null => {
+  const path = href.startsWith("/") && !href.startsWith("//") ? href : href.replace(SITE_ORIGIN, "");
+  if (path === href && !href.startsWith("/")) return null;
+  if (path.startsWith("//")) return null;
+
+  const url = new URL(decodeEntities(path) || "/", "https://www.splitbill.my.id");
+  for (const key of [...url.searchParams.keys()]) {
+    if (key.startsWith("utm_")) url.searchParams.delete(key);
+  }
+  return `${url.pathname}${url.search.replace(/&/g, "&amp;")}${url.hash}`;
+};
+
+// The CMS editor marks every link new-tab + nofollow, which drops the link
+// signal internal pages need and sends crawlers through redirects. Same-site
+// links become plain relative links; external ones are left alone.
+const normalizeSiteLinks = (html: string) =>
+  html.replace(/<a\b[^>]*>/gi, (tag) => {
+    const href = tag.match(/\shref=(?:"([^"]*)"|'([^']*)')/i);
+    const path = href && toSitePath(href[1] ?? href[2]);
+    if (!href || !path) return tag;
+    return tag.replace(NEW_TAB_ATTRS, "").replace(href[0], ` href="${path}"`);
+  });
+
 const ID_ATTR = /\sid=["']([^"']+)["']/i;
 
 // Ids are compared decoded: the DOM id (what the TOC href and getElementById
@@ -44,13 +72,14 @@ const idsIn = (html: string) =>
   Array.from(html.matchAll(/\sid=["']([^"']+)["']/gi), (m) => decodeEntities(m[1]));
 
 /**
- * Normalises CMS HTML for the article page: demotes H1s and gives every H2/H3
- * a unique id so the table of contents can link to it. A CMS-set heading id
- * is kept unless an earlier heading or any non-heading element already uses
- * it; generated ids also avoid every id that appears anywhere in the body.
+ * Normalises CMS HTML for the article page: makes same-site links relative,
+ * demotes H1s and gives every H2/H3 a unique id so the table of contents can
+ * link to it. A CMS-set heading id is kept unless an earlier heading or any
+ * non-heading element already uses it; generated ids also avoid every id that
+ * appears anywhere in the body.
  */
 export const prepareBlogContent = (content: string): { html: string; headings: BlogHeading[] } => {
-  const source = demoteH1(content);
+  const source = normalizeSiteLinks(demoteH1(content));
   const headings: BlogHeading[] = [];
   const reserved = new Set(idsIn(source));
   const nonHeadingIds = new Set(idsIn(source.replace(/<h[23](?=[\s>])[^>]*>/gi, "")));

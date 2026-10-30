@@ -100,7 +100,7 @@ export const HomepagePromoSlider = ({ content }: HomepagePromoSliderProps) => {
                         <div className={`absolute top-0 right-0 w-24 h-24 ${theme.slideGlow} rounded-full blur-2xl -mr-6 -mt-6 pointer-events-none`} />
 
                         <div className="flex items-center gap-4">
-                          <div className="shrink-0 w-16 h-16 rounded-full flex items-center justify-center transition-transform group-hover/card:scale-110 overflow-hidden relative">
+                          <div className="shrink-0 w-16 h-16 rounded-lg flex items-center justify-center transition-transform group-hover/card:scale-110 overflow-hidden relative">
                             <Image
                               src={slide.imageUrl}
                               alt=""
@@ -112,9 +112,9 @@ export const HomepagePromoSlider = ({ content }: HomepagePromoSliderProps) => {
                           </div>
 
                           <div className="space-y-1">
-                            <h4 className="text-base sm:text-lg font-bold text-slate-800 tracking-tight leading-tight">
+                            <h3 className="text-base sm:text-lg font-bold text-slate-800 tracking-tight leading-tight">
                               {slide.title}
-                            </h4>
+                            </h3>
                           </div>
                         </div>
 

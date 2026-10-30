@@ -1,13 +1,17 @@
 import { cache } from "react";
 import { apiClient } from "@/lib/api/client";
 import { IS_BUILD_PHASE } from "@/lib/api/blog.server";
+import { readLastGood, saveLastGood } from "@/lib/cmsLastGood";
 import { mergeWithDefaults } from "./normalize";
 import type { LandingContent } from "./types";
 
 /** Cache tag on the CMS fetch; splitbill-be hits /api/revalidate with it after every save. */
 export const LANDING_CACHE_TAG = "landing-page";
 
-const FETCH_TIMEOUT_MS = 5000;
+// Next waits for fresh data when an ISR render finds a stale fetch entry, and
+// hourly renders tend to hit a cold backend: a 5s timeout here baked the
+// defaults into the live page. Visitors get the previous page meanwhile.
+const FETCH_TIMEOUT_MS = 20000;
 // `next build` prerenders every page at once, often against a cold-starting
 // backend: a 5s timeout there once baked the defaults into a deploy.
 const BUILD_FETCH_TIMEOUT_MS = 15000;
@@ -44,32 +48,44 @@ export async function requestCms<T>(run: (signal: AbortSignal) => Promise<T>): P
   }
 }
 
-async function fetchLandingContent(init: RequestInit, signal: AbortSignal): Promise<LandingContentResult> {
+/** Raw CMS response: merged on read, so a saved copy picks up newer defaults and guards. */
+interface StoredLandingContent {
+  content?: Partial<LandingContent>;
+  updatedAt: string | null;
+}
+
+async function fetchLandingContent(init: RequestInit, signal: AbortSignal): Promise<StoredLandingContent> {
   const json = await apiClient.request<{ data?: { content?: Partial<LandingContent>; updatedAt?: string } }>(
     "/api/landing-page",
     { skipAuth: true, ...init, signal },
   );
-  return {
-    content: mergeWithDefaults(json?.data?.content),
-    updatedAt: json?.data?.updatedAt ?? null,
-  };
+  return { content: json?.data?.content, updatedAt: json?.data?.updatedAt ?? null };
 }
 
-const defaultLandingContent = (): LandingContentResult => ({ content: mergeWithDefaults(undefined), updatedAt: null });
+const toLandingResult = ({ content, updatedAt }: StoredLandingContent): LandingContentResult => ({
+  content: mergeWithDefaults(content),
+  updatedAt,
+});
+
+const defaultLandingContent = (): LandingContentResult => toLandingResult({ updatedAt: null });
 
 /**
  * CMS homepage content, ISR-cached for an hour and refreshed on demand after a
- * CMS save. Never throws: on timeout/error it returns the shipped defaults.
+ * CMS save. Never throws: on timeout/error it returns the last good response,
+ * or the shipped defaults when there is none.
  * Not rethrowing on revalidation on purpose: /api/revalidate expires the page
  * immediately, so a throw there would serve a 500 instead of the last good page.
  * Wrapped in React cache() so generateMetadata and the page share one fetch.
  */
 export const getLandingContent = cache(async (): Promise<LandingContentResult> => {
   try {
-    return await requestCms((signal) => fetchLandingContent(CMS_FETCH_CACHE(LANDING_CACHE_TAG), signal));
+    const stored = await requestCms((signal) => fetchLandingContent(CMS_FETCH_CACHE(LANDING_CACHE_TAG), signal));
+    if (stored.content) await saveLastGood(LANDING_CACHE_TAG, stored);
+    return toLandingResult(stored);
   } catch (error) {
-    console.error("Failed to fetch landing content, using defaults:", error);
-    return defaultLandingContent();
+    console.error("Failed to fetch landing content, using last good copy or defaults:", error);
+    const lastGood = await readLastGood<StoredLandingContent>(LANDING_CACHE_TAG);
+    return lastGood ? toLandingResult(lastGood) : defaultLandingContent();
   }
 });
 
@@ -81,7 +97,7 @@ export const getLandingContent = cache(async (): Promise<LandingContentResult> =
  */
 export const getFreshLandingContent = async (): Promise<LandingContentResult> => {
   try {
-    return await fetchLandingContent({ cache: "no-store" }, AbortSignal.timeout(PREVIEW_FETCH_TIMEOUT_MS));
+    return toLandingResult(await fetchLandingContent({ cache: "no-store" }, AbortSignal.timeout(PREVIEW_FETCH_TIMEOUT_MS)));
   } catch (error) {
     console.error("Failed to fetch landing content, using defaults:", error);
     return defaultLandingContent();

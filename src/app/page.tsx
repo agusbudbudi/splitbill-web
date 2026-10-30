@@ -16,7 +16,8 @@ import { getFaqs } from "@/lib/faq";
 // refreshed hourly.
 export const revalidate = 3600;
 
-const FETCH_TIMEOUT_MS = 5000;
+// Same as the CMS fetches: hourly ISR renders tend to hit a cold backend.
+const FETCH_TIMEOUT_MS = 20000;
 
 async function withTimeout<T>(run: (signal: AbortSignal) => Promise<T>): Promise<T> {
   const controller = new AbortController();

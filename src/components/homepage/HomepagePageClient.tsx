@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { HomepageNavbar } from "./HomepageNavbar";
+import { toNavFeatures } from "@/lib/landing/navFeatures";
 import { HeroExperimentSection } from "./HeroExperimentSection";
 import { HowItWorksSection } from "./HowItWorksSection";
 import { PromoBanner } from "../ui/PromoBanner";
@@ -172,7 +173,7 @@ export const HomepagePageClient = ({ content, faqs, initialReviews, initialBlogs
       />
 
       {/* Header/Navbar */}
-      <HomepageNavbar />
+      <HomepageNavbar features={toNavFeatures(content.features)} />
 
       {/* Main Content */}
       <main>

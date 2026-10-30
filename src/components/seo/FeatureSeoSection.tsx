@@ -154,7 +154,7 @@ export function FeatureSeoSection({
               {faqs.map((faq) => (
                 <details key={faq.id} className={cn(cardClass, "group overflow-hidden open:border-primary/20")}>
                   <summary className="list-none [&::-webkit-details-marker]:hidden px-5 py-4 flex items-center justify-between gap-4 cursor-pointer text-sm sm:text-base font-bold text-slate-800 hover:text-primary group-open:text-primary transition-colors">
-                    {faq.question}
+                    <h3>{faq.question}</h3>
                     <span className="w-8 h-8 rounded-full bg-slate-50 text-slate-400 flex items-center justify-center shrink-0 transition-all group-open:bg-primary group-open:text-white group-open:shadow-md group-open:shadow-primary/20">
                       <ChevronDown className="w-4 h-4 transition-transform duration-300 group-open:rotate-180" />
                     </span>

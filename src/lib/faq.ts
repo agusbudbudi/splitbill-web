@@ -1,5 +1,6 @@
 import { cache } from "react";
 import { apiClient } from "@/lib/api/client";
+import { readLastGood, saveLastGood } from "@/lib/cmsLastGood";
 import { faqData, faqCategoryLabels, type FAQItem } from "@/data/faqData";
 import { CMS_FETCH_CACHE, requestCms } from "@/lib/landing/content";
 
@@ -24,9 +25,10 @@ const toFaq = (f: unknown): FAQItem | null => {
 
 /**
  * All active FAQs from the CMS, ISR-cached for an hour and refreshed on demand
- * after a CMS change. Never throws: on error — or while the CMS collection is
- * still empty (`configured` false/absent) — it returns the static faqData, so FAQ sections and their
- * FAQPage structured data never disappear.
+ * after a CMS change. Never throws: on error it returns the last good list, and
+ * with none of those — or while the CMS collection is still empty (`configured`
+ * false/absent) — the static faqData, so FAQ sections and their FAQPage
+ * structured data never disappear.
  */
 export const getFaqs = cache(async (): Promise<FAQItem[]> => {
   try {
@@ -41,10 +43,12 @@ export const getFaqs = cache(async (): Promise<FAQItem[]> => {
       ? json.data.map(toFaq).filter((f): f is FAQItem => f !== null)
       : [];
     // An empty list from a configured CMS means every FAQ was deactivated on purpose
-    return faqs.length > 0 || json?.configured === true ? faqs : faqData;
+    if (faqs.length === 0 && json?.configured !== true) return faqData;
+    await saveLastGood(FAQ_CACHE_TAG, faqs);
+    return faqs;
   } catch (error) {
-    console.error("Failed to fetch FAQs, using static data:", error);
-    return faqData;
+    console.error("Failed to fetch FAQs, using last good copy or static data:", error);
+    return (await readLastGood<FAQItem[]>(FAQ_CACHE_TAG)) ?? faqData;
   }
 });
 

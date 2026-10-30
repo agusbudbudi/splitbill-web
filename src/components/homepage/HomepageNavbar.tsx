@@ -10,7 +10,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useAuthStore } from "@/lib/stores/authStore";
 import { usePWA } from "@/hooks/usePWA";
 import { useIsNativeApp, useSessionFlag } from "@/hooks/useClientOnly";
+import { useNavFeatures } from "@/hooks/useNavFeatures";
 import { scrollBelowHeader } from "@/lib/landing/scroll";
+import { getTone } from "@/lib/landing/tones";
+import { isUnoptimizableSrc } from "@/lib/landing/image";
+import type { NavFeature } from "@/lib/landing/navFeatures";
 import { usePathname, useRouter } from "next/navigation";
 
 interface NavLink {
@@ -26,17 +30,55 @@ const DEFAULT_NAV_LINKS: NavLink[] = [
   { label: "Member", href: "/subscription", badge: "VIP" },
 ];
 
-// Shortcuts shown in the "Fitur" tray — mirrors FeaturesSection so the header doubles as quick nav
-const FEATURE_SHORTCUTS = [
-  { imageSrc: "/img/menu-split-bill.png", title: "Split Bill", href: "/split-bill", bgLight: "bg-blue-100/90", badge: "Populer" },
-  { imageSrc: "/img/menu-split-later.png", title: "Split Later", href: "/split-later", bgLight: "bg-purple-100/90", badge: "NEW" },
-  { imageSrc: "/img/menu-shared-goal.png", title: "Shared Goals", href: "/shared-goals", bgLight: "bg-emerald-100/90" },
-  { imageSrc: "/img/menu-collect-money.png", title: "Collect Money", href: "/collect-money", bgLight: "bg-amber-100/90" },
-  { imageSrc: "/img/menu-invoice.png", title: "Invoice", href: "/invoice", bgLight: "bg-rose-100/90" },
-  { imageSrc: "/img/menu-wallet.png", title: "Wallet", href: "/wallet", bgLight: "bg-violet-100/90" },
-  // Landing page, not a separate tool; full-width row so the 2-col grid stays even
-  { imageSrc: "/img/menu-split-later.png", title: "Split Bill Liburan", href: "/split-bill-liburan", bgLight: "bg-sky-100/90", wide: true },
-];
+interface FeatureShortcut {
+  imageSrc: string;
+  title: string;
+  href: string;
+  bgLight: string;
+  badge?: string;
+  wide?: boolean;
+}
+
+// Shortcuts shown in the "Fitur" tray: the active landing features, so the header
+// doubles as quick nav, plus this hardcoded landing page (not a separate tool).
+// It takes a full-width row when needed to keep the 2-col grid even.
+// CMS hrefs are free text, so duplicates are dropped: href is the tray's React key.
+const LIBURAN_HREF = "/split-bill-liburan";
+
+const buildFeatureShortcuts = (features: NavFeature[]): FeatureShortcut[] => {
+  const seen = new Set([LIBURAN_HREF]);
+  const unique = features.filter(({ href }) => !seen.has(href) && seen.add(href));
+  return [
+    ...unique.map(({ imageUrl, title, href, tone, badge }) => ({
+      imageSrc: imageUrl,
+      title,
+      href,
+      bgLight: getTone(tone).cardIcon,
+      badge,
+    })),
+    {
+      imageSrc: "/img/menu-split-later.png",
+      title: "Split Bill Liburan",
+      href: LIBURAN_HREF,
+      bgLight: "bg-sky-100/90",
+      wide: unique.length % 2 === 0,
+    },
+  ];
+};
+
+// Badges are free text in the CMS; the tray displays them uppercase either way.
+const isNewBadge = (badge: string) => /^(new|baru)$/i.test(badge.trim());
+
+const FeatureShortcutsSkeleton = () => (
+  <>
+    {[0, 1, 2, 3].map((i) => (
+      <div key={i} className="flex items-center gap-3 p-2.5" aria-hidden>
+        <div className="w-10 h-10 shrink-0 rounded-sm bg-slate-100 animate-pulse" />
+        <div className="h-3 w-20 rounded-sm bg-slate-100 animate-pulse" />
+      </div>
+    ))}
+  </>
+);
 
 interface AuthCTAProps {
   user: ReturnType<typeof useAuthStore.getState>["user"];
@@ -96,12 +138,15 @@ interface HomepageNavbarProps {
   ctaHref?: string;
   /** Path on which "#anchor" links should scroll-in-place instead of navigating there first. Defaults to "/" (homepage). */
   scrollPath?: string;
+  /** "Fitur" tray items, for pages that already have the landing content. Otherwise fetched when the tray first opens. */
+  features?: NavFeature[];
 }
 
 export const HomepageNavbar = ({
   navLinks = DEFAULT_NAV_LINKS,
   ctaHref = "/split-bill",
   scrollPath = "/",
+  features,
 }: HomepageNavbarProps = {}) => {
   const pathname = usePathname();
   const router = useRouter();
@@ -111,6 +156,9 @@ export const HomepageNavbar = ({
   const [fiturPinned, setFiturPinned] = useState(false);
   const fiturOpen = fiturHover || fiturPinned;
   const [mobileFiturOpen, setMobileFiturOpen] = useState(false);
+  const fetchedFeatures = useNavFeatures(!features && (fiturOpen || mobileFiturOpen));
+  const trayFeatures = features ?? fetchedFeatures;
+  const featureShortcuts = trayFeatures ? buildFeatureShortcuts(trayFeatures) : [];
   const [headerHeight, setHeaderHeight] = useState(64);
   const headerRef = useRef<HTMLElement>(null);
   const fiturTrayRef = useRef<HTMLDivElement>(null);
@@ -315,7 +363,8 @@ export const HomepageNavbar = ({
                           className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-[420px] bg-white rounded-md border border-slate-100 shadow-2xl shadow-slate-900/10 p-4 z-50"
                         >
                           <div className="grid grid-cols-2 gap-1">
-                            {FEATURE_SHORTCUTS.map((feat) => (
+                            {!trayFeatures && <FeatureShortcutsSkeleton />}
+                            {featureShortcuts.map((feat) => (
                               <Link
                                 key={feat.href}
                                 href={feat.href}
@@ -331,6 +380,7 @@ export const HomepageNavbar = ({
                                     alt=""
                                     width={40}
                                     height={40}
+                                    unoptimized={isUnoptimizableSrc(feat.imageSrc)}
                                     className="w-full h-full object-contain"
                                   />
                                 </div>
@@ -342,7 +392,7 @@ export const HomepageNavbar = ({
                                     <span
                                       className={cn(
                                         "text-[9px] font-black uppercase tracking-wider",
-                                        feat.badge === "NEW" ? "text-emerald-600" : "text-amber-600"
+                                        isNewBadge(feat.badge) ? "text-emerald-600" : "text-amber-600"
                                       )}
                                     >
                                       {feat.badge}
@@ -511,7 +561,8 @@ export const HomepageNavbar = ({
                           className="overflow-hidden"
                         >
                           <div className="grid grid-cols-2 gap-1 px-2 pb-2 pt-1">
-                            {FEATURE_SHORTCUTS.map((feat) => (
+                            {!trayFeatures && <FeatureShortcutsSkeleton />}
+                            {featureShortcuts.map((feat) => (
                               <Link
                                 key={feat.href}
                                 href={feat.href}
@@ -527,6 +578,7 @@ export const HomepageNavbar = ({
                                     alt=""
                                     width={36}
                                     height={36}
+                                    unoptimized={isUnoptimizableSrc(feat.imageSrc)}
                                     className="w-full h-full object-contain"
                                   />
                                 </div>

@@ -89,6 +89,7 @@ const features: FeatureGridItem[] = [
     image: "/img/menu-invoice.png",
     href: "/invoice",
     ctaText: "Buat Invoice",
+    caraPakaiHref: "/invoice/cara-pakai",
     badge: "Populer",
   },
   {
@@ -107,6 +108,7 @@ const features: FeatureGridItem[] = [
     image: "/img/menu-collect-money.png",
     href: "/collect-money",
     ctaText: "Bikin Patungan",
+    caraPakaiHref: "/collect-money/cara-pakai",
   },
   {
     id: "wallet",

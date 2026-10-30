@@ -87,25 +87,28 @@ export const FAQSectionHomepage = ({
                   key={faq.id}
                   className="reveal bg-white border border-slate-100 rounded-md overflow-hidden shadow-[0_4px_20px_-6px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_24px_-6px_rgba(0,0,0,0.05)] hover:border-slate-200/80 transition-[box-shadow,border-color,background-color] duration-300"
                 >
-                  <button
-                    onClick={() => toggleFaq(faq.id)}
-                    aria-expanded={isOpen}
-                    className={`w-full px-6 py-5 flex items-center justify-between text-left font-bold transition-colors duration-200 group cursor-pointer ${isOpen ? "text-primary" : "text-slate-800 hover:text-primary"
-                      }`}
-                  >
-                    <span className="text-base pr-4">{faq.question}</span>
-                    <div
-                      className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 shrink-0 ${isOpen
-                        ? "bg-primary text-white shadow-md shadow-primary/20"
-                        : "bg-slate-50 text-slate-400 group-hover:bg-slate-100 group-hover:text-primary"
+                  {/* Heading wraps the button: a <button> can't contain an <h3> */}
+                  <h3>
+                    <button
+                      onClick={() => toggleFaq(faq.id)}
+                      aria-expanded={isOpen}
+                      className={`w-full px-6 py-5 flex items-center justify-between text-left font-bold transition-colors duration-200 group cursor-pointer ${isOpen ? "text-primary" : "text-slate-800 hover:text-primary"
                         }`}
                     >
-                      <ChevronDown
-                        className={`w-4 h-4 transition-transform duration-300 ${isOpen ? "rotate-180" : ""
+                      <span className="text-base pr-4">{faq.question}</span>
+                      <div
+                        className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 shrink-0 ${isOpen
+                          ? "bg-primary text-white shadow-md shadow-primary/20"
+                          : "bg-slate-50 text-slate-400 group-hover:bg-slate-100 group-hover:text-primary"
                           }`}
-                      />
-                    </div>
-                  </button>
+                      >
+                        <ChevronDown
+                          className={`w-4 h-4 transition-transform duration-300 ${isOpen ? "rotate-180" : ""
+                            }`}
+                        />
+                      </div>
+                    </button>
+                  </h3>
 
                   {/* Answer stays in the DOM when collapsed so it matches the
                       FAQPage schema above and crawlers can index it. */}

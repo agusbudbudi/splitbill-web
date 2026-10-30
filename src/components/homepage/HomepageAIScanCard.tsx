@@ -44,7 +44,7 @@ export const HomepageAIScanCard = () => {
           </div>
 
           <div className="space-y-1">
-            <h4 className="text-base sm:text-lg font-bold text-slate-800 tracking-tight leading-tight">
+            <h3 className="text-base sm:text-lg font-bold text-slate-800 tracking-tight leading-tight">
               {isSubscribed ? (
                 "Scan struk tanpa batas sepuasnya! ⚡"
               ) : freeScanCount === maxScanCount ? (
@@ -54,7 +54,7 @@ export const HomepageAIScanCard = () => {
               ) : (
                 `Tersisa ${freeScanCount}x scan gratis buat kamu! ✨`
               )}
-            </h4>
+            </h3>
           </div>
         </div>
 

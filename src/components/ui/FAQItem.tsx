@@ -26,31 +26,34 @@ export const FAQItem = ({
         className,
       )}
     >
-      <button
-        onClick={onToggle}
-        aria-expanded={isOpen}
-        className={cn(
-          "w-full px-5 py-4 flex items-center justify-between text-left font-bold gap-4 cursor-pointer transition-colors duration-200 group",
-          isOpen ? "text-primary" : "text-foreground/80 hover:text-primary",
-        )}
-      >
-        <span className="text-sm lg:text-base pr-2">{question}</span>
-        <div
+      {/* Heading wraps the button: a <button> can't contain an <h3> */}
+      <h3>
+        <button
+          onClick={onToggle}
+          aria-expanded={isOpen}
           className={cn(
-            "w-6 h-6 rounded-full flex items-center justify-center transition-all duration-300 shrink-0",
-            isOpen
-              ? "bg-primary text-white shadow-md shadow-primary/20"
-              : "bg-primary/5 text-primary/40 group-hover:bg-primary/10 group-hover:text-primary",
+            "w-full px-5 py-4 flex items-center justify-between text-left font-bold gap-4 cursor-pointer transition-colors duration-200 group",
+            isOpen ? "text-primary" : "text-foreground/80 hover:text-primary",
           )}
         >
-          <ChevronDown
+          <span className="text-sm lg:text-base pr-2">{question}</span>
+          <div
             className={cn(
-              "w-3.5 h-3.5 transition-transform duration-300",
-              isOpen && "rotate-180",
+              "w-6 h-6 rounded-full flex items-center justify-center transition-all duration-300 shrink-0",
+              isOpen
+                ? "bg-primary text-white shadow-md shadow-primary/20"
+                : "bg-primary/5 text-primary/40 group-hover:bg-primary/10 group-hover:text-primary",
             )}
-          />
-        </div>
-      </button>
+          >
+            <ChevronDown
+              className={cn(
+                "w-3.5 h-3.5 transition-transform duration-300",
+                isOpen && "rotate-180",
+              )}
+            />
+          </div>
+        </button>
+      </h3>
 
       {/* Answer stays in the DOM when collapsed (crawlers index it); the
           grid-rows trick animates height without measuring content. */}

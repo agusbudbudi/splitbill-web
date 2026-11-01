@@ -96,7 +96,6 @@ export const trackAuth = {
   googleLoginSuccess: () => trackEvent("user_login", { method: "google" }),
   googleLoginFailed: (reason?: string) => trackEvent("user_login_failed", { method: "google", reason }),
   googleRegistrationSuccess: () => trackEvent("user_signup", { method: "google" }),
-  splitbillFinalizeAfterGoogleLogin: () => trackEvent("bill_finalize_after_google_login"),
   logoutSuccess: () => trackEvent("user_logout"),
 };
 
@@ -133,7 +132,6 @@ export const trackSplitBill = {
       });
     }
   },
-  aiRetry: () => trackEvent("bill_scan_retry", { flow_type: "wizard" }),
   aiImport: (itemCount?: number, merchantName?: string) => 
     trackEvent("bill_scan_imported", {
       flow_type: "wizard",
@@ -148,6 +146,7 @@ export const trackSplitBill = {
     trackEvent("bill_calculated", { 
       flow_type: "wizard",
       total_amount: params.total_amount,
+      currency: "IDR",
       participant_count: params.num_participants
     }),
   autofillView: (name: string) => trackEvent("bill_autofill_view", { flow_type: "wizard", name }),
@@ -156,6 +155,7 @@ export const trackSplitBill = {
     trackEvent("bill_created", { 
       flow_type: "wizard",
       total_amount: params.total_amount,
+      currency: "IDR",
       participant_count: params.num_participants,
       item_count: params.num_items,
       activity_name: params.activity_name
@@ -166,11 +166,7 @@ export const trackSplitBill = {
   monitorStatus: (id?: string) => trackEvent("bill_monitor_status_click", { flow_type: "wizard", bill_id: id }),
   validationError: (step: number, errorMessage: string) => 
     trackEvent("bill_validation_error", { flow_type: "wizard", step, error_message: errorMessage }),
-  finalizeModalView: () => trackEvent("bill_finalize_modal_view", { flow_type: "wizard" }),
-  finalizeConfirm: () => trackEvent("bill_finalize_modal_confirm", { flow_type: "wizard" }),
-  finalizeCancel: () => trackEvent("bill_finalize_modal_cancel", { flow_type: "wizard" }),
   restart: () => trackEvent("bill_restart", { flow_type: "wizard" }),
-  delete: (id: string) => trackEvent("bill_delete", { flow_type: "wizard", bill_id: id }),
   toggleDetails: (isOpen: boolean) =>
     trackEvent("bill_toggle_person_details", { flow_type: "wizard", is_open: isOpen }),
 };
@@ -202,7 +198,6 @@ export const trackWallet = {
 };
 
 export const trackMarketing = {
-  setPersona: (persona: string) => setUserProperties({ marketing_persona: persona }),
   setSocialEngagement: (bestiesCount: number) => setUserProperties({ besties_count: bestiesCount }),
   setUsageIntensity: (totalBills: number) => setUserProperties({ total_bills_created: totalBills }),
 };

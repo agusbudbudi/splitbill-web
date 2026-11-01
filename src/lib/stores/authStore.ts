@@ -183,6 +183,7 @@ export const useAuthStore = create<AuthState>((set) => ({
           JSON.stringify({ type: "LOGOUT" }),
         );
       }
+      trackAuth.logoutSuccess();
       clearUser();
       // Clear draft ID on logout to avoid account switching conflicts
       useSplitBillStore.getState().clearDraftId();

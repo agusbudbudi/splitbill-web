@@ -56,6 +56,18 @@ import { getRandomAdCampaign, type AdCampaign } from "@/lib/ads/adsConfig";
 import { AIScanQuotaBanner } from "@/components/ui/AIScanQuotaBanner";
 import { AgentBillyEntryCard } from "@/components/splitbill/chat/ChatAgentEntryCard";
 
+const toStep3DraftUpdate = (payload: ReturnType<typeof mapFrontendToBackend>) => ({
+  last_step: "STEP_3" as const,
+  activityName: payload.activityName,
+  occurredAt: payload.occurredAt,
+  participants: payload.participants,
+  expenses: payload.expenses,
+  additionalExpenses: payload.additionalExpenses,
+  paymentMethodIds: payload.paymentMethodIds,
+  paymentMethodSnapshots: payload.paymentMethodSnapshots,
+  summary: payload.summary,
+});
+
 // Experiment: "Siap dihitung" ticket card on step 3 is hidden. Set to true to restore it.
 const SHOW_STEP3_TICKET_CARD = false;
 
@@ -424,7 +436,7 @@ const SplitBillContent = () => {
           // Fully serialize draft using mapFrontendToBackend mapping logic
           const payload = mapFrontendToBackend(
             {
-              activityName: activityName || "Aktivitas Split Bill",
+              activityName: activityName.trim() || getDefaultActivityName(),
               totalAmount: totalSpent,
               people,
               expenses,
@@ -435,17 +447,7 @@ const SplitBillContent = () => {
             paymentMethods
           );
 
-          await draftApi.update(activeDraftId, {
-            last_step: "STEP_3",
-            activityName: payload.activityName,
-            occurredAt: payload.occurredAt,
-            participants: payload.participants,
-            expenses: payload.expenses,
-            additionalExpenses: payload.additionalExpenses,
-            paymentMethodIds: payload.paymentMethodIds,
-            paymentMethodSnapshots: payload.paymentMethodSnapshots,
-            summary: payload.summary,
-          });
+          await draftApi.update(activeDraftId, toStep3DraftUpdate(payload));
         }
       }
     } catch (err: unknown) {
@@ -511,9 +513,29 @@ const SplitBillContent = () => {
       const { draftId, clearDraftId } = useSplitBillStore.getState();
       let recordId = "";
 
+      const finalActivityName = activityName.trim() || getDefaultActivityName();
+      if (finalActivityName !== activityName) {
+        setActivityName(finalActivityName);
+      }
+      const payload = mapFrontendToBackend(
+        {
+          activityName: finalActivityName,
+          totalAmount: totalSpent,
+          people,
+          expenses,
+          additionalExpenses,
+          selectedPaymentMethodIds,
+        },
+        calculationResult,
+        paymentMethods
+      );
+
       if (draftId) {
         try {
-          // If there's a draft, finalize it via backend draft finalize endpoint
+          // Finalize reads the server's copy of the draft, which can lag behind
+          // this device: entry points like the home card's ?finalize=true skip
+          // the step 3 save. Sync first so the record matches what the user sees.
+          await draftApi.update(draftId, toStep3DraftUpdate(payload));
           const response = await draftApi.finalize(draftId);
           recordId = response.record.id;
         } catch (finalizeErr: unknown) {
@@ -542,18 +564,6 @@ const SplitBillContent = () => {
 
       if (!recordId) {
         // Fallback: direct creation (no draft, or draft ownership conflict above)
-        const payload = mapFrontendToBackend(
-          {
-            activityName: activityName || "Aktivitas Split Bill",
-            totalAmount: totalSpent,
-            people,
-            expenses,
-            additionalExpenses,
-            selectedPaymentMethodIds,
-          },
-          calculationResult,
-          paymentMethods
-        );
         const response = await splitBillApi.create(payload);
         recordId = response.record?.id || response.data?.record?.id || "";
       }
@@ -563,7 +573,7 @@ const SplitBillContent = () => {
 
       const summarySnapshot = {
         id: recordId,
-        activityName: activityName || "Aktivitas Split Bill",
+        activityName: finalActivityName,
         totalSpent,
         peopleCount: people.length,
       };
@@ -580,7 +590,7 @@ const SplitBillContent = () => {
         useSplitLaterStore.getState().markReceiptCompleted(
           sourceReceiptId,
           recordId,
-          activityName || "Struk Belanja",
+          finalActivityName,
           totalSpent
         ).catch((err) => console.error("Failed to mark split-later receipt completed:", err));
       }
@@ -590,7 +600,7 @@ const SplitBillContent = () => {
         total_amount: totalSpent,
         num_participants: people.length,
         num_items: expenses.length + additionalExpenses.length,
-        activity_name: activityName || "Aktivitas Split Bill",
+        activity_name: finalActivityName,
       });
 
       // 1. Update current URL to include saved=true so back navigation shows the success card
@@ -607,6 +617,9 @@ const SplitBillContent = () => {
     } catch (e: any) {
       console.error("Failed to finalize split bill:", e);
       toast.error("Gagal menyimpan split bill: " + (e.message || "Terjadi kesalahan"));
+      // Stays set on success so a saved bill can't be finalized twice, but a
+      // failure has to leave the button retryable.
+      isFinalizingRef.current = false;
     } finally {
       setIsFinalizing(false);
     }

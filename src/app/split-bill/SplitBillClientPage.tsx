@@ -48,7 +48,7 @@ import { toast } from "sonner";
 import { useOnboardingStore } from "@/store/useOnboardingStore";
 import type { TutorialStep } from "@/components/onboarding/TutorialOverlay";
 import { useAuthStore } from "@/lib/stores/authStore";
-import { trackSplitBill, trackSocial, trackWallet, trackAuth } from "@/lib/gtag";
+import { trackSplitBill, trackSocial, trackWallet } from "@/lib/gtag";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { useUIStore } from "@/lib/stores/uiStore";
 import { getRandomAdCampaign, type AdCampaign } from "@/lib/ads/adsConfig";
@@ -677,7 +677,7 @@ const SplitBillContent = () => {
 
 
     const nextStepNum = step + 1;
-    const stepNames = ["", "Teman", "Bil", "Detail", "Hasil"];
+    const stepNames = ["", "Teman", "Bill", "Detail", "Hasil"];
     trackSplitBill.stepComplete(nextStepNum, stepNames[nextStepNum] || "");
     router.replace(`/split-bill?step=${nextStepNum}`);
   };
@@ -708,7 +708,11 @@ const SplitBillContent = () => {
         const errorMsg =
           "Beberapa biaya tambahan (pajak/service/diskon) belum di-assign 'Split dengan' atau 'Dibayar oleh'. Tolong lengkapi dulu ya!";
         toast.error(errorMsg);
-        trackSplitBill.validationError(step, errorMsg);
+        // GA4 cuts parameter values at 100 characters, so track a shorter message
+        trackSplitBill.validationError(
+          step,
+          "Biaya tambahan belum di-assign 'Split dengan' atau 'Dibayar oleh'",
+        );
         return;
       }
       if (!activityName.trim()) {
@@ -1582,7 +1586,6 @@ const SplitBillContent = () => {
         isOpen={showAuthModal}
         onClose={() => setShowAuthModal(false)}
         onSuccess={() => {
-          trackAuth.splitbillFinalizeAfterGoogleLogin();
           handleFinalize();
         }}
         iconSrc="/img/feature-splitbill-scan.png"

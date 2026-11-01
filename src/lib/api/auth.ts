@@ -46,6 +46,7 @@ export interface AuthResponse {
   refreshToken: string;
   user: User;
   draftAssociated?: boolean;
+  isNewUser?: boolean;
 }
 
 export interface CurrentUserResponse {

@@ -17,6 +17,15 @@ export const trackEvent = (eventName: string, eventParams?: Record<string, any>)
 };
 
 /**
+ * Read the GA client ID from the _ga cookie so the backend can attribute
+ * server-sent events (Measurement Protocol) to this browser
+ */
+export const getGaClientId = (): string | undefined => {
+  if (typeof document === "undefined") return undefined;
+  return document.cookie.match(/(?:^|;\s*)_ga=GA\d+\.\d+\.(\d+\.\d+)/)?.[1];
+};
+
+/**
  * Identify user with User-ID and set base properties
  * @param userId Unique identifier for the user
  * @param properties Additional user properties
@@ -127,9 +136,8 @@ export const trackSplitBill = {
   },
   aiRetry: () => trackEvent("bill_scan_retry", { flow_type: "wizard" }),
   aiImport: (itemCount?: number, merchantName?: string) => 
-    trackEvent("bill_scan_completed", { 
+    trackEvent("bill_scan_imported", {
       flow_type: "wizard",
-      status: "success",
       item_count: itemCount,
       merchant_name: merchantName,
       has_merchant: !!merchantName
@@ -164,8 +172,8 @@ export const trackSplitBill = {
   finalizeCancel: () => trackEvent("bill_finalize_modal_cancel", { flow_type: "wizard" }),
   restart: () => trackEvent("bill_restart", { flow_type: "wizard" }),
   delete: (id: string) => trackEvent("bill_delete", { flow_type: "wizard", bill_id: id }),
-  toggleDetails: (name: string, isOpen: boolean) => 
-    trackEvent("bill_toggle_person_details", { flow_type: "wizard", person_name: name, is_open: isOpen }),
+  toggleDetails: (isOpen: boolean) =>
+    trackEvent("bill_toggle_person_details", { flow_type: "wizard", is_open: isOpen }),
 };
 
 export const trackPublic = {

@@ -1,4 +1,5 @@
 import { API_BASE_URL, API_ENDPOINTS } from "@/lib/constants";
+import { getGaClientId } from "@/lib/gtag";
 import type { SubscriptionPackage, Order } from "@/lib/types/subscription";
 import { apiClient } from "./client";
 
@@ -21,7 +22,7 @@ export async function createOrder(
     API_ENDPOINTS.ORDERS.CREATE,
     {
       method: "POST",
-      body: JSON.stringify({ referenceId, type }),
+      body: JSON.stringify({ referenceId, type, gaClientId: getGaClientId() }),
     },
   );
   return response.data;

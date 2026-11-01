@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { User } from "@/lib/api/auth";
 import * as authApi from "@/lib/api/auth";
 import { hasTokens, clearTokens, consumeAuthExpiredGuard } from "@/lib/auth/tokens";
-import { identifyUser, clearUser } from "@/lib/gtag";
+import { identifyUser, clearUser, trackAuth } from "@/lib/gtag";
 import { useSplitBillStore } from "@/store/useSplitBillStore";
 
 export interface LoginCredentials {
@@ -63,8 +63,6 @@ export const useAuthStore = create<AuthState>((set) => ({
 
       // Track User-ID and Properties
       identifyUser(response.user._id || response.user.id, {
-        email: response.user.email,
-        name: response.user.name,
         user_type: "registered",
       });
 
@@ -108,10 +106,14 @@ export const useAuthStore = create<AuthState>((set) => ({
 
       // Track User-ID and Properties
       identifyUser(response.user._id || response.user.id, {
-        email: response.user.email,
-        name: response.user.name,
         user_type: "registered",
       });
+
+      if (response.isNewUser) {
+        trackAuth.googleRegistrationSuccess();
+      } else {
+        trackAuth.googleLoginSuccess();
+      }
 
       // Store user data in localStorage for offline access
       if (typeof window !== "undefined") {
@@ -264,8 +266,6 @@ export const useAuthStore = create<AuthState>((set) => ({
 
       // Track User-ID and Properties on Init
       identifyUser(user._id || user.id, {
-        email: user.email,
-        name: user.name,
         user_type: "registered",
       });
 

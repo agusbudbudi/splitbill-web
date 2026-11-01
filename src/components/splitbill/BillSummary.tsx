@@ -143,7 +143,7 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
         ...prev,
         [name]: isNowOpen,
       }));
-      trackSplitBill.toggleDetails(name, isNowOpen);
+      trackSplitBill.toggleDetails(isNowOpen);
     };
 
     const [isSharing, setIsSharing] = React.useState(false);

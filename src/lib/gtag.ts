@@ -173,6 +173,18 @@ export const trackSplitBill = {
 
 export const trackPublic = {
   openBill: (billId: string) => trackEvent("bill_open_public", { bill_id: billId }),
+  acquisitionCtaClick: (params: {
+    billId: string;
+    placement: "top" | "bottom";
+    participantCount: number;
+    prefilled: boolean;
+  }) =>
+    trackEvent("bill_public_cta_click", {
+      bill_id: params.billId,
+      placement: params.placement,
+      participant_count: params.participantCount,
+      prefilled: params.prefilled,
+    }),
 };
 
 export const trackSocial = {

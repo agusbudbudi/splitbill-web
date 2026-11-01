@@ -197,6 +197,7 @@ export const mapBackendToFrontend = (record: BackendSplitBillRecord) => {
   }
   return {
     id: record.id || "",
+    ownerId: record.ownerId,
     date: record.occurredAt || new Date().toISOString(),
     activityName: record.activityName || "Unnamed Activity",
     totalAmount: record.summary?.total || 0,

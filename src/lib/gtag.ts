@@ -103,7 +103,6 @@ export const trackAuth = {
 export const trackSubscription = {
   viewPlans: () => trackEvent("subscription_plans_viewed"),
   initiateCheckout: (planId: string) => trackEvent("checkout_initiated", { plan_id: planId }),
-  purchaseSuccess: (planId: string, amount: number) => trackEvent("purchase_completed", { plan_id: planId, amount }),
   premiumFeatureClick: (featureName: string) => trackEvent("premium_feature_click", { feature_name: featureName }),
 };
 

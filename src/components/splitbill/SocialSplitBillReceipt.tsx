@@ -18,6 +18,7 @@ import {
 } from "@/hooks/useBillCalculations";
 import { cn } from "@/lib/utils";
 import { PaymentMethod } from "@/store/useWalletStore";
+import { ReceiptProviderLogo } from "@/components/wallet/ReceiptProviderLogo";
 
 const AVATAR_BASE_URL =
   "https://api.dicebear.com/9.x/personas/png?backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf&size=128&scale=100&seed=";
@@ -259,37 +260,7 @@ export const SocialSplitBillReceipt = React.forwardRef<
                     className="p-6 bg-white border border-slate-100 rounded-lg flex items-center gap-8"
                   >
                     <div className="w-24 h-24 bg-slate-50 rounded-lg flex items-center justify-center border border-slate-100 shrink-0 relative overflow-hidden">
-                      {[
-                        "bca",
-                        "bni",
-                        "bri",
-                        "mandiri",
-                        "dana",
-                        "gopay",
-                        "ovo",
-                        "shopeepay",
-                        "jenius",
-                        "linkaja",
-                        "permata",
-                        "danamon",
-                        "bsi",
-                        "btn",
-                        "bank jago",
-                        "seabank",
-                      ].some((kw) =>
-                        method.providerName.toLowerCase().includes(kw),
-                      ) ? (
-                        <img
-                          src={`/img/logo-${method.providerName.toLowerCase()}.png`}
-                          alt={method.providerName}
-                          crossOrigin="anonymous"
-                          className="w-full h-full object-contain p-2"
-                        />
-                      ) : (
-                        <div className="text-primary/40 font-black text-2xl uppercase">
-                          {method.providerName.slice(0, 3)}
-                        </div>
-                      )}
+                      <ReceiptProviderLogo method={method} />
                     </div>
                     <div className="flex flex-col gap-1 min-w-0">
                       <p className="text-lg font-black text-primary uppercase tracking-wider leading-none mb-1">

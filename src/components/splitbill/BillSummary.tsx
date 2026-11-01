@@ -904,6 +904,7 @@ export const BillSummary = React.forwardRef<BillSummaryHandle, BillSummaryProps>
         <div className="fixed -left-[2000px] top-0 pointer-events-none">
           <SocialSplitBillReceipt
             ref={socialReceiptRef}
+            billId={billData?.id}
             data={{
               people,
               activityName: activityName || "Laporan Keuangan Tongkrongan",

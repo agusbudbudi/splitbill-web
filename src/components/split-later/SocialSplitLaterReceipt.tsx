@@ -425,11 +425,7 @@ export const SocialSplitLaterReceipt = React.forwardRef<
       {/* Footer Brand */}
       <div className="relative z-10 mt-auto pt-24 pb-8 text-center w-full">
         <div className="w-full h-px bg-slate-100 mb-10" />
-        <p className="text-slate-600 text-2xl font-bold">
-          Dihitung otomatis dengan cinta oleh{" "}
-          <span className="text-primary font-black">SplitBill</span>
-        </p>
-        <p className="text-primary font-black text-3xl mt-3 tracking-tighter">
+        <p className="text-primary font-black text-3xl tracking-tighter">
           www.splitbill.my.id
         </p>
       </div>

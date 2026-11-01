@@ -28,16 +28,6 @@ export const SavedBestiesSelection = ({
   const contentRef = useRef<HTMLDivElement>(null);
   const [contentHeight, setContentHeight] = useState(0);
 
-  useLayoutEffect(() => {
-    const el = contentRef.current;
-    if (!el) return;
-    const update = () => setContentHeight(el.scrollHeight);
-    update();
-    const resizeObserver = new ResizeObserver(update);
-    resizeObserver.observe(el);
-    return () => resizeObserver.disconnect();
-  }, []);
-
   const sortedFriends = [...friends].sort((a, b) => {
     const countA = a.useCount ?? 0;
     const countB = b.useCount ?? 0;
@@ -62,6 +52,18 @@ export const SavedBestiesSelection = ({
   );
 
   const hasSavedItems = friends.length > 0 || groupsWithMembers.length > 0;
+
+  // Friends can arrive after mount, when the panel isn't rendered yet and the
+  // ref is empty, so measuring has to start once the section appears.
+  useLayoutEffect(() => {
+    const el = contentRef.current;
+    if (!el) return;
+    const update = () => setContentHeight(el.scrollHeight);
+    update();
+    const resizeObserver = new ResizeObserver(update);
+    resizeObserver.observe(el);
+    return () => resizeObserver.disconnect();
+  }, [hasSavedItems]);
 
   if (!hasSavedItems) return null;
 

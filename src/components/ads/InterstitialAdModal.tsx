@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ExternalLink, Volume2, VolumeX, ChevronRight } from "lucide-react";
 import { AdCampaign } from "@/lib/ads/adsConfig";
 import { Button } from "@/components/ui/Button";
+import { trackAds } from "@/lib/gtag";
 
 interface InterstitialAdModalProps {
   isOpen: boolean;
@@ -107,6 +108,15 @@ export const InterstitialAdModal = ({
 
   const isFinished = timeLeft <= 0;
   const hasCta = Boolean(ad.ctaUrl && ad.ctaText);
+
+  const handleCtaClick = (ctaPlacement: "button" | "icon") => {
+    trackAds.ctaClick({
+      adId: ad.id,
+      sponsorName: ad.sponsorName,
+      mediaType: ad.mediaType,
+      ctaPlacement,
+    });
+  };
   const progressPercent = ((ad.durationSeconds - timeLeft) / ad.durationSeconds) * 100;
 
   const handleToggleMute = (e: React.MouseEvent) => {
@@ -255,6 +265,7 @@ export const InterstitialAdModal = ({
                     href={ad.ctaUrl}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() => handleCtaClick("icon")}
                     aria-label={ad.ctaText}
                     title={ad.ctaText}
                     className="shrink-0 w-10 h-10 rounded-full border border-primary/30 bg-card text-primary hover:bg-primary/5 active:scale-95 transition-all flex items-center justify-center"
@@ -271,6 +282,7 @@ export const InterstitialAdModal = ({
                 href={ad.ctaUrl}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => handleCtaClick("button")}
                 className="block w-full"
               >
                 <Button

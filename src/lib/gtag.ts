@@ -214,6 +214,22 @@ export const trackMarketing = {
   setUsageIntensity: (totalBills: number) => setUserProperties({ total_bills_created: totalBills }),
 };
 
+export const trackAds = {
+  ctaClick: (params: {
+    adId: string;
+    sponsorName: string;
+    mediaType: "image" | "video";
+    /** "button" while the countdown runs, "icon" once Lanjut has replaced it */
+    ctaPlacement: "button" | "icon";
+  }) =>
+    trackEvent("ad_cta_click", {
+      ad_id: params.adId,
+      sponsor_name: params.sponsorName,
+      media_type: params.mediaType,
+      cta_placement: params.ctaPlacement,
+    }),
+};
+
 /**
  * Chat Split Bill (Agent Billy) event trackers
  * Prefix: chat_ -> Standardized under bill_* events with flow_type: "chat"

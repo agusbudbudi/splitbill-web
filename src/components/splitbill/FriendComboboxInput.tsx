@@ -33,7 +33,9 @@ export const FriendComboboxInput = ({
   const { friends } = useFriendStore();
   const [query, setQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
-  const [highlightIndex, setHighlightIndex] = useState(0);
+  // -1 until the user arrows into the list: Enter on typed text must add that
+  // text, not whichever saved friend happens to contain it.
+  const [highlightIndex, setHighlightIndex] = useState(-1);
   const [dropdownRect, setDropdownRect] = useState<{ top: number; left: number; width: number } | null>(null);
   const [contactPickerSupported, setContactPickerSupported] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -66,16 +68,11 @@ export const FriendComboboxInput = ({
   const matches = normalizedQuery
     ? availableFriends.filter((f) => normalize(f.name).includes(normalizedQuery))
     : availableFriends;
-  const exactMatch = availableFriends.find(
-    (f) => normalize(f.name) === normalizedQuery,
-  );
-  const showCreateRow = normalizedQuery.length > 0 && !exactMatch;
-  const createRowIndex = matches.length;
 
   const resetInput = () => {
     setQuery("");
     setIsOpen(false);
-    setHighlightIndex(0);
+    setHighlightIndex(-1);
     inputRef.current?.focus();
   };
 
@@ -117,22 +114,22 @@ export const FriendComboboxInput = ({
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (!isOpen) return;
-    const totalOptions = matches.length + (showCreateRow ? 1 : 0);
+    const totalOptions = matches.length;
 
     if (e.key === "ArrowDown") {
       e.preventDefault();
-      setHighlightIndex((i) => (totalOptions ? (i + 1) % totalOptions : 0));
+      setHighlightIndex((i) => (totalOptions ? (i + 1) % totalOptions : -1));
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
-      setHighlightIndex((i) => (totalOptions ? (i - 1 + totalOptions) % totalOptions : 0));
+      setHighlightIndex((i) =>
+        totalOptions ? (i <= 0 ? totalOptions - 1 : i - 1) : -1,
+      );
     } else if (e.key === "Enter") {
       e.preventDefault();
-      if (highlightIndex < matches.length && matches[highlightIndex]) {
+      if (matches[highlightIndex]) {
         selectFriend(matches[highlightIndex].name);
-      } else if (showCreateRow) {
+      } else {
         createNew();
-      } else if (exactMatch) {
-        selectFriend(exactMatch.name);
       }
     } else if (e.key === "Escape") {
       setIsOpen(false);
@@ -149,7 +146,7 @@ export const FriendComboboxInput = ({
         onChange={(e) => {
           setQuery(e.target.value);
           setIsOpen(true);
-          setHighlightIndex(0);
+          setHighlightIndex(-1);
         }}
         onFocus={() => query.trim() && setIsOpen(true)}
         onBlur={() => setIsOpen(false)}
@@ -185,7 +182,7 @@ export const FriendComboboxInput = ({
         <p className="text-[11px] text-muted-foreground/70 px-1 pt-1.5">{helperText}</p>
       )}
 
-      {isOpen && dropdownRect && createPortal(
+      {isOpen && dropdownRect && matches.length > 0 && createPortal(
         <div
           onMouseDown={(e) => e.preventDefault()}
           style={{ top: dropdownRect.top, left: dropdownRect.left, width: dropdownRect.width }}
@@ -209,20 +206,6 @@ export const FriendComboboxInput = ({
               <span className="font-medium text-foreground">{f.name}</span>
             </button>
           ))}
-          {showCreateRow && (
-            <button
-              type="button"
-              onClick={createNew}
-              className={cn(
-                "w-full flex items-center gap-2 px-3 py-2.5 text-sm text-left font-semibold text-primary transition-colors cursor-pointer",
-                matches.length > 0 && "border-t border-primary/10",
-                highlightIndex === createRowIndex ? "bg-primary/10" : "hover:bg-primary/5",
-              )}
-            >
-              <Plus className="w-3.5 h-3.5 shrink-0" />
-              <span>Tambah &quot;{query.trim()}&quot; sebagai teman baru</span>
-            </button>
-          )}
         </div>,
         document.body,
       )}

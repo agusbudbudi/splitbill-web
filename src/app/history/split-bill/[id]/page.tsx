@@ -13,6 +13,7 @@ import { ReviewBanner } from "@/components/splitbill/ReviewBanner";
 import { AnimatePresence } from "framer-motion";
 import { SocialReceiptPreviewBanner } from "@/components/splitbill/SocialReceiptPreviewBanner";
 import { MonitorStatusButton } from "@/components/splitbill/MonitorStatusButton";
+import { PublicBillAcquisitionCta } from "@/components/splitbill/PublicBillAcquisitionCta";
 import { useBillCalculations } from "@/hooks/useBillCalculations";
 import confetti from "canvas-confetti";
 
@@ -24,7 +25,7 @@ function SplitBillDetailContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { savedBills } = useWalletStore();
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, isInitialized, user } = useAuthStore();
   const id = params.id as string;
   const isNew = searchParams.get("new") === "true";
 
@@ -104,10 +105,12 @@ function SplitBillDetailContent() {
   }, [id, savedBills]);
 
   useEffect(() => {
-    if (bill && !isAuthenticated) {
+    // Auth starts out false until initialize() resolves; without this wait,
+    // logged-in users opening a direct link count as public opens.
+    if (bill && isInitialized && !isAuthenticated) {
       trackPublic.openBill(id);
     }
-  }, [bill, isAuthenticated, id]);
+  }, [bill, isInitialized, isAuthenticated, id]);
 
   if (isLoading) {
     return (
@@ -143,13 +146,36 @@ function SplitBillDetailContent() {
   // A bill is "public" if the user is not logged in
   const isPublic = !isAuthenticated;
 
-  return <SplitBillDetailView bill={bill} isPublic={isPublic} showBanner={showBanner} setShowBanner={setShowBanner} isAuthenticated={isAuthenticated} router={router} />;
+  // Stricter than isPublic: a logged-in friend opening a shared link is not the
+  // owner, so they get the acquisition CTA too. ownerId decides when present:
+  // savedBills survives logout, so on a shared device it can hold someone else's
+  // bills. It's only the fallback for entries persisted before ownerId existed.
+  const isOwner =
+    isAuthenticated &&
+    (bill.ownerId
+      ? bill.ownerId === user?.id || bill.ownerId === user?._id
+      : savedBills.some((b) => b.id === id));
+
+  return (
+    <SplitBillDetailView
+      bill={bill}
+      isPublic={isPublic}
+      // Auth starts out false until initialize() resolves; wait so owners don't
+      // see a flash of the acquisition copy on a direct load.
+      ctaVariant={!isInitialized ? null : isOwner ? "owner" : "acquisition"}
+      showBanner={showBanner}
+      setShowBanner={setShowBanner}
+      isAuthenticated={isAuthenticated}
+      router={router}
+    />
+  );
 }
 
 // Separated so hooks (useBillCalculations) always run unconditionally
 function SplitBillDetailView({
   bill,
   isPublic,
+  ctaVariant,
   showBanner,
   setShowBanner,
   isAuthenticated,
@@ -157,6 +183,7 @@ function SplitBillDetailView({
 }: {
   bill: any;
   isPublic: boolean;
+  ctaVariant: "owner" | "acquisition" | null;
   showBanner: boolean;
   setShowBanner: (v: boolean) => void;
   isAuthenticated: boolean;
@@ -206,7 +233,10 @@ function SplitBillDetailView({
 
         {/* Content section — default background */}
         <main className="relative z-10 flex-1 flex flex-col">
-          <div className="px-3 pt-3">
+          <div className="px-3 pt-3 space-y-3">
+            {ctaVariant === "acquisition" && (
+              <PublicBillAcquisitionCta billId={bill.id} people={bill.people} placement="top" />
+            )}
             <BillSummary ref={billSummaryRef} billData={bill} isPublic={isPublic} hideShareActions hideMonitorButton />
           </div>
 
@@ -247,32 +277,38 @@ function SplitBillDetailView({
                 />
               )}
 
+              {ctaVariant === "acquisition" && (
+                <PublicBillAcquisitionCta billId={bill.id} people={bill.people} placement="bottom" />
+              )}
+
               {/* "Split Bill Lagi?" CTA banner — after Monitor Status Bayar */}
-              <div
-                onClick={() => {
-                  trackSplitBill.reEntry();
-                  router.push("/split-bill");
-                }}
-                className="relative rounded-md p-5 text-white active:scale-[0.98] transition-all group cursor-pointer bg-brand-reversed"
-              >
-                <div className="absolute -top-1 right-4 p-1 opacity-100 transition-transform group-hover:scale-110 group-hover:rotate-6 z-20">
-                  <img
-                    src="/img/feature-splitbill-scan.png"
-                    alt="Split Bill Icon"
-                    className="w-24 h-24 object-contain drop-shadow-sm"
-                  />
-                </div>
-                <div className="relative z-10 flex flex-col gap-1">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-xl font-black">Split Bill Lagi?</h3>
-                    <ChevronRight className="w-5 h-5 opacity-60 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+              {ctaVariant === "owner" && (
+                <div
+                  onClick={() => {
+                    trackSplitBill.reEntry();
+                    router.push("/split-bill");
+                  }}
+                  className="relative rounded-md p-5 text-white active:scale-[0.98] transition-all group cursor-pointer bg-brand-reversed"
+                >
+                  <div className="absolute -top-1 right-4 p-1 opacity-100 transition-transform group-hover:scale-110 group-hover:rotate-6 z-20">
+                    <img
+                      src="/img/feature-splitbill-scan.png"
+                      alt="Split Bill Icon"
+                      className="w-24 h-24 object-contain drop-shadow-sm"
+                    />
                   </div>
-                  <p className="text-xs text-white/80 font-medium max-w-[280px]">
-                    Banyak patungan belum beres? Yuk, bagi tagihan sekarang biar gak
-                    ribet!
-                  </p>
+                  <div className="relative z-10 flex flex-col gap-1">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-xl font-black">Split Bill Lagi?</h3>
+                      <ChevronRight className="w-5 h-5 opacity-60 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                    </div>
+                    <p className="text-xs text-white/80 font-medium max-w-[280px]">
+                      Banyak patungan belum beres? Yuk, bagi tagihan sekarang biar gak
+                      ribet!
+                    </p>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         </main>

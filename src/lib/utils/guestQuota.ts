@@ -1,5 +1,6 @@
 export const GUEST_LIMIT = 1;
 export const TRACKER_KEY = "sb_guest_scan_tracker";
+export const GUEST_QUOTA_CHANGED_EVENT = "sb-guest-quota-changed";
 
 export interface GuestTracker {
   count: number;
@@ -44,4 +45,5 @@ export const incrementGuestScanCount = () => {
     }
   }
   localStorage.setItem(TRACKER_KEY, JSON.stringify(tracker));
+  window.dispatchEvent(new Event(GUEST_QUOTA_CHANGED_EVENT));
 };

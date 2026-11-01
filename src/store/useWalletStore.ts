@@ -21,6 +21,7 @@ export interface PaymentMethod {
 
 export interface SavedBill {
   id: string;
+  ownerId?: string;
   date: string; // ISO string
   activityName: string;
   totalAmount: number;

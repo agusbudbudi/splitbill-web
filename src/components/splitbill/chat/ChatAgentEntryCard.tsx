@@ -47,7 +47,7 @@ export const AgentBillyEntryCard = () => {
                         Bingung Mulai dari mana?
                     </p>
                     <p className="text-[11px] leading-relaxed mt-0.5 text-muted-foreground font-medium">
-                        Chat aja ke Agent Billy, dipandu sampe beres!
+                        Chat Agent Billy, dipandu sampe beres!
                     </p>
                 </div>
 

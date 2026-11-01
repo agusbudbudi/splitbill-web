@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 /**
  * One-off content fix: point blog links at specific feature pages, repoint links
- * to the login-only /split-later, and drop leftover [VERIFIKASI] draft markers.
+ * to the login-only /split-later, correct claims that Split Later needs no login,
+ * and drop leftover [VERIFIKASI] draft markers.
  *
  * Run after /collect-money/cara-pakai is live, since one edit links to it.
  *
@@ -44,6 +45,10 @@ const EDITS = {
   "tips-atur-uang-kas-liburan-kelompok": [
     relink("yang jauh lebih praktis di ", BARE, "/split-bill-liburan"),
     relink("Cobain langsung fiturnya secara gratis di ", BARE, "/split-later/cara-pakai"),
+    {
+      find: "aplikasi, gak perlu daftar akun, dan pastinya 100% gratis.",
+      replace: "aplikasi, cukup login biar struknya tersimpan aman, dan pastinya 100% gratis.",
+    },
   ],
   "hitung-patungan-tanpa-download-aplikasi": [relink("Buka ", WWW, "/split-bill")],
   "cara-hitung-pajak-restoran-service-charge-adil": [relink("Kamu bisa pakai ", WWW, "/split-bill")],
@@ -51,6 +56,14 @@ const EDITS = {
   "fitur-split-later-splitbill": [
     relink("Masuk ke ", WWW, "/split-later/cara-pakai"),
     relink("Cobain fitur <strong>Split Later</strong> di ", BARE, "/split-later/cara-pakai"),
+    {
+      find: "<strong>Bikin bucket &amp; kumpulin struk nggak perlu login</strong> Kamu bisa langsung bikin bucket dan upload struk tanpa akun. Tapi kalau mau proses struk pakai AI Scan, kadang bakal diminta login dulu.",
+      replace: "<strong>Split Later butuh login</strong> Login dulu biar struk dan progress bucket tersimpan aman di akun kamu, dan gak hilang meskipun ganti HP di tengah acara.",
+    },
+    {
+      find: "Bikin bucket dan upload struk nggak perlu login. Tapi buat proses struk pakai AI Scan, kadang bakal diminta login dulu.",
+      replace: "Perlu. Split Later butuh login biar struk dan progress bucket tersimpan aman di akun kamu, dan gak hilang meskipun ganti HP di tengah acara.",
+    },
   ],
   "first-date-split-bill-atau-bayarin": [relink("Dan di sinilah ", BARE, "/split-bill")],
   "cara-split-bill-multiple-struk": [

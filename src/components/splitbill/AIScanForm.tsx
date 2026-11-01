@@ -776,8 +776,6 @@ export const AIScanForm = ({ onLoginClick }: { onLoginClick?: () => void }) => {
         </div>
       )}
 
-      {/* Benefits info */}
-      {!scanResult && <AIScanBenefits />}
       <LoadingModal isOpen={isScanning} image={image} />
 
       {/* Auth modal triggered when guest tries to import scan result */}

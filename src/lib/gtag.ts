@@ -173,6 +173,18 @@ export const trackSplitBill = {
 
 export const trackPublic = {
   openBill: (billId: string) => trackEvent("bill_open_public", { bill_id: billId }),
+  acquisitionCtaClick: (params: {
+    billId: string;
+    placement: "top" | "bottom";
+    participantCount: number;
+    prefilled: boolean;
+  }) =>
+    trackEvent("bill_public_cta_click", {
+      bill_id: params.billId,
+      placement: params.placement,
+      participant_count: params.participantCount,
+      prefilled: params.prefilled,
+    }),
 };
 
 export const trackSocial = {
@@ -200,6 +212,22 @@ export const trackWallet = {
 export const trackMarketing = {
   setSocialEngagement: (bestiesCount: number) => setUserProperties({ besties_count: bestiesCount }),
   setUsageIntensity: (totalBills: number) => setUserProperties({ total_bills_created: totalBills }),
+};
+
+export const trackAds = {
+  ctaClick: (params: {
+    adId: string;
+    sponsorName: string;
+    mediaType: "image" | "video";
+    /** "button" while the countdown runs, "icon" once Lanjut has replaced it */
+    ctaPlacement: "button" | "icon";
+  }) =>
+    trackEvent("ad_cta_click", {
+      ad_id: params.adId,
+      sponsor_name: params.sponsorName,
+      media_type: params.mediaType,
+      cta_placement: params.ctaPlacement,
+    }),
 };
 
 /**

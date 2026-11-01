@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { QRCodeSVG } from "qrcode.react";
 import { formatToIDR } from "@/lib/utils";
 import {
   Users,
@@ -18,6 +19,24 @@ import {
 } from "@/hooks/useBillCalculations";
 import { cn } from "@/lib/utils";
 import { PaymentMethod } from "@/store/useWalletStore";
+import { SITE_URL } from "@/lib/seo";
+import { ReceiptProviderLogo } from "@/components/wallet/ReceiptProviderLogo";
+
+const RECEIPT_QR_PARAMS = "utm_source=receipt_image&utm_medium=qr";
+
+// Saved bills link to their public page, which is what fires bill_open_public.
+// Local-only ids have no public page, so those fall back to the homepage. Always
+// the production domain: this image is scanned on other people's phones.
+const getReceiptQrTarget = (billId?: string) =>
+  billId && /^[0-9a-fA-F]{24}$/.test(billId)
+    ? {
+        url: `${SITE_URL}/history/split-bill/${billId}?${RECEIPT_QR_PARAMS}`,
+        label: "Scan buat lihat rincian bill ini",
+      }
+    : {
+        url: `${SITE_URL}/?${RECEIPT_QR_PARAMS}`,
+        label: "Scan buat buka SplitBill",
+      };
 
 const AVATAR_BASE_URL =
   "https://api.dicebear.com/9.x/personas/png?backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf&size=128&scale=100&seed=";
@@ -31,12 +50,14 @@ interface SocialSplitBillReceiptProps {
     badges: Record<string, string[]>;
     selectedMethods?: PaymentMethod[];
   };
+  /** Saved bill id, used to point the footer QR at the bill's public page */
+  billId?: string;
 }
 
 export const SocialSplitBillReceipt = React.forwardRef<
   HTMLDivElement,
   SocialSplitBillReceiptProps
->(({ data }, ref) => {
+>(({ data, billId }, ref) => {
   const {
     activityName,
     totalSpent,
@@ -46,6 +67,7 @@ export const SocialSplitBillReceipt = React.forwardRef<
     selectedMethods = [],
   } = data;
   const people = Object.keys(balances);
+  const qrTarget = getReceiptQrTarget(billId);
 
   const getBadgeIcon = (badge: string) => {
     switch (badge) {
@@ -259,37 +281,7 @@ export const SocialSplitBillReceipt = React.forwardRef<
                     className="p-6 bg-white border border-slate-100 rounded-lg flex items-center gap-8"
                   >
                     <div className="w-24 h-24 bg-slate-50 rounded-lg flex items-center justify-center border border-slate-100 shrink-0 relative overflow-hidden">
-                      {[
-                        "bca",
-                        "bni",
-                        "bri",
-                        "mandiri",
-                        "dana",
-                        "gopay",
-                        "ovo",
-                        "shopeepay",
-                        "jenius",
-                        "linkaja",
-                        "permata",
-                        "danamon",
-                        "bsi",
-                        "btn",
-                        "bank jago",
-                        "seabank",
-                      ].some((kw) =>
-                        method.providerName.toLowerCase().includes(kw),
-                      ) ? (
-                        <img
-                          src={`/img/logo-${method.providerName.toLowerCase()}.png`}
-                          alt={method.providerName}
-                          crossOrigin="anonymous"
-                          className="w-full h-full object-contain p-2"
-                        />
-                      ) : (
-                        <div className="text-primary/40 font-black text-2xl uppercase">
-                          {method.providerName.slice(0, 3)}
-                        </div>
-                      )}
+                      <ReceiptProviderLogo method={method} />
                     </div>
                     <div className="flex flex-col gap-1 min-w-0">
                       <p className="text-lg font-black text-primary uppercase tracking-wider leading-none mb-1">
@@ -489,10 +481,12 @@ export const SocialSplitBillReceipt = React.forwardRef<
       {/* Footer Brand */}
       <div className="relative z-10 mt-auto pt-24 pb-8 text-center w-full">
         <div className="w-full h-px bg-slate-100 mb-10" />
-        <p className="text-slate-600 text-2xl font-bold">
-          Dihitung otomatis dengan cinta oleh{" "}
-          <span className="text-primary font-black">SplitBill</span>
-        </p>
+        <div className="flex flex-col items-center gap-3">
+          <div className="p-3 bg-white rounded-lg border border-slate-100">
+            <QRCodeSVG value={qrTarget.url} size={200} level="M" />
+          </div>
+          <p className="text-slate-500 text-xl font-bold">{qrTarget.label}</p>
+        </div>
         <p className="text-primary font-black text-3xl mt-3 tracking-tighter">
           www.splitbill.my.id
         </p>
